@@ -1,28 +1,4 @@
-/*
- * drivers/cpufreq/cpufreq_smartass2.c
- *
- * Copyright (C) 2010 Google, Inc.
- *
- * This software is licensed under the terms of the GNU General Public
- * License version 2, as published by the Free Software Foundation, and
- * may be copied, distributed, and modified under those terms.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * Author: Erasmux
- *
- * Based on the interactive governor By Mike Chan (mike@android.com)
- * which was adaptated to 2.6.29 kernel by Nadlabak (pavel@doshaska.net)
- *
- * SMP support based on mod by faux123
- *
- * For a general overview of smartassV2 see the relavent part in
- * Documentation/cpu-freq/governors.txt
- *
- */
+/* FeraEdit */
 
 #include <linux/cpu.h>
 #include <linux/cpumask.h>
@@ -35,78 +11,33 @@
 #include <asm/cputime.h>
 #include <linux/earlysuspend.h>
 
-
-/******************** Tunable parameters: ********************/
-
-/*
- * The "ideal" frequency to use when awake. The governor will ramp up faster
- * towards the ideal frequency and slower after it has passed it. Similarly,
- * lowering the frequency towards the ideal frequency is faster than below it.
- */
 #define DEFAULT_AWAKE_IDEAL_FREQ 768000
 static unsigned int awake_ideal_freq;
 
-/*
- * The "ideal" frequency to use when suspended.
- * When set to 0, the governor will not track the suspended state (meaning
- * that practically when sleep_ideal_freq==0 the awake_ideal_freq is used
- * also when suspended).
- */
 #define DEFAULT_SLEEP_IDEAL_FREQ 245760
 static unsigned int sleep_ideal_freq;
 
-/*
- * Freqeuncy delta when ramping up above the ideal freqeuncy.
- * Zero disables and causes to always jump straight to max frequency.
- * When below the ideal freqeuncy we always ramp up to the ideal freq.
- */
-#define DEFAULT_RAMP_UP_STEP 128000
+#define DEFAULT_RAMP_UP_STEP 80000
 static unsigned int ramp_up_step;
 
-/*
- * Freqeuncy delta when ramping down below the ideal freqeuncy.
- * Zero disables and will calculate ramp down according to load heuristic.
- * When above the ideal freqeuncy we always ramp down to the ideal freq.
- */
-#define DEFAULT_RAMP_DOWN_STEP 256000
+#define DEFAULT_RAMP_DOWN_STEP 0
 static unsigned int ramp_down_step;
 
-/*
- * CPU freq will be increased if measured load > max_cpu_load;
- */
-#define DEFAULT_MAX_CPU_LOAD 50
+#define DEFAULT_MAX_CPU_LOAD 60
 static unsigned long max_cpu_load;
 
-/*
- * CPU freq will be decreased if measured load < min_cpu_load;
- */
-#define DEFAULT_MIN_CPU_LOAD 25
+#define DEFAULT_MIN_CPU_LOAD 30
 static unsigned long min_cpu_load;
 
-/*
- * The minimum amount of time to spend at a frequency before we can ramp up.
- * Notice we ignore this when we are below the ideal frequency.
- */
 #define DEFAULT_UP_RATE_US 48000;
 static unsigned long up_rate_us;
 
-/*
- * The minimum amount of time to spend at a frequency before we can ramp down.
- * Notice we ignore this when we are above the ideal frequency.
- */
 #define DEFAULT_DOWN_RATE_US 99000;
 static unsigned long down_rate_us;
 
-/*
- * The frequency to set when waking up from sleep.
- * When sleep_ideal_freq=0 this will have no effect.
- */
-#define DEFAULT_SLEEP_WAKEUP_FREQ 99999999
+#define DEFAULT_SLEEP_WAKEUP_FREQ 768000
 static unsigned int sleep_wakeup_freq;
 
-/*
- * Sampling rate, I highly recommend to leave it at 2.
- */
 #define DEFAULT_SAMPLE_RATE_JIFFIES 2
 static unsigned int sample_rate_jiffies;
 
