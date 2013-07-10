@@ -1,23 +1,3 @@
-/*
- * drivers/misc/logger.c
- *
- * A Logging Subsystem
- *
- * Copyright (C) 2007-2008 Google, Inc.
- * Copyright (c) 2009, Code Aurora Forum. All rights reserved.
- *
- * Robert Love <rlove@google.com>
- *
- * This software is licensed under the terms of the GNU General Public
- * License version 2, as published by the Free Software Foundation, and
- * may be copied, distributed, and modified under those terms.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- */
-
 #include <linux/module.h>
 #include <linux/fs.h>
 #include <linux/miscdevice.h>
@@ -26,20 +6,11 @@
 #include <linux/time.h>
 #include <linux/kobject.h>
 #include <linux/spinlock.h>
-
 #include <asm/ioctls.h>
 #include <asm/atomic.h>
-
 #include <linux/mutex.h>
 #include "logger.h"
 
-/*
- * struct logger_log - represents a specific log, such as 'main' or 'radio'
- *
- * This structure lives from module insertion until module removal, so it does
- * not need additional reference counting. The structure is protected by the
- * spinlock 'bufflock'.
- */
 struct logger_log {
 	unsigned char *		buffer;	/* the ring buffer itself */
 	struct miscdevice	misc;	/* misc device representing the log */
@@ -60,12 +31,6 @@ struct logger_log {
 
 static DEFINE_MUTEX(logger_mutex);
 
-/*
- * struct logger_reader - a logging device open for reading
- *
- * This object lives from open to release, so we don't need additional
- * reference counting. The structure is protected by log->bufflock.
- */
 struct logger_reader {
 	struct logger_log *	log;	/* associated log */
 	struct list_head	list;	/* entry in logger_log's list */
@@ -73,18 +38,12 @@ struct logger_reader {
 	int			fixed;	/* flag if read offset fixed*/
 };
 
-/*
- * struct logger_tag - a tag element based on a character string that allows
- * fine grained control of logging.
- */
-
 struct logger_tag {
 	struct logger_log	*log;	/* associated log */
 	struct list_head	list;	/* entry in logger_log's list */
 	atomic_t		priority;
 	atomic_t		enabled;
 	struct kobject		kobj;
-	/* next element must be last in struct because it is dynamic length */
 	char			name[0]; /* must be last in struct */
 };
 #define to_tag(t) container_of(t, struct logger_tag, kobj)
@@ -120,23 +79,8 @@ module_param_named(default_enabled,
 	.store = _store,                                      \
 }
 
-/* logger_offset - returns index 'n' into the log via (optimized) modulus */
 #define logger_offset(n)	((n) & (log->size - 1))
 
-/*
- * file_get_log - Given a file structure, return the associated log
- *
- * This isn't aesthetic. We have several goals:
- *
- * 	1) Need to quickly obtain the associated log during an I/O operation
- * 	2) Readers need to maintain state (logger_reader)
- * 	3) Writers need to be very fast (open() should be a near no-op)
- *
- * In the reader case, we can trivially go file->logger_reader->logger_log.
- * For a writer, we don't want to maintain a logger_reader, so we just go
- * file->logger_log. Thus what file->private_data points at depends on whether
- * or not the file was opened for reading. This function hides that dirtiness.
- */
 static inline struct logger_log *file_get_log(const struct file * const file)
 {
 	if (file->f_mode & FMODE_READ) {
@@ -146,12 +90,6 @@ static inline struct logger_log *file_get_log(const struct file * const file)
 		return file->private_data;
 }
 
-/*
- * get_entry_len - Grabs the length of the payload of the next entry starting
- * from 'off'.
- *
- * Caller needs to hold log->bufflock.
- */
 static __u32 get_entry_len(const struct logger_log * const log,
 			const size_t off)
 {
@@ -169,12 +107,6 @@ static __u32 get_entry_len(const struct logger_log * const log,
 	return sizeof(struct logger_entry) + val;
 }
 
-/*
- * do_read_log_to_user - reads exactly 'count' bytes from 'log' into the
- * user-space buffer 'buf'. Returns 'count' on success.
- *
- * log->bufflock must not be held on entry.
- */
 static ssize_t do_read_log_to_user(struct logger_log *log,
 				   struct logger_reader *reader,
 				   char __user *buf,
@@ -184,19 +116,12 @@ static ssize_t do_read_log_to_user(struct logger_log *log,
 	char *temp_buf = kmalloc(LOGGER_ENTRY_MAX_LEN, GFP_KERNEL);
 	unsigned long flags;
 	ssize_t ret = count;
-	/*
-	 * Can't call any user copy functions while holding a spinlock,
-	 * so use a temp buffer.
-	 */
 
 	if (!temp_buf)
 		return -ENOMEM;
 
 	spin_lock_irqsave(&log->bufflock, flags);
 
-	/*
-	 * Check if the r_off was already adjusted in fix_up_readers
-	 */
 	if (reader->fixed) {
 		reader->fixed = 0;
 		count = get_entry_len(log, reader->r_off);
@@ -204,17 +129,8 @@ static ssize_t do_read_log_to_user(struct logger_log *log,
 
 	len = min(count, log->size - reader->r_off);
 
-	/*
-	 * We read from the log in two disjoint operations. First, we read from
-	 * the current read head offset up to 'count' bytes or to the end of
-	 * the log, whichever comes first.
-	 */
 	memcpy(temp_buf, log->buffer + reader->r_off, len);
 
-	/*
-	 * Second, we read any remaining bytes, starting back at the head of
-	 * the log.
-	 */
 	if (count != len)
 		memcpy(temp_buf + len, log->buffer, count - len);
 
@@ -229,19 +145,6 @@ static ssize_t do_read_log_to_user(struct logger_log *log,
 	return ret;
 }
 
-/*
- * logger_read - our log's read() method
- *
- * Behavior:
- *
- * 	- O_NONBLOCK works
- * 	- If there are no log entries to read, blocks until log is written to
- * 	- Atomically reads exactly one log entry
- *
- * Optimal read size is LOGGER_ENTRY_MAX_LEN. Will set errno to EINVAL if read
- * buffer is insufficient to hold next entry.
- * Entered with spinlock not held.
- */
 static ssize_t logger_read(struct file *file, char __user *buf,
 			   size_t count, loff_t *pos)
 {
@@ -302,12 +205,6 @@ start:
 		-EINVAL : do_read_log_to_user(log, reader, buf, ret);
 }
 
-/*
- * get_next_entry - return the offset of the first valid entry at least 'len'
- * bytes after 'off'.
- *
- * Caller must hold log->bufflock.
- */
 static size_t get_next_entry(const struct logger_log * const log,
 			size_t off,
 			const size_t len)
@@ -1099,9 +996,9 @@ static struct logger_log VAR = { \
 	.tags = LIST_HEAD_INIT(VAR .tags), \
 };
 
-DEFINE_LOGGER_DEVICE(log_main, LOGGER_LOG_MAIN, 64*1024)
-DEFINE_LOGGER_DEVICE(log_events, LOGGER_LOG_EVENTS, 256*1024)
-DEFINE_LOGGER_DEVICE(log_radio, LOGGER_LOG_RADIO, 64*1024)
+DEFINE_LOGGER_DEVICE(log_main, LOGGER_LOG_MAIN, 32*1024)
+DEFINE_LOGGER_DEVICE(log_events, LOGGER_LOG_EVENTS, 32*1024)
+DEFINE_LOGGER_DEVICE(log_radio, LOGGER_LOG_RADIO, 16*1024)
 
 static struct logger_log *get_log_from_minor(const int minor)
 {
@@ -1130,10 +1027,6 @@ static int kernel_logger_write(struct logger_log * const log,
 			tag_bytes)) <= 0)
 		return ret;
 
-	/*
-	 * Use GFP_ATOMIC due to inability to reliably know if we
-	 * are able to sleep while allocating memory here or not.
-	 */
 	msg = kvasprintf(GFP_ATOMIC, fmt, args);
 	if (!msg)
 		return -ENOMEM;
