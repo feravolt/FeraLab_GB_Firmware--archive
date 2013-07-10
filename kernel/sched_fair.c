@@ -2,62 +2,15 @@
 
 #include <linux/latencytop.h>
 
-/*
- * Targeted preemption latency for CPU-bound tasks:
- * (default: 20ms * (1 + ilog(ncpus)), units: nanoseconds)
- *
- * NOTE: this latency value is not the same as the concept of
- * 'timeslice length' - timeslices in CFS are of variable length
- * and have no persistent notion like in traditional, time-slice
- * based scheduling concepts.
- *
- * (to see the precise effective timeslice length of your workload,
- *  run vmstat and monitor the context-switches (cs) field)
- */
-unsigned int sysctl_sched_latency = 9000000ULL;
-
-/*
- * Minimal preemption granularity for CPU-bound tasks:
- * (default: 4 msec * (1 + ilog(ncpus)), units: nanoseconds)
- */
-unsigned int sysctl_sched_min_granularity = 900000ULL;
-
-/*
- * is kept at sysctl_sched_latency / sysctl_sched_min_granularity
- */
-static unsigned int sched_nr_latency = 8;
-
-/*
- * After fork, child runs first. (default) If set to 0 then
- * parent will (try to) run first.
- */
+unsigned int sysctl_sched_latency = 20000000ULL;
+unsigned int sysctl_sched_min_granularity = 20000000ULL;
+static unsigned int sched_nr_latency = 7;
 const_debug unsigned int sysctl_sched_child_runs_first = 1;
-
-/*
- * sys_sched_yield() compat mode
- *
- * This option switches the agressive yield implementation of the
- * old scheduler back on.
- */
 unsigned int __read_mostly sysctl_sched_compat_yield;
-
-/*
- * SCHED_OTHER wake-up granularity.
- * (default: 5 msec * (1 + ilog(ncpus)), units: nanoseconds)
- *
- * This option delays the preemption effects of decoupled workloads
- * and reduces their over-scheduling. Synchronous workloads will still
- * have immediate wakeup/sleep latencies.
- */
-unsigned int sysctl_sched_wakeup_granularity = 3000000UL;
-
+unsigned int sysctl_sched_wakeup_granularity = 5000000UL;
 const_debug unsigned int sysctl_sched_migration_cost = 500000UL;
 
 static const struct sched_class fair_sched_class;
-/**************************************************************
- * CFS operations on generic schedulable entities:
- */
-
 static inline struct task_struct *task_of(struct sched_entity *se)
 {
 	return container_of(se, struct task_struct, se);
