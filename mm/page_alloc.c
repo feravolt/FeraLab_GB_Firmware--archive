@@ -1,19 +1,3 @@
-/*
- *  linux/mm/page_alloc.c
- *
- *  Manages the free list, the system allocates free pages here.
- *  Note that kmalloc() lives in slab.c
- *
- *  Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds
- *  Swap reorganised 29.12.95, Stephen Tweedie
- *  Support of BIGMEM added by Gerhard Wichert, Siemens AG, July 1999
- *  Reshaped it to be a zoned allocator, Ingo Molnar, Red Hat, 1999
- *  Discontiguous memory support, Kanoj Sarcar, SGI, Nov 1999
- *  Zone balancing, Kanoj Sarcar, SGI, Jan 2000
- *  Per cpu hot/cold page lists, bulk allocation, Martin J. Bligh, Sept 2002
- *          (lots of bits borrowed from Ingo Molnar & Andrew Morton)
- */
-
 #include <linux/stddef.h>
 #include <linux/mm.h>
 #include <linux/swap.h>
@@ -47,14 +31,10 @@
 #include <linux/page_cgroup.h>
 #include <linux/debugobjects.h>
 #include <linux/mem_notify.h>
-
 #include <asm/tlbflush.h>
 #include <asm/div64.h>
 #include "internal.h"
 
-/*
- * Array of node states.
- */
 nodemask_t node_states[NR_NODE_STATES] __read_mostly = {
 	[N_POSSIBLE] = NODE_MASK_ALL,
 	[N_ONLINE] = { { [0] = 1UL } },
@@ -64,7 +44,7 @@ nodemask_t node_states[NR_NODE_STATES] __read_mostly = {
 	[N_HIGH_MEMORY] = { { [0] = 1UL } },
 #endif
 	[N_CPU] = { { [0] = 1UL } },
-#endif	/* NUMA */
+#endif
 };
 EXPORT_SYMBOL(node_states);
 
@@ -2592,9 +2572,9 @@ static void setup_zone_migrate_reserve(struct zone *zone)
 #ifdef CONFIG_DONT_RESERVE_FROM_MOVABLE_ZONE
 	return;
 #endif
-	/* Get the start pfn, end pfn and the number of blocks to reserve */
 	start_pfn = zone->zone_start_pfn;
 	end_pfn = start_pfn + zone->spanned_pages;
+	start_pfn = roundup(start_pfn, pageblock_nr_pages);
 	reserve = roundup(zone->pages_min, pageblock_nr_pages) >>
 							pageblock_order;
 	for (pfn = start_pfn; pfn < end_pfn; pfn += pageblock_nr_pages) {
