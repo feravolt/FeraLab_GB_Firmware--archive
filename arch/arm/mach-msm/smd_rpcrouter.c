@@ -1,25 +1,3 @@
-/* arch/arm/mach-msm/smd_rpcrouter.c
- *
- * Copyright (C) 2007 Google, Inc.
- * Copyright (c) 2007-2010, Code Aurora Forum. All rights reserved.
- * Author: San Mehat <san@android.com>
- *
- * This software is licensed under the terms of the GNU General Public
- * License version 2, as published by the Free Software Foundation, and
- * may be copied, distributed, and modified under those terms.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
- * GNU General Public License for more details.
- *
- */
-
-/* TODO: handle cases where smd_write() will tempfail due to full fifo */
-/* TODO: thread priority? schedule a work to bump it? */
-/* TODO: maybe make server_list_lock a mutex */
-/* TODO: pool fragments to avoid kmalloc/kfree churn */
-
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/string.h>
@@ -39,9 +17,7 @@
 #include <linux/platform_device.h>
 #include <linux/uaccess.h>
 #include <linux/debugfs.h>
-
 #include <asm/byteorder.h>
-
 #include <mach/msm_smd.h>
 #include <mach/smem_log.h>
 #include "smd_rpcrouter.h"
@@ -159,19 +135,10 @@ static DECLARE_WORK(work_create_rpcrouter_pdev, do_create_rpcrouter_pdev);
 #define RR_STATE_HEADER  1
 #define RR_STATE_BODY    2
 #define RR_STATE_ERROR   3
-
-/* After restart notification, local ep keep
- * state for server restart and for ep notify.
- * Server restart cleared by R-R new svr msg.
- * NTFY cleared by calling msm_rpc_clear_netreset
-*/
-
 #define RESTART_NORMAL 0
 #define RESTART_PEND_SVR 1
 #define RESTART_PEND_NTFY 2
 #define RESTART_PEND_NTFY_SVR 3
-
-/* State for remote ep following restart */
 #define RESTART_QUOTA_ABORT  1
 
 struct rr_context {
@@ -246,9 +213,6 @@ static int rpcrouter_send_control_msg(struct rpcrouter_xprt_info *xprt_info,
 	hdr.size = sizeof(*msg);
 	hdr.dst_pid = xprt_info->remote_pid;
 	hdr.dst_cid = RPCROUTER_ROUTER_ADDRESS;
-
-	/* TODO: what if channel is full? */
-
 	need = sizeof(hdr) + hdr.size;
 	spin_lock_irqsave(&xprt_info->lock, flags);
 	while (xprt_info->xprt->write_avail() < need) {
@@ -488,6 +452,10 @@ int msm_rpcrouter_destroy_local_endpoint(struct msm_rpc_endpoint *ept)
 	unsigned long flags;
 	struct rpcrouter_xprt_info *xprt_info;
 
+	spin_lock_irqsave(&local_endpoints_lock, flags);
+	list_del(&ept->list);
+	spin_unlock_irqrestore(&local_endpoints_lock, flags);
+
 	msg.cmd = RPCROUTER_CTRL_CMD_REMOVE_CLIENT;
 	msg.cli.pid = ept->pid;
 	msg.cli.cid = ept->cid;
@@ -517,7 +485,6 @@ int msm_rpcrouter_destroy_local_endpoint(struct msm_rpc_endpoint *ept)
 
 	wake_lock_destroy(&ept->read_q_wake_lock);
 	wake_lock_destroy(&ept->reply_q_wake_lock);
-	list_del(&ept->list);
 	kfree(ept);
 	return 0;
 }
@@ -547,16 +514,11 @@ static int rpcrouter_create_remote_endpoint(uint32_t pid, uint32_t cid)
 static struct msm_rpc_endpoint *rpcrouter_lookup_local_endpoint(uint32_t cid)
 {
 	struct msm_rpc_endpoint *ept;
-	unsigned long flags;
 
-	spin_lock_irqsave(&local_endpoints_lock, flags);
 	list_for_each_entry(ept, &local_endpoints, list) {
-		if (ept->cid == cid) {
-			spin_unlock_irqrestore(&local_endpoints_lock, flags);
+		if (ept->cid == cid)
 			return ept;
-		}
 	}
-	spin_unlock_irqrestore(&local_endpoints_lock, flags);
 	return NULL;
 }
 
@@ -967,19 +929,17 @@ static void do_read_data(struct work_struct *work)
 				       hdr.src_cid);
 	}
 #endif
-
+	spin_lock_irqsave(&local_endpoints_lock, flags);
 	ept = rpcrouter_lookup_local_endpoint(hdr.dst_cid);
 	if (!ept) {
+		spin_unlock_irqrestore(&local_endpoints_lock, flags);
 		DIAG("no local ept for cid %08x\n", hdr.dst_cid);
 		kfree(frag);
 		goto done;
 	}
 
-	/* See if there is already a partial packet that matches our mid
-	 * and if so, append this fragment to that packet.
-	 */
 	mid = PACMARK_MID(pm);
-	spin_lock_irqsave(&ept->incomplete_lock, flags);
+	spin_lock(&ept->incomplete_lock);
 	list_for_each_entry(pkt, &ept->incomplete, list) {
 		if (pkt->mid == mid) {
 			pkt->last->next = frag;
@@ -987,37 +947,49 @@ static void do_read_data(struct work_struct *work)
 			pkt->length += frag->length;
 			if (PACMARK_LAST(pm)) {
 				list_del(&pkt->list);
-				spin_unlock_irqrestore(&ept->incomplete_lock,
-						       flags);
+				spin_unlock(&ept->incomplete_lock);
 				goto packet_complete;
 			}
-			spin_unlock_irqrestore(&ept->incomplete_lock, flags);
+			spin_unlock(&ept->incomplete_lock);
+			spin_unlock_irqrestore(&local_endpoints_lock, flags);
 			goto done;
 		}
 	}
-	spin_unlock_irqrestore(&ept->incomplete_lock, flags);
-	/* This mid is new -- create a packet for it, and put it on
-	 * the incomplete list if this fragment is not a last fragment,
-	 * otherwise put it on the read queue.
-	 */
+	spin_unlock(&ept->incomplete_lock);
+	spin_unlock_irqrestore(&local_endpoints_lock, flags);
 	pkt = rr_malloc(sizeof(struct rr_packet));
 	pkt->first = frag;
 	pkt->last = frag;
 	memcpy(&pkt->hdr, &hdr, sizeof(hdr));
 	pkt->mid = mid;
 	pkt->length = frag->length;
+	spin_lock_irqsave(&local_endpoints_lock, flags);
+	ept = rpcrouter_lookup_local_endpoint(hdr.dst_cid);
+
+	if (!ept) {
+	spin_unlock_irqrestore(&local_endpoints_lock, flags);
+	DIAG("no local ept for cid %08x\n", hdr.dst_cid);
+	kfree(frag);
+	kfree(pkt);
+	goto done;
+	}
+
 	if (!PACMARK_LAST(pm)) {
+		spin_lock(&ept->incomplete_lock);
 		list_add_tail(&pkt->list, &ept->incomplete);
+		spin_unlock(&ept->incomplete_lock);
+		spin_unlock_irqrestore(&local_endpoints_lock, flags);
 		goto done;
 	}
 
 packet_complete:
-	spin_lock_irqsave(&ept->read_q_lock, flags);
+	spin_lock(&ept->read_q_lock);
 	D("%s: take read lock on ept %p\n", __func__, ept);
 	wake_lock(&ept->read_q_wake_lock);
 	list_add_tail(&pkt->list, &ept->read_q);
 	wake_up(&ept->wait_q);
-	spin_unlock_irqrestore(&ept->read_q_lock, flags);
+	spin_unlock(&ept->read_q_lock);
+	spin_unlock_irqrestore(&local_endpoints_lock, flags);
 done:
 
 	if (hdr.confirm_rx) {
