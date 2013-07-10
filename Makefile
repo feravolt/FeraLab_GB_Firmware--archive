@@ -194,8 +194,9 @@ LINUXINCLUDE    := -Iinclude \
 KBUILD_CPPFLAGS := -D__KERNEL__
 
 KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
-		   -fno-strict-aliasing -fno-common \
-                   -Wno-unused-but-set-variable -Wno-uninitialized
+		   -fno-strict-aliasing -fno-common -fno-delete-null-pointer-checks \
+                   -Wno-unused-but-set-variable -Wno-uninitialized \
+		   -Wno-format-security
 
 KBUILD_AFLAGS   := -D__ASSEMBLY__
 
