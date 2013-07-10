@@ -89,9 +89,6 @@
 		.endm
 
 		.section ".start", #alloc, #execinstr
-/*
- * sort out different calling conventions
- */
 		.align
 start:
 		.type	start,#function
@@ -107,11 +104,7 @@ start:
 		mov	r8, r2			@ save atags pointer
 
 #ifndef __ARM_ARCH_2__
-		/*
-		 * Booting from Angel - need to enter SVC mode and disable
-		 * FIQs/IRQs (numeric definitions from angel arm.h source).
-		 * We only do this if we were in user mode on entry.
-		 */
+
 		mrs	r2, cpsr		@ get current mode
 		tst	r2, #3			@ not user?
 		bne	not_angel
@@ -125,16 +118,6 @@ not_angel:
 		teqp	pc, #0x0c000003		@ turn off interrupts
 #endif
 
-		/*
-		 * Note that some cache flushing and other stuff may
-		 * be needed here - is there an Angel SWI call for this?
-		 */
-
-		/*
-		 * some architecture specific code can be inserted
-		 * by the linker here, but it should preserve r7, r8, and r9.
-		 */
-
 		.text
 		adr	r0, LC0
 		ldmia	r0, {r1, r2, r3, r4, r5, r6, ip, sp}
@@ -144,32 +127,15 @@ not_angel:
 		beq	not_relocated		@ running at the address we
 						@ were linked at.
 
-		/*
-		 * We're running at a different address.  We need to fix
-		 * up various pointers:
-		 *   r5 - zImage base address
-		 *   r6 - GOT start
-		 *   ip - GOT end
-		 */
 		add	r5, r5, r0
 		add	r6, r6, r0
 		add	ip, ip, r0
 
 #ifndef CONFIG_ZBOOT_ROM
-		/*
-		 * If we're running fully PIC === CONFIG_ZBOOT_ROM = n,
-		 * we need to fix up pointers into the BSS region.
-		 *   r2 - BSS start
-		 *   r3 - BSS end
-		 *   sp - stack pointer
-		 */
 		add	r2, r2, r0
 		add	r3, r3, r0
 		add	sp, sp, r0
 
-		/*
-		 * Relocate all entries in the GOT table.
-		 */
 1:		ldr	r1, [r6, #0]		@ relocate entries in the GOT
 		add	r1, r1, r0		@ table.  This fixes up the
 		str	r1, [r6], #4		@ C references.
@@ -177,10 +143,6 @@ not_angel:
 		blo	1b
 #else
 
-		/*
-		 * Relocate entries in the GOT table.  We only relocate
-		 * the entries that are outside the (relocated) BSS region.
-		 */
 1:		ldr	r1, [r6, #0]		@ relocate entries in the GOT
 		cmp	r1, r2			@ entry < bss_start ||
 		cmphs	r3, r1			@ _end < entry
@@ -197,50 +159,21 @@ not_relocated:	mov	r0, #0
 		str	r0, [r2], #4
 		cmp	r2, r3
 		blo	1b
-
-		/*
-		 * The C runtime environment should now be setup
-		 * sufficiently.  Turn the cache on, set up some
-		 * pointers, and start decompressing.
-		 */
 		bl	cache_on
-
 		mov	r1, sp			@ malloc space above stack
 		add	r2, sp, #0x10000	@ 64k max
-
-/*
- * Check to see if we will overwrite ourselves.
- *   r4 = final kernel address
- *   r5 = start of this image
- *   r2 = end of malloc space (and therefore this image)
- * We basically want:
- *   r4 >= r2 -> OK
- *   r4 + image length <= r5 -> OK
- */
 		cmp	r4, r2
 		bhs	wont_overwrite
 		sub	r3, sp, r5		@ > compressed kernel size
 		add	r0, r4, r3, lsl #2	@ allow for 4x expansion
 		cmp	r0, r5
 		bls	wont_overwrite
-
 		mov	r5, r2			@ decompress after malloc space
 		mov	r0, r5
 		mov	r3, r7
 		bl	decompress_kernel
-
 		add	r0, r0, #127 + 128	@ alignment + stack
 		bic	r0, r0, #127		@ align the kernel length
-/*
- * r0     = decompressed kernel length
- * r1-r3  = unused
- * r4     = kernel execution address
- * r5     = decompressed kernel start
- * r6     = processor ID
- * r7     = architecture ID
- * r8     = atags pointer
- * r9-r14 = corrupted
- */
 		add	r1, r5, r0		@ end of decompressed kernel
 		adr	r2, reloc_start
 		ldr	r3, LC1
@@ -252,16 +185,9 @@ not_relocated:	mov	r0, #0
 		cmp	r2, r3
 		blo	1b
 		add	sp, r1, #128		@ relocate the stack
-
 		bl	cache_clean_flush
 		add	pc, r5, r0		@ call relocation code
 
-/*
- * We're not in danger of overwriting ourselves.  Do this the simple way.
- *
- * r4     = kernel execution address
- * r7     = architecture ID
- */
 wont_overwrite:	mov	r0, r4
 		mov	r3, r7
 		bl	decompress_kernel
@@ -287,33 +213,10 @@ params:		ldr	r0, =params_phys
 		.align
 #endif
 
-/*
- * Turn on the cache.  We need to setup some page tables so that we
- * can have both the I and D caches on.
- *
- * We place the page tables 16k down from the kernel execution address,
- * and we hope that nothing else is using it.  If we're using it, we
- * will go pop!
- *
- * On entry,
- *  r4 = kernel execution address
- *  r6 = processor ID
- *  r7 = architecture number
- *  r8 = atags pointer
- *  r9 = run-time address of "start"  (???)
- * On exit,
- *  r1, r2, r3, r9, r10, r12 corrupted
- * This routine must preserve:
- *  r4, r5, r6, r7, r8
- */
 		.align	5
 cache_on:	mov	r3, #8			@ cache_on function
 		b	call_cache_fn
 
-/*
- * Initialize the highest priority protection region, PR7
- * to cover all 32bit address and cacheable and bufferable.
- */
 __armv4_mpu_cache_on:
 		mov	r0, #0x3f		@ 4G, the whole
 		mcr	p15, 0, r0, c6, c7, 0	@ PR7 Area Setting
@@ -369,10 +272,6 @@ __armv3_mpu_cache_on:
 __setup_mmu:	sub	r3, r4, #16384		@ Page directory size
 		bic	r3, r3, #0xff		@ Align the pointer
 		bic	r3, r3, #0x3f00
-/*
- * Initialise the page tables, turning on the cacheable and bufferable
- * bits for the RAM area only.
- */
 		mov	r0, r3
 		mov	r9, r0, lsr #18
 		mov	r9, r9, lsl #18		@ start of RAM
@@ -388,12 +287,6 @@ __setup_mmu:	sub	r3, r4, #16384		@ Page directory size
 		add	r1, r1, #1048576
 		teq	r0, r2
 		bne	1b
-/*
- * If ever we are running from Flash, then we surely want the cache
- * to be enabled also for our execution instance...  We map 2MB of it
- * so there is no map overlap problem for up to 1 MB compressed kernel.
- * If the execution is in RAM then we would only be duplicating the above.
- */
 		mov	r1, #0x1e
 		orr	r1, r1, #3 << 10
 		mov	r2, pc, lsr #20
@@ -406,11 +299,11 @@ __setup_mmu:	sub	r3, r4, #16384		@ Page directory size
 ENDPROC(__setup_mmu)
 
 __armv6_mmu_cache_on:
-    mrc  p15, 0, r0, c1, c0, 0  @ read SCTLR
-    bic  r0, r0, #2    @ A (no unaligned access fault)
-    orr  r0, r0, #1 << 22  @ U (v6 unaligned access model)
-    mcr  p15, 0, r0, c1, c0, 0  @ write SCTLR
-    b  __armv4_mmu_cache_on
+    		mrc  p15, 0, r0, c1, c0, 0     @ read SCTLR
+    		bic  r0, r0, #2                @ A (no unaligned access fault)
+    		orr  r0, r0, #1 << 22          @ U (v6 unaligned access model)
+    		mcr  p15, 0, r0, c1, c0, 0     @ write SCTLR
+    		b  __armv4_mmu_cache_on
 
 __armv4_mmu_cache_on:
 		mov	r12, lr
