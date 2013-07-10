@@ -1,24 +1,4 @@
-/*
- * Completely Fair Scheduling (CFS) Class (SCHED_NORMAL/SCHED_BATCH)
- *
- *  Copyright (C) 2007 Red Hat, Inc., Ingo Molnar <mingo@redhat.com>
- *
- *  Interactivity improvements by Mike Galbraith
- *  (C) 2007 Mike Galbraith <efault@gmx.de>
- *
- *  Various enhancements by Dmitry Adamushko.
- *  (C) 2007 Dmitry Adamushko <dmitry.adamushko@gmail.com>
- *
- *  Group scheduling enhancements by Srivatsa Vaddagiri
- *  Copyright IBM Corporation, 2007
- *  Author: Srivatsa Vaddagiri <vatsa@linux.vnet.ibm.com>
- *
- *  Scaled math optimizations by Thomas Gleixner
- *  Copyright (C) 2007, Thomas Gleixner <tglx@linutronix.de>
- *
- *  Adaptive scheduling granularity, math enhancements by Peter Zijlstra
- *  Copyright (C) 2007 Red Hat, Inc., Peter Zijlstra <pzijlstr@redhat.com>
- */
+/*FeraEdit*/
 
 #include <linux/latencytop.h>
 
@@ -34,18 +14,18 @@
  * (to see the precise effective timeslice length of your workload,
  *  run vmstat and monitor the context-switches (cs) field)
  */
-unsigned int sysctl_sched_latency = 20000000ULL;
+unsigned int sysctl_sched_latency = 6000000ULL;
 
 /*
  * Minimal preemption granularity for CPU-bound tasks:
  * (default: 4 msec * (1 + ilog(ncpus)), units: nanoseconds)
  */
-unsigned int sysctl_sched_min_granularity = 4000000ULL;
+unsigned int sysctl_sched_min_granularity = 750000ULL;
 
 /*
  * is kept at sysctl_sched_latency / sysctl_sched_min_granularity
  */
-static unsigned int sched_nr_latency = 5;
+static unsigned int sched_nr_latency = 8;
 
 /*
  * After fork, child runs first. (default) If set to 0 then
@@ -69,12 +49,11 @@ unsigned int __read_mostly sysctl_sched_compat_yield;
  * and reduces their over-scheduling. Synchronous workloads will still
  * have immediate wakeup/sleep latencies.
  */
-unsigned int sysctl_sched_wakeup_granularity = 5000000UL;
+unsigned int sysctl_sched_wakeup_granularity = 1000000UL;
 
 const_debug unsigned int sysctl_sched_migration_cost = 500000UL;
 
 static const struct sched_class fair_sched_class;
-
 /**************************************************************
  * CFS operations on generic schedulable entities:
  */
