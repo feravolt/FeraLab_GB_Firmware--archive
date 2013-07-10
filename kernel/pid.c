@@ -1,31 +1,3 @@
-/*
- * Generic pidhash and scalable, time-bounded PID allocator
- *
- * (C) 2002-2003 William Irwin, IBM
- * (C) 2004 William Irwin, Oracle
- * (C) 2002-2004 Ingo Molnar, Red Hat
- *
- * pid-structures are backing objects for tasks sharing a given ID to chain
- * against. There is very little to them aside from hashing them and
- * parking tasks using given ID's on a list.
- *
- * The hash is always changed with the tasklist_lock write-acquired,
- * and the hash is only accessed with the tasklist_lock at least
- * read-acquired, so there's no additional SMP locking needed here.
- *
- * We have a list of bitmap pages, which bitmaps represent the PID space.
- * Allocating and freeing PIDs is completely lockless. The worst-case
- * allocation scenario when all but one out of 1 million PIDs possible are
- * allocated already: the scanning of 32 list entries and at most PAGE_SIZE
- * bytes. The typical fastpath is a single successful setbit. Freeing is O(1).
- *
- * Pid namespaces:
- *    (C) 2007 Pavel Emelyanov <xemul@openvz.org>, OpenVZ, SWsoft Inc.
- *    (C) 2007 Sukadev Bhattiprolu <sukadev@us.ibm.com>, IBM
- *     Many thanks to Oleg Nesterov for comments and help
- *
- */
-
 #include <linux/mm.h>
 #include <linux/module.h>
 #include <linux/slab.h>
@@ -62,12 +34,6 @@ static inline int mk_pid(struct pid_namespace *pid_ns,
 #define find_next_offset(map, off)					\
 		find_next_zero_bit((map)->page, BITS_PER_PAGE, off)
 
-/*
- * PID-map pages start out as NULL, they get allocated upon
- * first use and are never deallocated. This way a low pid_max
- * value does not cause lots of bitmaps to be allocated, but
- * the scheme scales to up to 4 million PIDs, runtime.
- */
 struct pid_namespace init_pid_ns = {
 	.kref = {
 		.refcount       = ATOMIC_INIT(2),
@@ -122,6 +88,22 @@ static void free_pidmap(struct upid *upid)
 	atomic_inc(&map->nr_free);
 }
 
+
+static int pid_before(int base, int a, int b)
+	    {
+	return (unsigned)(a - base) < (unsigned)(b - base);
+	    }
+
+static void set_last_pid(struct pid_namespace *pid_ns, int base, int pid)
+	{
+	int prev;
+	int last_write = base;
+	do {
+	prev = last_write;
+	last_write = cmpxchg(&pid_ns->last_pid, prev, pid);
+	} while ((prev != last_write) && (pid_before(base, last_write, pid)));
+	}
+
 static int alloc_pidmap(struct pid_namespace *pid_ns)
 {
 	int i, offset, max_scan, pid, last = pid_ns->last_pid;
@@ -136,10 +118,6 @@ static int alloc_pidmap(struct pid_namespace *pid_ns)
 	for (i = 0; i <= max_scan; ++i) {
 		if (unlikely(!map->page)) {
 			void *page = kzalloc(PAGE_SIZE, GFP_KERNEL);
-			/*
-			 * Free the page if someone raced with us
-			 * installing it:
-			 */
 			spin_lock_irq(&pidmap_lock);
 			if (map->page)
 				kfree(page);
@@ -153,7 +131,7 @@ static int alloc_pidmap(struct pid_namespace *pid_ns)
 			do {
 				if (!test_and_set_bit(offset, map->page)) {
 					atomic_dec(&map->nr_free);
-					pid_ns->last_pid = pid;
+					set_last_pid(pid_ns, last, pid);
 					return pid;
 				}
 				offset = find_next_offset(map, offset);
