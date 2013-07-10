@@ -1,42 +1,21 @@
-/*
- * Copyright (C) 2009 Google, Inc.
- * Copyright (c) 2010, Code Aurora Forum. All rights reserved.
- * Author: Brian Swetland <swetland@google.com>
- *
- * This software is licensed under the terms of the GNU General Public
- * License version 2, as published by the Free Software Foundation, and
- * may be copied, distributed, and modified under those terms.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- */
-
 #include <linux/mutex.h>
 #include <linux/sched.h>
 #include <linux/wait.h>
 #include <linux/dma-mapping.h>
 #include <linux/clk.h>
-
 #include <linux/delay.h>
 #include <linux/wakelock.h>
 #include <linux/android_pmem.h>
 #include <linux/firmware.h>
 #include <linux/miscdevice.h>
-
 #include "dal.h"
 #include "dal_audio.h"
 #include "dal_audio_format.h"
 #include "dal_acdb.h"
 #include "dal_adie.h"
 #include <mach/msm_qdsp6_audio.h>
-
 #include <linux/msm_audio_aac.h>
-
 #include <linux/gpio.h>
-
 #include "q6audio_devices.h"
 
 #if 0
@@ -49,12 +28,10 @@ struct q6_hw_info {
 	int max_gain;
 };
 
-/* TODO: provide mechanism to configure from board file */
-
 static struct q6_hw_info q6_audio_hw[Q6_HW_COUNT] = {
 	[Q6_HW_HANDSET] = {
-		.min_gain = -900,
-		.max_gain = 800,
+		.min_gain = -600,
+		.max_gain = 900,
 	},
 	[Q6_HW_HEADSET] = {
 		.min_gain = -1900,
@@ -1182,12 +1159,19 @@ static void _audio_rx_clk_enable(void)
 static void _audio_tx_clk_enable(void)
 {
 	uint32_t device_group = q6_device_to_codec(audio_tx_device_id);
+	uint32_t icodec_tx_clk_rate;
 
 	switch (device_group) {
 	case Q6_ICODEC_TX:
 		icodec_tx_clk_refcount++;
 		if (icodec_tx_clk_refcount == 1) {
-			clk_set_rate(icodec_tx_clk, tx_clk_freq * 256);
+			if (tx_clk_freq > 16000)
+		          icodec_tx_clk_rate = 48000;
+		        else if (tx_clk_freq > 8000)
+		          icodec_tx_clk_rate = 16000;
+		        else
+		          icodec_tx_clk_rate = 8000;
+		        clk_set_rate(icodec_tx_clk, icodec_tx_clk_rate * 256);
 			clk_enable(icodec_tx_clk);
 		}
 		break;
@@ -1199,7 +1183,6 @@ static void _audio_tx_clk_enable(void)
 		}
 		break;
 	case Q6_SDAC_TX:
-		/* TODO: In QCT BSP, clk rate was set to 20480000 */
 		sdac_clk_refcount++;
 		if (sdac_clk_refcount == 1) {
 			clk_set_rate(sdac_clk, 12288000);
