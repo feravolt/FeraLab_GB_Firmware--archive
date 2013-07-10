@@ -1,0 +1,3 @@
+Configuration files can be found in arch/arm/configs.
+
+Xperia X10 => semc_es209ra_defconfig
