@@ -54,7 +54,7 @@ struct q6_hw_info {
 static struct q6_hw_info q6_audio_hw[Q6_HW_COUNT] = {
 	[Q6_HW_HANDSET] = {
 		.min_gain = -900,
-		.max_gain = 600,
+		.max_gain = 800,
 	},
 	[Q6_HW_HEADSET] = {
 		.min_gain = -1900,
