@@ -5,7 +5,7 @@
 #include <linux/syscalls.h>
 
 #define MAX_FRAMES 10000
-#define MS_BETWEEN_FRAMES 50
+#define MS_BETWEEN_FRAMES 30
 
 int load_565rle_image(char *filename, bool bf_supported);
 struct delayed_work rle_animate_work;
