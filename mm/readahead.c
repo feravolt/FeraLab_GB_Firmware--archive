@@ -1,12 +1,3 @@
-/*
- * mm/readahead.c - address_space-level file readahead.
- *
- * Copyright (C) 2002, Linus Torvalds
- *
- * 09Apr2002	Andrew Morton
- *		Initial version.
- */
-
 #include <linux/kernel.h>
 #include <linux/fs.h>
 #include <linux/mm.h>
@@ -30,10 +21,6 @@ struct backing_dev_info default_backing_dev_info = {
 };
 EXPORT_SYMBOL_GPL(default_backing_dev_info);
 
-/*
- * Initialise a struct file's readahead state.  Assumes that the caller has
- * memset *ra to zero.
- */
 void
 file_ra_state_init(struct file_ra_state *ra, struct address_space *mapping)
 {
@@ -44,16 +31,6 @@ EXPORT_SYMBOL_GPL(file_ra_state_init);
 
 #define list_to_page(head) (list_entry((head)->prev, struct page, lru))
 
-/**
- * read_cache_pages - populate an address space with some pages & start reads against them
- * @mapping: the address_space
- * @pages: The address of a list_head which contains the target pages.  These
- *   pages have their ->index populated and are otherwise uninitialised.
- * @filler: callback routine for filling a single page.
- * @data: private data for the callback routine.
- *
- * Hides the details of the LRU cache etc from the filesystems.
- */
 int read_cache_pages(struct address_space *mapping, struct list_head *pages,
 			int (*filler)(void *, struct page *), void *data)
 {
