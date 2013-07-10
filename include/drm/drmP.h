@@ -504,6 +504,15 @@ struct drm_sigdata {
 	struct drm_hw_lock *lock;
 };
 
+struct drm_local_map {
+	resource_size_t offset;
+	unsigned long size;
+	enum drm_map_type type;
+	enum drm_map_flags flags;
+	void *handle;
+
+	int mtrr;
+};
 
 /*
  * Generic memory manager structs
@@ -1329,6 +1338,7 @@ extern int drm_mm_add_space_to_tail(struct drm_mm *mm, unsigned long size);
 /* Graphics Execution Manager library functions (drm_gem.c) */
 int drm_gem_init(struct drm_device *dev);
 void drm_gem_destroy(struct drm_device *dev);
+void drm_gem_object_release(struct drm_gem_object *obj);
 void drm_gem_object_free(struct kref *kref);
 struct drm_gem_object *drm_gem_object_alloc(struct drm_device *dev,
 					    size_t size);
