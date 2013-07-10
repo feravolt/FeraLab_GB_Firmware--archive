@@ -1,22 +1,4 @@
-/*
- *  linux/arch/arm/boot/compressed/head.S
- *
- *  Copyright (C) 1996-2002 Russell King
- *  Copyright (C) 2004 Hyok S. Choi (MPU support)
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation.
- */
 #include <linux/linkage.h>
-
-/*
- * Debugging stuff
- *
- * Note that these macros must not contain any code which is not
- * 100% relocatable.  Any attempt to do so will result in a crash.
- * Please select one of the following when turning on debugging.
- */
 #ifdef DEBUG
 
 #if defined(CONFIG_DEBUG_ICEDCC)
@@ -423,6 +405,13 @@ __setup_mmu:	sub	r3, r4, #16384		@ Page directory size
 		mov	pc, lr
 ENDPROC(__setup_mmu)
 
+__armv6_mmu_cache_on:
+    mrc  p15, 0, r0, c1, c0, 0  @ read SCTLR
+    bic  r0, r0, #2    @ A (no unaligned access fault)
+    orr  r0, r0, #1 << 22  @ U (v6 unaligned access model)
+    mcr  p15, 0, r0, c1, c0, 0  @ write SCTLR
+    b  __armv4_mmu_cache_on
+
 __armv4_mmu_cache_on:
 		mov	r12, lr
 		bl	__setup_mmu
@@ -449,6 +438,9 @@ __armv7_mmu_cache_on:
 		mrc	p15, 0, r0, c1, c0, 0	@ read control reg
 		orr	r0, r0, #0x5000		@ I-cache enable, RR cache replacement
 		orr	r0, r0, #0x003c		@ write buffer
+		bic  r0, r0, #2    @ A (no unaligned access fault)
+	        orr  r0, r0, #1 << 22  @ U (v6 unaligned access model)
+	            @ (needed for ARM1176)
 		orrne	r0, r0, #1		@ MMU enabled
 		movne	r1, #-1
 		mcrne	p15, 0, r3, c2, c0, 0	@ load page table pointer
@@ -660,7 +652,7 @@ proc_types:
 
 		.word	0x0007b000		@ ARMv6
 		.word	0x000ff000
-		b	__armv4_mmu_cache_on
+		b	__armv6_mmu_cache_on
 		b	__armv4_mmu_cache_off
 		b	__armv6_mmu_cache_flush
 
@@ -678,14 +670,6 @@ proc_types:
 
 		.size	proc_types, . - proc_types
 
-/*
- * Turn off the Cache and MMU.  ARMv3 does not support
- * reading the control register, but ARMv4 does.
- *
- * On entry,  r6 = processor ID
- * On exit,   r0, r1, r2, r3, r12 corrupted
- * This routine must preserve: r4, r6, r7
- */
 		.align	5
 cache_off:	mov	r3, #12			@ cache_off function
 		b	call_cache_fn
@@ -745,16 +729,6 @@ __armv3_mmu_cache_off:
 		mcr	p15, 0, r0, c5, c0, 0	@ invalidate whole TLB v3
 		mov	pc, lr
 
-/*
- * Clean and flush the cache to maintain consistency.
- *
- * On entry,
- *  r6 = processor ID
- * On exit,
- *  r1, r2, r3, r11, r12 corrupted
- * This routine must preserve:
- *  r0, r4, r5, r6, r7
- */
 		.align	5
 cache_clean_flush:
 		mov	r3, #16
