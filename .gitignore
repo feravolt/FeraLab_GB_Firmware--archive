@@ -9,6 +9,7 @@
 *.dll
 *.so
 *.so.*
+*.o.*
 *.c~
 *.h~
 *.dylib
