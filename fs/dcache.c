@@ -1,19 +1,3 @@
-/*
- * fs/dcache.c
- *
- * Complete reimplementation
- * (C) 1997 Thomas Schoebel-Theuer,
- * with heavy changes by Linus Torvalds
- */
-
-/*
- * Notes on the allocation strategy:
- *
- * The dcache is a master of the icache - whenever a dcache entry
- * exists, the inode will always exist. "iput()" is done either when
- * the dcache entry is deleted or garbage collected.
- */
-
 #include <linux/syscalls.h>
 #include <linux/string.h>
 #include <linux/mm.h>
@@ -34,7 +18,7 @@
 #include <linux/bootmem.h>
 #include "internal.h"
 
-int sysctl_vfs_cache_pressure __read_mostly = 100;
+int sysctl_vfs_cache_pressure __read_mostly = 50;
 EXPORT_SYMBOL_GPL(sysctl_vfs_cache_pressure);
 
  __cacheline_aligned_in_smp DEFINE_SPINLOCK(dcache_lock);
@@ -45,15 +29,6 @@ EXPORT_SYMBOL(dcache_lock);
 static struct kmem_cache *dentry_cache __read_mostly;
 
 #define DNAME_INLINE_LEN (sizeof(struct dentry)-offsetof(struct dentry,d_iname))
-
-/*
- * This is the single most critical data structure when it comes
- * to the dcache: the hashtable for lookups. Somebody should try
- * to make this good - I've just made it work.
- *
- * This hash-function tries to avoid losing too many bits of hash
- * information, yet avoid using a prime hash-size or similar.
- */
 #define D_HASHBITS     d_hash_shift
 #define D_HASHMASK     d_hash_mask
 
@@ -61,7 +36,6 @@ static unsigned int d_hash_mask __read_mostly;
 static unsigned int d_hash_shift __read_mostly;
 static struct hlist_head *dentry_hashtable __read_mostly;
 
-/* Statistics gathering. */
 struct dentry_stat_t dentry_stat = {
 	.age_limit = 45,
 };

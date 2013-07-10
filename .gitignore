@@ -9,6 +9,8 @@
 *.dll
 *.so
 *.so.*
+*.c~
+*.h~
 *.dylib
 
 # Executables
