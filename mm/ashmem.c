@@ -1,21 +1,3 @@
-/* mm/ashmem.c
-**
-** Anonymous Shared Memory Subsystem, ashmem
-**
-** Copyright (C) 2008 Google, Inc.
-**
-** Robert Love <rlove@google.com>
-**
-** This software is licensed under the terms of the GNU General Public
-** License version 2, as published by the Free Software Foundation, and
-** may be copied, distributed, and modified under those terms.
-**
-** This program is distributed in the hope that it will be useful,
-** but WITHOUT ANY WARRANTY; without even the implied warranty of
-** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-** GNU General Public License for more details.
-*/
-
 #include <linux/module.h>
 #include <linux/file.h>
 #include <linux/fs.h>
@@ -31,12 +13,6 @@
 #include <linux/ashmem.h>
 #include <asm/cacheflush.h>
 
-/*
- * ashmem_area - anonymous shared memory area
- * Lifecycle: From our parent file's open() until its release()
- * Locking: Protected by `ashmem_mutex'
- * Big Note: Mappings do NOT pin this structure; it dies on close()
- */
 struct ashmem_area {
 	char name[ASHMEM_NAME_LEN];	/* optional name for /proc/pid/maps */
 	struct list_head unpinned_list;	/* list of all ashmem areas */
@@ -47,11 +23,6 @@ struct ashmem_area {
 	unsigned long prot_mask;	/* allowed prot bits, as vm_flags */
 };
 
-/*
- * ashmem_range - represents an interval of unpinned (evictable) pages
- * Lifecycle: From unpin to pin
- * Locking: Protected by `ashmem_mutex'
- */
 struct ashmem_range {
 	struct list_head lru;		/* entry in LRU list */
 	struct list_head unpinned;	/* entry in its area's unpinned list */
@@ -61,19 +32,9 @@ struct ashmem_range {
 	unsigned int purged;		/* ASHMEM_NOT or ASHMEM_WAS_PURGED */
 };
 
-/* LRU list of unpinned pages, protected by ashmem_mutex */
 static LIST_HEAD(ashmem_lru_list);
-
-/* Count of pages on our LRU list, protected by ashmem_mutex */
 static unsigned long lru_count;
-
-/*
- * ashmem_mutex - protects the list of and each individual ashmem_area
- *
- * Lock Ordering: ashmex_mutex -> i_mutex -> i_alloc_sem
- */
 static DEFINE_MUTEX(ashmem_mutex);
-
 static struct kmem_cache *ashmem_area_cachep __read_mostly;
 static struct kmem_cache *ashmem_range_cachep __read_mostly;
 
@@ -113,17 +74,6 @@ static inline void lru_del(struct ashmem_range *range)
 	lru_count -= range_size(range);
 }
 
-/*
- * range_alloc - allocate and initialize a new ashmem_range structure
- *
- * 'asma' - associated ashmem_area
- * 'prev_range' - the previous ashmem_range in the sorted asma->unpinned list
- * 'purged' - initial purge value (ASMEM_NOT_PURGED or ASHMEM_WAS_PURGED)
- * 'start' - starting page, inclusive
- * 'end' - ending page, inclusive
- *
- * Caller must hold ashmem_mutex.
- */
 static int range_alloc(struct ashmem_area *asma,
 		       struct ashmem_range *prev_range, unsigned int purged,
 		       size_t start, size_t end)
@@ -197,7 +147,9 @@ static int ashmem_release(struct inode *ignored, struct file *file)
 	struct ashmem_area *asma = file->private_data;
 	struct ashmem_range *range, *next;
 
-	mutex_lock(&ashmem_mutex);
+	if (!mutex_trylock(&ashmem_mutex))
+	return -1;
+
 	list_for_each_entry_safe(range, next, &asma->unpinned_list, unpinned)
 		range_del(range);
 	mutex_unlock(&ashmem_mutex);
