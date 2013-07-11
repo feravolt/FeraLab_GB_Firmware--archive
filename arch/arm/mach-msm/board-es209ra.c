@@ -1,5 +1,4 @@
-/*FeraVolt*/
-
+/*FeraEdit*/
 #include <linux/kernel.h>
 #include <linux/irq.h>
 #include <linux/gpio.h>
@@ -43,54 +42,44 @@
 #include "smd_private.h"
 #include "proc_comm.h"
 #include <linux/msm_kgsl.h>
+#include <linux/spi/es209ra_touch_mt.h>
+#include <asm/setup.h>
+#include "qdsp6/q6audio.h"
+#include <../../../drivers/video/msm/mddi_tmd_nt35580.h>
+#include "board-es209ra.h"
+#include "board-es209ra-keypad.h"
+#include <linux/bma150_ng.h>
+#include "../../../drivers/video/msm/msm_fb_panel.h"
+#include "../../../drivers/video/msm/mddihost.h"
 
 #ifdef CONFIG_USB_ANDROID
 #include <linux/usb/android_composite.h>
 #endif
 
-#include "board-es209ra.h"
-#include "board-es209ra-keypad.h"
-
 #ifdef CONFIG_ES209RA_HEADSET
 #include "es209ra_headset.h"
 #endif
-
-#include <linux/spi/es209ra_touch_mt.h>
-#include <asm/setup.h>
-#include "qdsp6/q6audio.h"
-#include <../../../drivers/video/msm/mddi_tmd_nt35580.h>
-#include <linux/bma150_ng.h>
-#include "../../../drivers/video/msm/msm_fb_panel.h"
-#include "../../../drivers/video/msm/mddihost.h"
 
 #define TOUCHPAD_SUSPEND 	34
 #define TOUCHPAD_IRQ 		38
 #define MSM_PMEM_MDP_SIZE	0x1C91000
 #define SMEM_SPINLOCK_I2C	"S:6"
-#define MSM_PMEM_ADSP_SIZE	0x02196000
+#define MSM_PMEM_ADSP_SIZE	0x2196000
 #define MSM_FB_SIZE		0x500000
 #define MSM_GPU_PHYS_SIZE 	SZ_2M
-
-#ifdef CONFIG_MSM_SOC_REV_A
-#define MSM_SMI_BASE		0xE0000000
-#else
+#define MSM_PMEM_SMI_SIZE	0x01500000
+#define PMEM_KERNEL_EBI1_SIZE	0x28000
+#define PMIC_VREG_WLAN_LEVEL	2600
+#define PMIC_VREG_GP6_LEVEL	2850
+#define FPGA_SDCC_STATUS	0x70000280
 #define MSM_SMI_BASE		0x00000000
-#endif
-
 #define MSM_SHARED_RAM_PHYS	(MSM_SMI_BASE + 0x00100000)
 #define MSM_PMEM_SMI_BASE	(MSM_SMI_BASE + 0x02B00000)
-#define MSM_PMEM_SMI_SIZE	0x01500000
 #define MSM_FB_BASE		MSM_PMEM_SMI_BASE
 #define MSM_GPU_PHYS_BASE 	(MSM_FB_BASE + MSM_FB_SIZE)
 #define MSM_PMEM_SMIPOOL_BASE	(MSM_GPU_PHYS_BASE + MSM_GPU_PHYS_SIZE)
 #define MSM_PMEM_SMIPOOL_SIZE	(MSM_PMEM_SMI_SIZE - MSM_FB_SIZE \
 					- MSM_GPU_PHYS_SIZE)
-
-#define PMEM_KERNEL_EBI1_SIZE	0x28000
-#define PMIC_VREG_WLAN_LEVEL	2600
-#define PMIC_VREG_GP6_LEVEL	2850
-#define FPGA_SDCC_STATUS	0x70000280
-
 
 #ifdef CONFIG_SMC91X
 static struct resource smc91x_resources[] = {
@@ -399,6 +388,7 @@ static int msm_hsusb_native_phy_reset(void __iomem *addr)
 	msm_hsusb_apps_reset_link(1);
 	msm_hsusb_apps_reset_phy();
 	msm_hsusb_apps_reset_link(0);
+
 	temp = (readl(USB_PORTSC) & ~PORTSC_PTS);
 	writel(temp | PORTSC_PTS_ULPI, USB_PORTSC);
 
@@ -479,7 +469,6 @@ static struct platform_device android_pmem_smipool_device = {
 	.id = 2,
 	.dev = { .platform_data = &android_pmem_smipool_pdata },
 };
-
 
 static struct platform_device android_pmem_kernel_ebi1_device = {
 	.name = "android_pmem",
@@ -679,7 +668,6 @@ static void msm_fb_mddi_power_save(int on)
 	int flag_on = !!on;
 	int ret;
 
-
 	if (mddi_power_save_on == flag_on)
 		return;
 
@@ -774,9 +762,7 @@ static struct platform_device mddi_tmd_wvga_display_device = {
 static void __init msm_mddi_tmd_fwvga_display_device_init(void)
 {
 	struct msm_fb_panel_data *panel_data = &tmd_wvga_panel_data;
-
 	printk(KERN_DEBUG "%s \n", __func__);
-
 	panel_data->panel_info.xres = 480;
 	panel_data->panel_info.yres = 854;
 	panel_data->panel_info.type = MDDI_PANEL;
@@ -796,8 +782,7 @@ static void __init msm_mddi_tmd_fwvga_display_device_init(void)
 	panel_data->panel_info.lcd.vsync_notifier_period = 0;
 	panel_data->panel_info.lcd.refx100 = 100000000 / 16766;
 	panel_data->panel_ext = &tmd_wvga_panel_ext;
-	mddi_tmd_wvga_display_device.dev.platform_data =
-						&tmd_wvga_panel_data;
+	mddi_tmd_wvga_display_device.dev.platform_data = &tmd_wvga_panel_data;
 
 	vreg_gp2 = vreg_get(NULL, "gp2");
 	if (IS_ERR(vreg_gp2)) {
@@ -851,10 +836,10 @@ static struct resource msm_audio_resources[] = {
 };
 
 static unsigned audio_gpio_on[] = {
-	GPIO_CFG(68, 1, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA),	/* PCM_DOUT */
-	GPIO_CFG(69, 1, GPIO_INPUT,  GPIO_NO_PULL, GPIO_2MA),	/* PCM_DIN */
-	GPIO_CFG(70, 2, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA),	/* PCM_SYNC */
-	GPIO_CFG(71, 2, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA),	/* PCM_CLK */
+	GPIO_CFG(68, 1, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA),
+	GPIO_CFG(69, 1, GPIO_INPUT,  GPIO_NO_PULL, GPIO_2MA),
+	GPIO_CFG(70, 2, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA),
+	GPIO_CFG(71, 2, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA),
 };
 
 static void __init audio_gpio_init(void)
@@ -941,15 +926,12 @@ static unsigned bt_config_power_off[] = {
 	GPIO_CFG(140, 0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),	/* Tx */
 };
 #endif
-/* SEMC:LC: Update for Phase3.2 end */ 
 
 #if 1
 static int bluetooth_power(int on)
 {
 	printk(KERN_DEBUG "Bluetooth power switch: %d\n", on);
-
-	gpio_set_value(77, on); /* PWR_EN */
-
+	gpio_set_value(77, on);
 	return 0;
 }
 
@@ -967,8 +949,7 @@ static void __init bt_power_init(void)
 			return;
 		}
 	}
-	gpio_set_value(77, 0); /* PWR_EN */
-
+	gpio_set_value(77, 0);
 	msm_bt_power_device.dev.platform_data = &bluetooth_power;
 	printk(KERN_DEBUG "Bluetooth power switch initialized\n");
 }
@@ -1032,12 +1013,11 @@ static int bluetooth_power(int on)
 			return -EIO;
 		}
 
-		gpio_set_value(22, on); /* VDD_IO */
-		gpio_set_value(18, on); /* SYSRST */
-
+		gpio_set_value(22, on);
+		gpio_set_value(18, on);
 	} else {
-		gpio_set_value(18, on); /* SYSRST */
-		gpio_set_value(22, on); /* VDD_IO */
+		gpio_set_value(18, on);
+		gpio_set_value(22, on);
 
 		rc = vreg_disable(vreg_wlan);
 		if (rc) {
@@ -1138,7 +1118,6 @@ static struct platform_device es209ra_audio_jack_device = {
 #endif
 
 #if defined(CONFIG_TSIF) || defined(CONFIG_TSIF_MODULE)
-
 #define TSIF_A_SYNC      GPIO_CFG(106, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA)
 #define TSIF_A_DATA      GPIO_CFG(107, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA)
 #define TSIF_A_EN        GPIO_CFG(108, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA)
@@ -1193,7 +1172,6 @@ static struct max17040_i2c_platform_data max17040_platform_data = {
 #endif
 
 #ifdef CONFIG_SENSORS_AK8973
-
 #define AKM8973_GPIO_RESET_PIN 2
 #define AKM8973_GPIO_RESET_ON 0
 #define AKM8973_GPIO_RESET_OFF 1
@@ -1213,7 +1191,6 @@ static int ak8973_gpio_config(int enable)
 			goto ak8973_gpio_fail_0;
 		}
 		gpio_set_value(AKM8973_GPIO_RESET_PIN, 1);
-
 	} else {
 		gpio_free(AKM8973_GPIO_RESET_PIN);
 	}
@@ -1284,43 +1261,43 @@ static struct i2c_board_info msm_i2c_board_info[] __initdata = {
 
 #ifdef CONFIG_MSM_CAMERA
 static uint32_t camera_off_gpio_table[] = {
-	GPIO_CFG(0,  0, GPIO_OUTPUT, GPIO_PULL_DOWN, GPIO_2MA),/* DAT0 */
-	GPIO_CFG(1,  0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA), /* DAT1 */
-	GPIO_CFG(4,  0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA), /* DAT4 */
-	GPIO_CFG(5,  0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA), /* DAT5 */
-	GPIO_CFG(6,  0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA), /* DAT6 */
-	GPIO_CFG(7,  0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA), /* DAT7 */
-	GPIO_CFG(8,  0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA), /* DAT8 */
-	GPIO_CFG(9,  0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA), /* DAT9 */
-	GPIO_CFG(10, 0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA), /* DAT10 */
-	GPIO_CFG(11, 0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA), /* DAT11 */
-	GPIO_CFG(12, 0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA), /* PCLK */
-	GPIO_CFG(13, 0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA), /* HSYNC_IN */
-	GPIO_CFG(14, 0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA), /* VSYNC_IN */
-	GPIO_CFG(15, 0, GPIO_OUTPUT, GPIO_PULL_DOWN, GPIO_2MA), /* MCLK */
-	GPIO_CFG(27, 0, GPIO_OUTPUT, GPIO_PULL_DOWN, GPIO_2MA), /* VCAML2_EN */
-	GPIO_CFG(43, 0, GPIO_OUTPUT, GPIO_PULL_DOWN, GPIO_2MA), /* VCAML_EN */
-	GPIO_CFG(142,0, GPIO_OUTPUT, GPIO_PULL_DOWN, GPIO_2MA), /* VCAMSD_EN */
+	GPIO_CFG(0,  0, GPIO_OUTPUT, GPIO_PULL_DOWN, GPIO_2MA),
+	GPIO_CFG(1,  0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),
+	GPIO_CFG(4,  0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),
+	GPIO_CFG(5,  0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),
+	GPIO_CFG(6,  0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),
+	GPIO_CFG(7,  0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),
+	GPIO_CFG(8,  0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),
+	GPIO_CFG(9,  0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),
+	GPIO_CFG(10, 0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),
+	GPIO_CFG(11, 0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),
+	GPIO_CFG(12, 0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),
+	GPIO_CFG(13, 0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),
+	GPIO_CFG(14, 0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),
+	GPIO_CFG(15, 0, GPIO_OUTPUT, GPIO_PULL_DOWN, GPIO_2MA),
+	GPIO_CFG(27, 0, GPIO_OUTPUT, GPIO_PULL_DOWN, GPIO_2MA),
+	GPIO_CFG(43, 0, GPIO_OUTPUT, GPIO_PULL_DOWN, GPIO_2MA),
+	GPIO_CFG(142,0, GPIO_OUTPUT, GPIO_PULL_DOWN, GPIO_2MA),
 };
 
 static uint32_t camera_on_gpio_table[] = {
-	GPIO_CFG(0,  0, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA), /* DAT0 */
-	GPIO_CFG(1,  0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA), /* DAT1 */
-	GPIO_CFG(4,  1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA), /* DAT4 */
-	GPIO_CFG(5,  1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA), /* DAT5 */
-	GPIO_CFG(6,  1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA), /* DAT6 */
-	GPIO_CFG(7,  1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA), /* DAT7 */
-	GPIO_CFG(8,  1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA), /* DAT8 */
-	GPIO_CFG(9,  1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA), /* DAT9 */
-	GPIO_CFG(10, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA), /* DAT10 */
-	GPIO_CFG(11, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA), /* DAT11 */
-	GPIO_CFG(12, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA), /* PCLK */
-	GPIO_CFG(13, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA), /* HSYNC_IN */
-	GPIO_CFG(14, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA), /* VSYNC_IN */
-	GPIO_CFG(15, 0, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA), /* MCLK */
-	GPIO_CFG(27, 0, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA), /* VCAML2_EN */
-	GPIO_CFG(43, 0, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA), /* VCAML_EN */
-	GPIO_CFG(142, 0, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA), /* VCAMSD_EN */
+	GPIO_CFG(0,  0, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA),
+	GPIO_CFG(1,  0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),
+	GPIO_CFG(4,  1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),
+	GPIO_CFG(5,  1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),
+	GPIO_CFG(6,  1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),
+	GPIO_CFG(7,  1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),
+	GPIO_CFG(8,  1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),
+	GPIO_CFG(9,  1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),
+	GPIO_CFG(10, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),
+	GPIO_CFG(11, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),
+	GPIO_CFG(12, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),
+	GPIO_CFG(13, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),
+	GPIO_CFG(14, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),
+	GPIO_CFG(15, 0, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA),
+	GPIO_CFG(27, 0, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA),
+	GPIO_CFG(43, 0, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA),
+	GPIO_CFG(142, 0, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA),
 };
 
 static void config_gpio_table(uint32_t *table, int len)
@@ -1576,15 +1553,9 @@ static struct platform_device pmic_time_device = {
 static struct platform_device *devices[] __initdata = {
 	&msm_wlan_ar6000_pm_device,
 	&msm_fb_device,
-#ifdef CONFIG_SMC91X
-	&smc91x_device,
-#endif
 	&msm_device_smd,
 	&msm_device_dmov,
 	&android_pmem_kernel_ebi1_device,
-#ifdef CONFIG_KERNEL_PMEM_SMI_REGION
-	&android_pmem_kernel_smi_device,
-#endif
 	&android_pmem_device,
 	&android_pmem_adsp_device,
 	&android_pmem_smipool_device,
@@ -1593,18 +1564,24 @@ static struct platform_device *devices[] __initdata = {
 	&qsd_device_spi,
 	&rndis_device,
 	&usb_mass_storage_device,
-#ifdef CONFIG_USB_ANDROID
-	&android_usb_device,
-#endif
 	&msm_device_tssc,
 	&msm_device_uart1,
 	&msm_bluesleep_device,
+	&msm_device_kgsl,
+	&hs_device,
+#ifdef CONFIG_SMC91X
+	&smc91x_device,
+#endif
+#ifdef CONFIG_KERNEL_PMEM_SMI_REGION
+	&android_pmem_kernel_smi_device,
+#endif
+#ifdef CONFIG_USB_ANDROID
+	&android_usb_device,
+#endif
 #ifdef CONFIG_BT
 	&msm_bt_power_device,
 	&msm_device_uart_dm2,
 #endif
-	&msm_device_kgsl,
-	&hs_device,
 #if defined(CONFIG_TSIF) || defined(CONFIG_TSIF_MODULE)
 	&msm_device_tsif,
 #endif
@@ -1773,6 +1750,7 @@ static uint32_t msm_sdcc_setup_power(struct device *dv, unsigned int vdd)
 
 	if (!vreg_sts) {
 		rc = vreg_set_level(vreg_mmc, PMIC_VREG_GP6_LEVEL);
+
 		if (rc)
 			printk(KERN_ERR "%s: return val: %d \n",
 					__func__, rc);
@@ -1792,10 +1770,10 @@ static unsigned int es209ra_sdcc_slot_status(struct device *dev)
 }
 
 static struct mmc_platform_data es209ra_sdcc_data1 = {
-	.ocr_mask	    = MMC_VDD_27_28 | MMC_VDD_28_29,
+	.ocr_mask	= MMC_VDD_27_28 | MMC_VDD_28_29,
 	.translate_vdd	= msm_sdcc_setup_power,
-	.status		    = es209ra_sdcc_slot_status,
-	.status_irq	    = INT_ES209RA_GPIO_CARD_INS_N,
+	.status		= es209ra_sdcc_slot_status,
+	.status_irq	= INT_ES209RA_GPIO_CARD_INS_N,
 	.irq_flags      = IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
 	.mmc_bus_width  = MMC_CAP_4_BIT_DATA,
 #ifdef CONFIG_MMC_MSM_SDC1_DUMMY52_REQUIRED
@@ -2076,7 +2054,6 @@ static void __init es209ra_allocate_memory_regions(void)
 		pr_info("allocating %lu bytes at %p (%lx physical) for adsp "
 			"pmem arena\n", size, addr, __pa(addr));
 	}
-
 
 	size = MSM_FB_SIZE;
 	addr = (void *)MSM_FB_BASE;
