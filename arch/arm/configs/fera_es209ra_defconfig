@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.29.9-FGB
-# Wed Jul 10 15:13:16 2013
+# Thu Jul 11 12:28:48 2013
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -886,7 +886,7 @@ CONFIG_DUMMY=y
 # CONFIG_BONDING is not set
 # CONFIG_MACVLAN is not set
 # CONFIG_EQUALIZER is not set
-CONFIG_TUN=y
+CONFIG_TUN=m
 # CONFIG_VETH is not set
 # CONFIG_NET_ETHERNET is not set
 # CONFIG_NETDEV_1000 is not set
@@ -897,7 +897,7 @@ CONFIG_TUN=y
 #
 # CONFIG_WLAN_PRE80211 is not set
 # CONFIG_WLAN_80211 is not set
-CONFIG_LIBRA_SDIOIF=y
+# CONFIG_LIBRA_SDIOIF is not set
 # CONFIG_IWLWIFI_LEDS is not set
 
 #
