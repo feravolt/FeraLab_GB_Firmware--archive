@@ -1,41 +1,7 @@
-/*
- *  linux/arch/arm/vfp/vfpdouble.c
- *
- * This code is derived in part from John R. Housers softfloat library, which
- * carries the following notice:
- *
- * ===========================================================================
- * This C source file is part of the SoftFloat IEC/IEEE Floating-point
- * Arithmetic Package, Release 2.
- *
- * Written by John R. Hauser.  This work was made possible in part by the
- * International Computer Science Institute, located at Suite 600, 1947 Center
- * Street, Berkeley, California 94704.  Funding was partially provided by the
- * National Science Foundation under grant MIP-9311980.  The original version
- * of this code was written as part of a project to build a fixed-point vector
- * processor in collaboration with the University of California at Berkeley,
- * overseen by Profs. Nelson Morgan and John Wawrzynek.  More information
- * is available through the web page `http://HTTP.CS.Berkeley.EDU/~jhauser/
- * arithmetic/softfloat.html'.
- *
- * THIS SOFTWARE IS DISTRIBUTED AS IS, FOR FREE.  Although reasonable effort
- * has been made to avoid it, THIS SOFTWARE MAY CONTAIN FAULTS THAT WILL AT
- * TIMES RESULT IN INCORRECT BEHAVIOR.  USE OF THIS SOFTWARE IS RESTRICTED TO
- * PERSONS AND ORGANIZATIONS WHO CAN AND WILL TAKE FULL RESPONSIBILITY FOR ANY
- * AND ALL LOSSES, COSTS, OR OTHER PROBLEMS ARISING FROM ITS USE.
- *
- * Derivative works are acceptable, even for commercial purposes, so long as
- * (1) they include prominent notice that the work is derivative, and (2) they
- * include prominent notice akin to these three paragraphs for those parts of
- * this code that are retained.
- * ===========================================================================
- */
 #include <linux/kernel.h>
 #include <linux/bitops.h>
-
 #include <asm/div64.h>
 #include <asm/vfp.h>
-
 #include "vfpinstr.h"
 #include "vfp.h"
 
@@ -1144,19 +1110,11 @@ u32 vfp_double_cpdo(u32 inst, u32 fpscr)
 		dest = vfp_get_sd(inst);
 	else
 		dest = vfp_get_dd(inst);
-
-	/*
-	 * f[us]ito takes a sN operand, not a dN operand.
-	 */
 	if (fop->flags & OP_SM)
 		dm = vfp_get_sm(inst);
 	else
 		dm = vfp_get_dm(inst);
 
-	/*
-	 * If destination bank is zero, vector length is always '1'.
-	 * ARM DDI0100F C5.1.3, C5.3.2.
-	 */
 	if ((fop->flags & OP_SCALAR) || (FREG_BANK(dest) == 0))
 		veclen = 0;
 	else

@@ -1,14 +1,3 @@
-/*
- *  linux/arch/arm/vfp/vfp.h
- *
- *  Copyright (C) 2004 ARM Limited.
- *  Written by Deep Blue Solutions Limited.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation.
- */
-
 static inline u32 vfp_shiftright32jamming(u32 val, unsigned int shift)
 {
 	if (shift) {
@@ -347,30 +336,13 @@ u32 vfp_double_normaliseround(int dd, struct vfp_double *vd, u32 fpscr, u32 exce
 
 u32 vfp_estimate_sqrt_significand(u32 exponent, u32 significand);
 
-/*
- * A special flag to tell the normalisation code not to normalise.
- */
 #define VFP_NAN_FLAG	0x100
-
-/*
- * A bit pattern used to indicate the initial (unset) value of the
- * exception mask, in case nothing handles an instruction.  This
- * doesn't include the NAN flag, which get masked out before
- * we check for an error.
- */
 #define VFP_EXCEPTION_ERROR	((u32)-1 & ~VFP_NAN_FLAG)
-
-/*
- * A flag to tell vfp instruction type.
- *  OP_SCALAR - this operation always operates in scalar mode
- *  OP_SD - the instruction exceptionally writes to a single precision result.
- *  OP_DD - the instruction exceptionally writes to a double precision result.
- *  OP_SM - the instruction exceptionally reads from a single precision operand.
- */
 #define OP_SCALAR	(1 << 0)
 #define OP_SD		(1 << 1)
 #define OP_DD		(1 << 1)
 #define OP_SM		(1 << 2)
+#define OP_SM    	(1 << 2)
 
 struct op {
 	u32 (* const fn)(int dd, int dn, int dm, u32 fpscr);
