@@ -18,7 +18,7 @@
 #include <linux/bootmem.h>
 #include "internal.h"
 
-int sysctl_vfs_cache_pressure __read_mostly = 50;
+int sysctl_vfs_cache_pressure __read_mostly = 100;
 EXPORT_SYMBOL_GPL(sysctl_vfs_cache_pressure);
 
  __cacheline_aligned_in_smp DEFINE_SPINLOCK(dcache_lock);
@@ -54,25 +54,17 @@ static void d_callback(struct rcu_head *head)
 	__d_free(dentry);
 }
 
-/*
- * no dcache_lock, please.  The caller must decrement dentry_stat.nr_dentry
- * inside dcache_lock.
- */
 static void d_free(struct dentry *dentry)
 {
 	if (dentry->d_op && dentry->d_op->d_release)
 		dentry->d_op->d_release(dentry);
-	/* if dentry was never inserted into hash, immediate free is OK */
+
 	if (hlist_unhashed(&dentry->d_hash))
 		__d_free(dentry);
 	else
 		call_rcu(&dentry->d_u.d_rcu, d_callback);
 }
 
-/*
- * Release the dentry's inode, using the filesystem
- * d_iput() operation if defined.
- */
 static void dentry_iput(struct dentry * dentry)
 	__releases(dentry->d_lock)
 	__releases(dcache_lock)

@@ -1,22 +1,9 @@
-/*
- *  linux/kernel/compat.c
- *
- *  Kernel compatibililty routines for e.g. 32 bit syscall support
- *  on 64 bit kernels.
- *
- *  Copyright (C) 2002-2003 Stephen Rothwell, IBM Corporation
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License version 2 as
- *  published by the Free Software Foundation.
- */
-
 #include <linux/linkage.h>
 #include <linux/compat.h>
 #include <linux/errno.h>
 #include <linux/time.h>
 #include <linux/signal.h>
-#include <linux/sched.h>	/* for MAX_SCHEDULE_TIMEOUT */
+#include <linux/sched.h>
 #include <linux/syscalls.h>
 #include <linux/unistd.h>
 #include <linux/security.h>
@@ -25,13 +12,8 @@
 #include <linux/posix-timers.h>
 #include <linux/times.h>
 #include <linux/ptrace.h>
-
 #include <asm/uaccess.h>
 
-/*
- * Note that the native side is already converted to a timespec, because
- * that's what we want anyway.
- */
 static int compat_get_timeval(struct timespec *o,
 		struct compat_timeval __user *i)
 {
@@ -233,11 +215,6 @@ asmlinkage long compat_sys_times(struct compat_tms __user *tbuf)
 	force_successful_syscall_return();
 	return compat_jiffies_to_clock_t(jiffies);
 }
-
-/*
- * Assumption: old_sigset_t and compat_old_sigset_t are both
- * types that can be passed to put_user()/get_user().
- */
 
 asmlinkage long compat_sys_sigpending(compat_old_sigset_t __user *set)
 {
