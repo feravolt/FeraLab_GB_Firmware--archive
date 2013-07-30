@@ -1,11 +1,6 @@
-# Object files
 *.o
-
-# Libraries
 *.lib
 *.a
-
-# Shared objects (inc. Windows DLLs)
 *.dll
 *.so
 *.so.*
@@ -13,8 +8,12 @@
 *.c~
 *.h~
 *.dylib
-
-# Executables
 *.exe
+*.cmd
 *.out
 *.app
+Kconfig~
+Makefile~
+.config
+.gitignore~
+

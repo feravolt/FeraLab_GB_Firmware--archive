@@ -1,7 +1,7 @@
 VERSION = 2
 PATCHLEVEL = 6
 SUBLEVEL = 29
-EXTRAVERSION = .10.9-FGB
+EXTRAVERSION = .11.0-GB
 NAME = FeraKernel
 MAKEFLAGS += -rR --no-print-directory
 
