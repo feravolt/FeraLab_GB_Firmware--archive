@@ -1,4 +1,4 @@
-*
+/*
  * random.c -- A strong random number generator
  *
  * Copyright Matt Mackall <mpm@selenic.com>, 2003, 2004, 2005
