@@ -1,7 +1,3 @@
-#
-# Character device configuration
-#
-
 menu "Character devices"
 
 config VT
@@ -773,6 +769,8 @@ config NWFLASH
 	  If you're not sure, say N.
 
 source "drivers/char/hw_random/Kconfig"
+
+source "drivers/char/frandom/Kconfig"
 
 config NVRAM
 	tristate "/dev/nvram support"

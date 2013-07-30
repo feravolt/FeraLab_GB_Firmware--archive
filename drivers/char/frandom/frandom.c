@@ -15,7 +15,6 @@
 
 #define INTERNAL_SEED 0
 #define EXTERNAL_SEED 1
-
 #define FRANDOM_MAJOR 235
 #define FRANDOM_MINOR 11 
 #define ERANDOM_MINOR 12 
@@ -83,12 +82,25 @@ void erandom_get_random_bytes(char *buf, size_t count)
 	unsigned int i;
 	unsigned int j;
 	u8 *S;
+  
+	/* If we fail to get the semaphore, we revert to external random data.
+	   Since semaphore blocking is expected to be very rare, and interrupts
+	   during these rare and very short periods of time even less frequent,
+	   we take the better-safe-than-sorry approach, and fill the buffer
+	   some expensive random data, in case the caller wasn't aware of this
+	   possibility, and expects random data anyhow.
+	*/
 
 	if (down_interruptible(&state->sem)) {
 		get_random_bytes(buf, count);
 		return;
 	}
-	
+
+	/* We seed erandom as late as possible, hoping that the kernel's main
+	   RNG is already restored in the boot sequence (not critical, but
+	   better.
+	*/
+
 	if (!erandom_seeded) {
 		erandom_seeded = 1;
 		init_rand_state(state, EXTERNAL_SEED);
@@ -135,6 +147,10 @@ static void init_rand_state(struct frandom_state *state, int seedflag)
 		swap_byte(&S[i], &S[j]);
 	}
 
+	/* It's considered good practice to discard the first 256 bytes
+	   generated. So we do it:
+	*/
+
 	i=0; j=0;
 	for (k=0; k<256; k++) {
 		i = (i + 1) & 0xff;
@@ -153,6 +169,9 @@ static int frandom_open(struct inode *inode, struct file *filp)
 
 	int num = iminor(inode);
 
+	/* This should never happen, now when the minors are regsitered
+	 * explicitly
+	 */
 	if ((num != frandom_minor) && (num != erandom_minor)) return -ENODEV;
   
 	state = kmalloc(sizeof(struct frandom_state), GFP_KERNEL);
@@ -303,7 +322,7 @@ static int frandom_init_module(void)
 		printk(KERN_WARNING "frandom: Failed to register class fastrng\n");
 		goto error0;
 	}
-	
+
 	/*
 	 * Register your major, and accept a dynamic number. This is the
 	 * first thing to do, in order to avoid releasing other module's
@@ -376,3 +395,4 @@ module_init(frandom_init_module);
 module_exit(frandom_cleanup_module);
 
 EXPORT_SYMBOL(erandom_get_random_bytes);
+
