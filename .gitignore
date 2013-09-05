@@ -12,6 +12,7 @@
 *.cmd
 *.out
 *.app
+*.order
 Kconfig~
 Makefile~
 .config
