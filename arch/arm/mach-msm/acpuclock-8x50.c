@@ -73,7 +73,7 @@ struct clkctl_acpu_speed acpu_freq_tbl_998[] = {
 	{ 0, 883200, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x17, 1225},
 	{ 0, 921600, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x18, 1225},
 	{ 0, 960000, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x19, 1250},
-	{ 1, 998400, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x1A, 1250},
+	{ 1, 998400, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x1A, 1275},
 	{ 0, 1036800, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x1B, 1275},
 	{ 0, 1075200, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x1C, 1275},
 	{ 1, 1113600, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x1D, 1300},
@@ -338,13 +338,6 @@ int acpuclk_set_rate(unsigned long rate, enum setrate_reason reason)
 	}
 
 	if (reason == SETRATE_CPUFREQ) {
-#ifdef CONFIG_MSM_CPU_AVS
-		rc = avs_adjust_freq(freq_index, 1);
-		if (rc) {
-			pr_err("Unable to increase ACPU vdd (%d)\n", rc);
-			goto out;
-		}
-#endif
 		if (tgt_s->vdd > strt_s->vdd) {
 			rc = acpuclk_set_vdd_level(tgt_s->vdd);
 			if (rc) {
