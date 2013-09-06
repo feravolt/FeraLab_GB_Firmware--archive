@@ -740,7 +740,9 @@ uint32_t flash_onfi_probe(struct msm_nand_chip *chip)
 					number_of_spare_bytes_per_page;
 				supported_flash[0].density  =
 					onfi_param_page_ptr->
-					number_of_blocks_per_logical_unit
+				number_of_blocks_per_logical_unit
+			                * onfi_param_page_ptr->
+				          number_of_logical_units
 					* supported_flash[0].blksize;
 
 				pr_info("ONFI probe : Found an ONFI "
