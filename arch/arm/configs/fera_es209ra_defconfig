@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.29.11.0-GB
-# Wed Jul 31 18:15:37 2013
+# Linux kernel version: 2.6.29.12.0-GB
+# Fri Sep  6 11:00:25 2013
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -118,16 +118,16 @@ CONFIG_BLOCK=y
 # IO Schedulers
 #
 CONFIG_IOSCHED_NOOP=y
-# CONFIG_IOSCHED_AS is not set
 CONFIG_IOSCHED_DEADLINE=y
+CONFIG_IOSCHED_ROW=y
 CONFIG_IOSCHED_CFQ=y
 CONFIG_IOSCHED_SIO=y
-# CONFIG_DEFAULT_AS is not set
 # CONFIG_DEFAULT_DEADLINE is not set
+CONFIG_DEFAULT_ROW=y
 # CONFIG_DEFAULT_CFQ is not set
-CONFIG_DEFAULT_SIO=y
+# CONFIG_DEFAULT_SIO is not set
 # CONFIG_DEFAULT_NOOP is not set
-CONFIG_DEFAULT_IOSCHED="sio"
+CONFIG_DEFAULT_IOSCHED="row"
 CONFIG_FREEZER=y
 
 #
@@ -320,11 +320,10 @@ CONFIG_ALIGNMENT_TRAP=y
 #
 CONFIG_ZBOOT_ROM_TEXT=0x0
 CONFIG_ZBOOT_ROM_BSS=0x0
-CONFIG_CMDLINE="console=ttyMSM0 ramdisk_size=6144 quiet"
+CONFIG_CMDLINE="androidboot.hardware=es209ra vmalloc=256M g_android.product_id=0x312E console=ttyMSM0 ramdisk_size=6144 quiet"
 # CONFIG_XIP_KERNEL is not set
 CONFIG_KEXEC=y
 # CONFIG_CRASH_DUMP is not set
-# CONFIG_CAPTURE_KERNEL is not set
 CONFIG_ATAGS_PROC=y
 
 #
@@ -1654,21 +1653,6 @@ CONFIG_RTC_INTF_ALARM=y
 CONFIG_RTC_DRV_MSM=y
 CONFIG_RTC_SECURE_TIME_SUPPORT=y
 # CONFIG_DMADEVICES is not set
-# CONFIG_REGULATOR is not set
-# CONFIG_UIO is not set
-CONFIG_STAGING=y
-# CONFIG_STAGING_EXCLUDE_BUILD is not set
-# CONFIG_MEILHAUS is not set
-# CONFIG_USB_IP_COMMON is not set
-# CONFIG_ECHO is not set
-# CONFIG_COMEDI is not set
-# CONFIG_ASUS_OLED is not set
-# CONFIG_INPUT_MIMIO is not set
-# CONFIG_TRANZPORT is not set
-
-#
-# DMA Devices
-#
 # CONFIG_REGULATOR is not set
 # CONFIG_UIO is not set
 CONFIG_STAGING=y
