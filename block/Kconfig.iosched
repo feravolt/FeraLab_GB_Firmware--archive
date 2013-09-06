@@ -12,15 +12,6 @@ config IOSCHED_NOOP
 	  that do their own scheduling and require only minimal assistance from
 	  the kernel.
 
-config IOSCHED_AS
-	tristate "Anticipatory I/O scheduler"
-	default y
-	---help---
-	  The anticipatory I/O scheduler is generally a good choice for most
-	  environments, but is quite large and complex when compared to the
-	  deadline I/O scheduler, it can also be slower in some cases
-	  especially some database loads.
-
 config IOSCHED_DEADLINE
 	tristate "Deadline I/O scheduler"
 	default y
@@ -30,6 +21,16 @@ config IOSCHED_DEADLINE
 	  workloads, better. In the case of a single process performing I/O to
 	  a disk at any one time, its behaviour is almost identical to the
 	  anticipatory I/O scheduler and so is a good choice.
+
+config IOSCHED_ROW
+	  tristate "ROW I/O scheduler"
+	  ---help---
+    The ROW I/O scheduler gives priority to READ requests over the
+    WRITE requests when dispatching, without starving WRITE requests.
+    Requests are kept in priority queues. Dispatching is done in a RR
+    manner when the dispatch quantum for each queue is calculated
+    according to queue priority.
+    Most suitable for mobile devices.
 
 config IOSCHED_CFQ
 	tristate "CFQ I/O scheduler"
@@ -57,17 +58,17 @@ choice
 	  Select the I/O scheduler which will be used by default for all
 	  block devices.
 
-	config DEFAULT_AS
-		bool "Anticipatory" if IOSCHED_AS=y
-
 	config DEFAULT_DEADLINE
 		bool "Deadline" if IOSCHED_DEADLINE=y
+
+	config DEFAULT_ROW
+		bool "ROW" if IOSCHED_ROW=y
 
 	config DEFAULT_CFQ
 		bool "CFQ" if IOSCHED_CFQ=y
 
-    config DEFAULT_SIO
-        bool "SIO" if IOSCHED_SIO=y
+    	config DEFAULT_SIO
+        	bool "SIO" if IOSCHED_SIO=y
 
 	config DEFAULT_NOOP
 		bool "No-op"
@@ -76,10 +77,10 @@ endchoice
 
 config DEFAULT_IOSCHED
 	string
-	default "anticipatory" if DEFAULT_AS
 	default "deadline" if DEFAULT_DEADLINE
+	default "row" if DEFAULT_ROW
 	default "cfq" if DEFAULT_CFQ
-    default "sio" if DEFAULT_SIO
+    	default "sio" if DEFAULT_SIO
 	default "noop" if DEFAULT_NOOP
 
 endmenu
