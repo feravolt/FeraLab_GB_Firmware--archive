@@ -1,28 +1,17 @@
-/*
- * Linux Socket Filter Data Structures
- */
-
 #ifndef __LINUX_FILTER_H__
 #define __LINUX_FILTER_H__
 
 #include <linux/compiler.h>
 #include <linux/types.h>
+#include <linux/rcupdate.h>
 
 #ifdef __KERNEL__
 #include <asm/atomic.h>
 #endif
 
-/*
- * Current version of the filter code architecture.
- */
 #define BPF_MAJOR_VERSION 1
 #define BPF_MINOR_VERSION 1
 
-/*
- *	Try and keep these values and structures similar to BSD, especially
- *	the BPF code definitions which need to match so you can share filters
- */
- 
 struct sock_filter	/* Filter block */
 {
 	__u16	code;   /* Actual filter code */
@@ -37,10 +26,6 @@ struct sock_fprog	/* Required for SO_ATTACH_FILTER. */
 	struct sock_filter __user *filter;
 };
 
-/*
- * Instruction classes
- */
-
 #define BPF_CLASS(code) ((code) & 0x07)
 #define         BPF_LD          0x00
 #define         BPF_LDX         0x01
@@ -51,7 +36,6 @@ struct sock_fprog	/* Required for SO_ATTACH_FILTER. */
 #define         BPF_RET         0x06
 #define         BPF_MISC        0x07
 
-/* ld/ldx fields */
 #define BPF_SIZE(code)  ((code) & 0x18)
 #define         BPF_W           0x00
 #define         BPF_H           0x08
@@ -64,7 +48,6 @@ struct sock_fprog	/* Required for SO_ATTACH_FILTER. */
 #define         BPF_LEN         0x80
 #define         BPF_MSH         0xa0
 
-/* alu/jmp fields */
 #define BPF_OP(code)    ((code) & 0xf0)
 #define         BPF_ADD         0x00
 #define         BPF_SUB         0x10
