@@ -269,12 +269,11 @@ static inline void row_get_next_queue(struct row_data *rd)
  * @rq:	request to add
  *
  */
-static void
-row_add_request(struct request_queue *q,
+static void row_add_request(struct request_queue *q,
 			    struct request *rq)
 {
 	struct row_data *rd = (struct row_data *)q->elevator->elevator_data;
-	struct row_queue *rqueue = RQ_ROWQ(rq);
+	struct row_queue *rqueue = (struct row_queue *)rq->elevator_private;
 
 	list_add_tail(&rq->queuelist, &rqueue->fifo);
 	rd->nr_reqs[rq_data_dir(rq)]++;
@@ -321,7 +320,7 @@ static int row_reinsert_req(struct request_queue *q,
 			    struct request *rq)
 {
 	struct row_data    *rd = q->elevator->elevator_data;
-	struct row_queue   *rqueue = RQ_ROWQ(rq);
+	struct row_queue   *rqueue = (struct row_queue *)rq->elevator_private;
 
 	/* Verify rqueue is legitimate */
 	if (rqueue->prio >= ROWQ_MAX_PRIO) {
@@ -373,7 +372,7 @@ static void row_remove_request(struct request_queue *q,
 			       struct request *rq)
 {
 	struct row_data *rd = (struct row_data *)q->elevator->elevator_data;
-	struct row_queue *rqueue = RQ_ROWQ(rq);
+	struct row_queue *rqueue = (struct row_queue *)rq->elevator_private;
 
 	rq_fifo_clear(rq);
 	rqueue->nr_req--;
@@ -560,8 +559,7 @@ static void *row_init_queue(struct request_queue *q)
 	if (!rdata->read_idle.idle_time)
 		rdata->read_idle.idle_time = 1;
 	rdata->read_idle.freq = ROW_READ_FREQ_MSEC;
-	rdata->read_idle.idle_workqueue = alloc_workqueue("row_idle_work",
-					    WQ_MEM_RECLAIM | WQ_HIGHPRI, 0);
+	rdata->read_idle.idle_workqueue = alloc_workqueue("row_idle_work", 0);
 	if (!rdata->read_idle.idle_workqueue)
 		panic("Failed to create idle workqueue\n");
 	INIT_DELAYED_WORK(&rdata->read_idle.idle_work, kick_queue);
@@ -601,7 +599,7 @@ static void row_exit_queue(struct elevator_queue *e)
 static void row_merged_requests(struct request_queue *q, struct request *rq,
 				 struct request *next)
 {
-	struct row_queue   *rqueue = RQ_ROWQ(next);
+	struct row_queue   *rqueue = (next)->elevator_private;
 
 	list_del_init(&next->queuelist);
 	rqueue->nr_req--;
@@ -639,6 +637,7 @@ static enum row_queue_prio get_queue_type(struct request *rq)
  * @gfp_mask:	ignored
  *
  */
+
 static int
 row_set_request(struct request_queue *q, struct request *rq, gfp_t gfp_mask)
 {
@@ -646,7 +645,7 @@ row_set_request(struct request_queue *q, struct request *rq, gfp_t gfp_mask)
 	unsigned long flags;
 
 	spin_lock_irqsave(q->queue_lock, flags);
-	rq->elevator_private[0] =
+	rq->elevator_private =
 		(void *)(&rd->row_queues[get_queue_type(rq)]);
 	spin_unlock_irqrestore(q->queue_lock, flags);
 
@@ -757,8 +756,6 @@ static struct elevator_type iosched_row = {
 		.elevator_merge_req_fn		= row_merged_requests,
 		.elevator_dispatch_fn		= row_dispatch_requests,
 		.elevator_add_req_fn		= row_add_request,
-		.elevator_reinsert_req_fn	= row_reinsert_req,
-		.elevator_is_urgent_fn		= row_urgent_pending,
 		.elevator_former_req_fn		= elv_rb_former_request,
 		.elevator_latter_req_fn		= elv_rb_latter_request,
 		.elevator_set_req_fn		= row_set_request,
