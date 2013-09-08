@@ -1604,7 +1604,7 @@ cfq_cic_lookup(struct cfq_data *cfqd, struct io_context *ioc)
 	void *k;
 
 	if (unlikely(!ioc))
-		return NULL;
+		return -ENOMEM;
 
 	rcu_read_lock();
 
@@ -2248,18 +2248,19 @@ static void cfq_exit_queue(struct elevator_queue *e)
 	kfree(cfqd);
 }
 
-static void *cfq_init_queue(struct request_queue *q)
+static int cfq_init_queue(struct request_queue *q)
 {
 	struct cfq_data *cfqd;
 
 	cfqd = kmalloc_node(sizeof(*cfqd), GFP_KERNEL | __GFP_ZERO, q->node);
 	if (!cfqd)
-		return NULL;
+		return -ENOMEM;
 
 	cfqd->service_tree = CFQ_RB_ROOT;
 	INIT_LIST_HEAD(&cfqd->cic_list);
 
 	cfqd->queue = q;
+	q->elevator->elevator_data = cfqd;
 
 	init_timer(&cfqd->idle_slice_timer);
 	cfqd->idle_slice_timer.function = cfq_idle_slice_timer;
@@ -2279,7 +2280,7 @@ static void *cfq_init_queue(struct request_queue *q)
 	cfqd->cfq_slice_idle = cfq_slice_idle;
 	cfqd->hw_tag = 1;
 
-	return cfqd;
+	return 0;
 }
 
 static void cfq_slab_kill(void)
