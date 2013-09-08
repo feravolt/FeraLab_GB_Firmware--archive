@@ -831,9 +831,7 @@ dcssblk_make_request(struct request_queue *q, struct bio *bio)
 	if ((bio->bi_sector & 7) != 0 || (bio->bi_size & 4095) != 0)
 		/* Request is not page-aligned. */
 		goto fail;
-	if (((bio->bi_size >> 9) + bio->bi_sector)
-			> get_capacity(bio->bi_bdev->bd_disk)) {
-		/* Request beyond end of DCSS segment. */
+	if (bio_end_sector(bio) > get_capacity(bio->bi_bdev->bd_disk)) {
 		goto fail;
 	}
 	/* verify data transfer direction */

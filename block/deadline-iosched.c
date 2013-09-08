@@ -95,7 +95,7 @@ deadline_merge(struct request_queue *q, struct request **req, struct bio *bio)
 	int ret;
 
 	if (dd->front_merges) {
-		sector_t sector = bio->bi_sector + bio_sectors(bio);
+		sector_t sector = bio_end_sector(bio);
 
 		__rq = elv_rb_find(&dd->sort_list[bio_data_dir(bio)], sector);
 		if (__rq) {

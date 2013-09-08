@@ -1883,8 +1883,7 @@ static int submit_extent_page(int rw, struct extent_io_tree *tree,
 		if (old_compressed)
 			contig = bio->bi_sector == sector;
 		else
-			contig = bio->bi_sector + (bio->bi_size >> 9) ==
-				sector;
+		contig = bio_end_sector(bio) == sector;
 
 		if (prev_bio_flags != bio_flags || !contig ||
 		    (tree->ops && tree->ops->merge_bio_hook &&
