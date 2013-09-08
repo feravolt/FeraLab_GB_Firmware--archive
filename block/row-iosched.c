@@ -658,14 +658,6 @@ static ssize_t row_var_show(int var, char *page)
 	return snprintf(page, 100, "%d\n", var);
 }
 
-static ssize_t row_var_store(int *var, const char *page, size_t count)
-{
-	int err;
-	err = kstrtoul(page, 10, (unsigned long *)var);
-
-	return count;
-}
-
 #define SHOW_FUNCTION(__FUNC, __VAR, __CONV)				\
 static ssize_t __FUNC(struct elevator_queue *e, char *page)		\
 {									\
