@@ -183,10 +183,11 @@ AFLAGS_MODULE   = $(MODFLAGS)
 LDFLAGS_MODULE  =
 CFLAGS_KERNEL	= -march=armv7-a -mtune=cortex-a8 -mfpu=neon \
                   -ffast-math -fsingle-precision-constant \
-                  -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr
+		  -ftree-vectorize
 AFLAGS_KERNEL	= -march=armv7-a -mtune=cortex-a8 -mfpu=neon \
                   -ffast-math -fsingle-precision-constant \
-                  -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr
+		  -ftree-vectorize
+
 LINUXINCLUDE    := -Iinclude \
                    $(if $(KBUILD_SRC),-Iinclude2 -I$(srctree)/include) \
                    -I$(srctree)/arch/$(hdr-arch)/include               \
@@ -318,7 +319,7 @@ all: vmlinux
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 KBUILD_CFLAGS	+= -O3
 else
-KBUILD_CFLAGS	+= -O3
+KBUILD_CFLAGS	+= -O2
 endif
 
 include $(srctree)/arch/$(SRCARCH)/Makefile
