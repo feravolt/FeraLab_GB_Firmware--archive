@@ -121,8 +121,8 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 
 HOSTCC       = gcc
 HOSTCXX      = g++
-HOSTCFLAGS   = -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer
-HOSTCXXFLAGS = -O2
+HOSTCFLAGS   = -Wall -Wstrict-prototypes -O3 -fomit-frame-pointer
+HOSTCXXFLAGS = -O3
 KBUILD_MODULES :=
 KBUILD_BUILTIN := 1
 
@@ -181,8 +181,12 @@ MODFLAGS	= -DMODULE
 CFLAGS_MODULE   = $(MODFLAGS)
 AFLAGS_MODULE   = $(MODFLAGS)
 LDFLAGS_MODULE  =
-CFLAGS_KERNEL	= -mcpu=cortex-a8 -ftree-vectorize -ffast-math -fsingle-precision-constant
-AFLAGS_KERNEL	= -mcpu=cortex-a8 -ftree-vectorize -ffast-math -fsingle-precision-constant
+CFLAGS_KERNEL	= -march=armv7-a -mtune=cortex-a8 -mfpu=neon \
+                  -ffast-math -fsingle-precision-constant \
+                  -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr
+AFLAGS_KERNEL	= -march=armv7-a -mtune=cortex-a8 -mfpu=neon \
+                  -ffast-math -fsingle-precision-constant \
+                  -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr
 LINUXINCLUDE    := -Iinclude \
                    $(if $(KBUILD_SRC),-Iinclude2 -I$(srctree)/include) \
                    -I$(srctree)/arch/$(hdr-arch)/include               \
