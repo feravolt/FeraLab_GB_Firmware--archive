@@ -320,7 +320,7 @@ extern void __put_swap_token(struct mm_struct *);
 
 static inline int has_swap_token(struct mm_struct *mm)
 {
-	return (mm == swap_token_mm);
+	return (mm == swap_token_mm && vm_swap_full());
 }
 
 static inline void put_swap_token(struct mm_struct *mm)
