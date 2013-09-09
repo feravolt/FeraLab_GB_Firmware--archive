@@ -702,39 +702,27 @@ static int msm_fb_set_lut(struct fb_cmap *cmap, struct fb_info *info)
 	return 0;
 }
 
-/*
- * Custom Framebuffer mmap() function for MSM driver.
- * Differs from standard mmap() function by allowing for customized
- * page-protection.
- */
 static int msm_fb_mmap(struct fb_info *info, struct vm_area_struct * vma)
 {
-	/* Get frame buffer memory range. */
 	unsigned long start = info->fix.smem_start;
 	u32 len = PAGE_ALIGN((start & ~PAGE_MASK) + info->fix.smem_len);
 	unsigned long off = vma->vm_pgoff << PAGE_SHIFT;
 	struct msm_fb_data_type *mfd = (struct msm_fb_data_type *)info->par;
-	if (off >= len) {
-		/* memory mapped io */
-		off -= len;
-		if (info->var.accel_flags) {
-			mutex_unlock(&info->lock);
-			return -EINVAL;
-		}
-		start = info->fix.mmio_start;
-		len = PAGE_ALIGN((start & ~PAGE_MASK) + info->fix.mmio_len);
-	}
+	if (!start)
+	    return -EINVAL;
 
-	/* Set VM flags. */
+        if ((vma->vm_end <= vma->vm_start) ||
+	      (off >= len) ||
+	      ((vma->vm_end - vma->vm_start) > (len - off)))
+	    return -EINVAL;
+
 	start &= PAGE_MASK;
-	if ((vma->vm_end - vma->vm_start + off) > len)
-		return -EINVAL;
+	if (off < start)
+	    return -EINVAL;
 	off += start;
 	vma->vm_pgoff = off >> PAGE_SHIFT;
-	/* This is an IO map - tell maydump to skip this VMA */
 	vma->vm_flags |= VM_IO | VM_RESERVED;
 
-	/* Set VM page protection */
 	if (mfd->mdp_fb_page_protection == MDP_FB_PAGE_PROTECTION_WRITECOMBINE)
 		vma->vm_page_prot = pgprot_writecombine(vma->vm_page_prot);
 	else if (mfd->mdp_fb_page_protection ==
