@@ -1,4 +1,4 @@
-/* FeraVolt */
+
 #include <linux/kernel.h>
 #include <linux/fs.h>
 #include <linux/blkdev.h>
@@ -10,20 +10,18 @@
 #include <linux/compiler.h>
 #include <linux/rbtree.h>
 
-static const int read_expire = HZ / 2;  /* max time before a read is submitted. */
-static const int write_expire = 5 * HZ; /* ditto for writes, these limits are SOFT! */
-static const int writes_starved = 2;    /* max times reads can starve a write */
-static const int fifo_batch = 16;       /* # of sequential requests treated as one
-				     by the above parameters. For throughput. */
+static const int read_expire = HZ / 2;
+static const int write_expire = 5 * HZ;
+static const int writes_starved = 2;
+static const int fifo_batch = 16;
 
 struct deadline_data {
 	struct rb_root sort_list[2];	
 	struct list_head fifo_list[2];
 	struct request *next_rq[2];
-	unsigned int batching;		/* number of sequential requests made */
-	sector_t last_sector;		/* head position */
-	unsigned int starved;		/* times reads have starved writes */
-
+	unsigned int batching;
+	sector_t last_sector;
+	unsigned int starved;
 	int fifo_expire[2];
 	int fifo_batch;
 	int writes_starved;
@@ -53,7 +51,10 @@ static void
 deadline_add_rq_rb(struct deadline_data *dd, struct request *rq)
 {
 	struct rb_root *root = deadline_rb_root(dd, rq);
-	elv_rb_add(root, rq);
+	struct request *__alias;
+
+	while (unlikely(__alias = elv_rb_add(root, rq)))
+		deadline_move_request(dd, __alias);
 }
 
 static inline void
@@ -74,7 +75,6 @@ deadline_add_request(struct request_queue *q, struct request *rq)
 	const int data_dir = rq_data_dir(rq);
 
 	deadline_add_rq_rb(dd, rq);
-
 	rq_set_fifo_time(rq, jiffies + dd->fifo_expire[data_dir]);
 	list_add_tail(&rq->queuelist, &dd->fifo_list[data_dir]);
 }
@@ -95,7 +95,7 @@ deadline_merge(struct request_queue *q, struct request **req, struct bio *bio)
 	int ret;
 
 	if (dd->front_merges) {
-		sector_t sector = bio_end_sector(bio);
+		sector_t sector = bio->bi_sector + bio_sectors(bio);
 
 		__rq = elv_rb_find(&dd->sort_list[bio_data_dir(bio)], sector);
 		if (__rq) {
@@ -152,11 +152,9 @@ static void
 deadline_move_request(struct deadline_data *dd, struct request *rq)
 {
 	const int data_dir = rq_data_dir(rq);
-
 	dd->next_rq[READ] = NULL;
 	dd->next_rq[WRITE] = NULL;
 	dd->next_rq[data_dir] = deadline_latter_request(rq);
-
 	dd->last_sector = rq_end_sector(rq);
 	deadline_move_to_dispatch(dd, rq);
 }
@@ -200,18 +198,15 @@ static int deadline_dispatch_requests(struct request_queue *q, int force)
 
 	if (writes) {
 dispatch_writes:
-		BUG_ON(RB_EMPTY_ROOT(&dd->sort_list[WRITE]));
-
 		dd->starved = 0;
-
 		data_dir = WRITE;
-
 		goto dispatch_find_request;
 	}
 
 	return 0;
 
 dispatch_find_request:
+
 	if (deadline_check_fifo(dd, data_dir) || !dd->next_rq[data_dir]) {
 		rq = rq_entry_fifo(dd->fifo_list[data_dir].next);
 	} else {
@@ -223,7 +218,6 @@ dispatch_find_request:
 dispatch_request:
 	dd->batching++;
 	deadline_move_request(dd, rq);
-
 	return 1;
 }
 
@@ -238,20 +232,16 @@ static int deadline_queue_empty(struct request_queue *q)
 static void deadline_exit_queue(struct elevator_queue *e)
 {
 	struct deadline_data *dd = e->elevator_data;
-
-	BUG_ON(!list_empty(&dd->fifo_list[READ]));
-	BUG_ON(!list_empty(&dd->fifo_list[WRITE]));
-
 	kfree(dd);
 }
 
-static int deadline_init_queue(struct request_queue *q)
+static void *deadline_init_queue(struct request_queue *q)
 {
 	struct deadline_data *dd;
 
 	dd = kmalloc_node(sizeof(*dd), GFP_KERNEL | __GFP_ZERO, q->node);
 	if (!dd)
-		return -ENOMEM;
+		return NULL;
 
 	INIT_LIST_HEAD(&dd->fifo_list[READ]);
 	INIT_LIST_HEAD(&dd->fifo_list[WRITE]);
@@ -262,8 +252,7 @@ static int deadline_init_queue(struct request_queue *q)
 	dd->writes_starved = writes_starved;
 	dd->front_merges = 1;
 	dd->fifo_batch = fifo_batch;
-	q->elevator->elevator_data = dd;
-	return 0;
+	return dd;
 }
 
 static ssize_t
@@ -370,4 +359,3 @@ module_exit(deadline_exit);
 MODULE_AUTHOR("Jens Axboe");
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("deadline IO scheduler");
-

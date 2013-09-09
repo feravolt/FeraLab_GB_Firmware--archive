@@ -294,7 +294,8 @@ static int brd_make_request(struct request_queue *q, struct bio *bio)
 	int err = -EIO;
 
 	sector = bio->bi_sector;
-	if (bio_end_sector(bio) > get_capacity(bdev->bd_disk))
+	if (sector + (bio->bi_size >> SECTOR_SHIFT) >
+						get_capacity(bdev->bd_disk))
 		goto out;
 
 	rw = bio_rw(bio);

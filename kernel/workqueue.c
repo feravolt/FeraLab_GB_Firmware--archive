@@ -1007,5 +1007,5 @@ void __init init_workqueues(void)
 	cpu_singlethread_map = cpumask_of(singlethread_cpu);
 	hotcpu_notifier(workqueue_cpu_callback, 0);
 	keventd_wq = create_workqueue("events");
+	BUG_ON(!keventd_wq);
 }
-
