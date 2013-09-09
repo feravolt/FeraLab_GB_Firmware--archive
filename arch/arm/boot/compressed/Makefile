@@ -1,16 +1,7 @@
-#
-# linux/arch/arm/boot/compressed/Makefile
-#
-# create a compressed vmlinuz image from the original vmlinux
-#
-
 HEAD	= head.o
 OBJS	= misc.o
 FONTC	= $(srctree)/drivers/video/console/font_acorn_8x8.c
 
-#
-# Architecture dependencies
-#
 ifeq ($(CONFIG_ARCH_ACORN),y)
 OBJS		+= ll_char_wr.o font.o
 endif
@@ -24,7 +15,6 @@ OBJS		+= head-l7200.o
 endif
 
 ifeq ($(CONFIG_ARCH_P720T),y)
-# Borrow this code from SA1100
 OBJS		+= head-sa1100.o
 endif
 
@@ -44,15 +34,9 @@ ifeq ($(CONFIG_CPU_BIG_ENDIAN),y)
 ifeq ($(CONFIG_CPU_CP15),y)
 OBJS		+= big-endian.o
 else
-# The endian should be set by h/w design.
 endif
 endif
 
-#
-# We now have a PIC decompressor implementation.  Decompressors running
-# from RAM should not define ZTEXTADDR.  Decompressors running directly
-# from ROM or Flash must define ZTEXTADDR (preferably via the config)
-# FIXME: Previous assignment to ztextaddr-y is lost here. See SHARK
 ifeq ($(CONFIG_ZBOOT_ROM),y)
 ZTEXTADDR	:= $(CONFIG_ZBOOT_ROM_TEXT)
 ZBSSADDR	:= $(CONFIG_ZBOOT_ROM_BSS)
@@ -74,9 +58,6 @@ endif
 EXTRA_CFLAGS  := -fpic -fno-builtin
 EXTRA_AFLAGS  := -Wa,-march=all
 
-# Supply ZRELADDR, INITRD_PHYS and PARAMS_PHYS to the decompressor via
-# linker symbols.  We only define initrd_phys and params_phys if the
-# machine class defined the corresponding makefile variable.
 LDFLAGS_vmlinux := --defsym zreladdr=$(ZRELADDR)
 ifneq ($(INITRD_PHYS),)
 LDFLAGS_vmlinux += --defsym initrd_phys=$(INITRD_PHYS)
@@ -87,8 +68,6 @@ endif
 LDFLAGS_vmlinux += -p --no-undefined -X \
 	$(shell $(CC) $(KBUILD_CFLAGS) --print-libgcc-file-name) -T
 
-# Don't allow any static data in misc.o, which
-# would otherwise mess up our GOT table
 CFLAGS_misc.o := -Dstatic=
 
 $(obj)/vmlinux: $(obj)/vmlinux.lds $(obj)/$(HEAD) $(obj)/piggy.o \
@@ -108,3 +87,4 @@ $(obj)/font.c: $(FONTC)
 
 $(obj)/vmlinux.lds: $(obj)/vmlinux.lds.in arch/arm/boot/Makefile .config
 	@sed "$(SEDFLAGS)" < $< > $@
+
