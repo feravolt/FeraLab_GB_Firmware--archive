@@ -181,12 +181,8 @@ MODFLAGS	= -DMODULE
 CFLAGS_MODULE   = $(MODFLAGS)
 AFLAGS_MODULE   = $(MODFLAGS)
 LDFLAGS_MODULE  =
-CFLAGS_KERNEL	= -march=armv7-a -mtune=cortex-a8 -mfpu=neon \
-                  -ffast-math -fsingle-precision-constant \
-		  -ftree-vectorize
-AFLAGS_KERNEL	= -march=armv7-a -mtune=cortex-a8 -mfpu=neon \
-                  -ffast-math -fsingle-precision-constant \
-		  -ftree-vectorize
+CFLAGS_KERNEL	= -mcpu=cortex-a8 -ftree-vectorize -ffast-math -fsingle-precision-constant
+AFLAGS_KERNEL	= -mcpu=cortex-a8 -ftree-vectorize -ffast-math -fsingle-precision-constant
 
 LINUXINCLUDE    := -Iinclude \
                    $(if $(KBUILD_SRC),-Iinclude2 -I$(srctree)/include) \
