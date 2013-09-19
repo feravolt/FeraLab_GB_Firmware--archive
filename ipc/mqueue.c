@@ -114,6 +114,7 @@ static struct inode *mqueue_get_inode(struct super_block *sb, int mode,
 {
 	struct user_struct *u = current_user();
 	struct inode *inode;
+	int ret = -ENOMEM;
 
 	inode = new_inode(sb);
 	if (inode) {
@@ -156,6 +157,7 @@ static struct inode *mqueue_get_inode(struct super_block *sb, int mode,
 		 	    u->mq_bytes + mq_bytes >
 			    p->signal->rlim[RLIMIT_MSGQUEUE].rlim_cur) {
 				spin_unlock(&mq_lock);
+				ret = -EMFILE;
 				goto out_inode;
 			}
 			u->mq_bytes += mq_bytes;
@@ -182,7 +184,7 @@ static struct inode *mqueue_get_inode(struct super_block *sb, int mode,
 out_inode:
 	make_bad_inode(inode);
 	iput(inode);
-	return NULL;
+	return ERR_PTR(ret);
 }
 
 static int mqueue_fill_super(struct super_block *sb, void *data, int silent)
@@ -195,8 +197,8 @@ static int mqueue_fill_super(struct super_block *sb, void *data, int silent)
 	sb->s_op = &mqueue_super_ops;
 
 	inode = mqueue_get_inode(sb, S_IFDIR | S_ISVTX | S_IRWXUGO, NULL);
-	if (!inode)
-		return -ENOMEM;
+	if (IS_ERR(inode)) {
+		error = PTR_ERR(inode);
 
 	sb->s_root = d_alloc_root(inode);
 	if (!sb->s_root) {
@@ -284,8 +286,8 @@ static int mqueue_create(struct inode *dir, struct dentry *dentry,
 	spin_unlock(&mq_lock);
 
 	inode = mqueue_get_inode(dir->i_sb, mode, attr);
-	if (!inode) {
-		error = -ENOMEM;
+	if (IS_ERR(inode)) {
+		error = PTR_ERR(inode);
 		spin_lock(&mq_lock);
 		queues_count--;
 		goto out_lock;
