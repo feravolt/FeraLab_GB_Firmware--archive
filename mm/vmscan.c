@@ -672,6 +672,10 @@ static unsigned long shrink_page_list(struct list_head *page_list,
 		}
 
 		if (PageDirty(page)) {
+			if (page_is_file_cache(page) && !current_is_kswapd()) {
+        		inc_zone_page_state(page, NR_VMSCAN_WRITE_SKIP);
+        			goto keep_locked;
+      				}
 			if (sc->order <= PAGE_ALLOC_COSTLY_ORDER && referenced)
 				goto keep_locked;
 			if (!may_enter_fs)
