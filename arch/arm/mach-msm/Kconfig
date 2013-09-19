@@ -901,15 +901,6 @@ config SEMC_POWER
 	help
 	  Enable semc battery power manager.
 
-config DELTA_PROXIMITY_SENSOR
-	tristate "Proximity sensor driver for delta platform"
-	default y
-	select SEMCCLASS
-	depends on (ARCH_SQD || ARCH_MSM)
-	help
-	  This option enables support delta platform
-	  proximity sensor.
-
 config TI1271
 	bool "Use connectivity driver and config for TI1271"
 	default n
