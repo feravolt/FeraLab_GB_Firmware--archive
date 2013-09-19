@@ -1,7 +1,7 @@
 VERSION = 2
 PATCHLEVEL = 6
-SUBLEVEL = 29
-EXTRAVERSION = .12.1-GB
+SUBLEVEL = 30
+EXTRAVERSION = .13-GB
 NAME = FeraKernel
 MAKEFLAGS += -rR --no-print-directory
 
@@ -312,7 +312,7 @@ endif
 
 all: vmlinux
 
-KBUILD_CFLAGS	+= -O3 -Wno-address
+KBUILD_CFLAGS	+= -O4 -Wno-address
 
 include $(srctree)/arch/$(SRCARCH)/Makefile
 
