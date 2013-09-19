@@ -1,4 +1,3 @@
-
 #include <linux/wait.h>
 #include <linux/backing-dev.h>
 #include <linux/fs.h>
@@ -246,8 +245,6 @@ void bdi_destroy(struct backing_dev_info *bdi)
 	int i;
 
 	bdi_unregister(bdi);
-
-	del_timer_sync(&bdi->wb.wakeup_timer);
 
 	for (i = 0; i < NR_BDI_STAT_ITEMS; i++)
 		percpu_counter_destroy(&bdi->bdi_stat[i]);

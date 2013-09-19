@@ -2030,7 +2030,7 @@ int CIFSSMBRenameOpenFile(const int xid, struct cifsTconInfo *pTcon,
 	param_offset = offsetof(struct smb_com_transaction2_sfi_req, Fid) - 4;
 	offset = param_offset + params;
 
-	ddata_offset = (char *)pSMB + offsetof(struct smb_hdr, Protocol) + offset;
+	data_offset = (char *) (&pSMB->hdr.Protocol) + offset;
 	rename_info = (struct set_file_rename *) data_offset;
 	pSMB->MaxParameterCount = cpu_to_le16(2);
 	pSMB->MaxDataCount = cpu_to_le16(1000); /* BB find max SMB from sess */
@@ -3177,12 +3177,13 @@ CIFSSMBSetCIFSACL(const int xid, struct cifsTconInfo *tcon, __u16 fid,
 	int rc = 0;
 	int bytes_returned = 0;
 	SET_SEC_DESC_REQ *pSMB = NULL;
-	void *pSMBr;
+	NTRANSACT_RSP *pSMBr = NULL;
 
 setCifsAclRetry:
-	rc = smb_init(SMB_COM_NT_TRANSACT, 19, tcon, (void **) &pSMB, &pSMBr);
+	rc = smb_init(SMB_COM_NT_TRANSACT, 19, tcon, (void **) &pSMB,
+			(void **) &pSMBr);
 	if (rc)
-			return rc;
+			return (rc);
 
 	pSMB->MaxSetupCount = 0;
 	pSMB->Reserved = 0;
@@ -3210,7 +3211,9 @@ setCifsAclRetry:
 	pSMB->AclFlags = cpu_to_le32(CIFS_ACL_DACL);
 
 	if (pntsd && acllen) {
-		memcpy((char *)pSMBr + offsetof(struct smb_hdr, Protocol) + data_offset, pntsd, acllen);
+		memcpy((char *) &pSMBr->hdr.Protocol + data_offset,
+			(char *) pntsd,
+			acllen);
 		pSMB->hdr.smb_buf_length += (byte_count + data_count);
 
 	} else
@@ -4797,7 +4800,7 @@ CIFSSMBSetFileSize(const int xid, struct cifsTconInfo *tcon, __u64 size,
 	param_offset = offsetof(struct smb_com_transaction2_sfi_req, Fid) - 4;
 	offset = param_offset + params;
 
-	data_offset = (char *)pSMB + offsetof(struct smb_hdr, Protocol) + offset;
+	data_offset = (char *) (&pSMB->hdr.Protocol) + offset;
 
 	count = sizeof(struct file_end_of_file_info);
 	pSMB->MaxParameterCount = cpu_to_le16(2);
@@ -5114,7 +5117,7 @@ CIFSSMBUnixSetInfo(const int xid, struct cifsTconInfo *tcon, char *fileName,
 	int name_len;
 	int rc = 0;
 	int bytes_returned = 0;
-	char *data_offset;
+	FILE_UNIX_BASIC_INFO *data_offset;
 	__u16 params, param_offset, offset, count, byte_count;
 	__u64 mode = args->mode;
 
