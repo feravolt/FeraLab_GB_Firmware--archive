@@ -1203,6 +1203,7 @@ struct super_block {
 	 * storage for asynchronous operations
 	 */
 	struct list_head s_async_list;
+	int cleancache_poolid;
 };
 
 extern struct timespec current_fs_time(struct super_block *sb);

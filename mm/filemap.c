@@ -34,87 +34,23 @@
 #include <linux/hardirq.h> /* for BUG_ON(!in_atomic()) only */
 #include <linux/memcontrol.h>
 #include <linux/mm_inline.h> /* for page_is_file_cache() */
+#include <linux/cleancache.h>
 #include "internal.h"
 
 /*
  * FIXME: remove all knowledge of the buffer layer from the core VM
  */
 #include <linux/buffer_head.h> /* for generic_osync_inode */
-
 #include <asm/mman.h>
 
-
-/*
- * Shared mappings implemented 30.11.1994. It's not fully working yet,
- * though.
- *
- * Shared mappings now work. 15.8.1995  Bruno.
- *
- * finished 'unifying' the page and buffer cache and SMP-threaded the
- * page-cache, 21.05.1999, Ingo Molnar <mingo@redhat.com>
- *
- * SMP-threaded pagemap-LRU 1999, Andrea Arcangeli <andrea@suse.de>
- */
-
-/*
- * Lock ordering:
- *
- *  ->i_mmap_lock		(vmtruncate)
- *    ->private_lock		(__free_pte->__set_page_dirty_buffers)
- *      ->swap_lock		(exclusive_swap_page, others)
- *        ->mapping->tree_lock
- *
- *  ->i_mutex
- *    ->i_mmap_lock		(truncate->unmap_mapping_range)
- *
- *  ->mmap_sem
- *    ->i_mmap_lock
- *      ->page_table_lock or pte_lock	(various, mainly in memory.c)
- *        ->mapping->tree_lock	(arch-dependent flush_dcache_mmap_lock)
- *
- *  ->mmap_sem
- *    ->lock_page		(access_process_vm)
- *
- *  ->i_mutex			(generic_file_buffered_write)
- *    ->mmap_sem		(fault_in_pages_readable->do_page_fault)
- *
- *  ->i_mutex
- *    ->i_alloc_sem             (various)
- *
- *  ->inode_lock
- *    ->sb_lock			(fs/fs-writeback.c)
- *    ->mapping->tree_lock	(__sync_single_inode)
- *
- *  ->i_mmap_lock
- *    ->anon_vma.lock		(vma_adjust)
- *
- *  ->anon_vma.lock
- *    ->page_table_lock or pte_lock	(anon_vma_prepare and various)
- *
- *  ->page_table_lock or pte_lock
- *    ->swap_lock		(try_to_unmap_one)
- *    ->private_lock		(try_to_unmap_one)
- *    ->tree_lock		(try_to_unmap_one)
- *    ->zone.lru_lock		(follow_page->mark_page_accessed)
- *    ->zone.lru_lock		(check_pte_range->isolate_lru_page)
- *    ->private_lock		(page_remove_rmap->set_page_dirty)
- *    ->tree_lock		(page_remove_rmap->set_page_dirty)
- *    ->inode_lock		(page_remove_rmap->set_page_dirty)
- *    ->inode_lock		(zap_pte_range->set_page_dirty)
- *    ->private_lock		(zap_pte_range->__set_page_dirty_buffers)
- *
- *  ->task->proc_lock
- *    ->dcache_lock		(proc_pid_lookup)
- */
-
-/*
- * Remove a page from the page cache and free it. Caller has to make
- * sure the page is locked and that nobody else uses it - or that usage
- * is safe.  The caller must hold the mapping's tree_lock.
- */
 void __remove_from_page_cache(struct page *page)
 {
 	struct address_space *mapping = page->mapping;
+
+if (PageUptodate(page) && PageMappedToDisk(page))
+        cleancache_put_page(page);
+    else
+        cleancache_flush_page(mapping, page);
 
 	radix_tree_delete(&mapping->page_tree, page->index);
 	page->mapping = NULL;

@@ -16,25 +16,10 @@
 #include <linux/highmem.h>
 #include <linux/pagevec.h>
 #include <linux/task_io_accounting_ops.h>
-#include <linux/buffer_head.h>	/* grr. try_to_release_page,
-				   do_invalidatepage */
+#include <linux/buffer_head.h>
+#include <linux/cleancache.h>
 #include "internal.h"
 
-
-/**
- * do_invalidatepage - invalidate part or all of a page
- * @page: the page which is affected
- * @offset: the index of the truncation point
- *
- * do_invalidatepage() is called when all or part of the page has become
- * invalidated by a truncate operation.
- *
- * do_invalidatepage() does not have to release all buffers, but it must
- * ensure that no dirty buffer is left outside @offset and that no I/O
- * is underway against any of the blocks which are outside the truncation
- * point.  Because the caller is about to free (and possibly reuse) those
- * blocks on-disk.
- */
 void do_invalidatepage(struct page *page, unsigned long offset)
 {
 	void (*invalidatepage)(struct page *, unsigned long);
@@ -50,6 +35,7 @@ void do_invalidatepage(struct page *page, unsigned long offset)
 static inline void truncate_partial_page(struct page *page, unsigned partial)
 {
 	zero_user_segment(page, partial, PAGE_CACHE_SIZE);
+	cleancache_flush_page(page->mapping, page);
 	if (PagePrivate(page))
 		do_invalidatepage(page, partial);
 }
@@ -168,6 +154,8 @@ void truncate_inode_pages_range(struct address_space *mapping,
 	pgoff_t next;
 	int i;
 
+	cleancache_flush_inode(mapping);
+
 	if (mapping->nrpages == 0)
 		return;
 
@@ -251,6 +239,7 @@ void truncate_inode_pages_range(struct address_space *mapping,
 		}
 		pagevec_release(&pvec);
 	}
+	cleancache_flush_inode(mapping);
 }
 EXPORT_SYMBOL(truncate_inode_pages_range);
 
@@ -356,9 +345,9 @@ invalidate_complete_page2(struct address_space *mapping, struct page *page)
 		goto failed;
 
 	clear_page_mlock(page);
-	BUG_ON(PagePrivate(page));
-	__remove_from_page_cache(page);
+	remove_from_page_cache(page);
 	spin_unlock_irq(&mapping->tree_lock);
+	cleancache_flush_page(mapping, page);
 	page_cache_release(page);	/* pagecache ref */
 	return 1;
 failed:
@@ -375,17 +364,6 @@ static int do_launder_page(struct address_space *mapping, struct page *page)
 	return mapping->a_ops->launder_page(page);
 }
 
-/**
- * invalidate_inode_pages2_range - remove range of pages from an address_space
- * @mapping: the address_space
- * @start: the page offset 'from' which to invalidate
- * @end: the page offset 'to' which to invalidate (inclusive)
- *
- * Any pages which are found to be mapped into pagetables are unmapped prior to
- * invalidation.
- *
- * Returns -EBUSY if any pages could not be invalidated.
- */
 int invalidate_inode_pages2_range(struct address_space *mapping,
 				  pgoff_t start, pgoff_t end)
 {
@@ -397,6 +375,7 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
 	int did_range_unmap = 0;
 	int wrapped = 0;
 
+	cleancache_flush_inode(mapping);
 	pagevec_init(&pvec, 0);
 	next = start;
 	while (next <= end && !wrapped &&
@@ -453,6 +432,7 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
 		pagevec_release(&pvec);
 		cond_resched();
 	}
+	cleancache_flush_inode(mapping);
 	return ret;
 }
 EXPORT_SYMBOL_GPL(invalidate_inode_pages2_range);

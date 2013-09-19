@@ -78,6 +78,7 @@
 #include <linux/interrupt.h>
 #include <linux/string.h>
 #include <linux/ctype.h>
+#include <linux/cleancache.h>
 
 #if (YAFFS_NEW_FOLLOW_LINK == 1)
 #include <linux/namei.h>
@@ -1000,6 +1001,10 @@ static int yaffs_readpage_nolock(struct file *f, struct page *pg)
 		(unsigned)(pg->index << PAGE_CACHE_SHIFT),
 		(unsigned)PAGE_CACHE_SIZE));
 
+	ret = cleancache_get_page(pg);
+	  if (!ret)
+	    goto cleancache_got;
+
 	obj = yaffs_DentryToObject(f->f_dentry);
 
 	dev = obj->myDev;
@@ -1025,11 +1030,13 @@ static int yaffs_readpage_nolock(struct file *f, struct page *pg)
 	if (ret >= 0)
 		ret = 0;
 
+cleancache_got:
 	if (ret) {
 		ClearPageUptodate(pg);
 		SetPageError(pg);
 	} else {
 		SetPageUptodate(pg);
+		SetPageMappedToDisk(pg);
 		ClearPageError(pg);
 	}
 
@@ -3084,6 +3091,7 @@ static struct super_block *yaffs_internal_read_super(int yaffsVersion,
 		dev->isCheckpointed));
 
 	T(YAFFS_TRACE_OS, (TSTR("yaffs_read_super: done\n")));
+	cleancache_init_fs(sb);
 	return sb;
 }
 
