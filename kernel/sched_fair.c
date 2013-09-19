@@ -3,7 +3,7 @@
 #include <linux/latencytop.h>
 
 unsigned int sysctl_sched_latency = 20000000ULL;
-unsigned int sysctl_sched_min_granularity = 20000000ULL;
+unsigned int sysctl_sched_min_granularity = 4000000ULL;
 static unsigned int sched_nr_latency = 7;
 const_debug unsigned int sysctl_sched_child_runs_first = 1;
 unsigned int __read_mostly sysctl_sched_compat_yield;
