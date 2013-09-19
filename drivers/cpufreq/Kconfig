@@ -271,7 +271,15 @@ config CPU_FREQ_GOV_SMARTASS2
 	help
 	  'smartassV2' - a "smart" optimized governor for the hero!
 
-	  If in doubt, say N.
+	  If in doubt, say Y.
+
+config CPU_FREQ_GOV_SMARTASSH3
+	tristate "'SmartassH3' cpufreq governor"
+	depends on CPU_FREQ
+	help
+	 'SmartassH3' - a "smartassV2 with tweaks" governor!
+
+	  If in doubt, say Y.
 
 config CPU_FREQ_GOV_LAGFREE
 	tristate "'lagfree' cpufreq governor"
