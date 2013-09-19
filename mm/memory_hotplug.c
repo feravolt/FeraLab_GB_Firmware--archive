@@ -428,6 +428,7 @@ int online_pages(unsigned long pfn, unsigned long nr_pages)
 		node_set_state(zone_to_nid(zone), N_HIGH_MEMORY);
 	}
 
+	drain_all_pages();
 	if (need_zonelists_rebuild)
 		build_all_zonelists();
 	else
