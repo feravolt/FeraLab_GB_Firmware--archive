@@ -60,20 +60,19 @@
 #define TOUCHPAD_SUSPEND 	34
 #define TOUCHPAD_IRQ 		38
 #define MSM_PMEM_MDP_SIZE 	0x01C91000
-#define MSM_AUDIO_SIZE		0x00080000
 #define SMEM_SPINLOCK_I2C	"S:6"
 #define MSM_PMEM_ADSP_SIZE	0x02196000
-#define MSM_FB_SIZE		0x00500000
-#define MSM_PMEM_SMI_SIZE	0x01500000
+#define MSM_FB_SIZE         	0x001B0500
 #define PMEM_KERNEL_EBI1_SIZE	0x00028000
-#define MSM_PMEM_SWIQI_SIZE 	0x00E00000
+#define MSM_PMEM_SWIQI_SIZE 	0x00200000
 #define PMIC_VREG_WLAN_LEVEL	2600
 #define PMIC_VREG_GP6_LEVEL	2850
 #define FPGA_SDCC_STATUS	0x70000280
 #define MSM_SMI_BASE		0x00000000
-#define MSM_SHARED_RAM_PHYS	(MSM_SMI_BASE + 0x00100000)
-#define MSM_PMEM_SMI_BASE	(MSM_SMI_BASE + 0x02B00000)
-#define MSM_FB_BASE		MSM_PMEM_SMI_BASE
+#define MSM_SHARED_RAM_PHYS	0x00100000
+#define MSM_PMEM_SMI_BASE	0x02B00000
+#define MSM_PMEM_SMI_SIZE	0x01500000
+#define MSM_FB_BASE		0x02B00000
 #define MSM_GPU_PHYS_SIZE 	SZ_2M
 #define MSM_GPU_PHYS_BASE 	(MSM_FB_BASE + MSM_FB_SIZE)
 #define MSM_PMEM_SMIPOOL_BASE	(MSM_GPU_PHYS_BASE + MSM_GPU_PHYS_SIZE)
@@ -944,13 +943,6 @@ static void __init audio_gpio_init(void)
 	set_audio_gpios(msm_audio_resources[1].start);
 }
 
-static struct platform_device msm_audio_device = {
-	.name   = "msm_audio",
-	.id     = 0,
-	.num_resources  = ARRAY_SIZE(msm_audio_resources),
-	.resource       = msm_audio_resources,
-};
-
 static struct resource bluesleep_resources[] = {
 	{
 		.name	= "gpio_host_wake",
@@ -1542,7 +1534,6 @@ static struct platform_device *devices[] __initdata = {
 	&usb_mass_storage_device,
 	&android_usb_device,
 	&msm_device_tssc,
-	&msm_audio_device,
 	&msm_device_uart1,
 	&msm_bluesleep_device,
 	&msm_bt_power_device,
@@ -1890,13 +1881,6 @@ static void __init pmem_swiqi_size_setup(char **p)
 
 __early_param("pmem_swiqi_size=", pmem_swiqi_size_setup);
 
-static unsigned audio_size = MSM_AUDIO_SIZE;
-static void __init audio_size_setup(char **p)
-{
-	audio_size = memparse(*p, p);
-}
-__early_param("audio_size=", audio_size_setup);
-
 unsigned int es209ra_startup_reason = 0;
 
 static int __init es209ra_startup_reason_setup(char *str)
@@ -1939,8 +1923,7 @@ static void __init es209ra_init(void)
 #endif
 	msm_acpu_clock_init(&qsd8x50_clock_data);
 
-	msm_hsusb_pdata.swfi_latency =
-		msm_pm_data
+	msm_hsusb_pdata.swfi_latency = msm_pm_data
 		[MSM_PM_SLEEP_MODE_RAMP_DOWN_AND_WAIT_FOR_INTERRUPT].latency;
 	msm_device_hsusb_peripheral.dev.platform_data = &msm_hsusb_pdata;
 	msm_device_otg.dev.platform_data = &msm_otg_pdata;
@@ -2021,15 +2004,7 @@ static void __init es209ra_allocate_memory_regions(void)
 			"pmem arena\n", size, addr, __pa(addr));
 	}
 
-	size = MSM_FB_SIZE;
-	addr = (void *)MSM_FB_BASE;
-	msm_fb_resources[0].start = (unsigned long)addr;
-	msm_fb_resources[0].end = msm_fb_resources[0].start + size - 1;
-	pr_info("using %lu bytes of SMI at %lx physical for fb\n",
-	       size, (unsigned long)addr);
-
 	size = pmem_swiqi_size;
-
 	if (size) {
 		addr = alloc_bootmem(size);
 		android_pmem_swiqi_pdata.start = __pa(addr);
@@ -2038,12 +2013,12 @@ static void __init es209ra_allocate_memory_regions(void)
 			"pmem arena\n", size, addr, __pa(addr));
 	}
 
-	size = audio_size ? : MSM_AUDIO_SIZE;
-	addr = alloc_bootmem(size);
-	msm_audio_resources[0].start = __pa(addr);
-	msm_audio_resources[0].end = msm_audio_resources[0].start + size - 1;
-	pr_info("allocating %lu bytes at %p (%lx physical) for audio\n",
-		size, addr, __pa(addr));
+	size = MSM_FB_SIZE;
+	addr = (void *)MSM_FB_BASE;
+	msm_fb_resources[0].start = (unsigned long)addr;
+	msm_fb_resources[0].end = msm_fb_resources[0].start + size - 1;
+	pr_info("using %lu bytes of SMI at %lx physical for fb\n",
+	       size, (unsigned long)addr);
 }
 
 static void __init es209ra_fixup(struct machine_desc *desc, struct tag *tags,
