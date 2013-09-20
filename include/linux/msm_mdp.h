@@ -139,11 +139,6 @@ struct mdp_ccs {
 	uint16_t bv[MDP_BV_SIZE];	/* 1x3 bias vector */
 };
 
-/* The version of the mdp_blit_req structure so that
- * user applications can selectively decide which functionality
- * to include
- */
-
 #define MDP_BLIT_REQ_VERSION 2
 
 struct mdp_blit_req {
@@ -176,7 +171,7 @@ struct mdp_blit_req_list {
 struct mdp_blit_req_list_gb {
   uint32_t count;
   struct mdp_blit_req_gb req[];
-}
+};
 
 #define MSMFB_DATA_VERSION 2
 
