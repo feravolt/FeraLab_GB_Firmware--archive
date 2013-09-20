@@ -1,4 +1,5 @@
 /*FeraLab*/
+
 #include <linux/kernel.h>
 #include <linux/irq.h>
 #include <linux/gpio.h>
@@ -42,26 +43,27 @@
 #include "smd_private.h"
 #include "proc_comm.h"
 #include <linux/msm_kgsl.h>
-#include <linux/spi/es209ra_touch_mt.h>
+#include <linux/usb/android_composite.h>
+#include "board-es209ra.h"
+#include "board-es209ra-keypad.h"
+#include "es209ra_headset.h"
+#include <linux/spi/es209ra_touch.h>
 #include <asm/setup.h>
 #include "qdsp6/q6audio.h"
 #include <../../../drivers/video/msm/mddi_tmd_nt35580.h>
-#include "board-es209ra.h"
-#include "board-es209ra-keypad.h"
-#include <linux/semc/msm_pmic_vibrator.h>
 #include <mach/semc_low_batt_shutdown.h>
+#include  <linux/semc/msm_pmic_vibrator.h>
 #include <linux/bma150_ng.h>
 #include "../../../drivers/video/msm/msm_fb_panel.h"
 #include "../../../drivers/video/msm/mddihost.h"
-#include <linux/usb/android_composite.h>
-#include "es209ra_headset.h"
 
 #define TOUCHPAD_SUSPEND 	34
 #define TOUCHPAD_IRQ 		38
-#define MSM_PMEM_MDP_SIZE 	0x01700000
+#define MSM_PMEM_MDP_SIZE 	0x01C91000
+#define MSM_AUDIO_SIZE		0x00080000
 #define SMEM_SPINLOCK_I2C	"S:6"
 #define MSM_PMEM_ADSP_SIZE	0x02196000
-#define MSM_FB_SIZE		0x00278780
+#define MSM_FB_SIZE		0x00500000
 #define MSM_PMEM_SMI_SIZE	0x01500000
 #define PMEM_KERNEL_EBI1_SIZE	0x00028000
 #define MSM_PMEM_SWIQI_SIZE 	0x00E00000
@@ -77,6 +79,15 @@
 #define MSM_PMEM_SMIPOOL_BASE	(MSM_GPU_PHYS_BASE + MSM_GPU_PHYS_SIZE)
 #define MSM_PMEM_SMIPOOL_SIZE	(MSM_PMEM_SMI_SIZE - MSM_FB_SIZE \
 					- MSM_GPU_PHYS_SIZE)
+
+#ifdef CONFIG_CAPTURE_KERNEL
+#define AMSSCORE_RAM_START 0x00000000
+#define AMSSCORE_RAM_END   0x03FFFFFF
+#define SMEMCORE_RAM_START 0x00100000
+#define SMEMCORE_RAM_END   0x001FFFFF
+#define ADSPCORE_RAM_START 0x2E000000
+#define ADSPCORE_RAM_END   0x2FFFFFFF
+#endif
 
 static int msm7227_platform_set_vib_voltage(u16 volt_mv)
 {
@@ -107,7 +118,6 @@ static struct msm_pmic_vibrator_platform_data vibrator_platform_data = {
 	.platform_set_vib_voltage = msm7227_platform_set_vib_voltage,
 	.platform_init_vib_hw = msm7227_platform_init_vib_hw,
 };
-
 static struct platform_device vibrator_device = {
 	.name = "msm_pmic_vibrator",
 	.id = -1,
@@ -115,6 +125,17 @@ static struct platform_device vibrator_device = {
 		.platform_data = &vibrator_platform_data,
 	},
 };
+
+#ifdef CONFIG_SMC91X
+static struct resource smc91x_resources[] = {
+	[0] = {
+		.flags  = IORESOURCE_MEM,
+	},
+	[1] = {
+		.flags  = IORESOURCE_IRQ,
+	},
+};
+#endif
 
 static char *usb_func_msc[] = {
 	"usb_mass_storage",
@@ -147,7 +168,6 @@ static char *usb_functions_all[] = {
 	"nmea",
 	"diag",
 };
-
 static struct android_usb_product android_usb_products[] = {
 	{
 		.product_id = 0xE12E,
@@ -223,14 +243,45 @@ static struct platform_device android_usb_device = {
 		.platform_data = &android_usb_pdata,
 	},
 };
+
+#ifdef CONFIG_SMC91X
+static struct platform_device smc91x_device = {
+	.name           = "smc91x",
+	.id             = 0,
+	.num_resources  = ARRAY_SIZE(smc91x_resources),
+	.resource       = smc91x_resources,
+};
+#endif
  
 static struct platform_device hs_device = {
-	.name   = "msm-handset",
-	.id     = -1,
-	.dev    = {
-		.platform_data = "8k_handset",
-	},
+       .name   = "msm-handset",
+       .id     = -1,
+       .dev    = {
+               .platform_data = "8k_handset",
+       },
 };
+
+#ifdef CONFIG_USB_FS_HOST
+static struct msm_gpio fsusb_config[] = {
+	{ GPIO_CFG(139, 2, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA), "fs_dat" },
+	{ GPIO_CFG(140, 2, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA), "fs_se0" },
+	{ GPIO_CFG(141, 3, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA), "fs_oe_n" },
+};
+
+static int fsusb_gpio_init(void)
+{
+	return msm_gpios_request(fsusb_config, ARRAY_SIZE(fsusb_config));
+}
+
+static void msm_fsusb_setup_gpio(unsigned int enable)
+{
+	if (enable)
+		msm_gpios_enable(fsusb_config, ARRAY_SIZE(fsusb_config));
+	else
+		msm_gpios_disable(fsusb_config, ARRAY_SIZE(fsusb_config));
+
+}
+#endif
 
 #define MSM_USB_BASE              ((unsigned)addr)
 static unsigned ulpi_read(void __iomem *addr, unsigned reg)
@@ -271,7 +322,6 @@ static int ulpi_write(void __iomem *addr, unsigned val, unsigned reg)
 }
 
 struct clk *hs_clk, *phy_clk;
-
 #define CLKRGM_APPS_RESET_USBH      37
 #define CLKRGM_APPS_RESET_USB_PHY   34
 static void msm_hsusb_apps_reset_link(int reset)
@@ -404,10 +454,56 @@ static int msm_hsusb_native_phy_reset(void __iomem *addr)
 static struct msm_hsusb_platform_data msm_hsusb_pdata = {
 };
 
+#ifdef CONFIG_USB_FS_HOST
+static struct msm_usb_host_platform_data msm_usb_host2_pdata = {
+	.phy_info	= USB_PHY_SERIAL_PMIC,
+	.config_gpio = msm_fsusb_setup_gpio,
+	.vbus_power = msm_hsusb_vbus_power,
+};
+#endif
+
 static struct android_pmem_platform_data android_pmem_kernel_ebi1_pdata = {
 	.name = PMEM_KERNEL_EBI1_DATA_NAME,
 	.cached = 0,
 };
+
+#ifdef CONFIG_KERNEL_PMEM_SMI_REGION
+static struct android_pmem_platform_data android_pmem_kernel_smi_pdata = {
+	.name = PMEM_KERNEL_SMI_DATA_NAME,
+	.cached = 0,
+};
+
+#endif
+
+#ifdef CONFIG_CAPTURE_KERNEL
+static struct resource kdump_amsscoredump_resources[] = {
+	{
+		.name   = "amsscore0",
+		.start  = AMSSCORE_RAM_START,
+		.end    = AMSSCORE_RAM_END,
+		.flags  = IORESOURCE_MEM,
+	},
+	{
+		.name   = "smemcore0",
+		.start  = SMEMCORE_RAM_START,
+		.end    = SMEMCORE_RAM_END,
+		.flags  = IORESOURCE_MEM,
+	},
+	{
+		.name   = "adspcore0",
+		.start  = ADSPCORE_RAM_START,
+		.end    = ADSPCORE_RAM_END,
+		.flags  = IORESOURCE_MEM,
+	},
+};
+
+static struct platform_device kdump_amsscoredump_device = {
+	.name           = "amsscoredump",
+	.id             = -1,
+	.num_resources  = ARRAY_SIZE(kdump_amsscoredump_resources),
+	.resource       = kdump_amsscoredump_resources,
+};
+#endif
 
 static struct android_pmem_platform_data android_pmem_pdata = {
 	.name = "pmem",
@@ -459,9 +555,17 @@ static struct platform_device android_pmem_kernel_ebi1_device = {
 	.dev = { .platform_data = &android_pmem_kernel_ebi1_pdata },
 };
 
-static struct platform_device android_pmem_swiqi_device = {
+#ifdef CONFIG_KERNEL_PMEM_SMI_REGION
+static struct platform_device android_pmem_kernel_smi_device = {
 	.name = "android_pmem",
 	.id = 4,
+	.dev = { .platform_data = &android_pmem_kernel_smi_pdata },
+};
+#endif
+
+static struct platform_device android_pmem_swiqi_device = {
+	.name = "android_pmem",
+	.id = 5,
 	.dev = {.platform_data = &android_pmem_swiqi_pdata},
 };
 
@@ -557,11 +661,11 @@ static struct spi_board_info msm_spi_board_info[] __initdata = {
 		.modalias	= "es209ra_touch",
 		.mode		= SPI_MODE_0,
 		.irq		= INT_ES209RA_GPIO_TOUCHPAD,
+		.platform_data  = &es209ra_touch_data,
 		.bus_num	= 0,
 		.chip_select	= 0,
 		.max_speed_hz	= 3000000,
-		.platform_data  = &es209ra_touch_data,
-	},
+	}
 };
 
 #define CT_CSR_PHYS		0xA8700000
@@ -648,6 +752,7 @@ static void msm_fb_mddi_power_save(int on)
 {
 	int flag_on = !!on;
 	int ret;
+
 
 	if (mddi_power_save_on == flag_on)
 		return;
@@ -813,7 +918,6 @@ static struct resource msm_audio_resources[] = {
 		.end	= 0xa0700000 + 4,
 		.flags	= IORESOURCE_MEM,
 	},
-
 };
 
 static unsigned audio_gpio_on[] = {
@@ -839,6 +943,13 @@ static void __init audio_gpio_init(void)
 	}
 	set_audio_gpios(msm_audio_resources[1].start);
 }
+
+static struct platform_device msm_audio_device = {
+	.name   = "msm_audio",
+	.id     = 0,
+	.num_resources  = ARRAY_SIZE(msm_audio_resources),
+	.resource       = msm_audio_resources,
+};
 
 static struct resource bluesleep_resources[] = {
 	{
@@ -910,7 +1021,9 @@ static unsigned bt_config_power_off[] = {
 static int bluetooth_power(int on)
 {
 	printk(KERN_DEBUG "Bluetooth power switch: %d\n", on);
+
 	gpio_set_value(77, on);
+
 	return 0;
 }
 
@@ -929,6 +1042,7 @@ static void __init bt_power_init(void)
 		}
 	}
 	gpio_set_value(77, 0);
+
 	msm_bt_power_device.dev.platform_data = &bluetooth_power;
 	printk(KERN_DEBUG "Bluetooth power switch initialized\n");
 }
@@ -938,6 +1052,7 @@ static int bluetooth_power(int on)
 	struct vreg *vreg_bt;
 	struct vreg *vreg_wlan;
 	int pin, rc;
+
 	vreg_bt = vreg_get(NULL, "gp6");
 
 	if (IS_ERR(vreg_bt)) {
@@ -1001,7 +1116,7 @@ static int bluetooth_power(int on)
 		rc = vreg_disable(vreg_wlan);
 		if (rc) {
 			printk(KERN_ERR "%s: vreg wlan disable failed (%d)\n",
-					__func__, rc);
+			       __func__, rc);
 			return -EIO;
 		}
 		rc = vreg_disable(vreg_bt);
@@ -1057,6 +1172,7 @@ static struct resource kgsl_resources[] = {
 		.flags = IORESOURCE_IRQ,
        },
 };
+
 static struct kgsl_platform_data kgsl_pdata = {
 	.high_axi_3d = 128000,
 	.max_grp2d_freq = 0,
@@ -1094,13 +1210,45 @@ static struct platform_device es209ra_audio_jack_device = {
     },
 };
 
+#if defined(CONFIG_TSIF) || defined(CONFIG_TSIF_MODULE)
+
+#define TSIF_A_SYNC      GPIO_CFG(106, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA)
+#define TSIF_A_DATA      GPIO_CFG(107, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA)
+#define TSIF_A_EN        GPIO_CFG(108, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA)
+#define TSIF_A_CLK       GPIO_CFG(109, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA)
+
+static const struct msm_gpio tsif_gpios[] = {
+	{ .gpio_cfg = TSIF_A_CLK,  .label =  "tsif_clk", },
+	{ .gpio_cfg = TSIF_A_EN,   .label =  "tsif_en", },
+	{ .gpio_cfg = TSIF_A_DATA, .label =  "tsif_data", },
+	{ .gpio_cfg = TSIF_A_SYNC, .label =  "tsif_sync", },
+};
+
+static struct msm_tsif_platform_data tsif_platform_data = {
+	.num_gpios = ARRAY_SIZE(tsif_gpios),
+	.gpios = tsif_gpios,
+};
+
+#endif
+
+#ifdef CONFIG_QSD_SVS
 #define TPS65023_MAX_DCDC1	1600
+#else
+#define TPS65023_MAX_DCDC1	CONFIG_QSD_PMIC_DEFAULT_DCDC1
+#endif
+
 static int qsd8x50_tps65023_set_dcdc1(int mVolts)
 {
 	int rc = 0;
+#ifdef CONFIG_QSD_SVS
 	rc = tps65023_set_dcdc1_level(mVolts);
+
 	if (rc == -ENODEV && mVolts <= CONFIG_QSD_PMIC_DEFAULT_DCDC1)
 		rc = 0;
+#else
+	if (mVolts > CONFIG_QSD_PMIC_DEFAULT_DCDC1)
+		rc = -EFAULT;
+#endif
 	return rc;
 }
 
@@ -1135,6 +1283,7 @@ static int ak8973_gpio_config(int enable)
 			goto ak8973_gpio_fail_0;
 		}
 		gpio_set_value(AKM8973_GPIO_RESET_PIN, 1);
+
 	} else {
 		gpio_free(AKM8973_GPIO_RESET_PIN);
 	}
@@ -1332,10 +1481,14 @@ static struct platform_device msm_wlan_ar6000_pm_device = {
 
 static int hsusb_rpc_connect(int connect)
 {
+#ifdef CONFIG_CRASH_DUMP
+	return 0;
+#else
 	if (connect)
 		return msm_hsusb_rpc_connect();
 	else
 		return msm_hsusb_rpc_close();
+#endif
 }
 
 static struct msm_otg_platform_data msm_otg_pdata = {
@@ -1369,9 +1522,15 @@ static struct platform_device pmic_time_device = {
 static struct platform_device *devices[] __initdata = {
 	&msm_wlan_ar6000_pm_device,
 	&msm_fb_device,
+#ifdef CONFIG_SMC91X
+	&smc91x_device,
+#endif
 	&msm_device_smd,
 	&msm_device_dmov,
 	&android_pmem_kernel_ebi1_device,
+#ifdef CONFIG_KERNEL_PMEM_SMI_REGION
+	&android_pmem_kernel_smi_device,
+#endif
 	&android_pmem_device,
 	&android_pmem_adsp_device,
 	&android_pmem_smipool_device,
@@ -1379,21 +1538,32 @@ static struct platform_device *devices[] __initdata = {
 	&msm_device_nand,
 	&msm_device_i2c,
 	&qsd_device_spi,
-	&usb_mass_storage_device,
 	&rndis_device,
+	&usb_mass_storage_device,
 	&android_usb_device,
 	&msm_device_tssc,
+	&msm_audio_device,
 	&msm_device_uart1,
 	&msm_bluesleep_device,
 	&msm_bt_power_device,
 	&msm_device_uart_dm2,
 	&msm_device_kgsl,
 	&hs_device,
+#if defined(CONFIG_TSIF) || defined(CONFIG_TSIF_MODULE)
+	&msm_device_tsif,
+#endif
+#ifdef CONFIG_SEMC_IMX046_CAMERA
 	&msm_camera_sensor_semc_imx046_camera,
+#endif
+#ifdef CONFIG_SEMC_MSM_PMIC_VIBRATOR
 	&vibrator_device,
+#endif
 	&es209ra_audio_jack_device,
-	&pmic_time_device,
 	&lbs_device,
+#ifdef CONFIG_CAPTURE_KERNEL
+	&kdump_amsscoredump_device,
+#endif
+	&pmic_time_device,
 };
 
 static void __init es209ra_init_irq(void)
@@ -1422,8 +1592,17 @@ static void __init es209ra_init_usb(void)
 		return;
 	}
 
+#ifdef CONFIG_USB_MSM_OTG_72K
 	platform_device_register(&msm_device_otg);
+#endif
+
+#ifdef CONFIG_USB_FUNCTION_MSM_HSUSB
+	platform_device_register(&msm_device_hsusb_peripheral);
+#endif
+
+#ifdef CONFIG_USB_MSM_72K
 	platform_device_register(&msm_device_gadget_peripheral);
+#endif
 }
 
 static void sdcc_gpio_init(void)
@@ -1540,10 +1719,10 @@ static unsigned int es209ra_sdcc_slot_status(struct device *dev)
 }
 
 static struct mmc_platform_data es209ra_sdcc_data1 = {
-	.ocr_mask	= MMC_VDD_27_28 | MMC_VDD_28_29,
+	.ocr_mask	    = MMC_VDD_27_28 | MMC_VDD_28_29,
 	.translate_vdd	= msm_sdcc_setup_power,
-	.status		= es209ra_sdcc_slot_status,
-	.status_irq	= INT_ES209RA_GPIO_CARD_INS_N,
+	.status		    = es209ra_sdcc_slot_status,
+	.status_irq	    = INT_ES209RA_GPIO_CARD_INS_N,
 	.irq_flags      = IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
 	.mmc_bus_width  = MMC_CAP_4_BIT_DATA,
 };
@@ -1568,22 +1747,47 @@ static void __init es209ra_init_mmc(void)
 	msm_add_sdcc(2, &es209ra_sdcc_data2);
 }
 
+#ifdef CONFIG_SMC91X
+static void __init es209ra_cfg_smc91x(void)
+{
+	int rc = 0;
+
+	smc91x_resources[0].start = 0x70000300;
+	smc91x_resources[0].end = 0x700003ff;
+	smc91x_resources[1].start = INT_ES209RA_GPIO_ETHER;
+	smc91x_resources[1].end = INT_ES209RA_GPIO_ETHER;
+
+	rc = gpio_tlmm_config(GPIO_CFG(107, 0, GPIO_INPUT,
+					       GPIO_PULL_DOWN, GPIO_2MA),
+					       GPIO_ENABLE);
+		if (rc) {
+			printk(KERN_ERR "%s: gpio_tlmm_config=%d\n",
+					__func__, rc);
+		}
+		printk(KERN_ERR "%s: invalid machine type\n", __func__);
+}
+#endif
+
 static struct msm_pm_platform_data msm_pm_data[MSM_PM_SLEEP_MODE_NR] = {
 	[MSM_PM_SLEEP_MODE_POWER_COLLAPSE].supported = 1,
 	[MSM_PM_SLEEP_MODE_POWER_COLLAPSE].suspend_enabled = 1,
 	[MSM_PM_SLEEP_MODE_POWER_COLLAPSE].idle_enabled = 1,
 	[MSM_PM_SLEEP_MODE_POWER_COLLAPSE].latency = 8594,
 	[MSM_PM_SLEEP_MODE_POWER_COLLAPSE].residency = 23740,
+
 	[MSM_PM_SLEEP_MODE_POWER_COLLAPSE_NO_XO_SHUTDOWN].supported = 1,
 	[MSM_PM_SLEEP_MODE_POWER_COLLAPSE_NO_XO_SHUTDOWN].suspend_enabled = 1,
 	[MSM_PM_SLEEP_MODE_POWER_COLLAPSE_NO_XO_SHUTDOWN].idle_enabled = 1,
 	[MSM_PM_SLEEP_MODE_POWER_COLLAPSE_NO_XO_SHUTDOWN].latency = 4594,
 	[MSM_PM_SLEEP_MODE_POWER_COLLAPSE_NO_XO_SHUTDOWN].residency = 23740,
+
 	[MSM_PM_SLEEP_MODE_RAMP_DOWN_AND_WAIT_FOR_INTERRUPT].supported = 1,
-	[MSM_PM_SLEEP_MODE_RAMP_DOWN_AND_WAIT_FOR_INTERRUPT].suspend_enabled = 1,
+	[MSM_PM_SLEEP_MODE_RAMP_DOWN_AND_WAIT_FOR_INTERRUPT].suspend_enabled
+		= 1,
 	[MSM_PM_SLEEP_MODE_RAMP_DOWN_AND_WAIT_FOR_INTERRUPT].idle_enabled = 0,
 	[MSM_PM_SLEEP_MODE_RAMP_DOWN_AND_WAIT_FOR_INTERRUPT].latency = 443,
 	[MSM_PM_SLEEP_MODE_RAMP_DOWN_AND_WAIT_FOR_INTERRUPT].residency = 1098,
+
 	[MSM_PM_SLEEP_MODE_WAIT_FOR_INTERRUPT].supported = 1,
 	[MSM_PM_SLEEP_MODE_WAIT_FOR_INTERRUPT].suspend_enabled = 1,
 	[MSM_PM_SLEEP_MODE_WAIT_FOR_INTERRUPT].idle_enabled = 1,
@@ -1595,24 +1799,27 @@ static void msm_i2c_gpio_config(int iface, int config_type)
 {
 	int gpio_scl;
 	int gpio_sda;
-	
+
 	switch (iface)
 	{
 		case 0:
 			gpio_scl = 95;
 			gpio_sda = 96;
 			break;
-		case 1:
+		case 1: 
 		default:
-			printk(KERN_INFO "%s: es209ra has only primary I2C.\n", __func__);
 			return;
 	}
-	if (config_type) {
+
+	if (config_type)
+	{
 		gpio_tlmm_config(GPIO_CFG(gpio_scl, 1, GPIO_INPUT,
 					GPIO_NO_PULL, GPIO_16MA), GPIO_ENABLE);
 		gpio_tlmm_config(GPIO_CFG(gpio_sda, 1, GPIO_INPUT,
 					GPIO_NO_PULL, GPIO_16MA), GPIO_ENABLE);
-	} else {
+	}
+	else
+	{
 		gpio_tlmm_config(GPIO_CFG(gpio_scl, 0, GPIO_OUTPUT,
 					GPIO_NO_PULL, GPIO_16MA), GPIO_ENABLE);
 		gpio_tlmm_config(GPIO_CFG(gpio_sda, 0, GPIO_OUTPUT,
@@ -1630,6 +1837,11 @@ static struct msm_i2c_platform_data msm_i2c_pdata = {
 
 static void __init msm_device_i2c_init(void)
 {
+	if (gpio_request(95, "i2c_pri_clk"))
+		pr_err("failed to request gpio i2c_pri_clk\n");
+	if (gpio_request(96, "i2c_pri_dat"))
+		pr_err("failed to request gpio i2c_pri_dat\n");
+
 	msm_i2c_pdata.rmutex = (uint32_t)smem_alloc(SMEM_I2C_MUTEX, 8);
 	msm_i2c_pdata.pm_lat =
 		msm_pm_data[MSM_PM_SLEEP_MODE_POWER_COLLAPSE_NO_XO_SHUTDOWN]
@@ -1644,6 +1856,17 @@ static void __init pmem_kernel_ebi1_size_setup(char **p)
 }
 __early_param("pmem_kernel_ebi1_size=", pmem_kernel_ebi1_size_setup);
 
+#ifdef CONFIG_KERNEL_PMEM_SMI_REGION
+static unsigned pmem_kernel_smi_size = MSM_PMEM_SMIPOOL_SIZE;
+static void __init pmem_kernel_smi_size_setup(char **p)
+{
+	pmem_kernel_smi_size = memparse(*p, p);
+
+	if (pmem_kernel_smi_size > MSM_PMEM_SMIPOOL_SIZE)
+		pmem_kernel_smi_size = MSM_PMEM_SMIPOOL_SIZE;
+}
+__early_param("pmem_kernel_smi_size=", pmem_kernel_smi_size_setup);
+#endif
 
 static unsigned pmem_mdp_size = MSM_PMEM_MDP_SIZE;
 static void __init pmem_mdp_size_setup(char **p)
@@ -1651,22 +1874,6 @@ static void __init pmem_mdp_size_setup(char **p)
 	pmem_mdp_size = memparse(*p, p);
 }
 __early_param("pmem_mdp_size=", pmem_mdp_size_setup);
-
-static unsigned fb_size = MSM_FB_SIZE;
-static void __init fb_size_setup(char **p)
-{
-	fb_size = memparse(*p, p);
-}
-
-__early_param("fb_size=", fb_size_setup);
-
-static unsigned gpu_phys_size = MSM_GPU_PHYS_SIZE;
-static void __init gpu_phys_size_setup(char **p)
-{
-	gpu_phys_size = memparse(*p, p);
-}
-
-__early_param("gpu_phys_size=", gpu_phys_size_setup);
 
 static unsigned pmem_adsp_size = MSM_PMEM_ADSP_SIZE;
 static void __init pmem_adsp_size_setup(char **p)
@@ -1683,6 +1890,13 @@ static void __init pmem_swiqi_size_setup(char **p)
 
 __early_param("pmem_swiqi_size=", pmem_swiqi_size_setup);
 
+static unsigned audio_size = MSM_AUDIO_SIZE;
+static void __init audio_size_setup(char **p)
+{
+	audio_size = memparse(*p, p);
+}
+__early_param("audio_size=", audio_size_setup);
+
 unsigned int es209ra_startup_reason = 0;
 
 static int __init es209ra_startup_reason_setup(char *str)
@@ -1690,7 +1904,6 @@ static int __init es209ra_startup_reason_setup(char *str)
 	es209ra_startup_reason = simple_strtoul(str, NULL, 16);
 	return 1;
 }
-
 __setup_param("startup=", es209ra_startup_reason_setup_1, es209ra_startup_reason_setup, 0);
 __setup_param("semcandroidboot.startup=", es209ra_startup_reason_setup_2, es209ra_startup_reason_setup, 0);
 
@@ -1699,31 +1912,48 @@ static int es209ra_hw_version = 0;
 static int __init es209ra_hw_version_setup(char *str)
 {
 	es209ra_hw_version = simple_strtoul(str, NULL, 0);
+
 	return 1;
 }
-
 __setup_param("hwversion=", es209ra_hw_version_setup_1, es209ra_hw_version_setup, 0);
 __setup_param("semcandroidboot.hwversion=", es209ra_hw_version_setup_2, es209ra_hw_version_setup, 0);
-
 int get_predecode_repair_cache(void);
 int set_predecode_repair_cache(void);
-
 static void __init es209ra_init(void)
 {
+#ifdef CONFIG_CAPTURE_KERNEL
+	smsm_wait_for_modem_reset();
+#else
+	smsm_wait_for_modem();
+#endif
+	if (socinfo_init() < 0)
+		printk(KERN_ERR "%s: socinfo_init() failed!\n", __func__);
 	printk(KERN_INFO "%s: startup_reason: 0x%08x\n",
 					__func__, es209ra_startup_reason);
 	printk(KERN_ERR "PVR0F2: %x\n", get_predecode_repair_cache());
 	set_predecode_repair_cache();
 	printk(KERN_ERR "PVR0F2: %x\n", get_predecode_repair_cache());
+
+#ifdef CONFIG_SMC91X
+	es209ra_cfg_smc91x();
+#endif
 	msm_acpu_clock_init(&qsd8x50_clock_data);
-	msm_hsusb_pdata.swfi_latency =	msm_pm_data
+
+	msm_hsusb_pdata.swfi_latency =
+		msm_pm_data
 		[MSM_PM_SLEEP_MODE_RAMP_DOWN_AND_WAIT_FOR_INTERRUPT].latency;
 	msm_device_hsusb_peripheral.dev.platform_data = &msm_hsusb_pdata;
 	msm_device_otg.dev.platform_data = &msm_otg_pdata;
 	msm_device_gadget_peripheral.dev.platform_data = &msm_gadget_pdata;
+
+#if defined(CONFIG_TSIF) || defined(CONFIG_TSIF_MODULE)
+	msm_device_tsif.dev.platform_data = &tsif_platform_data;
+#endif
 	platform_add_devices(devices, ARRAY_SIZE(devices));
 	msm_fb_add_devices();
+#ifdef CONFIG_MSM_CAMERA
 	config_camera_off_gpios();
+#endif
 	es209ra_init_usb();
 	es209ra_init_mmc();
 	bt_power_init();
@@ -1740,6 +1970,82 @@ static void __init es209ra_init(void)
 	msm_mddi_tmd_fwvga_display_device_init();
 }
 
+#ifndef CONFIG_CAPTURE_KERNEL
+static void __init es209ra_allocate_memory_regions(void)
+{
+	void *addr;
+	unsigned long size;
+
+	size = pmem_kernel_ebi1_size;
+	if (size) {
+		addr = alloc_bootmem_aligned(size, 0x100000);
+		android_pmem_kernel_ebi1_pdata.start = __pa(addr);
+		android_pmem_kernel_ebi1_pdata.size = size;
+		pr_info("allocating %lu bytes at %p (%lx physical) for kernel"
+			" ebi1 pmem arena\n", size, addr, __pa(addr));
+	}
+
+#ifdef CONFIG_KERNEL_PMEM_SMI_REGION
+	size = pmem_kernel_smi_size;
+	if (size > MSM_PMEM_SMIPOOL_SIZE) {
+		printk(KERN_ERR "pmem kernel smi arena size %lu is too big\n",
+			size);
+
+		size = MSM_PMEM_SMIPOOL_SIZE;
+	}
+
+	android_pmem_kernel_smi_pdata.start = MSM_PMEM_SMIPOOL_BASE;
+	android_pmem_kernel_smi_pdata.size = size;
+
+	pr_info("allocating %lu bytes at %lx (%lx physical)"
+		"for pmem kernel smi arena\n", size,
+		(long unsigned int) MSM_PMEM_SMIPOOL_BASE,
+		__pa(MSM_PMEM_SMIPOOL_BASE));
+#endif
+
+	size = pmem_mdp_size;
+	if (size) {
+		addr = alloc_bootmem(size);
+		android_pmem_pdata.start = __pa(addr);
+		android_pmem_pdata.size = size;
+		pr_info("allocating %lu bytes at %p (%lx physical) for mdp "
+			"pmem arena\n", size, addr, __pa(addr));
+	}
+
+	size = pmem_adsp_size;
+	if (size) {
+		addr = alloc_bootmem(size);
+		android_pmem_adsp_pdata.start = __pa(addr);
+		android_pmem_adsp_pdata.size = size;
+		pr_info("allocating %lu bytes at %p (%lx physical) for adsp "
+			"pmem arena\n", size, addr, __pa(addr));
+	}
+
+	size = MSM_FB_SIZE;
+	addr = (void *)MSM_FB_BASE;
+	msm_fb_resources[0].start = (unsigned long)addr;
+	msm_fb_resources[0].end = msm_fb_resources[0].start + size - 1;
+	pr_info("using %lu bytes of SMI at %lx physical for fb\n",
+	       size, (unsigned long)addr);
+
+	size = pmem_swiqi_size;
+
+	if (size) {
+		addr = alloc_bootmem(size);
+		android_pmem_swiqi_pdata.start = __pa(addr);
+		android_pmem_swiqi_pdata.size = size;
+		pr_info("allocating %lu bytes at %p (%lx physical) for swiqi "
+			"pmem arena\n", size, addr, __pa(addr));
+	}
+
+	size = audio_size ? : MSM_AUDIO_SIZE;
+	addr = alloc_bootmem(size);
+	msm_audio_resources[0].start = __pa(addr);
+	msm_audio_resources[0].end = msm_audio_resources[0].start + size - 1;
+	pr_info("allocating %lu bytes at %p (%lx physical) for audio\n",
+		size, addr, __pa(addr));
+}
+
 static void __init es209ra_fixup(struct machine_desc *desc, struct tag *tags,
                                char **cmdline, struct meminfo *mi)
 {
@@ -1747,20 +2053,26 @@ static void __init es209ra_fixup(struct machine_desc *desc, struct tag *tags,
 	mi->bank[0].start = PHYS_OFFSET;
 	mi->bank[0].node = PHYS_TO_NID(mi->bank[0].start);
 	mi->bank[0].size = (232*1024*1024);
+
 	mi->bank[1].start = 0x30000000;
 	mi->bank[1].size = (127*1024*1024);
 	mi->bank[1].node = PHYS_TO_NID(mi->bank[1].start);
 }
+#endif
 
 static void __init es209ra_map_io(void)
 {
 	msm_shared_ram_phys = MSM_SHARED_RAM_PHYS;
 	msm_map_qsd8x50_io();
+#ifndef CONFIG_CAPTURE_KERNEL
+	es209ra_allocate_memory_regions();
+#endif
 	msm_clock_init(msm_clocks_8x50, msm_num_clocks_8x50);
 }
 
 static int __init board_serialno_setup(char *serialno)
 {
+#ifdef CONFIG_USB_ANDROID
 	int i;
 	char *src = serialno;
 	android_usb_pdata.serial_number = serialno;
@@ -1769,9 +2081,9 @@ static int __init board_serialno_setup(char *serialno)
 	rndis_pdata.ethaddr[0] = 0x02;
 	for (i = 0; *src; i++)
 		rndis_pdata.ethaddr[i % (ETH_ALEN -1)+1] ^= *src++;
+#endif
 	return 1;
 }
-
 __setup_param("serialno=", board_serialno_setup_1, board_serialno_setup, 0);
 __setup_param("semcandroidboot.serialno=", board_serialno_setup_2, board_serialno_setup, 0);
 
@@ -1780,8 +2092,12 @@ MACHINE_START(ES209RA, "ES209RA")
 	.phys_io  = MSM_DEBUG_UART_PHYS,
 	.io_pg_offst = ((MSM_DEBUG_UART_BASE) >> 18) & 0xfffc,
 #endif
+#ifdef CONFIG_CAPTURE_KERNEL
+	.boot_params    = PHYS_OFFSET + 0x1000,
+#else
 	.boot_params	= PHYS_OFFSET + 0x100,
 	.fixup          = es209ra_fixup,
+#endif
 	.map_io		= es209ra_map_io,
 	.init_irq	= es209ra_init_irq,
 	.init_machine	= es209ra_init,
