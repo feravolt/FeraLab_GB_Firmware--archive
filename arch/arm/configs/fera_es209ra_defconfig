@@ -815,10 +815,7 @@ CONFIG_ES209RA_WLAN_POWER=y
 #
 # CONFIG_MSM_SIM_CARD_DETECT is not set
 
-#
-# SEMC vibrator driver for msm-pmic platform
-#
-# CONFIG_SEMC_MSM_PMIC_VIBRATOR is not set
+CONFIG_SEMC_MSM_PMIC_VIBRATOR=y
 
 #
 # SEMC GPIO DRIVERS
