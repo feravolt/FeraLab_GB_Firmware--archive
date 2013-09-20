@@ -59,25 +59,26 @@
 
 #define TOUCHPAD_SUSPEND 	34
 #define TOUCHPAD_IRQ 		38
-#define MSM_PMEM_MDP_SIZE 	0x01C91000
+#define MSM_PMEM_MDP_SIZE 	0x1C91000
 #define SMEM_SPINLOCK_I2C	"S:6"
-#define MSM_PMEM_ADSP_SIZE	0x02196000
-#define MSM_FB_SIZE         	0x001B0500
-#define PMEM_KERNEL_EBI1_SIZE	0x00028000
-#define MSM_PMEM_SWIQI_SIZE 	0x00200000
-#define PMIC_VREG_WLAN_LEVEL	2600
-#define PMIC_VREG_GP6_LEVEL	2850
-#define FPGA_SDCC_STATUS	0x70000280
-#define MSM_SMI_BASE		0x00000000
-#define MSM_SHARED_RAM_PHYS	0x00100000
-#define MSM_PMEM_SMI_BASE	0x02B00000
-#define MSM_PMEM_SMI_SIZE	0x01500000
-#define MSM_FB_BASE		0x02B00000
+#define MSM_PMEM_ADSP_SIZE	0x2196000
+#define MSM_PMEM_SWIQI_SIZE 	0x300000
+#define MSM_FB_SIZE         	0x500000
 #define MSM_GPU_PHYS_SIZE 	SZ_2M
+#define MSM_SMI_BASE		0x00000000
+#define MSM_SHARED_RAM_PHYS	(MSM_SMI_BASE + 0x00100000)
+#define MSM_PMEM_SMI_BASE	(MSM_SMI_BASE + 0x02B00000)
+#define MSM_PMEM_SMI_SIZE	0x01500000
+#define MSM_FB_BASE		MSM_PMEM_SMI_BASE
 #define MSM_GPU_PHYS_BASE 	(MSM_FB_BASE + MSM_FB_SIZE)
 #define MSM_PMEM_SMIPOOL_BASE	(MSM_GPU_PHYS_BASE + MSM_GPU_PHYS_SIZE)
 #define MSM_PMEM_SMIPOOL_SIZE	(MSM_PMEM_SMI_SIZE - MSM_FB_SIZE \
 					- MSM_GPU_PHYS_SIZE)
+
+#define PMEM_KERNEL_EBI1_SIZE	0x28000
+#define PMIC_VREG_WLAN_LEVEL	2600
+#define PMIC_VREG_GP6_LEVEL	2850
+#define FPGA_SDCC_STATUS	0x70000280
 
 #ifdef CONFIG_CAPTURE_KERNEL
 #define AMSSCORE_RAM_START 0x00000000
@@ -1166,12 +1167,12 @@ static struct resource kgsl_resources[] = {
 };
 
 static struct kgsl_platform_data kgsl_pdata = {
-	.high_axi_3d = 128000,
-	.max_grp2d_freq = 0,
-	.min_grp2d_freq = 0,
+	.high_axi_3d = 144000,
+	.max_grp2d_freq = 128000000,
+	.min_grp2d_freq = 96000000,
 	.set_grp2d_async = NULL,
-	.max_grp3d_freq = 0,
-	.min_grp3d_freq = 0,
+	.max_grp3d_freq = 144000000,
+	.min_grp3d_freq = 128000000,
 	.set_grp3d_async = NULL,
 	.imem_clk_name = "imem_clk",
 	.grp3d_clk_name = "grp_clk",
