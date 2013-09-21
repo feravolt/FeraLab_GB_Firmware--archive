@@ -1,7 +1,7 @@
 /* include/linux/msm_mdp.h
  *
  * Copyright (C) 2007 Google Incorporated
- * Copyright (c) 2009-2011, Code Aurora Forum. All rights reserved.
+ * Copyright (c) 2009-2010, Code Aurora Forum. All rights reserved.
  *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and
@@ -41,8 +41,6 @@
 #define MSMFB_OVERLAY_GET      _IOR(MSMFB_IOCTL_MAGIC, 140, \
 						struct mdp_overlay)
 #define MSMFB_OVERLAY_PLAY_ENABLE     _IOW(MSMFB_IOCTL_MAGIC, 141, unsigned int)
-#define MSMFB_DTV_LCDC_ENABLE     _IOW(MSMFB_IOCTL_MAGIC, 142, unsigned int)
-#define MSMFB_OVERLAY_REFRESH     _IOW(MSMFB_IOCTL_MAGIC, 143, unsigned int)
 
 #define MDP_IMGTYPE2_START 0x10000
 
@@ -72,6 +70,7 @@ enum {
 	FB_IMG,
 };
 
+/* mdp_blit_req flag values */
 #define MDP_ROT_NOP 0
 #define MDP_FLIP_LR 0x1
 #define MDP_FLIP_UD 0x2
@@ -89,18 +88,17 @@ enum {
 #define MDP_BLIT_WITH_DMA_BARRIERS	0x000
 #define MDP_BLIT_WITH_NO_DMA_BARRIERS    \
 	(MDP_NO_DMA_BARRIER_START | MDP_NO_DMA_BARRIER_END)
-#define MDP_BLIT_SRC_GEM                0x04000000
-#define MDP_BLIT_DST_GEM                0x02000000
 #define MDP_TRANSP_NOP 0xffffffff
 #define MDP_ALPHA_NOP 0xff
-#define MDP_SOURCE_ROTATED_90		0x00100000
 
 #define MDP_FB_PAGE_PROTECTION_NONCACHED         (0)
 #define MDP_FB_PAGE_PROTECTION_WRITECOMBINE      (1)
 #define MDP_FB_PAGE_PROTECTION_WRITETHROUGHCACHE (2)
 #define MDP_FB_PAGE_PROTECTION_WRITEBACKCACHE    (3)
 #define MDP_FB_PAGE_PROTECTION_WRITEBACKWACACHE  (4)
+/* Sentinel: Don't use! */
 #define MDP_FB_PAGE_PROTECTION_INVALID           (5)
+/* Count of the number of MDP_FB_PAGE_PROTECTION_... values. */
 #define MDP_NUM_FB_PAGE_PROTECTION_VALUES        (5)
 
 struct mdp_rect {
@@ -116,16 +114,11 @@ struct mdp_img {
 	uint32_t format;
 	uint32_t offset;
 	int memory_id;		/* the file descriptor */
-	uint32_t priv;
 };
 
-struct mdp_img_gb {
-  uint32_t width;
-  uint32_t height;
-  uint32_t format;
-  uint32_t offset;
-  int memory_id;
-};
+/*
+ * {3x3} + {3} ccs matrix
+ */
 
 #define MDP_CCS_RGB2YUV 	0
 #define MDP_CCS_YUV2RGB 	1
@@ -139,8 +132,6 @@ struct mdp_ccs {
 	uint16_t bv[MDP_BV_SIZE];	/* 1x3 bias vector */
 };
 
-#define MDP_BLIT_REQ_VERSION 2
-
 struct mdp_blit_req {
 	struct mdp_img src;
 	struct mdp_img dst;
@@ -152,35 +143,15 @@ struct mdp_blit_req {
 	int sharpening_strength;  /* -127 <--> 127, default 64 */
 };
 
-struct mdp_blit_req_gb {
-  struct mdp_img_gb src;
-  struct mdp_img_gb dst;
-  struct mdp_rect src_rect;
-  struct mdp_rect dst_rect;
-  uint32_t alpha;
-  uint32_t transp_mask;
-  uint32_t flags;
-  int sharpening_strength;  /* -127 <--> 127, default 64 */
-};
-
 struct mdp_blit_req_list {
 	uint32_t count;
 	struct mdp_blit_req req[];
 };
 
-struct mdp_blit_req_list_gb {
-  uint32_t count;
-  struct mdp_blit_req_gb req[];
-};
-
-#define MSMFB_DATA_VERSION 2
-
 struct msmfb_data {
 	uint32_t offset;
 	int memory_id;
 	int id;
-	uint32_t flags;
-	uint32_t priv;
 };
 
 #define MSMFB_NEW_REQUEST -1
@@ -221,11 +192,4 @@ struct mdp_page_protection {
 	uint32_t page_protection;
 };
 
-#ifdef __KERNEL__
-
-int get_fb_phys_info(unsigned long *start, unsigned long *len, int fb_num);
-
 #endif
-
-#endif
-
