@@ -69,7 +69,6 @@
 #define MSM_SHARED_RAM_PHYS	(MSM_SMI_BASE + 0x00100000)
 #define MSM_PMEM_SMI_BASE	(MSM_SMI_BASE + 0x02B00000)
 #define MSM_PMEM_SMI_SIZE	0x01500000
-#define MSM_FB_BASE		0x02B00000
 #define MSM_GPU_PHYS_SIZE 	SZ_2M
 #define MSM_FB_BASE		MSM_PMEM_SMI_BASE
 #define MSM_GPU_PHYS_BASE 	(MSM_FB_BASE + MSM_FB_SIZE)
@@ -1169,11 +1168,11 @@ static struct resource kgsl_resources[] = {
 };
 
 static struct kgsl_platform_data kgsl_pdata = {
-	.high_axi_3d = 144000,
+	.high_axi_3d = 192000,
 	.max_grp2d_freq = 128000000,
 	.min_grp2d_freq = 96000000,
 	.set_grp2d_async = NULL,
-	.max_grp3d_freq = 144000000,
+	.max_grp3d_freq = 192000000,
 	.min_grp3d_freq = 128000000,
 	.set_grp3d_async = NULL,
 	.imem_clk_name = "imem_clk",

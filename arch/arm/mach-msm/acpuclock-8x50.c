@@ -1,4 +1,4 @@
-/* FeraEdit */
+/* FeraLab */
 
 #include <linux/kernel.h>
 #include <linux/init.h>
@@ -53,33 +53,36 @@ struct clkctl_acpu_speed {
 	unsigned long    lpj;
 };
 
-struct clkctl_acpu_speed acpu_freq_tbl_998[] = {
-	{ 0, 19200, ACPU_PLL_TCXO, 0, 0, 0, 0, 14000, 0, 0, 1000},
-	{ 0, 128000, ACPU_PLL_1, 1, 5, 0, 0, 14000, 2, 0, 1000},
-	{ 1, 245760, ACPU_PLL_0, 4, 0, 0, 0, 29000, 0, 0, 1000},
-	{ 1, 384000, ACPU_PLL_3, 0, 0, 0, 0, 58000, 1, 0xA, 1000},
-	{ 0, 422400, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xB, 1000},
-	{ 0, 460800, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xC, 1000},
-	{ 0, 499200, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xD, 1025},
-	{ 0, 537600, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xE, 1050},
-	{ 1, 576000, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xF, 1050},
-	{ 0, 614400, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0x10, 1075},
-	{ 0, 652800, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0x11, 1100},
-	{ 0, 691200, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0x12, 1125},
-	{ 0, 729600, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0x13, 1125},
-	{ 1, 768000, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x14, 1125},
-	{ 0, 806400, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x15, 1175},
-	{ 0, 844800, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x16, 1200},
-	{ 0, 883200, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x17, 1225},
-	{ 0, 921600, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x18, 1225},
-	{ 0, 960000, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x19, 1250},
-	{ 1, 998400, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x1A, 1275},
-	{ 0, 1036800, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x1B, 1275},
-	{ 0, 1075200, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x1C, 1275},
-	{ 1, 1113600, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x1D, 1300},
-	{ 0, 1152000, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x1E, 1300},
-	{ 1, 1190400, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x1F, 1325},
- 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+struct clkctl_acpu_speed acpu_freq_tbl_1190[] = {
+	{ 0, 19200, ACPU_PLL_TCXO, 0, 0, 0, 0, 14000, 0, 0, 1000 },
+	{ 0, 192000, ACPU_PLL_1, 1, 5, 0, 0, 14000, 2, 0, 1000 },
+	{ 1, 245760, ACPU_PLL_0, 4, 0, 0, 0, 29000, 0, 0, 1000 },
+	{ 1, 384000, ACPU_PLL_3, 0, 0, 0, 0, 58000, 1, 0xA, 1000 },
+	{ 0, 422400, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xB, 1000 },
+	{ 0, 460800, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xC, 1000 },
+	{ 0, 499200, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xD, 1050 },
+	{ 0, 537600, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xE, 1050 },
+	{ 1, 576000, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xF, 1050 },
+	{ 0, 614400, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0x10, 1075 },
+	{ 0, 652800, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0x11, 1100 },
+	{ 0, 691200, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0x12, 1125 },
+	{ 0, 729600, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x13, 1150 },
+	{ 1, 768000, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x14, 1150 },
+	{ 0, 806400, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x15, 1175 },
+	{ 0, 844800, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x16, 1200 },
+	{ 0, 883200, ACPU_PLL_3, 0, 0, 0, 0, 160000, 1, 0x17, 1225 },
+	{ 0, 921600, ACPU_PLL_3, 0, 0, 0, 0, 160000, 1, 0x18, 1275 },
+	{ 0, 960000, ACPU_PLL_3, 0, 0, 0, 0, 160000, 1, 0x19, 1275 },
+	{ 1, 998400, ACPU_PLL_3, 0, 0, 0, 0, 160000, 1, 0x1A, 1275 },
+	{ 0, 1036800, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1B, 1300 },
+	{ 0, 1075200, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1C, 1325 },
+	{ 1, 1113600, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1D, 1325 },
+	{ 0, 1152000, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1E, 1325 },
+	{ 1, 1190400, ACPU_PLL_3, 0, 0, 0, 0, 259200, 1, 0x1F, 1350 },
+	{ 0, 1228800, ACPU_PLL_3, 0, 0, 0, 0, 259200, 1, 0x20, 1375 },
+	{ 0, 1267200, ACPU_PLL_3, 0, 0, 0, 0, 259200, 1, 0x21, 1400 },
+	{ 0, 1305600, ACPU_PLL_3, 0, 0, 0, 0, 259200, 1, 0x22, 1425 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 };
 
 struct clkctl_acpu_speed acpu_freq_tbl_768[] = {
@@ -100,7 +103,7 @@ struct clkctl_acpu_speed acpu_freq_tbl_768[] = {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 };
 
-static struct clkctl_acpu_speed *acpu_freq_tbl = acpu_freq_tbl_998;
+static struct clkctl_acpu_speed *acpu_freq_tbl = acpu_freq_tbl_1190;
 #define AXI_S	(&acpu_freq_tbl[1])
 #define PLL0_S	(&acpu_freq_tbl[2])
 #define POWER_COLLAPSE_KHZ (AXI_S->acpuclk_khz)
@@ -123,7 +126,6 @@ static void __init cpufreq_table_init(void)
 		}
 	}
 
-	BUG_ON(acpu_freq_tbl[i].acpuclk_khz != 0);
 	freq_table[freq_cnt].index = freq_cnt;
 	freq_table[freq_cnt].frequency = CPUFREQ_TABLE_END;
 	pr_info("%d scaling frequencies supported.\n", freq_cnt);
@@ -144,7 +146,7 @@ static struct clock_state drv_state = { 0 };
 
 unsigned long clk_get_max_axi_khz(void)
 {
-	return 128000;
+	return 192000;
 }
 EXPORT_SYMBOL(clk_get_max_axi_khz);
 
@@ -504,16 +506,9 @@ static void __init acpu_freq_tbl_fixup(void)
 	}
 
 	switch (tcsr_spare2 & 0xF0) {
-	case 0x70:
-		acpu_freq_tbl = acpu_freq_tbl_768;
-		max_acpu_khz = 768000;
-		break;
 	case 0x30:
 	case 0x00:
 		max_acpu_khz = 1190400;
-		break;
-	case 0x10:
-		max_acpu_khz = 1267200;
 		break;
 	default:
 		pr_warning("Invalid efuse data (%x) on Max ACPU freq!\n",
@@ -638,3 +633,4 @@ void acpuclk_set_vdd(unsigned int khz, int vdd)
 }
 
 #endif
+
