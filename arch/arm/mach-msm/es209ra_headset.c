@@ -1,24 +1,3 @@
-/* SEMC:modified */
-/* 
-   Audio Jack Driver
-
-   Copyright (C) 2009 Sony Ericsson Mobile Communications Japan, Inc.
-
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License, version 2, as
-   published by the Free Software Foundation.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*/
-
-
 #include <linux/module.h>
 #include <linux/interrupt.h>
 #include <linux/workqueue.h>
@@ -33,7 +12,6 @@
 #include <asm/atomic.h>
 #include <mach/gpio.h>
 #include <linux/wakelock.h>
-
 #include "proc_comm.h"
 #include "es209ra_headset.h"
 
@@ -43,9 +21,6 @@
 
 #define HEADSET_BUTTON_PRESS    0x84
 #define HEADSET_BUTTON_RELEASE  0x85
-
-#define DEBUG
-//#define DEBUG_VERBOSE
 
 struct audio_jack_driver {
 	struct switch_dev swDev;
@@ -239,12 +214,7 @@ static void es209ra_audio_jack_button_pressed(void)
 	}
 	else
 	{
-		/* No opeartion */
-#ifdef DEBUG
-	    printk(KERN_INFO "Ignore button pressed event\n");
-#endif // #ifdef DEBUG
 	}
-	/* unlock the wakelock */
 	wake_unlock(&jack->audiojack_wakelock);
 }
 
@@ -280,9 +250,7 @@ static void es209ra_audio_jack_button_released(void)
 			}
 		}
 		get_average_value = es209ra_audio_jack_calc_average(count, getadcvalue);
-#ifdef DEBUG
-	    printk(KERN_INFO "ES209RA Audio Jack Driver : get_average_value=%d in es209ra_audio_jack_button_released\n", get_average_value);
-#endif // #ifdef DEBUG
+
 		if ((headset_threshold_voltage_low < get_average_value) &&
 				(headset_threshold_voltage_high > get_average_value))
 		{
@@ -398,10 +366,7 @@ static void es209ra_audio_jack_detection_work(struct work_struct *work)
 			}
 		}
 		get_average_value = es209ra_audio_jack_calc_average(count, getadcvalue);
-		
-#ifdef DEBUG
-		printk(KERN_INFO "ES209RA Audio Jack Driver : get_average_value = %d\n", get_average_value);
-#endif // #ifdef DEBUG
+
 		if ((headset_threshold_voltage_low < get_average_value) &&
 				(headset_threshold_voltage_high > get_average_value))
 		{
@@ -428,11 +393,6 @@ static void es209ra_audio_jack_detection_work(struct work_struct *work)
 	/* Change check flag */
 	jack->ischeckirq = 1;
 	
-#ifdef DEBUG
-	printk(KERN_INFO "ES209RA Audio Jack Driver : previous_state = %d\n", es209ra_previous_accessory_state);
-	printk(KERN_INFO "ES209RA Audio Jack Driver : current_state = %d\n", es209ra_current_accessory_state);
-#endif // #ifdef DEBUG
-	
 	if (DEVICE_UNKNOWN == es209ra_current_accessory_state)
 	{
 		es209ra_audio_jack_notify_plug_removed_to_amss();
@@ -452,8 +412,7 @@ static void es209ra_audio_jack_detection_work(struct work_struct *work)
 	}
 	else
 	{
-		/* cancel retryTimer and evaluateTimer here since lo longer need to retry */
-		/* starting rertyTimer and evaluateTimer equal previous state is DEVICE_UNKNOWN */
+
 		if (DEVICE_UNKNOWN == es209ra_previous_accessory_state)
 		{
 			hrtimer_cancel(&jack->retryTimer);
@@ -559,10 +518,6 @@ static irqreturn_t es209ra_audio_jack_detect_irq_handler(int irq, void *dev_id)
 {
 	int value;
 	
-#ifdef DEBUG_VERBOSE
-	printk(KERN_INFO "ES209RA Audio Jack Driver : irq\n");
-#endif // #ifdef DEBUG
-	
 	if (jack->ischeckirq)
 	{
 		/* Change check flag */
@@ -574,12 +529,7 @@ static irqreturn_t es209ra_audio_jack_detect_irq_handler(int irq, void *dev_id)
 		/* check current gpio value */
 		value = gpio_get_value(jack->gpio_det_in);
 		set_irq_type(jack->interrupt, value ? IRQF_TRIGGER_FALLING : IRQF_TRIGGER_RISING);
-		
-#ifdef DEBUG
-		printk(KERN_INFO "ES209RA Audio Jack Driver : irq locked. value = %d\n", value);
-#endif // #ifdef DEBUG
-		
-		/* start detection_work to determine what kind of applications has been inserted */
+
 		hrtimer_start(&jack->timer, jack->debounceTime, HRTIMER_MODE_REL);
 	}
 	
@@ -748,34 +698,14 @@ static int es209ra_audio_jack_remove(struct platform_device *pdev)
 
 static int es209ra_audio_jack_suspend(struct platform_device *pdev, pm_message_t message)
 {
-#ifdef DEBUG
-	printk(KERN_INFO "ES209RA Audio Jack Driver : es209ra_audio_jack_suspend START\n");
-#endif // #ifdef DEBUG
-	
-	/* notify suspend signal to AMSS to disable MIC bias enabling*/
 	es209ra_audio_jack_notify_suspend_to_amss();
-	
-#ifdef DEBUG
-	printk(KERN_INFO "ES209RA Audio Jack Driver : es209ra_audio_jack_suspend END\n");
-#endif // #ifdef DEBUG
-	
 	return 0;
 }
 
 
 static int es209ra_audio_jack_resume(struct platform_device *pdev)
 {
-#ifdef DEBUG
-	printk(KERN_INFO "ES209RA Audio Jack Driver : es209ra_audio_jack_resume START\n");
-#endif // #ifdef DEBUG
-	
-	/* notify suspend signal to AMSS to disable MIC bias enabling */
 	es209ra_audio_jack_notify_resume_to_amss();
-	
-#ifdef DEBUG
-	printk(KERN_INFO "ES209RA Audio Jack Driver : es209ra_audio_jack_resume END\n");
-#endif // #ifdef DEBUG
-	
 	return 0;
 }
 

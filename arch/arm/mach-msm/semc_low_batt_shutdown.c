@@ -1,20 +1,3 @@
-/* arch/arm/mach-msm/semc_low_batt_shutdown.c
- *
- * Copyright (C) 2010 Sony Ericsson Mobile Communications AB. All Rights Reserved.
- *
- * Author: Yukito Naganuma <Yukito.X.Naganuma@sonyericsson.com>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2, as
- * published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- *    This file is derived from
- *      drivers/power/msm_battery.c
- *      Code Aurora Forum
-*/
-
-
 #include <linux/err.h>
 #include <linux/module.h>
 #include <linux/platform_device.h>
@@ -24,9 +7,7 @@
 #include <linux/wait.h>
 #include <linux/workqueue.h>
 #include <linux/wakelock.h>
-
 #include <asm/atomic.h>
-
 #include <mach/msm_rpcrouter.h>
 #include <mach/semc_low_batt_shutdown.h>
 
@@ -52,13 +33,7 @@
 #define BATT_IS_NOT_LOW		0
 #define BATT_IS_LOW		1
 
-#define DEBUG 0
-
-#if DEBUG
-#define DBG(x...) pr_info(x)
-#else
 #define DBG(x...) do {} while (0)
-#endif
 
 
 enum {
@@ -71,10 +46,7 @@ enum {
 	BATTERY_DEREGISTRATION_FAILED = 4,
 	BATTERY_MODIFICATION_FAILED = 8,
 	BATTERY_INTERROGATION_FAILED = 16,
-	/* Client's filter could not be set because perhaps it does not exist */
 	BATTERY_SET_FILTER_FAILED = 32,
-	/* Client's could not be found for enabling or disabling the individual
-	 * client */
 	BATTERY_ENABLE_DISABLE_INDIVIDUAL_CLIENT_FAILED = 64,
 	BATTERY_LAST_ERROR = 128,
 };
