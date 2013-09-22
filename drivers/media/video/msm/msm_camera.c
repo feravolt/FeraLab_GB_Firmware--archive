@@ -728,7 +728,7 @@ static int msm_control(struct msm_control_device *ctrl_pmsm,
 
 	qcmd_resp = __msm_control(sync,
 				  &ctrl_pmsm->ctrl_q,
-				  &qcmd, MAX_SCHEDULE_TIMEOUT);
+				  &qcmd, msecs_to_jiffies(10000));
 
 	qcmd = NULL;	
 	if (!qcmd_resp || IS_ERR(qcmd_resp)) {
