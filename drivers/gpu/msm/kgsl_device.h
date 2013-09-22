@@ -34,7 +34,6 @@
 #include <linux/wait.h>
 #include <linux/workqueue.h>
 #include <linux/msm_kgsl.h>
-#include <linux/wakelock.h>
 
 #include <asm/atomic.h>
 
@@ -155,7 +154,6 @@ struct kgsl_device {
 	struct timer_list idle_timer;
 	unsigned int interval_timeout;
 	atomic_t open_count;
-	struct wake_lock idle_wakelock;
 	struct atomic_notifier_head ts_notifier_list;
 };
 
