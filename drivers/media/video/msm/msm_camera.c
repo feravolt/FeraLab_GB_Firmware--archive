@@ -730,15 +730,8 @@ static int msm_control(struct msm_control_device *ctrl_pmsm,
 				  &ctrl_pmsm->ctrl_q,
 				  &qcmd, MAX_SCHEDULE_TIMEOUT);
 
+	qcmd = NULL;	
 	if (!qcmd_resp || IS_ERR(qcmd_resp)) {
-		/* Do not free qcmd_resp here.  If the config thread read it,
-		 * then it has already been freed, and we timed out because
-		 * we did not receive a MSM_CAM_IOCTL_CTRL_CMD_DONE.  If the
-		 * config thread itself is blocked and not dequeueing commands,
-		 * then it will either eventually unblock and process them,
-		 * or when it is killed, qcmd will be freed in
-		 * msm_release_config.
-		 */
 		rc = PTR_ERR(qcmd_resp);
 		qcmd_resp = NULL;
 		goto end;
