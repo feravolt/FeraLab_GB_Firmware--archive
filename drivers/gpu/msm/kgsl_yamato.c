@@ -581,6 +581,7 @@ kgsl_yamato_init(struct kgsl_device *device, struct kgsl_devconfig *config)
 	}
 
 	device->flags |= KGSL_FLAGS_INITIALIZED;
+	wake_lock_init(&device->idle_wakelock, WAKE_LOCK_IDLE, device->name);
 	return 0;
 
 error_close_rb:
@@ -625,6 +626,7 @@ int kgsl_yamato_close(struct kgsl_device *device)
 	free_irq(kgsl_driver.yamato_interrupt_num, NULL);
 	kgsl_driver.yamato_have_irq = 0;
 
+	wake_lock_destroy(&device->idle_wakelock);	
 	KGSL_DRV_VDBG("return %d\n", 0);
 	device->flags &= ~KGSL_FLAGS_INITIALIZED;
 	return 0;

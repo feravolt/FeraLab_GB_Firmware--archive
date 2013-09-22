@@ -293,7 +293,7 @@ kgsl_g12_init(struct kgsl_device *device,
 		goto error_close_mmu;
 
 	kgsl_sharedmem_set(&device->memstore, 0, 0, device->memstore.size);
-
+	wake_lock_init(&device->idle_wakelock, WAKE_LOCK_IDLE, device->name);
 	return 0;
 
 error_close_mmu:
@@ -334,6 +334,7 @@ int kgsl_g12_close(struct kgsl_device *device)
 	free_irq(kgsl_driver.g12_interrupt_num, NULL);
 	kgsl_driver.g12_have_irq = 0;
 
+	wake_lock_destroy(&device->idle_wakelock);
 	KGSL_DRV_VDBG("return %d\n", 0);
 	device->flags &= ~KGSL_FLAGS_INITIALIZED;
 	return 0;
