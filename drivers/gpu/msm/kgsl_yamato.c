@@ -581,7 +581,7 @@ kgsl_yamato_init(struct kgsl_device *device, struct kgsl_devconfig *config)
 	}
 
 	device->flags |= KGSL_FLAGS_INITIALIZED;
-	wake_lock_init(&device->idle_wakelock, WAKE_LOCK_IDLE, device->name);
+	wake_lock_init(&device->idle_wakelock, WAKE_LOCK_IDLE);
 	return 0;
 
 error_close_rb:
