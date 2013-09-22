@@ -665,7 +665,7 @@ static struct spi_board_info msm_spi_board_info[] __initdata = {
 		.platform_data  = &es209ra_touch_data,
 		.bus_num	= 0,
 		.chip_select	= 0,
-		.max_speed_hz	= 3000000,
+		.max_speed_hz	= 2000000,
 	}
 };
 
@@ -855,8 +855,8 @@ static void __init msm_mddi_tmd_fwvga_display_device_init(void)
 	panel_data->panel_info.type = MDDI_PANEL;
 	panel_data->panel_info.pdest = DISPLAY_1;
 	panel_data->panel_info.wait_cycle = 0;
-	panel_data->panel_info.bpp = 16;
-	panel_data->panel_info.clk_rate = 192000000;
+	panel_data->panel_info.bpp = 32;
+	panel_data->panel_info.clk_rate = 200000000;
 	panel_data->panel_info.clk_min =  190000000;
 	panel_data->panel_info.clk_max = 200000000;
 	panel_data->panel_info.fb_num = 2;
@@ -1169,11 +1169,11 @@ static struct resource kgsl_resources[] = {
 
 static struct kgsl_platform_data kgsl_pdata = {
 	.high_axi_3d = 192000,
-	.max_grp2d_freq = 128000000,
-	.min_grp2d_freq = 96000000,
+	.max_grp2d_freq = 192000000,
+	.min_grp2d_freq = 0,
 	.set_grp2d_async = NULL,
 	.max_grp3d_freq = 192000000,
-	.min_grp3d_freq = 128000000,
+	.min_grp3d_freq = 0,
 	.set_grp3d_async = NULL,
 	.imem_clk_name = "imem_clk",
 	.grp3d_clk_name = "grp_clk",
