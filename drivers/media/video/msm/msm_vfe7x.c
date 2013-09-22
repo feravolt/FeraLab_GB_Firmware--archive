@@ -187,12 +187,16 @@ static struct msm_adsp_ops vfe_7x_sync = {
 static int vfe_7x_enable(struct camera_enable_cmd *enable)
 {
 	int rc = -EFAULT;
+	static int cnt;
 
 	if (!strcmp(enable->name, "QCAMTASK"))
 		rc = msm_adsp_enable(qcam_mod);
 	else if (!strcmp(enable->name, "VFETASK"))
 		rc = msm_adsp_enable(vfe_mod);
-
+	if (!cnt) {
+		add_axi_qos();
+		cnt++;
+	}
 	return rc;
 }
 
