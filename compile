@@ -8,6 +8,11 @@ cp -f /home/feravolt/ferra-gb/fs/cifs/cifs.ko /home/feravolt
 cp -f /home/feravolt/ferra-gb/drivers/net/tun.ko /home/feravolt
 cp -f /home/feravolt/ferra-gb/arch/arm/boot/zImage /home/feravolt
 
+cd
+
+cd /home/feravolt/vendor/host
+./compile
+
 
 
 
