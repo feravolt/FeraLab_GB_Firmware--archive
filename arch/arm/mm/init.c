@@ -529,8 +529,7 @@ static void __init free_unused_memmap_node(int node, struct meminfo *mi)
 	for_each_nodebank(i, mi, node) {
 		struct membank *bank = &mi->bank[i];
 
-		bank_start = round_down(bank_pfn_start(bank),
-					MAX_ORDER_NR_PAGES);
+		bank_start = bank_pfn_start(bank);
 		if (bank_start < prev_bank_end) {
 			printk(KERN_ERR "MEM: unordered memory banks.  "
 				"Not freeing memmap.\n");
@@ -544,8 +543,7 @@ static void __init free_unused_memmap_node(int node, struct meminfo *mi)
 		if (prev_bank_end && prev_bank_end != bank_start)
 			free_memmap(node, prev_bank_end, bank_start);
 
-		prev_bank_end = round_up(bank_pfn_end(bank),
-					 MAX_ORDER_NR_PAGES);
+		prev_bank_end = bank_pfn_end(bank);
 	}
 }
 
