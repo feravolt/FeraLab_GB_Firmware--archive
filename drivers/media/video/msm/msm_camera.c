@@ -730,7 +730,6 @@ static int msm_control(struct msm_control_device *ctrl_pmsm,
 				  &ctrl_pmsm->ctrl_q,
 				  &qcmd, msecs_to_jiffies(10000));
 
-	qcmd = NULL;	
 	if (!qcmd_resp || IS_ERR(qcmd_resp)) {
 		rc = PTR_ERR(qcmd_resp);
 		qcmd_resp = NULL;
@@ -2020,7 +2019,6 @@ static int __msm_release(struct msm_sync *sync)
 			kfree(region);
 		}
 		msm_queue_drain(&sync->pict_q, list_pict);
-		msm_queue_drain(&sync->event_q, list_config);
 
 #ifdef CONFIG_SEMC_IMX046_CAMERA
 		wake_unlock(&sync->suspend_lock);
@@ -2371,8 +2369,6 @@ static int __msm_open(struct msm_sync *sync, const char *const apps_id)
 			if (rc < 0) {
 				pr_err("%s: vfe_init failed at %d\n",
 					__func__, rc);
-				sync->sctrl.s_release();
-				msm_camio_sensor_clk_off(sync->pdev);
 				goto msm_open_done;
 			}
 			if (sync->sctrl.s_check) {
@@ -2387,7 +2383,6 @@ static int __msm_open(struct msm_sync *sync, const char *const apps_id)
 			if (rc < 0) {
 				pr_err("%s: sensor init failed: %d\n",
 					__func__, rc);
-				msm_camio_sensor_clk_off(sync->pdev);
 				goto msm_open_done;
 			}
 		} else {
