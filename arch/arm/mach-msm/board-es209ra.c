@@ -47,7 +47,7 @@
 #include "board-es209ra.h"
 #include "board-es209ra-keypad.h"
 #include "es209ra_headset.h"
-#include <linux/spi/es209ra_touch.h>
+#include <linux/spi/es209ra_touch_mt.h>
 #include <asm/setup.h>
 #include "qdsp6/q6audio.h"
 #include <../../../drivers/video/msm/mddi_tmd_nt35580.h>
@@ -89,43 +89,6 @@
 #define ADSPCORE_RAM_START 0x2E000000
 #define ADSPCORE_RAM_END   0x2FFFFFFF
 #endif
-
-static int msm7227_platform_set_vib_voltage(u16 volt_mv)
-{
-	int rc = pmic_vib_mot_set_volt(volt_mv);
-
-	if (rc)
-		printk(KERN_ERR "%s: Failed to set motor voltage\n", __func__);
-	return rc;
-}
-
-static int msm7227_platform_init_vib_hw(void)
-{
-	int rc = pmic_vib_mot_set_mode(PM_VIB_MOT_MODE__MANUAL);
-
-	if (rc) {
-		printk(KERN_ERR "%s: Failed to set pin mode\n", __func__);
-		return rc;
-	}
-	return pmic_vib_mot_set_volt(0);
-}
-
-static struct msm_pmic_vibrator_platform_data vibrator_platform_data = {
-	.min_voltage = 1200,
-	.max_voltage = 2500,
-	.off_voltage = 0,
-	.default_voltage = 2500,
-	.mimimal_on_time = 10,
-	.platform_set_vib_voltage = msm7227_platform_set_vib_voltage,
-	.platform_init_vib_hw = msm7227_platform_init_vib_hw,
-};
-static struct platform_device vibrator_device = {
-	.name = "msm_pmic_vibrator",
-	.id = -1,
-	.dev = {
-		.platform_data = &vibrator_platform_data,
-	},
-};
 
 #ifdef CONFIG_SMC91X
 static struct resource smc91x_resources[] = {
@@ -662,10 +625,10 @@ static struct spi_board_info msm_spi_board_info[] __initdata = {
 		.modalias	= "es209ra_touch",
 		.mode		= SPI_MODE_0,
 		.irq		= INT_ES209RA_GPIO_TOUCHPAD,
-		.platform_data  = &es209ra_touch_data,
 		.bus_num	= 0,
 		.chip_select	= 0,
 		.max_speed_hz	= 2000000,
+		.platform_data  = &es209ra_touch_data,
 	}
 };
 
@@ -1545,12 +1508,7 @@ static struct platform_device *devices[] __initdata = {
 #if defined(CONFIG_TSIF) || defined(CONFIG_TSIF_MODULE)
 	&msm_device_tsif,
 #endif
-#ifdef CONFIG_SEMC_IMX046_CAMERA
 	&msm_camera_sensor_semc_imx046_camera,
-#endif
-#ifdef CONFIG_SEMC_MSM_PMIC_VIBRATOR
-	&vibrator_device,
-#endif
 	&es209ra_audio_jack_device,
 	&lbs_device,
 #ifdef CONFIG_CAPTURE_KERNEL

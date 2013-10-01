@@ -1,20 +1,5 @@
-/* linux/drivers/input/touchscreen/es209ra_touch_mt.c
- *
- * Copyright (C) 2009 Sony Ericsson Mobile Communications, INC
- *
- * This software is licensed under the terms of the GNU General Public
- * License version 2, as published by the Free Software Foundation, and
- * may be copied, distributed, and modified under those terms.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- */
+/* FeraLab */
 
-/*#define DEBUG*/
-/*#define CONFIG_FWUPDATE_IGNORE*/
 #define CONFIG_FW_HEADER
 #ifdef CONFIG_EARLYSUSPEND
 #define CONFIG_ES209RA_TOUCH_EARLYSUSPEND
@@ -47,9 +32,6 @@
 #include <asm/mach-types.h>
 #endif
 
-/*--------------------------------------------------------------------------*/
-
-/* control & status register address*/
 #define TP_REG_FWVER		0x00
 #define TP_REG_CTRL		0x01
 #define TP_REG_GCTRL		0x02
@@ -882,6 +864,8 @@ static void touch_data_handler(struct es209ra_touch *tp)
 			input_report_abs(tp->input, ABS_MT_POSITION_Y,
 							down->old_y);
 			input_report_abs(tp->input, ABS_MT_TOUCH_MAJOR, 0);
+			input_report_abs(tp->input, ABS_PRESSURE, 0);
+			input_report_key(tp->input, BTN_TOUCH, 0);
 			input_mt_sync(tp->input);
 			input_sync(tp->input);
 			DBGLOG("%s: ST -> touch up: (%d, %d)",
@@ -892,6 +876,8 @@ static void touch_data_handler(struct es209ra_touch *tp)
 			input_report_abs(tp->input, ABS_MT_POSITION_Y,
 							tp1->old_y);
 			input_report_abs(tp->input, ABS_MT_TOUCH_MAJOR, 0);
+			input_report_abs(tp->input, ABS_PRESSURE, 0);
+			input_report_key(tp->input, BTN_TOUCH, 0);			
 			input_mt_sync(tp->input);
 
 			input_report_abs(tp->input, ABS_MT_POSITION_X,
@@ -899,6 +885,8 @@ static void touch_data_handler(struct es209ra_touch *tp)
 			input_report_abs(tp->input, ABS_MT_POSITION_Y,
 							tp2->old_y);
 			input_report_abs(tp->input, ABS_MT_TOUCH_MAJOR, 0);
+			input_report_abs(tp->input, ABS_PRESSURE, 0);
+			input_report_key(tp->input, BTN_TOUCH, 0);			
 			input_mt_sync(tp->input);
 			input_sync(tp->input);
 			DBGLOG("%s: MT -> tp1 touch up: (%d, %d)"
@@ -923,6 +911,8 @@ static void touch_data_handler(struct es209ra_touch *tp)
 		input_report_abs(tp->input, ABS_MT_POSITION_X, down->x);
 		input_report_abs(tp->input, ABS_MT_POSITION_Y, down->y);
 		input_report_abs(tp->input, ABS_MT_TOUCH_MAJOR, 10);
+		input_report_abs(tp->input, ABS_PRESSURE, 255);
+		input_report_key(tp->input, BTN_TOUCH, 1);		
 		input_mt_sync(tp->input);
 		input_sync(tp->input);
 		DBGLOG("%s: ST -> tp1 touch down: %d, %d\n",
@@ -948,6 +938,8 @@ static void touch_data_handler(struct es209ra_touch *tp)
 		input_report_abs(tp->input, ABS_MT_POSITION_X, tp1->x);
 		input_report_abs(tp->input, ABS_MT_POSITION_Y, tp1->y);
 		input_report_abs(tp->input, ABS_MT_TOUCH_MAJOR, 10);
+		input_report_abs(tp->input, ABS_PRESSURE, 255);
+		input_report_key(tp->input, BTN_TOUCH, 1);		
 		input_mt_sync(tp->input);
 		tp1->old_x = tp1->x;
 		tp1->old_y = tp1->y;
@@ -955,6 +947,8 @@ static void touch_data_handler(struct es209ra_touch *tp)
 		input_report_abs(tp->input, ABS_MT_POSITION_X, tp2->x);
 		input_report_abs(tp->input, ABS_MT_POSITION_Y, tp2->y);
 		input_report_abs(tp->input, ABS_MT_TOUCH_MAJOR, 10);
+		input_report_abs(tp->input, ABS_PRESSURE, 255);
+		input_report_key(tp->input, BTN_TOUCH, 1);		
 		input_mt_sync(tp->input);
 		input_sync(tp->input);
 		DBGLOG("%s: MT -> tp1 touch down: (%d, %d),"
@@ -993,6 +987,8 @@ static void touch_data_handler(struct es209ra_touch *tp)
 		input_report_abs(tp->input, ABS_MT_POSITION_X, tp1->x);
 		input_report_abs(tp->input, ABS_MT_POSITION_Y, tp1->y);
 		input_report_abs(tp->input, ABS_MT_TOUCH_MAJOR, 10);
+		input_report_abs(tp->input, ABS_PRESSURE, 255);
+		input_report_key(tp->input, BTN_TOUCH, 1);		
 		input_mt_sync(tp->input);
 		tp1->old_x = tp1->x;
 		tp1->old_y = tp1->y;
@@ -1000,6 +996,8 @@ static void touch_data_handler(struct es209ra_touch *tp)
 		input_report_abs(tp->input, ABS_MT_POSITION_X, tp2->x);
 		input_report_abs(tp->input, ABS_MT_POSITION_Y, tp2->y);
 		input_report_abs(tp->input, ABS_MT_TOUCH_MAJOR, 10);
+		input_report_abs(tp->input, ABS_PRESSURE, 255);	
+		input_report_key(tp->input, BTN_TOUCH, 1);		
 		input_mt_sync(tp->input);
 		input_sync(tp->input);
 		DBGLOG("%s: MT -> tp1 touch down: (%d, %d),"
@@ -1465,6 +1463,7 @@ static int __devinit es209ra_touch_probe(struct spi_device *spi)
 						pdata->x_max, 0, 0);
 	input_set_abs_params(input_dev, ABS_MT_POSITION_Y, 0,
 						pdata->y_max, 0, 0);
+	input_set_abs_params(input_dev, ABS_PRESSURE, 0, 255, 0, 0);
 	input_set_abs_params(input_dev, ABS_MT_TOUCH_MAJOR, 0, 10, 0, 0);
 	input_set_abs_params(input_dev, ABS_MT_WIDTH_MAJOR, 0, 255, 0, 0);
 
