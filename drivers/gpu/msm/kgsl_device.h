@@ -154,6 +154,7 @@ struct kgsl_device {
 	struct timer_list idle_timer;
 	unsigned int interval_timeout;
 	atomic_t open_count;
+
 	struct atomic_notifier_head ts_notifier_list;
 };
 

@@ -211,6 +211,11 @@ static void kgsl_ringbuffer_submit(struct kgsl_ringbuffer *rb)
 	/* Drain write buffer and data memory barrier */
 	dsb();
 	wmb();
+
+	/* Memory fence to ensure all data has posted.  On some systems,
+	* like 7x27, the register block is not allocated as strongly ordered
+	* memory.  Adding a memory fence ensures ordering during ringbuffer
+	* submits.*/
 	mb();
 
 	kgsl_yamato_regwrite(rb->device, REG_CP_RB_WPTR, rb->wptr);

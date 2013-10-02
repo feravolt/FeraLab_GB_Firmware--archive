@@ -623,7 +623,8 @@ int kgsl_yamato_close(struct kgsl_device *device)
 					regspace->sizebytes);
 	}
 	free_irq(kgsl_driver.yamato_interrupt_num, NULL);
-	kgsl_driver.yamato_have_irq = 0;	
+	kgsl_driver.yamato_have_irq = 0;
+
 	KGSL_DRV_VDBG("return %d\n", 0);
 	device->flags &= ~KGSL_FLAGS_INITIALIZED;
 	return 0;
@@ -675,9 +676,9 @@ static int kgsl_yamato_start(struct kgsl_device *device)
 	kgsl_yamato_regwrite(device, REG_RBBM_SOFT_RESET, 0xFFFFFFFF);
 
 	/* The core is in an indeterminate state until the reset completes
-	 * after 30ms.
+	 * after 50ms.
 	 */
-	msleep(30);
+	msleep(50);
 
 	kgsl_yamato_regwrite(device, REG_RBBM_SOFT_RESET, 0x00000000);
 

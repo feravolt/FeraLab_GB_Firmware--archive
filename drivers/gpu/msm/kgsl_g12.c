@@ -64,6 +64,7 @@
 
 static int kgsl_g12_start(struct kgsl_device *device);
 static int kgsl_g12_stop(struct kgsl_device *device);
+static int kgsl_g12_idle(struct kgsl_device *device, unsigned int timeout);
 static int kgsl_g12_sleep(struct kgsl_device *device, const int idle);
 static int kgsl_g12_waittimestamp(struct kgsl_device *device,
 				unsigned int timestamp,
@@ -293,6 +294,7 @@ kgsl_g12_init(struct kgsl_device *device,
 		goto error_close_mmu;
 
 	kgsl_sharedmem_set(&device->memstore, 0, 0, device->memstore.size);
+
 	return 0;
 
 error_close_mmu:
@@ -332,6 +334,7 @@ int kgsl_g12_close(struct kgsl_device *device)
 	}
 	free_irq(kgsl_driver.g12_interrupt_num, NULL);
 	kgsl_driver.g12_have_irq = 0;
+
 	KGSL_DRV_VDBG("return %d\n", 0);
 	device->flags &= ~KGSL_FLAGS_INITIALIZED;
 	return 0;
@@ -478,7 +481,7 @@ static int kgsl_g12_getproperty(struct kgsl_device *device,
 	return status;
 }
 
-int kgsl_g12_idle(struct kgsl_device *device, unsigned int timeout)
+static int kgsl_g12_idle(struct kgsl_device *device, unsigned int timeout)
 {
 	int status = KGSL_SUCCESS;
 	struct kgsl_g12_device *g12_device = (struct kgsl_g12_device *) device;
