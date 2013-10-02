@@ -1,21 +1,42 @@
+/*
+ * Copyright (C) 2009 Google, Inc.
+ * Copyright (c) 2010, Code Aurora Forum. All rights reserved.
+ * Author: Brian Swetland <swetland@google.com>
+ *
+ * This software is licensed under the terms of the GNU General Public
+ * License version 2, as published by the Free Software Foundation, and
+ * may be copied, distributed, and modified under those terms.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ */
+
 #include <linux/mutex.h>
 #include <linux/sched.h>
 #include <linux/wait.h>
 #include <linux/dma-mapping.h>
 #include <linux/clk.h>
+
 #include <linux/delay.h>
 #include <linux/wakelock.h>
 #include <linux/android_pmem.h>
 #include <linux/firmware.h>
 #include <linux/miscdevice.h>
+
 #include "dal.h"
 #include "dal_audio.h"
 #include "dal_audio_format.h"
 #include "dal_acdb.h"
 #include "dal_adie.h"
 #include <mach/msm_qdsp6_audio.h>
+
 #include <linux/msm_audio_aac.h>
+
 #include <linux/gpio.h>
+
 #include "q6audio_devices.h"
 #include <mach/debug_mm.h>
 
