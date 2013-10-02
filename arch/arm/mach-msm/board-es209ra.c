@@ -49,11 +49,12 @@
 #include "es209ra_headset.h"
 #include <linux/spi/es209ra_touch_mt.h>
 #include <asm/setup.h>
+#include <linux/keyreset.h>
+#include <mach/semc_low_batt_shutdown.h>
+#include <linux/semc/msm_pmic_vibrator.h>
+#include <linux/bma150_ng.h>
 #include "qdsp6/q6audio.h"
 #include <../../../drivers/video/msm/mddi_tmd_nt35580.h>
-#include <mach/semc_low_batt_shutdown.h>
-#include  <linux/semc/msm_pmic_vibrator.h>
-#include <linux/bma150_ng.h>
 #include "../../../drivers/video/msm/msm_fb_panel.h"
 #include "../../../drivers/video/msm/mddihost.h"
 
@@ -1160,6 +1161,27 @@ struct es209ra_headset_platform_data es209ra_headset_data = {
 	.wait_time = 800,
 };
 
+static int es209ra_reset_keys_up[] = {
+  KEY_VOLUMEDOWN,
+  0
+};
+
+static struct keyreset_platform_data es209ra_reset_keys_pdata = {
+  .keys_up = es209ra_reset_keys_up,
+  .keys_down = {
+    KEY_POWER,
+    KEY_HOME,
+    0
+  },
+};
+
+struct platform_device es209ra_reset_keys_device = {
+  .name = KEYRESET_NAME,
+  .dev  = {
+    .platform_data = &es209ra_reset_keys_pdata,
+  },
+};
+
 static struct platform_device es209ra_audio_jack_device = {
 	.name		= "es209ra_audio_jack",
 	.dev = {
@@ -1893,6 +1915,7 @@ static void __init es209ra_init(void)
 	msm_device_tsif.dev.platform_data = &tsif_platform_data;
 #endif
 	platform_add_devices(devices, ARRAY_SIZE(devices));
+	platform_device_register(&es209ra_reset_keys_device);
 	msm_fb_add_devices();
 #ifdef CONFIG_MSM_CAMERA
 	config_camera_off_gpios();
