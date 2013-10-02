@@ -1,18 +1,20 @@
-ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-gnueabi- make distclean
-
+RCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-gnueabi- make distclean
 ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-gnueabi- make fera_es209ra_defconfig
-
 ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-gnueabi- make -j2
-
-cp -f /home/feravolt/ferra-gb/fs/cifs/cifs.ko /home/feravolt
-cp -f /home/feravolt/ferra-gb/drivers/net/tun.ko /home/feravolt
-cp -f /home/feravolt/ferra-gb/arch/arm/boot/zImage /home/feravolt
-
+cp -f /home/feravolt/ferra-gb/fs/cifs/cifs.ko /home/feravolt/ferra-gb/0utput
+cp -f /home/feravolt/ferra-gb/drivers/net/tun.ko /home/feravolt/ferra-gb/0utput
+cp -f /home/feravolt/ferra-gb/arch/arm/boot/zImage /home/feravolt/ferra-gb/0utput
+cp -f /home/feravolt/ferra-gb/drivers/staging/android/logger.ko /home/feravolt/ferra-gb/0utput
 cd
-
 cd /home/feravolt/vendor/host
-./compile
-
-
+ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-gnueabi- KERNEL_DIR=/home/feravolt/ferra-gb make clean
+ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-gnueabi- KERNEL_DIR=/home/feravolt/ferra-gb make
+cp -f /home/feravolt/vendor/host/.output/QUALCOMM_ARM_NATIVEMMC-SDIO/image/ar6000.ko /home/feravolt/ferra-gb/0utput
+cd
+cd /home/feravolt/ferra-gb/0utput
+/home/feravolt/arm/bin/arm-gnueabi-strip --strip-unneeded ar6000.ko
+/home/feravolt/arm/bin/arm-gnueabi-strip --strip-unneeded tun.ko
+/home/feravolt/arm/bin/arm-gnueabi-strip --strip-unneeded cifs.ko
+/home/feravolt/arm/bin/arm-gnueabi-strip --strip-unneeded logger.ko
 
 

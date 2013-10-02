@@ -1,57 +1,18 @@
 /* Copyright (c) 2010, Code Aurora Forum. All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of Code Aurora Forum nor
- *       the names of its contributors may be used to endorse or promote
- *       products derived from this software without specific prior written
- *       permission.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 and
+ * only version 2 as published by the Free Software Foundation.
  *
- * Alternatively, provided that this notice is retained in full, this software
- * may be relicensed by the recipient under the terms of the GNU General Public
- * License version 2 ("GPL") and only version 2, in which case the provisions of
- * the GPL apply INSTEAD OF those given above.  If the recipient relicenses the
- * software under the GPL, then the identification text in the MODULE_LICENSE
- * macro must be changed to reflect "GPLv2" instead of "Dual BSD/GPL".  Once a
- * recipient changes the license terms to the GPL, subsequent recipients shall
- * not relicense under alternate licensing terms, including the BSD or dual
- * BSD/GPL terms.  In addition, the following license statement immediately
- * below and between the words START and END shall also then apply when this
- * software is relicensed under the GPL:
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * START
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License version 2 and only version 2 as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * END
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301, USA.
  *
  */
 
@@ -65,10 +26,10 @@
 #include <linux/kthread.h>
 #include <linux/completion.h>
 #include <linux/wait.h>
-#include <mach/debug_audio_mm.h>
 #include <mach/msm_qdsp6_audiov2.h>
 #include "../dal.h"
 #include "dal_voice.h"
+#include <mach/debug_mm.h>
 
 struct voice_struct {
 	struct dal_client *cvd;
@@ -150,7 +111,8 @@ static int voice_thread(void *data)
 			cvd_process_set_network();
 			break;
 		default:
-			MM_ERR("Undefined event\n");
+			pr_err("[%s:%s] Undefined event\n", __MM_FILE__,
+					__func__);
 
 		}
 	}
@@ -159,16 +121,18 @@ static int voice_thread(void *data)
 
 static void remote_cb_function(void *data, int len, void *cookie)
 {
-	struct apr_command_hdr *apr = data + 2*sizeof(uint32_t);
+	struct apr_command_pkt *apr = data + 2*sizeof(uint32_t);
 
 	memcpy(&voice.apr_pkt, apr, sizeof(struct apr_command_pkt));
 
 	if (len <= 0) {
-		MM_ERR("unexpected event with length %d \n", len);
+		pr_err("[%s:%s] unexpected event with length %d\n",
+				__MM_FILE__, __func__, len);
 		return;
 	}
 
-	MM_DBG("APR = %x,%x,%x,%x,%x,%x,%x,%x,%x,%x\n",
+	pr_debug("[%s:%s] APR = %x,%x,%x,%x,%x,%x,%x,%x,%x,%x\n", __MM_FILE__,
+			__func__,
 	apr->header,
 	apr->reserved1,
 	apr->src_addr,
@@ -196,13 +160,15 @@ static int __init voice_init(void)
 			remote_cb_function, 0);
 
 	if (!voice.cvd) {
-		MM_ERR("audio_init: cannot attach to cvd\n");
+		pr_err("[%s:%s] audio_init: cannot attach to cvd\n",
+				__MM_FILE__, __func__);
 		res = -ENODEV;
 		goto done;
 	}
 
 	if (check_version(voice.cvd, VOICE_DAL_VERSION) != 0) {
-		pr_err("Incompatible cvd version\n");
+		pr_err("[%s:%s] Incompatible cvd version\n",
+				__MM_FILE__, __func__);
 		res = -ENODEV;
 		goto done;
 	}
@@ -213,7 +179,8 @@ static int __init voice_init(void)
 	task = kthread_run(voice_thread, &voice, "voice_thread");
 
 	if (IS_ERR(task)) {
-		MM_ERR("Cannot start the voice thread\n");
+		pr_err("[%s:%s] Cannot start the voice thread\n", __MM_FILE__,
+				__func__);
 		res = PTR_ERR(task);
 		task = NULL;
 	} else

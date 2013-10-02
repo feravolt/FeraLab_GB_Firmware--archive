@@ -17,6 +17,7 @@
 #include <linux/msm_audio_aac.h>
 #include <linux/gpio.h>
 #include "q6audio_devices.h"
+#include <mach/debug_mm.h>
 
 #if 0
 #define TRACE(x...) pr_info("Q6: "x)
@@ -34,24 +35,24 @@ static struct q6_hw_info q6_audio_hw[Q6_HW_COUNT] = {
 		.max_gain = 1000,
 	},
 	[Q6_HW_HEADSET] = {
-		.min_gain = -1900,
-		.max_gain = -400,
+		.min_gain = -1100,
+		.max_gain = 400,
 	},
 	[Q6_HW_SPEAKER] = {
-		.min_gain = -1600,
-		.max_gain = -100,
+		.min_gain = -1000,
+		.max_gain = 500,
 	},
 	[Q6_HW_TTY] = {
-		.min_gain = -1400,
+		.min_gain = 0,
 		.max_gain = 0,
 	},
 	[Q6_HW_BT_SCO] = {
-		.min_gain = -1400,
-		.max_gain = -300,
+		.min_gain = -1100,
+		.max_gain = 400,
 	},
 	[Q6_HW_BT_A2DP] = {
-		.min_gain = -1400,
-		.max_gain = -300,
+		.min_gain = -1100,
+		.max_gain = 400,
 	},
 };
 
@@ -122,8 +123,8 @@ static struct q6_device_info *q6_lookup_device(uint32_t device_id,
 			if (di->cad_id == acdb_id && di->id == device_id)
 				return di;
 			if (di->id == 0) {
-				pr_err("q6_lookup_device: bogus id 0x%08x\n",
-					device_id);
+				pr_err("[%s:%s] bogus id 0x%08x\n",
+					__MM_FILE__, __func__, device_id);
 				return di;
 			}
 			di++;
@@ -133,8 +134,8 @@ static struct q6_device_info *q6_lookup_device(uint32_t device_id,
 			if (di->id == device_id)
 				return di;
 			if (di->id == 0) {
-				pr_err("q6_lookup_device: bogus id 0x%08x\n",
-				       device_id);
+				pr_err("[%s:%s] bogus id 0x%08x\n",
+					__MM_FILE__, __func__, device_id);
 				return di;
 			}
 			di++;
@@ -356,8 +357,8 @@ static int audio_ioctl(struct audio_client *ac, void *ptr, uint32_t len)
 		return -EIO;
 	if (!wait_event_timeout(ac->wait, (ac->cb_status != -EBUSY), 5*HZ)) {
 		dal_trace_dump(ac->client);
-		pr_err("audio_ioctl: timeout. dsp dead?\n");
-		BUG();
+		pr_err("[%s:%s] timeout. dsp dead?\n", __MM_FILE__, __func__);
+		q6audio_dsp_not_responding();
 	}
 	return ac->cb_status;
 }
@@ -692,7 +693,7 @@ static int audio_tx_mute(struct audio_client *ac, uint32_t dev_id, int mute)
 	memset(&rpc, 0, sizeof(rpc));
 	rpc.hdr.opcode = ADSP_AUDIO_IOCTL_CMD_SET_DEVICE_MUTE;
 	rpc.device_id = dev_id;
-	rpc.path = 3;
+	rpc.path = ADSP_PATH_TX;
 	rpc.mute = !!mute;
 	return audio_ioctl(ac, &rpc, sizeof(rpc));
 }
@@ -728,21 +729,22 @@ static void callback(void *data, int len, void *cookie)
 	struct adsp_buffer_event *abe = data;
 
 	if (e->context >= SESSION_MAX) {
-		pr_err("audio callback: bogus session %d\n",
-		       e->context);
+		pr_err("[%s:%s] bogus session %d\n", __MM_FILE__, __func__,
+				e->context);
 		return;
 	}
 	ac = session[e->context];
 	if (!ac) {
-		pr_err("audio callback: unknown session %d\n",
-		       e->context);
+		pr_err("[%s:%s] unknown session %d\n", __MM_FILE__, __func__,
+				e->context);
 		return;
 	}
 
 	if (e->event_id == ADSP_AUDIO_IOCTL_CMD_STREAM_EOS) {
 		TRACE("%p: CB stream eos\n", ac);
 		if (e->status)
-			pr_err("playback status %d\n", e->status);
+			pr_err("[%s:%s] playback status %d\n", __MM_FILE__,
+					__func__, e->status);
 		if (ac->cb_status == -EBUSY) {
 			ac->cb_status = e->status;
 			wake_up(&ac->wait);
@@ -753,7 +755,8 @@ static void callback(void *data, int len, void *cookie)
 	if (e->event_id == ADSP_AUDIO_EVT_STATUS_BUF_DONE) {
 		TRACE("%p: CB done (%d)\n", ac, e->status);
 		if (e->status)
-			pr_err("buffer status %d\n", e->status);
+			pr_err("[%s:%s] buffer status %d\n", __MM_FILE__,
+					__func__, e->status);
 
 		ac->buf[ac->dsp_buf].actual_size = abe->buffer.actual_size;
 		ac->buf[ac->dsp_buf].used = 0;
@@ -796,7 +799,7 @@ static int q6audio_init(void)
 		goto done;
 	}
 
-	pr_info("audio: init: codecs\n");
+	pr_info("[%s:%s] codecs\n", __MM_FILE__, __func__);
 	icodec_rx_clk = clk_get(0, "icodec_rx_clk");
 	icodec_tx_clk = clk_get(0, "icodec_tx_clk");
 	ecodec_clk = clk_get(0, "ecodec_clk");
@@ -807,40 +810,45 @@ static int q6audio_init(void)
 	adsp = dal_attach(AUDIO_DAL_DEVICE, AUDIO_DAL_PORT, 1,
 			  callback, 0);
 	if (!adsp) {
-		pr_err("audio_init: cannot attach to adsp\n");
+		pr_err("[%s:%s] cannot attach to adsp\n", __MM_FILE__,
+				__func__);
 		res = -ENODEV;
 		goto done;
 	}
-	pr_info("audio: init: INIT\n");
+	pr_info("[%s:%s] INIT\n", __MM_FILE__, __func__);
 	audio_init(adsp);
 	dal_trace(adsp);
 
 	ac = audio_client_alloc(0);
 	if (!ac) {
-		pr_err("audio_init: cannot allocate client\n");
+		pr_err("[%s:%s] cannot allocate client\n",
+				__MM_FILE__, __func__);
 		res = -ENOMEM;
 		goto done;
 	}
 
-	pr_info("audio: init: OPEN control\n");
+	pr_info("[%s:%s] OPEN control\n", __MM_FILE__, __func__);
 	if (audio_open_control(ac)) {
-		pr_err("audio_init: cannot open control channel\n");
+		pr_err("[%s:%s] cannot open control channel\n",
+				__MM_FILE__, __func__);
 		res = -ENODEV;
 		goto done;
 	}
 
-	pr_info("audio: init: attach ACDB\n");
+	pr_info("[%s:%s] attach ACDB\n", __MM_FILE__, __func__);
 	acdb = dal_attach(ACDB_DAL_DEVICE, ACDB_DAL_PORT, 0, 0, 0);
 	if (!acdb) {
-		pr_err("audio_init: cannot attach to acdb channel\n");
+		pr_err("[%s:%s] cannot attach to acdb channel\n",
+				__MM_FILE__, __func__);
 		res = -ENODEV;
 		goto done;
 	}
 
-	pr_info("audio: init: attach ADIE\n");
+	pr_info("[%s:%s] attach ADIE\n", __MM_FILE__, __func__);
 	adie = dal_attach(ADIE_DAL_DEVICE, ADIE_DAL_PORT, 0, 0, 0);
 	if (!adie) {
-		pr_err("audio_init: cannot attach to adie\n");
+		pr_err("[%s:%s] cannot attach to adie\n",
+				__MM_FILE__, __func__);
 		res = -ENODEV;
 		goto done;
 	}
@@ -1021,6 +1029,7 @@ static int audio_update_acdb(uint32_t adev, uint32_t acdb_id)
 		else
 			sample_rate = 8000;
 	}
+
 	if (acdb_id == 0)
 		acdb_id = q6_device_to_cad_id(adev);
 
@@ -1223,8 +1232,8 @@ static void _audio_rx_clk_disable(void)
 		}
 		break;
 	default:
-		pr_err("audiolib: invalid rx device group %d\n",
-			audio_rx_device_group);
+		pr_err("[%s:%s] invalid rx device group %d\n", __MM_FILE__,
+				__func__, audio_rx_device_group);
 		break;
 	}
 }
@@ -1254,8 +1263,8 @@ static void _audio_tx_clk_disable(void)
 		}
 		break;
 	default:
-		pr_err("audiolib: invalid tx device group %d\n",
-			audio_tx_device_group);
+		pr_err("[%s:%s] invalid tx device group %d\n",
+			__MM_FILE__, __func__, audio_tx_device_group);
 		break;
 	}
 }
@@ -1389,7 +1398,8 @@ int q6audio_set_tx_mute(int mute)
 int q6audio_set_stream_volume(struct audio_client *ac, int vol)
 {
 	if (vol > 1200 || vol < -4000) {
-		pr_err("unsupported volume level %d\n", vol);
+		pr_err("[%s:%s] unsupported volume level %d\n", __MM_FILE__,
+				__func__, vol);
 		return -EINVAL;
 	}
 	mutex_lock(&audio_path_lock);
@@ -1412,9 +1422,14 @@ int q6audio_set_rx_volume(int level)
 
 	mutex_lock(&audio_path_lock);
 	adev = ADSP_AUDIO_DEVICE_ID_VOICE;
-	vol = q6_device_volume(audio_rx_device_id, level);
-	audio_rx_mute(ac_control, adev, 0);
-	audio_rx_volume(ac_control, adev, vol);
+
+	if (level) {
+		vol = q6_device_volume(audio_rx_device_id, level);
+		audio_rx_mute(ac_control, adev, 0);
+		audio_rx_volume(ac_control, adev, vol);
+	} else
+		audio_rx_mute(ac_control, adev, 1);
+
 	rx_vol_level = level;
 	mutex_unlock(&audio_path_lock);
 	return 0;
@@ -1600,8 +1615,10 @@ struct audio_client *q6audio_open_pcm(uint32_t bufsz, uint32_t rate,
 		if (rc == 0)
 			break;
 		if (retry == 0)
-			BUG();
-		pr_err("q6audio: open pcm error %d, retrying\n", rc);
+			q6audio_dsp_not_responding();
+
+		pr_err("[%s:%s] open pcm error %d, retrying\n",
+			__MM_FILE__, __func__, rc);
 		msleep(1);
 	}
 
@@ -1616,8 +1633,10 @@ struct audio_client *q6audio_open_pcm(uint32_t bufsz, uint32_t rate,
 		if (rc == 0)
 			break;
 		if (retry == 0)
-			BUG();
-		pr_err("q6audio: stream start error %d, retrying\n", rc);
+			q6audio_dsp_not_responding();
+
+		pr_err("[%s:%s] stream start error %d, retrying\n",
+			__MM_FILE__, __func__, rc);
 	}
 
 	if (!(ac->flags & AUDIO_FLAG_WRITE)) {
