@@ -45,7 +45,7 @@ static const unsigned max_zpage_size_bdev = PAGE_SIZE / 2;
  * uncompressed in memory.
  */
 
-static const size_t max_zpage_size = PAGE_SIZE / 4 * 3;
+static const unsigned max_zpage_size_nobdev = PAGE_SIZE / 4 * 3;
 
 /*
  * NOTE: max_zpage_size_{bdev,nobdev} sizes must be

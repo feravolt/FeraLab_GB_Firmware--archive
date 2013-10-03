@@ -726,7 +726,6 @@ static int handle_ramzswap_fault(struct ramzswap *rzs, struct bio *bio)
 		(ulong)(bio->bi_sector), bio->bi_size,
 		bio->bi_io_vec[0].bv_offset);
 
-	handle_zero_page(page);
 	set_bit(BIO_UPTODATE, &bio->bi_flags);
 	bio_endio(bio, 0);
 	return 0;
@@ -1126,7 +1125,7 @@ static int ramzswap_ioctl_init_device(struct ramzswap *rzs)
 		goto fail;
 	}
 
-	rzs->compress_buffer = (void *)__get_free_pages(__GFP_ZERO, 1);
+	rzs->compress_buffer = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO, 1);
 	if (!rzs->compress_buffer) {
 		pr_err("Error allocating compressor buffer space\n");
 		ret = -ENOMEM;
