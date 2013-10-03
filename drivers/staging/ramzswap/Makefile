@@ -1,3 +1,3 @@
-ramzswap-objs	:=	ramzswap_drv.o xvmalloc.o
+ramzswap-y := ramzswap_drv.o xvmalloc.o
+obj-$(CONFIG_RAMZSWAP)	+= ramzswap.o
 
-obj-$(CONFIG_RAMZSWAP)	+=	ramzswap.o

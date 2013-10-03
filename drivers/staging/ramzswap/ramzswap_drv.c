@@ -1,20 +1,5 @@
-/*
- * Compressed RAM based swap device
- *
- * Copyright (C) 2008, 2009, 2010  Nitin Gupta
- *
- * This code is released using a dual license strategy: BSD/GPL
- * You can choose the licence that better fits your requirements.
- *
- * Released under the terms of 3-clause BSD License
- * Released under the terms of GNU General Public License Version 2.0
- *
- * Project home: http://compcache.googlecode.com
- */
-
 #define KMSG_COMPONENT "ramzswap"
 #define pr_fmt(fmt) KMSG_COMPONENT ": " fmt
-
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/bitops.h>
@@ -24,12 +9,14 @@
 #include <linux/genhd.h>
 #include <linux/highmem.h>
 #include <linux/lzo.h>
+#include <linux/bio.h>
 #include <linux/slab.h>
 #include <linux/string.h>
 #include <linux/swap.h>
 #include <linux/swapops.h>
 #include <linux/vmalloc.h>
 #include <linux/version.h>
+#include <linux/mm.h>
 
 #include "compat.h"
 #include "ramzswap_drv.h"
@@ -156,7 +143,7 @@ static void ramzswap_set_disksize(struct ramzswap *rzs, size_t totalram_bytes)
 		);
 	}
 
-	rzs->disksize &= PAGE_MASK;
+	rzs->disksize &= PAGE_ALIGN(rzs->disksize);
 }
 
 /*
@@ -686,12 +673,11 @@ static int handle_uncompressed_page(struct ramzswap *rzs, struct bio *bio)
 	index = bio->bi_sector >> SECTORS_PER_PAGE_SHIFT;
 
 	user_mem = kmap_atomic(page, KM_USER0);
-	cmem = kmap_atomic(rzs->table[index].page, KM_USER1) +
-			rzs->table[index].offset;
+	cmem = kmap_atomic(rzs->table[index].page, KM_USER1);
 
 	memcpy(user_mem, cmem, PAGE_SIZE);
-	kunmap_atomic(user_mem, KM_USER0);
 	kunmap_atomic(cmem, KM_USER1);
+	kunmap_atomic(user_mem, KM_USER0);
 
 	ramzswap_flush_dcache_page(page);
 
@@ -740,7 +726,7 @@ static int handle_ramzswap_fault(struct ramzswap *rzs, struct bio *bio)
 		(ulong)(bio->bi_sector), bio->bi_size,
 		bio->bi_io_vec[0].bv_offset);
 
-	/* Do nothing. Just return success */
+	handle_zero_page(page);
 	set_bit(BIO_UPTODATE, &bio->bi_flags);
 	bio_endio(bio, 0);
 	return 0;
@@ -782,8 +768,8 @@ static int ramzswap_read(struct ramzswap *rzs, struct bio *bio)
 		xv_get_object_size(cmem) - sizeof(*zheader),
 		user_mem, &clen);
 
-	kunmap_atomic(user_mem, KM_USER0);
 	kunmap_atomic(cmem, KM_USER1);
+	kunmap_atomic(user_mem, KM_USER0);
 
 	/* should NEVER happen */
 	if (unlikely(ret != LZO_E_OK)) {
@@ -1330,24 +1316,18 @@ out:
 	return ret;
 }
 
-#if defined(CONFIG_SWAP_FREE_NOTIFY)
-void ramzswap_slot_free_notify(struct block_device *bdev, unsigned long index)
+static void ramzswap_slot_free_notify(struct block_device *bdev, unsigned long index)
 {
 	struct ramzswap *rzs;
-
 	rzs = bdev->bd_disk->private_data;
 	ramzswap_free_page(rzs, index);
 	stat64_inc(rzs, &rzs->stats.notify_free);
-
 	return;
 }
-#endif
 
 static struct block_device_operations ramzswap_devops = {
 	.ioctl = ramzswap_ioctl,
-#if defined(CONFIG_SWAP_FREE_NOTIFY)
 	.swap_slot_free_notify = ramzswap_slot_free_notify,
-#endif
 	.owner = THIS_MODULE
 };
 
@@ -1494,6 +1474,7 @@ static int __init ramzswap_init(void)
 free_devices:
 	while(dev_id)
 		destroy_device(&devices[--dev_id]);
+		kfree(devices);
 unregister:
 	unregister_blkdev(ramzswap_major, "ramzswap");
 out:

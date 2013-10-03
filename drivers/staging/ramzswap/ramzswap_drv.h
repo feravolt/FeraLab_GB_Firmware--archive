@@ -1,17 +1,3 @@
-/*
- * Compressed RAM based swap device
- *
- * Copyright (C) 2008, 2009, 2010  Nitin Gupta
- *
- * This code is released using a dual license strategy: BSD/GPL
- * You can choose the licence that better fits your requirements.
- *
- * Released under the terms of 3-clause BSD License
- * Released under the terms of GNU General Public License Version 2.0
- *
- * Project home: http://compcache.googlecode.com
- */
-
 #ifndef _RAMZSWAP_DRV_H_
 #define _RAMZSWAP_DRV_H_
 
@@ -58,7 +44,8 @@ static const unsigned max_zpage_size_bdev = PAGE_SIZE / 2;
  * Pages that compress to size greater than this are stored
  * uncompressed in memory.
  */
-static const unsigned max_zpage_size_nobdev = PAGE_SIZE / 4 * 3;
+
+static const size_t max_zpage_size = PAGE_SIZE / 4 * 3;
 
 /*
  * NOTE: max_zpage_size_{bdev,nobdev} sizes must be
