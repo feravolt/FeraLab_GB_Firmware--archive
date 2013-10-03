@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.31.13-GB
-# Wed Oct  2 09:24:07 2013
+# Thu Oct  3 21:13:49 2013
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -1679,6 +1679,8 @@ CONFIG_ANDROID_LOGGER=m
 CONFIG_ANDROID_TIMED_OUTPUT=y
 # CONFIG_ANDROID_TIMED_GPIO is not set
 CONFIG_ANDROID_LOW_MEMORY_KILLER=y
+CONFIG_RAMZSWAP=y
+# CONFIG_RAMZSWAP_STATS is not set
 
 #
 # File systems
