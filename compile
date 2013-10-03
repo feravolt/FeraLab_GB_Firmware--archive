@@ -1,4 +1,4 @@
-RCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-gnueabi- make distclean
+ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-gnueabi- make distclean
 ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-gnueabi- make fera_es209ra_defconfig
 ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-gnueabi- make -j2
 cp -f /home/feravolt/ferra-gb/fs/cifs/cifs.ko /home/feravolt/ferra-gb/0utput
