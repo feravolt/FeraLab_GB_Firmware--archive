@@ -791,12 +791,13 @@ config VFP
 	  Say N if your target does not have VFP hardware.
 
 config VFPv3
-	bool
-	depends on VFP
-	default y if CPU_V7
+	bool "Advanced VFPv3 processing"
+	depends on VFP && CPU_V7
+	help
+	  Say Y to include VFPv3 support code in the kernel. If you have ARMv7 cpu say Y here.
 
 config NEON
-	bool "Advanced SIMD (NEON) Extension support"
+	bool "NEON Extension support"
 	depends on VFPv3 && CPU_V7
 	help
 	  Say Y to include support code for NEON, the ARMv7 Advanced SIMD
