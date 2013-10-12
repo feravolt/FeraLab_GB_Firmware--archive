@@ -1,14 +1,9 @@
-
 config RAMZSWAP
 	tristate "Compressed in-memory swap device (ramzswap)"
 	depends on SWAP
-	select LZO_COMPRESS
-	select LZO_DECOMPRESS
 	default n
 	help
-	  Creates virtual block devices which can (only) be used as swap
-	  disks. Pages swapped to these disks are compressed and stored in
-	  memory itself.
+	  Creates virtual block devices which can (only) be used as swap disks. Pages swapped to these disks are compressed and stored in memory itself.
 
 	  See ramzswap.txt for more information.
 	  Project home: http://compcache.googlecode.com/
@@ -18,5 +13,24 @@ config RAMZSWAP_STATS
 	depends on RAMZSWAP
 	default y
 	help
-	  Enable statistics collection for ramzswap. This adds only a minimal
-	  overhead. In unsure, say Y.
+	  Enable statistics collection for ramzswap. This adds only a minimal overhead. In unsure, say Y.
+
+choice ZRAM_COMPRESS
+	prompt "compression method"
+	depends on RAMZSWAP
+	default ZRAM_LZO
+	help
+	  Select the compression method used by zram.
+	  LZO is the default. Snappy compresses a bit worse (around ~2%) but much (~2x) faster, at least on x86-64.
+
+config ZRAM_LZO
+	bool "LZO compression"
+	select LZO_COMPRESS
+	select LZO_DECOMPRESS
+
+config ZRAM_SNAPPY
+	bool "Snappy compression"
+	depends on SNAPPY_COMPRESS
+	depends on SNAPPY_DECOMPRESS
+endchoice
+

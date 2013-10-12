@@ -29,4 +29,7 @@ obj-$(CONFIG_INPUT_MIMIO)	+= mimio/
 obj-$(CONFIG_TRANZPORT)		+= frontier/
 obj-$(CONFIG_EPL)		+= epl/
 obj-$(CONFIG_ANDROID)		+= android/
+obj-$(CONFIG_SNAPPY_COMPRESS)   += snappy/
+obj-$(CONFIG_SNAPPY_DECOMPRESS) += snappy/
 obj-$(CONFIG_RAMZSWAP)		+= ramzswap/
+
