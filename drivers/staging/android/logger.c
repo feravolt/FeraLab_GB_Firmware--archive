@@ -996,8 +996,8 @@ static struct logger_log VAR = { \
 	.tags = LIST_HEAD_INIT(VAR .tags), \
 };
 
-DEFINE_LOGGER_DEVICE(log_main, LOGGER_LOG_MAIN, 16*1024)
-DEFINE_LOGGER_DEVICE(log_events, LOGGER_LOG_EVENTS, 16*1024)
+DEFINE_LOGGER_DEVICE(log_main, LOGGER_LOG_MAIN, 32*1024)
+DEFINE_LOGGER_DEVICE(log_events, LOGGER_LOG_EVENTS, 32*1024)
 DEFINE_LOGGER_DEVICE(log_radio, LOGGER_LOG_RADIO, 16*1024)
 
 static struct logger_log *get_log_from_minor(const int minor)
