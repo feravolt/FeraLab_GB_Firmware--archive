@@ -516,7 +516,7 @@ setup_ramdisk(int doload, int prompt, int image_start, unsigned int rd_sz)
 #endif
 }
 
-#if defined(CONFIG_KEXEC)
+#if defined(CONFIG_CRASH_DUMP)
 #define CAPTURE_KERNEL_MEM_SIZE (7*1024*1024)
 static void __init
 reserve_crashkernel_mem(struct resource *res)
@@ -583,7 +583,7 @@ request_standard_resources(struct meminfo *mi, struct machine_desc *mdesc)
 		    kernel_data.end <= res->end)
 			request_resource(res, &kernel_data);
 	}
-#if defined(CONFIG_KEXEC)
+#if defined(CONFIG_CRASH_DUMP)
 	reserve_crashkernel_mem(res);
 #endif
 
