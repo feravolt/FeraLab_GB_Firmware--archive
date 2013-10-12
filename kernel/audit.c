@@ -1,46 +1,3 @@
-/* audit.c -- Auditing support
- * Gateway between the kernel (e.g., selinux) and the user-space audit daemon.
- * System-call specific features have moved to auditsc.c
- *
- * Copyright 2003-2007 Red Hat Inc., Durham, North Carolina.
- * All Rights Reserved.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * Written by Rickard E. (Rik) Faith <faith@redhat.com>
- *
- * Goals: 1) Integrate fully with Security Modules.
- *	  2) Minimal run-time overhead:
- *	     a) Minimal when syscall auditing is disabled (audit_enable=0).
- *	     b) Small when syscall auditing is enabled and no audit record
- *		is generated (defer as much work as possible to record
- *		generation time):
- *		i) context is allocated,
- *		ii) names from getname are stored without a copy, and
- *		iii) inode information stored from path_lookup.
- *	  3) Ability to disable syscall auditing at boot time (audit=0).
- *	  4) Usable by other parts of the kernel (if audit_log* is called,
- *	     then a syscall record will be generated automatically for the
- *	     current syscall).
- *	  5) Netlink interface to user-space.
- *	  6) Support low-overhead kernel-based filtering to minimize the
- *	     information that must be passed to user-space.
- *
- * Example user-space utilities: http://people.redhat.com/sgrubb/audit/
- */
-
 #include <linux/init.h>
 #include <asm/types.h>
 #include <asm/atomic.h>
@@ -48,9 +5,7 @@
 #include <linux/module.h>
 #include <linux/err.h>
 #include <linux/kthread.h>
-
 #include <linux/audit.h>
-
 #include <net/sock.h>
 #include <net/netlink.h>
 #include <linux/skbuff.h>
@@ -61,12 +16,10 @@
 
 #include "audit.h"
 
-/* No auditing will take place until audit_initialized == AUDIT_INITIALIZED.
- * (Initialization happens after skb_init is called.) */
 #define AUDIT_DISABLED		-1
 #define AUDIT_UNINITIALIZED	0
 #define AUDIT_INITIALIZED	1
-static int	audit_initialized;
+static int	audit_initialized = AUDIT_DISABLED;
 
 #define AUDIT_OFF	0
 #define AUDIT_ON	1
