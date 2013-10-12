@@ -1,0 +1,3 @@
+ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-gnueabi- make distclean
+ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-gnueabi- make fera_es209ra_defconfig
+

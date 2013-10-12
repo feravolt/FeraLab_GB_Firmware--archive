@@ -1,6 +1,6 @@
-FeraKernel-GingerBread
+FeraKernel
 ======================
 
-Reborned Gingerbread Kernel for es209ra (SonyEricsson x10i/a)
+Reborned Kernel for es209ra (SonyEricsson x10i/a)
 By FeraVolt.
 
