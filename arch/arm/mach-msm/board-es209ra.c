@@ -63,7 +63,6 @@
 #define MSM_PMEM_MDP_SIZE 	0x1C91000
 #define SMEM_SPINLOCK_I2C	"S:6"
 #define MSM_PMEM_ADSP_SIZE	0x2196000
-#define MSM_PMEM_SWIQI_SIZE 	0x300000
 #define MSM_FB_SIZE         	0x500000
 #define MSM_GPU_PHYS_SIZE 	SZ_2M
 #define MSM_SMI_BASE		0x00000000
@@ -80,17 +79,6 @@
 #define PMIC_VREG_WLAN_LEVEL	2600
 #define PMIC_VREG_GP6_LEVEL	2850
 #define FPGA_SDCC_STATUS	0x70000280
-
-#ifdef CONFIG_SMC91X
-static struct resource smc91x_resources[] = {
-	[0] = {
-		.flags  = IORESOURCE_MEM,
-	},
-	[1] = {
-		.flags  = IORESOURCE_IRQ,
-	},
-};
-#endif
 
 static char *usb_func_msc[] = {
 	"usb_mass_storage",
@@ -198,15 +186,6 @@ static struct platform_device android_usb_device = {
 		.platform_data = &android_usb_pdata,
 	},
 };
-
-#ifdef CONFIG_SMC91X
-static struct platform_device smc91x_device = {
-	.name           = "smc91x",
-	.id             = 0,
-	.num_resources  = ARRAY_SIZE(smc91x_resources),
-	.resource       = smc91x_resources,
-};
-#endif
  
 static struct platform_device hs_device = {
        .name   = "msm-handset",
@@ -472,12 +451,6 @@ static struct android_pmem_platform_data android_pmem_adsp_pdata = {
 	.cached = 0,
 };
 
-static struct android_pmem_platform_data android_pmem_swiqi_pdata = {
-	.name = "pmem_swiqi",
-	.allocator_type = PMEM_ALLOCATORTYPE_BITMAP,
-	.cached = 1,
-};
-
 static struct android_pmem_platform_data android_pmem_smipool_pdata = {
 	.name = "pmem_smipool",
 	.start = MSM_PMEM_SMIPOOL_BASE,
@@ -517,12 +490,6 @@ static struct platform_device android_pmem_kernel_smi_device = {
 	.dev = { .platform_data = &android_pmem_kernel_smi_pdata },
 };
 #endif
-
-static struct platform_device android_pmem_swiqi_device = {
-	.name = "android_pmem",
-	.id = 5,
-	.dev = {.platform_data = &android_pmem_swiqi_pdata},
-};
 
 static struct resource msm_fb_resources[] = {
 	{
@@ -1450,14 +1417,10 @@ static struct platform_device msm_wlan_ar6000_pm_device = {
 
 static int hsusb_rpc_connect(int connect)
 {
-#ifdef CONFIG_CRASH_DUMP
-	return 0;
-#else
 	if (connect)
 		return msm_hsusb_rpc_connect();
 	else
 		return msm_hsusb_rpc_close();
-#endif
 }
 
 static struct msm_otg_platform_data msm_otg_pdata = {
@@ -1491,9 +1454,6 @@ static struct platform_device pmic_time_device = {
 static struct platform_device *devices[] __initdata = {
 	&msm_wlan_ar6000_pm_device,
 	&msm_fb_device,
-#ifdef CONFIG_SMC91X
-	&smc91x_device,
-#endif
 	&msm_device_smd,
 	&msm_device_dmov,
 	&android_pmem_kernel_ebi1_device,
@@ -1503,7 +1463,6 @@ static struct platform_device *devices[] __initdata = {
 	&android_pmem_device,
 	&android_pmem_adsp_device,
 	&android_pmem_smipool_device,
-	&android_pmem_swiqi_device,
 	&msm_device_nand,
 	&msm_device_i2c,
 	&qsd_device_spi,
@@ -1523,9 +1482,6 @@ static struct platform_device *devices[] __initdata = {
 	&msm_camera_sensor_semc_imx046_camera,
 	&es209ra_audio_jack_device,
 	&lbs_device,
-#ifdef CONFIG_CAPTURE_KERNEL
-	&kdump_amsscoredump_device,
-#endif
 	&pmic_time_device,
 };
 
@@ -1710,27 +1666,6 @@ static void __init es209ra_init_mmc(void)
 	msm_add_sdcc(2, &es209ra_sdcc_data2);
 }
 
-#ifdef CONFIG_SMC91X
-static void __init es209ra_cfg_smc91x(void)
-{
-	int rc = 0;
-
-	smc91x_resources[0].start = 0x70000300;
-	smc91x_resources[0].end = 0x700003ff;
-	smc91x_resources[1].start = INT_ES209RA_GPIO_ETHER;
-	smc91x_resources[1].end = INT_ES209RA_GPIO_ETHER;
-
-	rc = gpio_tlmm_config(GPIO_CFG(107, 0, GPIO_INPUT,
-					       GPIO_PULL_DOWN, GPIO_2MA),
-					       GPIO_ENABLE);
-		if (rc) {
-			printk(KERN_ERR "%s: gpio_tlmm_config=%d\n",
-					__func__, rc);
-		}
-		printk(KERN_ERR "%s: invalid machine type\n", __func__);
-}
-#endif
-
 static struct msm_pm_platform_data msm_pm_data[MSM_PM_SLEEP_MODE_NR] = {
 	[MSM_PM_SLEEP_MODE_POWER_COLLAPSE].supported = 1,
 	[MSM_PM_SLEEP_MODE_POWER_COLLAPSE].suspend_enabled = 1,
@@ -1845,14 +1780,6 @@ static void __init pmem_adsp_size_setup(char **p)
 }
 __early_param("pmem_adsp_size=", pmem_adsp_size_setup);
 
-static unsigned pmem_swiqi_size = MSM_PMEM_SWIQI_SIZE;
-static void __init pmem_swiqi_size_setup(char **p)
-{
-	pmem_swiqi_size = memparse(*p, p);
-}
-
-__early_param("pmem_swiqi_size=", pmem_swiqi_size_setup);
-
 unsigned int es209ra_startup_reason = 0;
 
 static int __init es209ra_startup_reason_setup(char *str)
@@ -1877,11 +1804,7 @@ int get_predecode_repair_cache(void);
 int set_predecode_repair_cache(void);
 static void __init es209ra_init(void)
 {
-#ifdef CONFIG_CAPTURE_KERNEL
-	smsm_wait_for_modem_reset();
-#else
 	smsm_wait_for_modem();
-#endif
 	if (socinfo_init() < 0)
 		printk(KERN_ERR "%s: socinfo_init() failed!\n", __func__);
 	printk(KERN_INFO "%s: startup_reason: 0x%08x\n",
@@ -1889,12 +1812,7 @@ static void __init es209ra_init(void)
 	printk(KERN_ERR "PVR0F2: %x\n", get_predecode_repair_cache());
 	set_predecode_repair_cache();
 	printk(KERN_ERR "PVR0F2: %x\n", get_predecode_repair_cache());
-
-#ifdef CONFIG_SMC91X
-	es209ra_cfg_smc91x();
-#endif
 	msm_acpu_clock_init(&qsd8x50_clock_data);
-
 	msm_hsusb_pdata.swfi_latency = msm_pm_data
 		[MSM_PM_SLEEP_MODE_RAMP_DOWN_AND_WAIT_FOR_INTERRUPT].latency;
 	msm_device_hsusb_peripheral.dev.platform_data = &msm_hsusb_pdata;
@@ -1977,15 +1895,6 @@ static void __init es209ra_allocate_memory_regions(void)
 			"pmem arena\n", size, addr, __pa(addr));
 	}
 
-	size = pmem_swiqi_size;
-	if (size) {
-		addr = alloc_bootmem(size);
-		android_pmem_swiqi_pdata.start = __pa(addr);
-		android_pmem_swiqi_pdata.size = size;
-		pr_info("allocating %lu bytes at %p (%lx physical) for swiqi "
-			"pmem arena\n", size, addr, __pa(addr));
-	}
-
 	size = MSM_FB_SIZE;
 	addr = (void *)MSM_FB_BASE;
 	msm_fb_resources[0].start = (unsigned long)addr;
@@ -2036,16 +1945,8 @@ __setup_param("serialno=", board_serialno_setup_1, board_serialno_setup, 0);
 __setup_param("semcandroidboot.serialno=", board_serialno_setup_2, board_serialno_setup, 0);
 
 MACHINE_START(ES209RA, "ES209RA")
-#ifdef CONFIG_MSM_DEBUG_UART
-	.phys_io  = MSM_DEBUG_UART_PHYS,
-	.io_pg_offst = ((MSM_DEBUG_UART_BASE) >> 18) & 0xfffc,
-#endif
-#ifdef CONFIG_CAPTURE_KERNEL
-	.boot_params    = PHYS_OFFSET + 0x1000,
-#else
 	.boot_params	= PHYS_OFFSET + 0x100,
 	.fixup          = es209ra_fixup,
-#endif
 	.map_io		= es209ra_map_io,
 	.init_irq	= es209ra_init_irq,
 	.init_machine	= es209ra_init,
