@@ -1,3 +1,5 @@
+/*FeraLab*/
+
 #include <linux/utsname.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
@@ -15,6 +17,7 @@
 #include <linux/spinlock.h>
 #include <linux/percpu.h>
 #include <linux/cryptohash.h>
+
 #include <asm/processor.h>
 #include <asm/uaccess.h>
 #include <asm/irq.h>
@@ -23,6 +26,8 @@
 #define INPUT_POOL_WORDS 128
 #define OUTPUT_POOL_WORDS 32
 #define SEC_XFER_SIZE 512
+#define EXTRACT_SIZE 10
+
 
 static int random_read_wakeup_thresh = 256;
 
@@ -97,14 +102,15 @@ struct entropy_store {
 	struct poolinfo *poolinfo;
 	__u32 *pool;
 	const char *name;
-	int limit;
 	struct entropy_store *pull;
+	int limit;
 
 	/* read-write data: */
 	spinlock_t lock;
 	unsigned add_ptr;
 	int entropy_count;
 	int input_rotate;
+	__u8 last_data[EXTRACT_SIZE];
 };
 
 static __u32 input_pool_data[INPUT_POOL_WORDS];
@@ -136,16 +142,6 @@ static struct entropy_store nonblocking_pool = {
 	.pool = nonblocking_pool_data
 };
 
-/*
- * This function adds bytes into the entropy "pool".  It does not
- * update the entropy estimate.  The caller should call
- * credit_entropy_bits if this is appropriate.
- *
- * The pool is stirred with a primitive polynomial of the appropriate
- * degree, and then twisted.  We twist by three bits at a time because
- * it's cheap to do so and helps slightly in the expected case where
- * the entropy is concentrated in the low-order bits.
- */
 static void mix_pool_bytes_extract(struct entropy_store *r, const void *in,
 				   int nbytes, __u8 out[64])
 {
@@ -403,8 +399,6 @@ void add_disk_randomness(struct gendisk *disk)
 	add_timer_randomness(disk->random, 0x100 + disk_devt(disk));
 }
 #endif
-
-#define EXTRACT_SIZE 10
 
 /*********************************************************************
  *
@@ -1293,33 +1287,11 @@ EXPORT_SYMBOL(secure_dccp_sequence_number);
 
 #endif /* CONFIG_INET */
 
-
-/*
- * Get a random word for internal kernel use only. Similar to urandom but
- * with the goal of minimal entropy pool depletion. As a result, the random
- * value is not cryptographically secure but for several uses the cost of
- * depleting entropy is too high
- */
 unsigned int get_random_int(void)
 {
-	/*
-	 * Use IP's RNG. It suits our purpose perfectly: it re-keys itself
-	 * every second, from the entropy pool (and thus creates a limited
-	 * drain on it), and uses halfMD4Transform within the second. We
-	 * also mix it with jiffies and the PID:
-	 */
 	return secure_ip_id((__force __be32)(current->pid + jiffies));
 }
 
-/*
- * randomize_range() returns a start address such that
- *
- *    [...... <range> .....]
- *  start                  end
- *
- * a <range> with size "len" starting at the return value is inside in the
- * area defined by [start, end], but is otherwise randomized.
- */
 unsigned long
 randomize_range(unsigned long start, unsigned long end, unsigned long len)
 {
