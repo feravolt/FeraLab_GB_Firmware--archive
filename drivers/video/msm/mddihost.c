@@ -602,7 +602,7 @@ boolean mddi_video_stream_black_display(uint32 x0, uint32 y0,
 	uint32 depth = 16;
 	uint32 rows_per_block = 16;
 	size_t pixelbytes_per_row = width * (depth / 8);
-	dma_addr_t  pixeldata_dma_addr;
+	dma_addr_t pixeldata_dma_addr;
 	void *pixeldata_ptr;
 
 	if (in_interrupt())
@@ -652,7 +652,7 @@ boolean mddi_video_stream_black_display(uint32 x0, uint32 y0,
 				curr_llist_ptr->packet_data_count;
 			video_pkt_ptr->packet_type = 0x10;
 			video_pkt_ptr->bClient_ID = 0;
-			video_pkt_ptr->video_data_format_descriptor = 0x5565;
+			video_pkt_ptr->video_data_format_descriptor = 0x5888;
 			video_pkt_ptr->pixel_data_attributes = 0x00C3;
 			video_pkt_ptr->x_left_edge = x0;
 			video_pkt_ptr->y_top_edge = y0;

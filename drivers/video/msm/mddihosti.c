@@ -1637,6 +1637,17 @@ void mddi_host_configure_interrupts(mddi_host_type host_idx, boolean enable)
 
 }
 
+void mddi_host_client_cnt_reset(void)
+{
+  unsigned long flags;
+  mddi_host_cntl_type *pmhctl;
+
+  pmhctl = &(mhctl[MDDI_HOST_PRIM]);
+  spin_lock_irqsave(&mddi_host_spin_lock, flags);
+  pmhctl->client_status_cnt = 0;
+  spin_unlock_irqrestore(&mddi_host_spin_lock, flags);
+}
+
 static void mddi_host_powerup(mddi_host_type host_idx)
 {
 	mddi_host_cntl_type *pmhctl = &(mhctl[host_idx]);
@@ -1872,50 +1883,9 @@ uint32 mddi_get_client_id(void)
 		if (!mddi_client_id)
 			mddi_disable(1);
 	}
-
-#if 0
-	switch (mddi_client_capability_pkt.Mfr_Name) {
-	case 0x4474:
-		if ((mddi_client_capability_pkt.Product_Code != 0x8960) &&
-		    (target == DISPLAY_1)) {
-			ret = PRISM_WVGA;
-		}
-		break;
-
-	case 0xD263:
-		if (target == DISPLAY_1)
-			ret = TOSHIBA_VGA_PRIM;
-		else if (target == DISPLAY_2)
-			ret = TOSHIBA_QCIF_SECD;
-		break;
-
-	case 0:
-		if (mddi_client_capability_pkt.Product_Code == 0x8835) {
-			if (target == DISPLAY_1)
-				ret = SHARP_QVGA_PRIM;
-			else if (target == DISPLAY_2)
-				ret = SHARP_128x128_SECD;
-		}
-		break;
-
-	default:
-		break;
-	}
-
-	if ((!client_detection_try) && (ret != TOSHIBA_VGA_PRIM)
-	    && (ret != TOSHIBA_QCIF_SECD)) {
-		/* Not a Toshiba display, so change drive_lo back to default value */
-		mddi_host_reg_out(DRIVE_LO, 0x0032);
-	}
 #endif
-
-#endif
-
 	return mddi_client_id;
 }
-/*
- * XXX: #endif
- */
 
 void mddi_host_powerdown(mddi_host_type host_idx)
 {

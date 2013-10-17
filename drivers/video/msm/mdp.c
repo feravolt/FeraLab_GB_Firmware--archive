@@ -1,60 +1,3 @@
-/* Copyright (c) 2008-2010, Code Aurora Forum. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of Code Aurora Forum nor
- *       the names of its contributors may be used to endorse or promote
- *       products derived from this software without specific prior written
- *       permission.
- *
- * Alternatively, provided that this notice is retained in full, this software
- * may be relicensed by the recipient under the terms of the GNU General Public
- * License version 2 ("GPL") and only version 2, in which case the provisions of
- * the GPL apply INSTEAD OF those given above.  If the recipient relicenses the
- * software under the GPL, then the identification text in the MODULE_LICENSE
- * macro must be changed to reflect "GPLv2" instead of "Dual BSD/GPL".  Once a
- * recipient changes the license terms to the GPL, subsequent recipients shall
- * not relicense under alternate licensing terms, including the BSD or dual
- * BSD/GPL terms.  In addition, the following license statement immediately
- * below and between the words START and END shall also then apply when this
- * software is relicensed under the GPL:
- *
- * START
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License version 2 and only version 2 as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * END
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- *
- */
-
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/sched.h>
@@ -69,20 +12,18 @@
 #include <linux/debugfs.h>
 #include <linux/delay.h>
 #include <linux/mutex.h>
-
+#include <linux/pm_runtime.h>
 #include <asm/system.h>
 #include <asm/mach-types.h>
 #include <linux/semaphore.h>
 #include <linux/uaccess.h>
-
+#include <mach/clk.h>
 #include "mdp.h"
 #include "msm_fb.h"
 #ifdef CONFIG_FB_MSM_MDP40
 #include "mdp4.h"
 #endif
-
 #include <linux/autoconf.h>
-
 #ifdef CONFIG_FB_MSM_MDDI_TMD_NT35580
 #include "mddi_tmd_nt35580.h"
 #endif
@@ -93,21 +34,12 @@ static struct clk *mdp_pclk;
 struct completion mdp_ppp_comp;
 struct semaphore mdp_ppp_mutex;
 struct semaphore mdp_pipe_ctrl_mutex;
-
-unsigned long mdp_timer_duration = (HZ);   /* 1 sec */
-/* unsigned long mdp_mdp_timer_duration=0; */
-
+unsigned long mdp_timer_duration = (HZ);
 boolean mdp_ppp_waiting = FALSE;
 uint32 mdp_tv_underflow_cnt;
 uint32 mdp_lcdc_underflow_cnt;
-
 boolean mdp_current_clk_on = FALSE;
 boolean mdp_is_in_isr = FALSE;
-
-/*
- * legacy mdp_in_processing is only for DMA2-MDDI
- * this applies to DMA2 block only
- */
 uint32 mdp_in_processing = FALSE;
 
 #ifdef CONFIG_FB_MSM_MDP40
@@ -121,10 +53,9 @@ MDP_BLOCK_TYPE mdp_debug[MDP_MAX_BLOCK];
 int32 mdp_block_power_cnt[MDP_MAX_BLOCK];
 
 spinlock_t mdp_spin_lock;
-struct workqueue_struct *mdp_dma_wq;	/*mdp dma wq */
-struct workqueue_struct *mdp_vsync_wq;	/*mdp vsync wq */
-
-static struct workqueue_struct *mdp_pipe_ctrl_wq; /* mdp mdp pipe ctrl wq */
+struct workqueue_struct *mdp_dma_wq;
+struct workqueue_struct *mdp_vsync_wq;
+static struct workqueue_struct *mdp_pipe_ctrl_wq;
 static struct delayed_work mdp_pipe_ctrl_worker;
 
 #ifdef CONFIG_FB_MSM_MDP40
@@ -336,6 +267,40 @@ int mdp_ppp_pipe_wait(void)
 	return ret;
 }
 
+#define DEFAULT_FRAME_RATE 60
+u32 mdp_get_panel_framerate(struct msm_fb_data_type *mfd)
+{
+  u32 frame_rate = 0, pixel_rate = 0, total_pixel;
+  struct msm_panel_info *panel_info = &mfd->panel_info;
+  frame_rate = panel_info->lcd.refx100 / 100;
+
+  if (frame_rate)
+    return frame_rate;
+
+  pixel_rate =
+    panel_info->clk_rate;
+
+  total_pixel =
+    (panel_info->lcdc.h_back_porch +
+     panel_info->lcdc.h_front_porch +
+     panel_info->lcdc.h_pulse_width +
+     panel_info->xres) *
+    (panel_info->lcdc.v_back_porch +
+     panel_info->lcdc.v_front_porch +
+     panel_info->lcdc.v_pulse_width +
+     panel_info->yres);
+
+  if (total_pixel)
+    frame_rate = pixel_rate / total_pixel;
+  else
+    printk("%s total pixels are zero\n", __func__);
+
+  if (frame_rate == 0) {
+    frame_rate = DEFAULT_FRAME_RATE;
+  }
+  return frame_rate;
+}
+
 static DEFINE_SPINLOCK(mdp_lock);
 static int mdp_irq_mask;
 static int mdp_irq_enabled;
@@ -458,6 +423,9 @@ void mdp_pipe_kickoff(uint32 term, struct msm_fb_data_type *mfd)
 	} else if (term == MDP_DMA_S_TERM) {
 		mdp_pipe_ctrl(MDP_DMA_S_BLOCK, MDP_BLOCK_POWER_ON, FALSE);
 		outpdw(MDP_BASE + 0x0048, 0x0);	/* start DMA */
+	} else if (term == MDP_DMA_E_TERM) {
+		mdp_pipe_ctrl(MDP_DMA_E_BLOCK, MDP_BLOCK_POWER_ON, FALSE);
+		outpdw(MDP_BASE + 0x004C, 0x0);
 	}
 #endif
 }
@@ -897,14 +865,12 @@ static int mdp_irq_clk_setup(void)
 	if (IS_ERR(mdp_pclk))
 		mdp_pclk = NULL;
 
-#ifdef CONFIG_FB_MSM_MDP40
 	/*
 	 * mdp_clk should greater than mdp_pclk always
 	 */
 	clk_set_rate(mdp_clk, 122880000); /* 122.88 Mhz */
 	printk(KERN_INFO "mdp_clk: mdp_clk=%d\n",
 				(int)clk_get_rate(mdp_clk));
-#endif
 
 	return 0;
 }
@@ -920,7 +886,7 @@ static int mdp_probe(struct platform_device *pdev)
 	struct msm_fb_data_type *mfd;
 	struct msm_fb_panel_data *pdata = NULL;
 	int rc;
-	resource_size_t  size ;
+	resource_size_t  size;
 #ifdef CONFIG_FB_MSM_MDP40
 	int intf, if_no;
 #else

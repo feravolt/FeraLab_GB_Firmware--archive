@@ -113,6 +113,7 @@ struct msm_panel_info {
 	/* physical size in mm */
 	__u32 width;
 	__u32 height;
+        __u32 frame_rate;
 
 	union {
 		struct mddi_panel_info mddi;
