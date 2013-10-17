@@ -1,10 +1,7 @@
 rm -R 0UTPUT
 mkdir 0UTPUT
 ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-gnueabi- make -j2
-cp -f /home/feravolt/ferra-gb/fs/cifs/cifs.ko /home/feravolt/ferra-gb/0UTPUT
-cp -f /home/feravolt/ferra-gb/drivers/net/tun.ko /home/feravolt/ferra-gb/0UTPUT
 cp -f /home/feravolt/ferra-gb/arch/arm/boot/zImage /home/feravolt/ferra-gb/0UTPUT
-cp -f /home/feravolt/ferra-gb/drivers/staging/android/logger.ko /home/feravolt/ferra-gb/0UTPUT
 cd
 cd /home/feravolt/vendor/host
 ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-gnueabi- KERNEL_DIR=/home/feravolt/ferra-gb make clean
@@ -13,9 +10,6 @@ cp -f /home/feravolt/vendor/host/.output/QUALCOMM_ARM_NATIVEMMC-SDIO/image/ar600
 cd
 cd /home/feravolt/ferra-gb/0UTPUT
 /home/feravolt/arm/bin/arm-gnueabi-strip --strip-unneeded ar6000.ko
-/home/feravolt/arm/bin/arm-gnueabi-strip --strip-unneeded tun.ko
-/home/feravolt/arm/bin/arm-gnueabi-strip --strip-unneeded cifs.ko
-/home/feravolt/arm/bin/arm-gnueabi-strip --strip-unneeded logger.ko
 mv /home/feravolt/ferra-gb/0UTPUT/zImage /home/feravolt/ferra-gb/0UTPUT/Image
 mv /home/feravolt/ferra-gb/0UTPUT/ar6000.ko /home/feravolt/ferra-gb/0UTPUT/wifi.ko
 
