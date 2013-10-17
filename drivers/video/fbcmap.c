@@ -90,7 +90,8 @@ static const struct fb_cmap default_16_colors = {
 
 int fb_alloc_cmap(struct fb_cmap *cmap, int len, int transp)
 {
-    int size = len*sizeof(u16);
+    int size = len * sizeof(u16);
+    int ret = -ENOMEM;
 
     if (cmap->len != len) {
 	fb_dealloc_cmap(cmap);
@@ -110,12 +111,14 @@ int fb_alloc_cmap(struct fb_cmap *cmap, int len, int transp)
     }
     cmap->start = 0;
     cmap->len = len;
-    fb_copy_cmap(fb_default_cmap(len), cmap);
-    return 0;
+    ret = fb_copy_cmap(fb_default_cmap(len), cmap);
+	if (ret)
+		goto fail;
+	return 0;
 
 fail:
-    fb_dealloc_cmap(cmap);
-    return -ENOMEM;
+	fb_dealloc_cmap(cmap);
+	return ret;
 }
 
 /**
@@ -249,6 +252,9 @@ int fb_set_user_cmap(struct fb_cmap_user *cmap, struct fb_info *info)
 {
 	int rc, size = cmap->len * sizeof(u16);
 	struct fb_cmap umap;
+
+        if (size < 0 || size < cmap->len)
+		return -E2BIG;
 
 	memset(&umap, 0, sizeof(struct fb_cmap));
 	rc = fb_alloc_cmap(&umap, cmap->len, cmap->transp != NULL);
