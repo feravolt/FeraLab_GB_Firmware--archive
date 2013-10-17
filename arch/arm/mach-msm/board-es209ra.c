@@ -771,16 +771,16 @@ static void __init msm_mddi_tmd_fwvga_display_device_init(void)
 {
 	struct msm_fb_panel_data *panel_data = &tmd_wvga_panel_data;
 	printk(KERN_DEBUG "%s \n", __func__);
-	panel_data->panel_info.xres = 480;
 	panel_data->panel_info.yres = 854;
+        panel_data->panel_info.xres = 480;
 	panel_data->panel_info.type = MDDI_PANEL;
 	panel_data->panel_info.pdest = DISPLAY_1;
 	panel_data->panel_info.wait_cycle = 0;
-	panel_data->panel_info.bpp = 16;
+	panel_data->panel_info.bpp = 32;
 	panel_data->panel_info.clk_rate = 192000000;
 	panel_data->panel_info.clk_min =  190000000;
 	panel_data->panel_info.clk_max = 200000000;
-	panel_data->panel_info.fb_num = 2;
+	panel_data->panel_info.fb_num = 3;
 	panel_data->panel_info.mddi.vdopkt = MDDI_DEFAULT_PRIM_PIX_ATTR;
 	panel_data->panel_info.lcd.vsync_enable = FALSE;
 	panel_data->panel_info.lcd.v_back_porch = 12;
@@ -788,7 +788,9 @@ static void __init msm_mddi_tmd_fwvga_display_device_init(void)
 	panel_data->panel_info.lcd.v_pulse_width = 0;
 	panel_data->panel_info.lcd.hw_vsync_mode = TRUE;
 	panel_data->panel_info.lcd.vsync_notifier_period = 0;
-	panel_data->panel_info.lcd.refx100 = 100000000 / 16766;
+	panel_data->panel_info.lcd.refx100 = 7468;
+	panel_data->panel_info.width = 51;
+	panel_data->panel_info.height = 89;
 	panel_data->panel_ext = &tmd_wvga_panel_ext;
 	mddi_tmd_wvga_display_device.dev.platform_data = &tmd_wvga_panel_data;
 
@@ -1094,7 +1096,7 @@ static struct kgsl_platform_data kgsl_pdata = {
 	.min_grp2d_freq = 96000000,
 	.set_grp2d_async = NULL,
 	.max_grp3d_freq = 192000000,
-	.min_grp3d_freq = 128000000,
+	.min_grp3d_freq = 192000000,
 	.set_grp3d_async = NULL,
 	.imem_clk_name = "imem_clk",
 	.grp3d_clk_name = "grp_clk",
