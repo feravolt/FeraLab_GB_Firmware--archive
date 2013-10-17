@@ -103,7 +103,6 @@ int load_565rle_image(char *filename)
 	}
 
 flush_cache_all();
-outer_flush_all();
 err_logo_free_data:
 	kfree(data);
 err_logo_close_file:

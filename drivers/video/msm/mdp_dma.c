@@ -509,25 +509,20 @@ void mdp_set_dma_pan_info(struct fb_info *info, struct mdp_dirty_region *dirty,
 			  boolean sync)
 {
 	struct msm_fb_data_type *mfd = (struct msm_fb_data_type *)info->par;
+	struct fb_info *fbi = mfd->fbi;
 	MDPIBUF *iBuf;
 	int bpp = info->var.bits_per_pixel / 8;
 
 	down(&mfd->sem);
 	iBuf = &mfd->ibuf;
 	iBuf->buf = (uint8 *) info->fix.smem_start;
-	iBuf->buf += info->var.xoffset * bpp +
-			info->var.yoffset * info->fix.line_length;
-
+	iBuf->buf += calc_fb_offset(mfd, fbi, bpp);
 	iBuf->ibuf_width = info->var.xres_virtual;
 	iBuf->bpp = bpp;
 
 	iBuf->vsync_enable = sync;
 
 	if (dirty) {
-		/*
-		 * ToDo: dirty region check inside var.xoffset+xres
-		 * <-> var.yoffset+yres
-		 */
 		iBuf->dma_x = dirty->xoffset % info->var.xres;
 		iBuf->dma_y = dirty->yoffset % info->var.yres;
 		iBuf->dma_w = dirty->width;
@@ -550,12 +545,10 @@ void mdp_dma_pan_update(struct fb_info *info)
 	iBuf = &mfd->ibuf;
 
 	if (mfd->sw_currently_refreshing) {
-		/* we need to wait for the pending update */
 		mfd->pan_waiting = TRUE;
 		if (!mfd->ibuf_flushed) {
 			wait_for_completion_killable(&mfd->pan_comp);
 		}
-		/* waiting for this update to complete */
 		mfd->pan_waiting = TRUE;
 		wait_for_completion_killable(&mfd->pan_comp);
 	} else
@@ -572,7 +565,6 @@ void mdp_refresh_screen(unsigned long data)
 		mfd->refresh_timer.data = data;
 
 		if (mfd->dma->busy)
-			/* come back in 1 msec */
 			mfd->refresh_timer.expires = jiffies + (HZ / 1000);
 		else
 			mfd->refresh_timer.expires =
@@ -591,3 +583,4 @@ void mdp_refresh_screen(unsigned long data)
 			complete(&mfd->refresher_comp);
 	}
 }
+
