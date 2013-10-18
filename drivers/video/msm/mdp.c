@@ -23,7 +23,9 @@
 #ifdef CONFIG_FB_MSM_MDP40
 #include "mdp4.h"
 #endif
+
 #include <linux/autoconf.h>
+
 #ifdef CONFIG_FB_MSM_MDDI_TMD_NT35580
 #include "mddi_tmd_nt35580.h"
 #endif
@@ -34,12 +36,21 @@ static struct clk *mdp_pclk;
 struct completion mdp_ppp_comp;
 struct semaphore mdp_ppp_mutex;
 struct semaphore mdp_pipe_ctrl_mutex;
-unsigned long mdp_timer_duration = (HZ);
+
+unsigned long mdp_timer_duration = (HZ);   /* 1 sec */
+/* unsigned long mdp_mdp_timer_duration=0; */
+
 boolean mdp_ppp_waiting = FALSE;
 uint32 mdp_tv_underflow_cnt;
 uint32 mdp_lcdc_underflow_cnt;
+
 boolean mdp_current_clk_on = FALSE;
 boolean mdp_is_in_isr = FALSE;
+
+/*
+ * legacy mdp_in_processing is only for DMA2-MDDI
+ * this applies to DMA2 block only
+ */
 uint32 mdp_in_processing = FALSE;
 
 #ifdef CONFIG_FB_MSM_MDP40
@@ -53,9 +64,10 @@ MDP_BLOCK_TYPE mdp_debug[MDP_MAX_BLOCK];
 int32 mdp_block_power_cnt[MDP_MAX_BLOCK];
 
 spinlock_t mdp_spin_lock;
-struct workqueue_struct *mdp_dma_wq;
-struct workqueue_struct *mdp_vsync_wq;
-static struct workqueue_struct *mdp_pipe_ctrl_wq;
+struct workqueue_struct *mdp_dma_wq;	/*mdp dma wq */
+struct workqueue_struct *mdp_vsync_wq;	/*mdp vsync wq */
+
+static struct workqueue_struct *mdp_pipe_ctrl_wq; /* mdp mdp pipe ctrl wq */
 static struct delayed_work mdp_pipe_ctrl_worker;
 
 #ifdef CONFIG_FB_MSM_MDP40
@@ -292,8 +304,6 @@ u32 mdp_get_panel_framerate(struct msm_fb_data_type *mfd)
 
   if (total_pixel)
     frame_rate = pixel_rate / total_pixel;
-  else
-    printk("%s total pixels are zero\n", __func__);
 
   if (frame_rate == 0) {
     frame_rate = DEFAULT_FRAME_RATE;

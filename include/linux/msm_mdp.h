@@ -192,4 +192,4 @@ struct mdp_page_protection {
 	uint32_t page_protection;
 };
 
-#endif
+#endif /*_MSM_MDP_H_*/

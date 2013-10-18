@@ -1637,15 +1637,21 @@ void mddi_host_configure_interrupts(mddi_host_type host_idx, boolean enable)
 
 }
 
+/*
+ * mddi_host_client_cnt_reset:
+ * reset client_status_cnt to 0 to make sure host does not
+ * send RTD cmd to client right after resume before mddi
+ * client be powered up. this fix "MDDI RTD Failure" problem
+ */
 void mddi_host_client_cnt_reset(void)
 {
-  unsigned long flags;
-  mddi_host_cntl_type *pmhctl;
+	unsigned long flags;
+	mddi_host_cntl_type *pmhctl;
 
-  pmhctl = &(mhctl[MDDI_HOST_PRIM]);
-  spin_lock_irqsave(&mddi_host_spin_lock, flags);
-  pmhctl->client_status_cnt = 0;
-  spin_unlock_irqrestore(&mddi_host_spin_lock, flags);
+	pmhctl = &(mhctl[MDDI_HOST_PRIM]);
+	spin_lock_irqsave(&mddi_host_spin_lock, flags);
+	pmhctl->client_status_cnt = 0;
+	spin_unlock_irqrestore(&mddi_host_spin_lock, flags);
 }
 
 static void mddi_host_powerup(mddi_host_type host_idx)
@@ -1676,6 +1682,12 @@ static void mddi_host_powerup(mddi_host_type host_idx)
 	/* Initialize the timer */
 	if (host_idx == MDDI_HOST_PRIM)
 		mddi_host_timer_service(0);
+}
+
+void mddi_send_fw_link_skew_cal(mddi_host_type host_idx)
+{
+	mddi_host_reg_out(CMD, MDDI_CMD_FW_LINK_SKEW_CAL);
+	MDDI_MSG_DEBUG("%s: Skew Calibration done!!\n", __func__);
 }
 
 void mddi_host_init(mddi_host_type host_idx)
@@ -1882,8 +1894,9 @@ uint32 mddi_get_client_id(void)
 
 		if (!mddi_client_id)
 			mddi_disable(1);
-	}
+
 #endif
+      }
 	return mddi_client_id;
 }
 

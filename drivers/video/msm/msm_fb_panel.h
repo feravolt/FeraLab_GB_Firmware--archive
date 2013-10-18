@@ -1,38 +1,45 @@
 #ifndef MSM_FB_PANEL_H
 #define MSM_FB_PANEL_H
+
 #include "msm_fb_def.h"
 #include <mach/board.h>
 
 struct msm_fb_data_type;
+
 typedef void (*msm_fb_vsync_handler_type) (void *arg);
 
+/* panel id type */
 typedef struct panel_id_s {
 	uint16 id;
 	uint16 type;
 } panel_id_type;
 
-#define NO_PANEL       0xffff
-#define MDDI_PANEL     1
-#define EBI2_PANEL     2
-#define LCDC_PANEL     3
-#define EXT_MDDI_PANEL 4
-#define TV_PANEL       5
-#define HDMI_PANEL     6
-#define DTV_PANEL      7
+/* panel type list */
+#define NO_PANEL       0xffff	/* No Panel */
+#define MDDI_PANEL     1	/* MDDI */
+#define EBI2_PANEL     2	/* EBI2 */
+#define LCDC_PANEL     3	/* internal LCDC type */
+#define EXT_MDDI_PANEL 4	/* Ext.MDDI */
+#define TV_PANEL       5	/* TV */
+#define HDMI_PANEL     6	/* HDMI TV */
+#define DTV_PANEL      7	/* DTV */
 
+/* panel class */
 typedef enum {
-	DISPLAY_LCD = 0,
-	DISPLAY_LCDC,
-	DISPLAY_TV,
-	DISPLAY_EXT_MDDI,
+	DISPLAY_LCD = 0,	/* lcd = ebi2/mddi */
+	DISPLAY_LCDC,		/* lcdc */
+	DISPLAY_TV,		/* TV Out */
+	DISPLAY_EXT_MDDI,	/* External MDDI */
 } DISP_TARGET;
 
+/* panel device locaiton */
 typedef enum {
-	DISPLAY_1 = 0,
-	DISPLAY_2,
+	DISPLAY_1 = 0,		/* attached as first device */
+	DISPLAY_2,		/* attached on second device */
 	MAX_PHYS_TARGET_NUM,
 } DISP_TARGET_PHYS;
 
+/* panel info type */
 struct lcd_panel_info {
 	__u32 vsync_enable;
 	__u32 refx100;
@@ -73,6 +80,8 @@ struct msm_panel_info {
 	__u32 clk_min;
 	__u32 clk_max;
 	__u32 frame_count;
+
+	/* physical size in mm */
 	__u32 width;
 	__u32 height;
         __u32 frame_rate;
@@ -93,17 +102,24 @@ struct msm_fb_panel_data {
 	void (*set_rect) (int x, int y, int xres, int yres);
 	void (*set_vsync_notifier) (msm_fb_vsync_handler_type, void *arg);
 	void (*set_backlight) (struct msm_fb_data_type *);
+
+	/* function entry chain */
 	int (*on) (struct platform_device *pdev);
 	int (*off) (struct platform_device *pdev);
 	struct platform_device *next;
 };
 
-struct platform_device *msm_fb_device_alloc(struct msm_fb_panel_data *pdata, u32 type, u32 id);
+/*===========================================================================
+  FUNCTIONS PROTOTYPES
+============================================================================*/
+struct platform_device *msm_fb_device_alloc(struct msm_fb_panel_data *pdata,
+						u32 type, u32 id);
 int panel_next_on(struct platform_device *pdev);
 int panel_next_off(struct platform_device *pdev);
+
 int lcdc_device_register(struct msm_panel_info *pinfo);
+
 int mddi_toshiba_device_register(struct msm_panel_info *pinfo,
 					u32 channel, u32 panel);
 
-#endif
-
+#endif /* MSM_FB_PANEL_H */

@@ -1,32 +1,3 @@
-/* Copyright (c) 2008-2009, Code Aurora Forum. All rights reserved.
- * Copyright (C) 2010 Sony Ericsson Mobile Communications AB.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of Code Aurora nor
- *       the names of its contributors may be used to endorse or promote
- *       products derived from this software without specific prior written
- *       permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NON-INFRINGEMENT ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
- * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
- * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- */
-
 #ifndef MDDIHOSTI_H
 #define MDDIHOSTI_H
 
@@ -34,8 +5,6 @@
 #include "mddihost.h"
 #include <linux/clk.h>
 
-/* Register offsets in MDDI, applies to both msm_pmdh_base and
- * (u32)msm_emdh_base. */
 #define MDDI_CMD   		0x0000
 #define MDDI_VERSION   		0x0004
 #define MDDI_PRI_PTR		0x0008
@@ -542,6 +511,7 @@ typedef struct {
 #define MDDI_CMD_SEND_RTD            0x0700
 #define MDDI_CMD_LINK_ACTIVE         0x0900
 #define MDDI_CMD_PERIODIC_REV_ENCAP  0x0A00
+#define MDDI_CMD_FW_LINK_SKEW_CAL    0x0D00
 
 extern void mddi_host_init(mddi_host_type host);
 extern void mddi_host_powerdown(mddi_host_type host);
@@ -588,4 +558,5 @@ void mddi_mhctl_remove(mddi_host_type host_idx);
 void mddi_host_timer_service(unsigned long data);
 void mddi_host_client_cnt_reset(void);
 uint32 mddi_host_get_error_count(void);
-#endif /* MDDIHOSTI_H */
+#endif
+

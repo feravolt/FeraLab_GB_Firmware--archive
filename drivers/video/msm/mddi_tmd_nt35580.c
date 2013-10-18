@@ -1,21 +1,3 @@
-/*
-   drivers/video/msm/mddi_nt35580_lcd.c   A control program for nt35580-LCD.
-   Copyright (C) 2009 Sony Ericsson Mobile Communications Japan, Inc.
-
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License, version 2, as
-   published by the Free Software Foundation.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*/
-
 #include <linux/kernel.h>
 #include <mach/gpio.h>
 #include <mach/vreg.h>
@@ -681,17 +663,60 @@ static int mddi_nt35580_lcd_lcd_off(struct platform_device *pdev)
 	return 0;
 }
 
+static int nt35580_lcd_get_nv_vsync(void)
+{
+	struct get_lcd_vsync_req{
+		struct rpc_request_nv_cmd	nv;
+		struct nv_oemhw_lcd_vsync	data;
+	} req;
+
+	struct get_lcd_vsync_rep{
+		struct rpc_reply_nv_cmd		nv;
+		struct nv_oemhw_lcd_vsync	data;
+	} rep;
+	struct msm_rpc_endpoint *endpoint;
+	uint32_t item = NV_OEMHW_LCD_VSYNC_I;
+	int rc;
+	endpoint = msm_rpc_connect(NV_RPC_PROG, NV_RPC_VERS, 0);
+	if (IS_ERR(endpoint)) {
+		MDDI_MSG_ERR("%s: msm_rpc_connect failed\n", __func__);
+		return 0;
+	}
+	req.nv.cmd			= cpu_to_be32(NV_READ);
+	req.nv.item			= cpu_to_be32(item);
+	req.nv.more_data		= cpu_to_be32(1);
+	req.nv.desc			= cpu_to_be32(item);
+	rc = msm_rpc_call_reply(endpoint, NV_CMD_REMOTE_PROC,
+						  &req, sizeof(req),
+						  &rep, sizeof(rep),
+						  5 * HZ);
+	if (rc < 0) {
+		MDDI_MSG_ERR("%s: msm_rpc_call_reply failed!\n", __func__);
+		return 0;
+	}
+	return be32_to_cpu(rep.data.vsync_usec);
+}
+
 static int __init mddi_nt35580_lcd_lcd_probe(struct platform_device *pdev)
 {
 	struct msm_fb_panel_data *panel_data;
+	int nv_vsync = 0;
 
 	if (!pdev) {
+		return -1;
+	}
+	if (!pdev->dev.platform_data) {
 		return -1;
 	}
 	panel_data = (struct msm_fb_panel_data *)pdev->dev.platform_data;
 	panel_data->on  = mddi_nt35580_lcd_lcd_on;
 	panel_data->off = mddi_nt35580_lcd_lcd_off;
-	panel_data->panel_info.lcd.refx100 = 100000000 / 16766;
+	nv_vsync = nt35580_lcd_get_nv_vsync();
+	nv_vsync >>= 16;
+	nv_vsync &= (0xffff);
+	if ((MIN_NV > nv_vsync) || (nv_vsync > MAX_NV))
+		nv_vsync = DEF_NV ;
+	panel_data->panel_info.lcd.refx100 = 100000000 / nv_vsync;
 	panel_data->panel_info.width = 51;
 	panel_data->panel_info.height = 89;
 	msm_fb_add_device(pdev);
