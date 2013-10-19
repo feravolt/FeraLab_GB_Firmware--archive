@@ -184,5 +184,6 @@ extern unsigned char *msm_mdp_base;
 extern unsigned char *msm_pmdh_base;
 extern unsigned char *msm_emdh_base;
 #endif
+#undef ENABLE_FWD_LINK_SKEW_CALIBRATION
 #endif
 
