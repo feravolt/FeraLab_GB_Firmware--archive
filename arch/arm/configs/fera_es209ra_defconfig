@@ -318,7 +318,7 @@ CONFIG_ALIGNMENT_TRAP=y
 #
 CONFIG_ZBOOT_ROM_TEXT=0x0
 CONFIG_ZBOOT_ROM_BSS=0x0
-CONFIG_CMDLINE="androidboot.hardware=es209ra vmalloc=256M g_android.product_id=0x312E console=ttyMSM0 video=480x854-32@60 mtdparts=msm_nand:12m@78m(boot),300m(system),620m(userdata),8m(cache),4m(appslog)"
+CONFIG_CMDLINE="androidboot.hardware=es209ra vmalloc=256M g_android.product_id=0x312E console=ttyMSM0 video=480x854 mtdparts=msm_nand:12m@78m(boot),300m(system),620m(userdata),8m(cache),4m(appslog)"
 # CONFIG_XIP_KERNEL is not set
 CONFIG_KEXEC=y
 # CONFIG_CRASH_DUMP is not set
@@ -1734,7 +1734,7 @@ CONFIG_FAT_FS=y
 # CONFIG_MSDOS_FS is not set
 CONFIG_VFAT_FS=y
 CONFIG_FAT_DEFAULT_CODEPAGE=437
-CONFIG_FAT_DEFAULT_IOCHARSET="utf8"
+CONFIG_FAT_DEFAULT_IOCHARSET="iso8859-1"
 CONFIG_NTFS_FS=y
 # CONFIG_NTFS_DEBUG is not set
 CONFIG_NTFS_RW=y
