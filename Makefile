@@ -312,7 +312,7 @@ endif
 
 all: vmlinux
 
-KBUILD_CFLAGS	+= -O4 -Wno-address
+KBUILD_CFLAGS	+= -O3 -Wno-address
 
 include $(srctree)/arch/$(SRCARCH)/Makefile
 
