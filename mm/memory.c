@@ -1,43 +1,3 @@
-/*
- *  linux/mm/memory.c
- *
- *  Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds
- */
-
-/*
- * demand-loading started 01.12.91 - seems it is high on the list of
- * things wanted, and it should be easy to implement. - Linus
- */
-
-/*
- * Ok, demand-loading was easy, shared pages a little bit tricker. Shared
- * pages started 02.12.91, seems to work. - Linus.
- *
- * Tested sharing by executing about 30 /bin/sh: under the old kernel it
- * would have taken more than the 6M I have free, but it worked well as
- * far as I could see.
- *
- * Also corrected some "invalidate()"s - I wasn't doing enough of them.
- */
-
-/*
- * Real VM (paging to/from disk) started 18.12.91. Much more work and
- * thought has to go into this. Oh, well..
- * 19.12.91  -  works, somewhat. Sometimes I get faults, don't know why.
- *		Found it. Everything seems to work now.
- * 20.12.91  -  Ok, making the swap-device changeable like the root.
- */
-
-/*
- * 05.04.94  -  Multi-page memory management added for v1.1.
- * 		Idea by Alex Bligh (alex@cconcepts.co.uk)
- *
- * 16.07.99  -  Support of BIGMEM added by Gerhard Wichert, Siemens AG
- *		(Gerhard.Wichert@pdb.siemens.de)
- *
- * Aug/Sep 2004 Changed to four level page tables (Andi Kleen)
- */
-
 #include <linux/kernel_stat.h>
 #include <linux/mm.h>
 #include <linux/hugetlb.h>
@@ -55,13 +15,11 @@
 #include <linux/kallsyms.h>
 #include <linux/swapops.h>
 #include <linux/elf.h>
-
 #include <asm/pgalloc.h>
 #include <asm/uaccess.h>
 #include <asm/tlb.h>
 #include <asm/tlbflush.h>
 #include <asm/pgtable.h>
-
 #include "internal.h"
 
 #ifndef CONFIG_NEED_MULTIPLE_NODES
@@ -1700,6 +1658,53 @@ int remap_pfn_range(struct vm_area_struct *vma, unsigned long addr,
 	return err;
 }
 EXPORT_SYMBOL(remap_pfn_range);
+
+/**
+ * vm_iomap_memory - remap memory to userspace
+ * @vma: user vma to map to
+ * @start: start of area
+ * @len: size of area
+ *
+ * This is a simplified io_remap_pfn_range() for common driver use. The
+ * driver just needs to give us the physical memory range to be mapped,
+ * we'll figure out the rest from the vma information.
+ *
+ * NOTE! Some drivers might want to tweak vma->vm_page_prot first to get
+ * whatever write-combining details or similar.
+ */
+int vm_iomap_memory(struct vm_area_struct *vma, phys_addr_t start, unsigned long len)
+{
+        unsigned long vm_len, pfn, pages;
+
+        /* Check that the physical memory area passed in looks valid */
+        if (start + len < start)
+                return -EINVAL;
+        /*
+         * You *really* shouldn't map things that aren't page-aligned,
+         * but we've historically allowed it because IO memory might
+         * just have smaller alignment.
+         */
+        len += start & ~PAGE_MASK;
+        pfn = start >> PAGE_SHIFT;
+        pages = (len + ~PAGE_MASK) >> PAGE_SHIFT;
+        if (pfn + pages < pfn)
+                return -EINVAL;
+
+        /* We start the mapping 'vm_pgoff' pages into the area */
+        if (vma->vm_pgoff > pages)
+                return -EINVAL;
+        pfn += vma->vm_pgoff;
+        pages -= vma->vm_pgoff;
+
+        /* Can we fit all of the mapping? */
+        vm_len = vma->vm_end - vma->vm_start;
+        if (vm_len >> PAGE_SHIFT > pages)
+                return -EINVAL;
+
+        /* Ok, let it rip */
+        return io_remap_pfn_range(vma, vma->vm_start, pfn, vm_len, vma->vm_page_prot);
+}
+EXPORT_SYMBOL(vm_iomap_memory);
 
 static int apply_to_pte_range(struct mm_struct *mm, pmd_t *pmd,
 				     unsigned long addr, unsigned long end,
