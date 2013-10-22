@@ -29,7 +29,7 @@
 #define EXTRACT_SIZE 10
 
 
-static int random_read_wakeup_thresh = 256;
+static int random_read_wakeup_thresh = 768;
 
 static int random_write_wakeup_thresh = 512;
 

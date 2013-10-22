@@ -529,6 +529,7 @@ void add_disk(struct gendisk *disk)
 		WARN_ON(1);
 		return;
 	}
+
 	disk_to_dev(disk)->devt = devt;
 
 	/* ->major and ->first_minor aren't supposed to be
@@ -547,6 +548,12 @@ void add_disk(struct gendisk *disk)
 	retval = sysfs_create_link(&disk_to_dev(disk)->kobj, &bdi->dev->kobj,
 				   "bdi");
 	WARN_ON(retval);
+
+        if (get_capacity(disk)) {
+                unsigned long size = get_capacity(disk) >> 9;
+                size = 1UL << (ilog2(size) / 2);
+                bdi->ra_pages = min(bdi->ra_pages, size);
+        }
 }
 
 EXPORT_SYMBOL(add_disk);

@@ -481,9 +481,8 @@ int fuse_conn_init(struct fuse_conn *fc, struct super_block *sb)
 	INIT_LIST_HEAD(&fc->bg_queue);
 	INIT_LIST_HEAD(&fc->entry);
 	atomic_set(&fc->num_waiting, 0);
-	fc->bdi.ra_pages = (VM_MAX_READAHEAD * 1024) / PAGE_CACHE_SIZE;
+	fc->bdi.ra_pages = max_readahead_pages;
 	fc->bdi.unplug_io_fn = default_unplug_io_fn;
-	/* fuse does it's own writeback accounting */
 	fc->bdi.capabilities = BDI_CAP_NO_ACCT_WB;
 	fc->khctr = 0;
 	fc->polled_files = RB_ROOT;

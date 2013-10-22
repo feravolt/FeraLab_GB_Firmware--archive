@@ -129,8 +129,7 @@ void blk_queue_make_request(struct request_queue *q, make_request_fn *mfn)
 	blk_queue_max_segment_size(q, MAX_SEGMENT_SIZE);
 
 	q->make_request_fn = mfn;
-	q->backing_dev_info.ra_pages =
-			(VM_MAX_READAHEAD * 1024) / PAGE_CACHE_SIZE;
+	q->backing_dev_info.ra_pages = max_readahead_pages;
 	q->backing_dev_info.state = 0;
 	q->backing_dev_info.capabilities = BDI_CAP_MAP_COPY;
 	blk_queue_max_sectors(q, SAFE_MAX_SECTORS);
