@@ -1,17 +1,3 @@
-/*
- * ext4_jbd2.h
- *
- * Written by Stephen C. Tweedie <sct@redhat.com>, 1999
- *
- * Copyright 1998--1999 Red Hat corp --- All Rights Reserved
- *
- * This file is part of the Linux kernel and is made available under
- * the terms of the GNU General Public License, version 2, or at your
- * option, any later version, incorporated herein by reference.
- *
- * Ext4-specific journaling extensions.
- */
-
 #ifndef _EXT4_JBD2_H
 #define _EXT4_JBD2_H
 
@@ -20,42 +6,15 @@
 #include "ext4.h"
 
 #define EXT4_JOURNAL(inode)	(EXT4_SB((inode)->i_sb)->s_journal)
-
-/* Define the number of blocks we need to account to a transaction to
- * modify one block of data.
- *
- * We may have to touch one inode, one bitmap buffer, up to three
- * indirection blocks, the group and superblock summaries, and the data
- * block to complete the transaction.
- *
- * For extents-enabled fs we may have to allocate and modify up to
- * 5 levels of tree + root which are stored in the inode. */
-
 #define EXT4_SINGLEDATA_TRANS_BLOCKS(sb)				\
 	(EXT4_HAS_INCOMPAT_FEATURE(sb, EXT4_FEATURE_INCOMPAT_EXTENTS)   \
 	 ? 27U : 8U)
 
-/* Extended attribute operations touch at most two data buffers,
- * two bitmap buffers, and two group summaries, in addition to the inode
- * and the superblock, which are already accounted for. */
-
 #define EXT4_XATTR_TRANS_BLOCKS		6U
-
-/* Define the minimum size for a transaction which modifies data.  This
- * needs to take into account the fact that we may end up modifying two
- * quota files too (one for the group, one for the user quota).  The
- * superblock only gets updated once, of course, so don't bother
- * counting that again for the quota updates. */
-
 #define EXT4_DATA_TRANS_BLOCKS(sb)	(EXT4_SINGLEDATA_TRANS_BLOCKS(sb) + \
 					 EXT4_XATTR_TRANS_BLOCKS - 2 + \
 					 2*EXT4_QUOTA_TRANS_BLOCKS(sb))
 
-/*
- * Define the number of metadata blocks we need to account to modify data.
- *
- * This include super block, inode block, quota blocks and xattr blocks
- */
 #define EXT4_META_TRANS_BLOCKS(sb)	(EXT4_XATTR_TRANS_BLOCKS + \
 					2*EXT4_QUOTA_TRANS_BLOCKS(sb))
 
@@ -245,9 +204,15 @@ static inline int ext4_journal_force_commit(journal_t *journal)
 
 static inline int ext4_jbd2_file_inode(handle_t *handle, struct inode *inode)
 {
-	if (ext4_handle_valid(handle))
-		return jbd2_journal_file_inode(handle, &EXT4_I(inode)->jinode);
-	return 0;
+        if (ext4_handle_valid(handle)) {
+                if (unlikely(EXT4_I(inode)->jinode == NULL)) {
+                        WARN(true, "inode #%lu has NULL jinode\n",
+                                inode->i_ino);
+                        return 0;
+                }
+                return jbd2_journal_file_inode(handle, EXT4_I(inode)->jinode);
+        }
+        return 0;
 }
 
 /* super.c */
