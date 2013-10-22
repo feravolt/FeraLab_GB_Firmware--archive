@@ -164,35 +164,16 @@ static int mddi_probe(struct platform_device *pdev)
 		platform_device_put(mdp_dev);
 		return -ENOMEM;
 	}
-	/*
-	 * data chain
-	 */
+
 	pdata = mdp_dev->dev.platform_data;
 	pdata->on = mddi_on;
 	pdata->off = mddi_off;
 	pdata->next = pdev;
 	mfd->panel_info = pdata->panel_info;
-	mfd->fb_imgType = MSMFB_DEFAULT_TYPE;
+	mfd->fb_imgType = MDP_RGB_565;
 	clk_rate = mfd->panel_info.clk_max;
-	if (mddi_pdata &&
-	    mddi_pdata->mddi_sel_clk &&
-	    mddi_pdata->mddi_sel_clk(&clk_rate))
-			printk(KERN_ERR
-			  "%s: can't select mddi io clk targate rate = %d\n",
-			  __func__, clk_rate);
-
-	if (clk_set_max_rate(mddi_clk, clk_rate) < 0)
-		printk(KERN_ERR "%s: clk_set_max_rate failed\n", __func__);
 	mfd->panel_info.clk_rate = mfd->panel_info.clk_min;
-
-	/*
-	 * set driver data
-	 */
 	platform_set_drvdata(mdp_dev, mfd);
-
-	/*
-	 * register in mdp driver
-	 */
 	rc = platform_device_add(mdp_dev);
 	if (rc)
 		goto mddi_probe_err;

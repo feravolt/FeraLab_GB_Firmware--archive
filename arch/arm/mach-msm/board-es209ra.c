@@ -776,7 +776,7 @@ static void __init msm_mddi_tmd_fwvga_display_device_init(void)
 	panel_data->panel_info.type = MDDI_PANEL;
 	panel_data->panel_info.pdest = DISPLAY_1;
 	panel_data->panel_info.wait_cycle = 0;
-	panel_data->panel_info.bpp = 32;
+	panel_data->panel_info.bpp = 16;
 	panel_data->panel_info.clk_rate = 192000000;
 	panel_data->panel_info.clk_min =  190000000;
 	panel_data->panel_info.clk_max = 200000000;

@@ -153,7 +153,7 @@ static void mdp_dma2_update_lcd(struct msm_fb_data_type *mfd)
 
 	if (outBpp == 4) {
 		dma2_cfg_reg |= DMA_IBUF_C3ALPHA_EN;
-		dma2_cfg_reg |= DMA_IBUF_FORMAT_xRGB8888_OR_ARGB8888;
+		//dma2_cfg_reg |= DMA_IBUF_FORMAT_xRGB8888_OR_ARGB8888;
 	}
 
 	if (outBpp == 2)
@@ -260,7 +260,6 @@ static void mdp_dma2_update_lcd(struct msm_fb_data_type *mfd)
 	MDP_OUTP(MDP_BASE + 0x9000c, ystride);
 #endif
 
-	/* adding dynamic setup of register */
 	if (mfd->panel_info.bpp == 18) {
 		mddi_pkt_desc = MDDI_VDO_PACKET_DESC;
 		dma2_cfg_reg |= DMA_DSTC0G_6BITS |	/* 666 18BPP */
