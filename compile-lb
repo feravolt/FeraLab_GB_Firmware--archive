@@ -1,6 +1,6 @@
 rm -R 0UTPUT
 mkdir 0UTPUT
-ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi- make fera_es209ra_defconfig
+ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi- make fera_es209ralb_defconfig
 ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi- make -j2
 cp -f /home/feravolt/ferra-gb/arch/arm/boot/zImage /home/feravolt/ferra-gb/0UTPUT
 cd

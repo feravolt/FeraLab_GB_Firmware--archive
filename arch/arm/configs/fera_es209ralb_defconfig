@@ -318,7 +318,7 @@ CONFIG_ALIGNMENT_TRAP=y
 #
 CONFIG_ZBOOT_ROM_TEXT=0x0
 CONFIG_ZBOOT_ROM_BSS=0x0
-CONFIG_CMDLINE="androidboot.hardware=es209ra vmalloc=256M g_android.product_id=0x312E console=ttyMSM0 video=480x854 mtdparts=msm_nand:12m@78m(boot),300m(system),620m(userdata),8m(cache),4m(appslog)"
+CONFIG_CMDLINE="androidboot.hardware=es209ra vmalloc=256M g_android.product_id=0x312E console=ttyMSM0 video=480x854"
 # CONFIG_XIP_KERNEL is not set
 CONFIG_KEXEC=y
 # CONFIG_CRASH_DUMP is not set
