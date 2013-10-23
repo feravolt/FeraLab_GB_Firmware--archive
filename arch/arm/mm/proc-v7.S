@@ -1,3 +1,15 @@
+/*
+ *  linux/arch/arm/mm/proc-v7.S
+ *
+ *  Copyright (C) 2001 Deep Blue Solutions Ltd.
+ *  Copyright (c) 2009, Code Aurora Forum. All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ *
+ *  This is the "shell" of the ARMv7 processor support.
+ */
 #include <linux/linkage.h>
 #include <asm/assembler.h>
 #include <asm/domain.h>
@@ -5,6 +17,7 @@
 #include <asm/hwcap.h>
 #include <asm/pgtable-hwdef.h>
 #include <asm/pgtable.h>
+
 #include "proc-macros.S"
 
 #define TTB_C		(1 << 0)
@@ -149,6 +162,21 @@ cpu_v7_name:
 
 	.section ".text.init", #alloc, #execinstr
 
+/*
+ *	__v7_setup
+ *
+ *	Initialise TLB, Caches, and MMU state ready to switch the MMU
+ *	on.  Return in r0 the new CP15 C1 control register setting.
+ *
+ *	We automatically detect if we have a Harvard cache, and use the
+ *	Harvard cache control instructions insead of the unified cache
+ *	control instructions.
+ *
+ *	This should be able to cover all ARMv7 cores.
+ *
+ *	It is assumed that:
+ *	- cache type register is implemented
+ */
 __v7_setup:
 #ifdef CONFIG_SMP
 	mrc	p15, 0, r0, c1, c0, 1		@ Enable SMP/nAMP mode
@@ -185,9 +213,6 @@ __v7_setup:
 #endif
 	mcr     p15, 0, r0, c1, c0, 1           @ write ACTLR
 #endif
-	mrc  p15, 0, r10, c1, c0, 1    		@ read aux control register
-	orr  r10, r10, #1 << 24    		@ set bit #24
-	mcr  p15, 0, r10, c1, c0, 1    		@ write aux control register
 	ldr	r5, =0xff0aa1a8
 	ldr	r6, =0x40e040e0
 	mcr	p15, 0, r5, c10, c2, 0		@ write PRRR
