@@ -1,42 +1,21 @@
-/*
- * Copyright (C) 2009 Google, Inc.
- * Copyright (c) 2010, Code Aurora Forum. All rights reserved.
- * Author: Brian Swetland <swetland@google.com>
- *
- * This software is licensed under the terms of the GNU General Public
- * License version 2, as published by the Free Software Foundation, and
- * may be copied, distributed, and modified under those terms.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- */
-
 #include <linux/mutex.h>
 #include <linux/sched.h>
 #include <linux/wait.h>
 #include <linux/dma-mapping.h>
 #include <linux/clk.h>
-
 #include <linux/delay.h>
 #include <linux/wakelock.h>
 #include <linux/android_pmem.h>
 #include <linux/firmware.h>
 #include <linux/miscdevice.h>
-
 #include "dal.h"
 #include "dal_audio.h"
 #include "dal_audio_format.h"
 #include "dal_acdb.h"
 #include "dal_adie.h"
 #include <mach/msm_qdsp6_audio.h>
-
 #include <linux/msm_audio_aac.h>
-
 #include <linux/gpio.h>
-
 #include "q6audio_devices.h"
 #include <mach/debug_mm.h>
 
@@ -60,8 +39,8 @@ static struct q6_hw_info q6_audio_hw[Q6_HW_COUNT] = {
 		.max_gain = 400,
 	},
 	[Q6_HW_SPEAKER] = {
-		.min_gain = -1500,
-		.max_gain = 200,
+		.min_gain = -1600,
+		.max_gain = -100,
 	},
 	[Q6_HW_TTY] = {
 		.min_gain = -1400,
@@ -69,11 +48,11 @@ static struct q6_hw_info q6_audio_hw[Q6_HW_COUNT] = {
 	},
 	[Q6_HW_BT_SCO] = {
 		.min_gain = -1400,
-		.max_gain = 300,
+		.max_gain = -300,
 	},
 	[Q6_HW_BT_A2DP] = {
 		.min_gain = -1400,
-		.max_gain = 300,
+		.max_gain = -300,
 	},
 };
 
@@ -1443,14 +1422,9 @@ int q6audio_set_rx_volume(int level)
 
 	mutex_lock(&audio_path_lock);
 	adev = ADSP_AUDIO_DEVICE_ID_VOICE;
-
-	if (level) {
-		vol = q6_device_volume(audio_rx_device_id, level);
-		audio_rx_mute(ac_control, adev, 0);
-		audio_rx_volume(ac_control, adev, vol);
-	} else
-		audio_rx_mute(ac_control, adev, 1);
-
+	vol = q6_device_volume(audio_rx_device_id, level);
+	audio_rx_mute(ac_control, adev, 0);
+	audio_rx_volume(ac_control, adev, vol);
 	rx_vol_level = level;
 	mutex_unlock(&audio_path_lock);
 	return 0;
