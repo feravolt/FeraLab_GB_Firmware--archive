@@ -1,3 +1,8 @@
+#
+# For a description of the syntax of this configuration file,
+# see Documentation/kbuild/kconfig-language.txt.
+#
+
 mainmenu "Linux Kernel Configuration"
 
 config ARM
@@ -797,12 +802,6 @@ config NEON
 	help
 	  Say Y to include support code for NEON, the ARMv7 Advanced SIMD
 	  Extension.
-config KERNEL_MODE_NEON
-  bool "Support for NEON in kernel mode"
-  default n
-  depends on NEON
-  help
-    Say Y to include support for NEON in kernel mode.
 
 endmenu
 
