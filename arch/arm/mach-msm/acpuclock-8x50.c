@@ -1,5 +1,4 @@
 /* FeraLab */
-
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/io.h>
@@ -23,9 +22,9 @@
 #define SCPLL_STATUS_ADDR      (MSM_SCPLL_BASE + 0x18)
 #define SCPLL_FSM_CTL_EXT_ADDR (MSM_SCPLL_BASE + 0x10)
 #define VREF_SEL     1
-#define V_STEP       (25 * (2 - VREF_SEL))
+#define V_STEP       25
 #define SEMC_ACPU_MIN_UV_MV 850U
-#define SEMC_ACPU_MAX_UV_MV 1425U
+#define SEMC_ACPU_MAX_UV_MV 1400U
 #define dprintk(msg...) \
 	cpufreq_debug_printk(CPUFREQ_DEBUG_DRIVER, "cpufreq-msm", msg)
 
@@ -79,27 +78,7 @@ struct clkctl_acpu_speed acpu_freq_tbl_1190[] = {
 	{ 1, 1113600, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1D, 1325 },
 	{ 0, 1152000, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1E, 1325 },
 	{ 1, 1190400, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1F, 1350 },
-	{ 0, 1228800, ACPU_PLL_3, 0, 0, 0, 0, 259200, 1, 0x20, 1375 },
-	{ 0, 1267200, ACPU_PLL_3, 0, 0, 0, 0, 259200, 1, 0x21, 1400 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-};
-
-struct clkctl_acpu_speed acpu_freq_tbl_768[] = {
-	{ 0, 19200, ACPU_PLL_TCXO, 0, 0, 0, 0, 14000, 0, 0, 1000},
-	{ 0, 128000, ACPU_PLL_1, 1, 5, 0, 0, 14000, 2, 0, 1000},
-	{ 1, 245760, ACPU_PLL_0, 4, 0, 0, 0, 29000, 0, 0, 1000},
-	{ 1, 384000, ACPU_PLL_3, 0, 0, 0, 0, 58000, 1, 0xA, 1075},
-	{ 0, 422400, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xB, 1100},
-	{ 0, 460800, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xC, 1125},
-	{ 0, 499200, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xD, 1150},
-	{ 0, 537600, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xE, 1150},
-	{ 1, 576000, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xF, 1150},
-	{ 0, 614400, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0x10, 1175},
-	{ 0, 652800, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0x11, 1200},
-	{ 0, 691200, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0x12, 1225},
-	{ 0, 729600, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0x13, 1250},
-	{ 1, 768000, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x14, 1250},
-	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 };
 
 static struct clkctl_acpu_speed *acpu_freq_tbl = acpu_freq_tbl_1190;
