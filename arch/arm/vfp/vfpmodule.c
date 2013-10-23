@@ -3,6 +3,7 @@
 #include <linux/signal.h>
 #include <linux/sched.h>
 #include <linux/init.h>
+#include <linux/export.h>
 #include <asm/cputype.h>
 #include <asm/thread_notify.h>
 #include <asm/vfp.h>
@@ -17,15 +18,6 @@ void (*vfp_vector)(void) = vfp_null_entry;
 union vfp_state *last_VFP_context[NR_CPUS];
 
 unsigned int VFP_arch;
-
-static bool vfp_state_in_hw(unsigned int cpu, struct thread_info *thread)
-{
-#ifdef CONFIG_SMP
-        if (thread->vfpstate.hard.cpu != cpu)
-                return false;
-#endif
-        return last_VFP_context[cpu] == &thread->vfpstate;
-}
 
 static int vfp_notifier(struct notifier_block *self, unsigned long cmd, void *v)
 {
@@ -293,12 +285,12 @@ void vfp_sync_state(struct thread_info *thread)
 #include <linux/smp.h>
 
 #ifdef CONFIG_KERNEL_MODE_NEON
-#include <asm/neon.h>
 void kernel_neon_begin(void)
 {
         struct thread_info *thread = current_thread_info();
         unsigned int cpu;
         u32 fpexc;
+        BUG_ON(in_interrupt());
         cpu = get_cpu();
         fpexc = fmrx(FPEXC) | FPEXC_EN;
         fmxr(FPEXC, fpexc);
@@ -306,10 +298,10 @@ void kernel_neon_begin(void)
         if (vfp_state_in_hw(cpu, thread))
                 vfp_save_state(&thread->vfpstate, fpexc);
 #ifndef CONFIG_SMP
-        else if (last_VFP_context[cpu] != NULL)
-                vfp_save_state(last_VFP_context[cpu], fpexc);
+        else if (vfp_current_hw_state[cpu] != NULL)
+                vfp_save_state(vfp_current_hw_state[cpu], fpexc);
 #endif
-        last_VFP_context[cpu] = NULL;
+        vfp_current_hw_state[cpu] = NULL;
 }
 EXPORT_SYMBOL(kernel_neon_begin);
 
