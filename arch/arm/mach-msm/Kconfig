@@ -988,4 +988,12 @@ config PMIC_TIME
 	default n
 	help
 	  This exports pmic time in a sysfs entry.
+
+config X10_UNDERVOLT
+	bool "Undervolt qsd8k CPU"
+	depends on (ARCH_MSM)
+	default n
+	help
+	  This option will undervolt Q-com Snapdragon CPU for qsk8k board (e.g. SE x10).
 endif
+

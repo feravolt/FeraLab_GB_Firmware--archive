@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.31.15.1
-# Thu Nov  7 21:18:31 2013
+# Thu Nov  7 21:14:37 2013
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -243,7 +243,7 @@ CONFIG_EXP_DABORT_MSG=y
 CONFIG_SEMC_LOW_BATT_SHUTDOWN=y
 # CONFIG_SEMC_RPC_SERVER_HANDSET is not set
 CONFIG_PMIC_TIME=y
-# CONFIG_X10_UNDERVOLT is not set
+CONFIG_X10_UNDERVOLT=y
 
 #
 # Processor Type
