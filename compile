@@ -17,7 +17,8 @@ cd
 cd /home/feravolt/ferra-gb/0UTPUT
 mkdir UV
 cd
-ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi- make fera_es209ra-uv_defconfig
+cd /home/feravolt/ferra-gb
+ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi- make fera-uv_es209ra_defconfig
 ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi- make -j2
 cp -f /home/feravolt/ferra-gb/arch/arm/boot/zImage /home/feravolt/ferra-gb/0UTPUT/UV
 cd /home/feravolt/vendor/host
