@@ -4,7 +4,7 @@
 
 choice
 	prompt "Timer frequency"
-	default HZ_1000
+	default HZ_250
 	help
 	 Allows the configuration of the timer frequency. It is customary
 	 to have the timer interrupt run at 1000 Hz but 100 Hz may be more
@@ -23,11 +23,13 @@ choice
 	  with lots of processors that may show reduced performance if
 	  too many timer interrupts are occurring.
 
-	config HZ_250_NODEFAULT
+	config HZ_250
 		bool "250 HZ"
 	help
-	  250 HZ is a lousy compromise choice allowing server 		  interactivity while also showing desktop throughput and no 		  extra power saving on laptops. No good for anything.
-	  Recommend 100 or 1000 instead.
+	 250 Hz is a good compromise choice allowing server performance
+	 while also showing good interactive responsiveness even
+	 on SMP and NUMA systems. If you are going to be using NTSC video
+	 or multimedia, selected 300Hz instead.
 
 	config HZ_300
 		bool "300 HZ"
@@ -41,16 +43,17 @@ choice
 		bool "1000 HZ"
 	help
 	 1000 Hz is the preferred choice for desktop systems and other
-	 systems requiring fast interactive responses to events. 		 Laptops can also benefit from this choice without sacrificing 		 battery life if dynticks is also enabled.
+	 systems requiring fast interactive responses to events.
 
 endchoice
 
 config HZ
 	int
 	default 100 if HZ_100
-	default 250 if HZ_250_NODEFAULT
+	default 250 if HZ_250
 	default 300 if HZ_300
 	default 1000 if HZ_1000
 
 config SCHED_HRTICK
 	def_bool HIGH_RES_TIMERS && (!SMP || USE_GENERIC_SMP_HELPERS)
+
