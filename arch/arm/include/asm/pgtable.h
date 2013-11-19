@@ -366,6 +366,7 @@ static inline pte_t *pmd_page_vaddr(pmd_t pmd)
 }
 
 #define pmd_page(pmd) virt_to_page(__va(pmd_val(pmd)))
+#define pmd_addr_end(addr,end)  (end)
 
 /*
  * Conversion functions: convert a page and protection to a page entry,
