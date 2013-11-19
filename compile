@@ -1,33 +1,27 @@
+echo '##################################'
+echo '###       ***FeraLab***        ###'
+echo '##################################'
+echo ' '
+echo ' '
+echo '### Applying latest config... ###'
 rm -R 0UTPUT
 mkdir 0UTPUT
 ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi- make fera_es209ra_defconfig
+echo '### Compiling kernel... ###'
 ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi- make -j2
 cp -f /home/feravolt/ferra-gb/arch/arm/boot/zImage /home/feravolt/ferra-gb/0UTPUT
 cd
+echo '### Compiling modules... ###'
 cd /home/feravolt/vendor/host
 ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi- KERNEL_DIR=/home/feravolt/ferra-gb make clobber
 ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi- KERNEL_DIR=/home/feravolt/ferra-gb make
 cp -f /home/feravolt/vendor/host/.output/QUALCOMM_ARM_NATIVEMMC-SDIO/image/ar6000.ko /home/feravolt/ferra-gb/0UTPUT
 cd
 cd /home/feravolt/ferra-gb/0UTPUT
+echo '### Cleaning binaries... ###'
 /home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi-strip --strip-unneeded ar6000.ko
 mv /home/feravolt/ferra-gb/0UTPUT/zImage /home/feravolt/ferra-gb/0UTPUT/Image
 mv /home/feravolt/ferra-gb/0UTPUT/ar6000.ko /home/feravolt/ferra-gb/0UTPUT/wifi.ko
 cd
-cd /home/feravolt/ferra-gb/0UTPUT
-mkdir UV
-cd
-cd /home/feravolt/ferra-gb
-ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi- make fera-uv_es209ra_defconfig
-ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi- make -j2
-cp -f /home/feravolt/ferra-gb/arch/arm/boot/zImage /home/feravolt/ferra-gb/0UTPUT/UV
-cd /home/feravolt/vendor/host
-ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi- KERNEL_DIR=/home/feravolt/ferra-gb make clobber
-ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi- KERNEL_DIR=/home/feravolt/ferra-gb make
-cp -f /home/feravolt/vendor/host/.output/QUALCOMM_ARM_NATIVEMMC-SDIO/image/ar6000.ko /home/feravolt/ferra-gb/0UTPUT/UV
-cd /home/feravolt/ferra-gb/0UTPUT/UV
-/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi-strip --strip-unneeded ar6000.ko
-mv /home/feravolt/ferra-gb/0UTPUT/UV/zImage /home/feravolt/ferra-gb/0UTPUT/UV/Image
-mv /home/feravolt/ferra-gb/0UTPUT/UV/ar6000.ko /home/feravolt/ferra-gb/0UTPUT/UV/wifi.ko
-echo 'BINGO!'
+echo '### DONE! ###'
 
