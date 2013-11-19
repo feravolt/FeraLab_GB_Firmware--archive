@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.31.16
-# Tue Nov 19 11:06:35 2013
+# Tue Nov 19 12:06:09 2013
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -625,7 +625,7 @@ CONFIG_NET_SCH_HTB=y
 CONFIG_NET_SCH_PRIO=y
 # CONFIG_NET_SCH_MULTIQ is not set
 # CONFIG_NET_SCH_RED is not set
-CONFIG_NET_SCH_SFB=y
+# CONFIG_NET_SCH_SFB is not set
 CONFIG_NET_SCH_SFQ=y
 # CONFIG_NET_SCH_TEQL is not set
 CONFIG_NET_SCH_TBF=y
