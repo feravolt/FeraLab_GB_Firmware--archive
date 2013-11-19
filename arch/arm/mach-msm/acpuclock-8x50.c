@@ -80,6 +80,7 @@ struct clkctl_acpu_speed acpu_freq_tbl_1190[] = {
 	{ 0, 1152000, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1E, 1325 },
 	{ 1, 1190400, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1F, 1350 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+};
 #else
 struct clkctl_acpu_speed acpu_freq_tbl_1190[] = {
 	{ 0, 19200, ACPU_PLL_TCXO, 0, 0, 0, 0, 14000, 0, 0, 1000 },
