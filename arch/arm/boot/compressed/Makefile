@@ -56,7 +56,7 @@ KBUILD_CFLAGS = $(subst -pg, , $(ORIG_CFLAGS))
 endif
 
 ccflags-y := -fpic -fno-builtin
-asflags-y := -Wa,-march=all
+asflags-y := -Wa,-march=armv7-a
 
 LDFLAGS_vmlinux := --defsym zreladdr=$(ZRELADDR)
 ifneq ($(INITRD_PHYS),)
