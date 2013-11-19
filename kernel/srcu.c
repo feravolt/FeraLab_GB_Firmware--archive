@@ -50,6 +50,8 @@ int init_srcu_struct(struct srcu_struct *sp)
 	return (sp->per_cpu_ref ? 0 : -ENOMEM);
 }
 
+EXPORT_SYMBOL_GPL(init_srcu_struct);
+
 /*
  * srcu_readers_active_idx -- returns approximate number of readers
  *	active on the specified rank of per-CPU counters.
@@ -98,6 +100,8 @@ void cleanup_srcu_struct(struct srcu_struct *sp)
 	sp->per_cpu_ref = NULL;
 }
 
+EXPORT_SYMBOL_GPL(cleanup_srcu_struct);
+
 /**
  * srcu_read_lock - register a new reader for an SRCU-protected structure.
  * @sp: srcu_struct in which to register the new reader.
@@ -119,6 +123,8 @@ int srcu_read_lock(struct srcu_struct *sp)
 	return idx;
 }
 
+EXPORT_SYMBOL_GPL(srcu_read_lock);
+
 /**
  * srcu_read_unlock - unregister a old reader from an SRCU-protected structure.
  * @sp: srcu_struct in which to unregister the old reader.
@@ -137,104 +143,43 @@ void srcu_read_unlock(struct srcu_struct *sp, int idx)
 	preempt_enable();
 }
 
-/**
- * synchronize_srcu - wait for prior SRCU read-side critical-section completion
- * @sp: srcu_struct with which to synchronize.
- *
- * Flip the completed counter, and wait for the old count to drain to zero.
- * As with classic RCU, the updater must use some separate means of
- * synchronizing concurrent updates.  Can block; must be called from
- * process context.
- *
- * Note that it is illegal to call synchornize_srcu() from the corresponding
- * SRCU read-side critical section; doing so will result in deadlock.
- * However, it is perfectly legal to call synchronize_srcu() on one
- * srcu_struct from some other srcu_struct's read-side critical section.
- */
-void synchronize_srcu(struct srcu_struct *sp)
+EXPORT_SYMBOL_GPL(srcu_read_unlock);
+
+void __synchronize_srcu(struct srcu_struct *sp, void (*sync_func)(void))
 {
 	int idx;
 
 	idx = sp->completed;
 	mutex_lock(&sp->mutex);
 
-	/*
-	 * Check to see if someone else did the work for us while we were
-	 * waiting to acquire the lock.  We need -two- advances of
-	 * the counter, not just one.  If there was but one, we might have
-	 * shown up -after- our helper's first synchronize_sched(), thus
-	 * having failed to prevent CPU-reordering races with concurrent
-	 * srcu_read_unlock()s on other CPUs (see comment below).  So we
-	 * either (1) wait for two or (2) supply the second ourselves.
-	 */
-
 	if ((sp->completed - idx) >= 2) {
 		mutex_unlock(&sp->mutex);
 		return;
 	}
 
-	synchronize_sched();  /* Force memory barrier on all CPUs. */
-
-	/*
-	 * The preceding synchronize_sched() ensures that any CPU that
-	 * sees the new value of sp->completed will also see any preceding
-	 * changes to data structures made by this CPU.  This prevents
-	 * some other CPU from reordering the accesses in its SRCU
-	 * read-side critical section to precede the corresponding
-	 * srcu_read_lock() -- ensuring that such references will in
-	 * fact be protected.
-	 *
-	 * So it is now safe to do the flip.
-	 */
-
+	sync_func();
 	idx = sp->completed & 0x1;
 	sp->completed++;
-
-	synchronize_sched();  /* Force memory barrier on all CPUs. */
-
-	/*
-	 * At this point, because of the preceding synchronize_sched(),
-	 * all srcu_read_lock() calls using the old counters have completed.
-	 * Their corresponding critical sections might well be still
-	 * executing, but the srcu_read_lock() primitives themselves
-	 * will have finished executing.
-	 */
+	sync_func();
 
 	while (srcu_readers_active_idx(sp, idx))
 		schedule_timeout_interruptible(1);
 
-	synchronize_sched();  /* Force memory barrier on all CPUs. */
-
-	/*
-	 * The preceding synchronize_sched() forces all srcu_read_unlock()
-	 * primitives that were executing concurrently with the preceding
-	 * for_each_possible_cpu() loop to have completed by this point.
-	 * More importantly, it also forces the corresponding SRCU read-side
-	 * critical sections to have also completed, and the corresponding
-	 * references to SRCU-protected data items to be dropped.
-	 *
-	 * Note:
-	 *
-	 *	Despite what you might think at first glance, the
-	 *	preceding synchronize_sched() -must- be within the
-	 *	critical section ended by the following mutex_unlock().
-	 *	Otherwise, a task taking the early exit can race
-	 *	with a srcu_read_unlock(), which might have executed
-	 *	just before the preceding srcu_readers_active() check,
-	 *	and whose CPU might have reordered the srcu_read_unlock()
-	 *	with the preceding critical section.  In this case, there
-	 *	is nothing preventing the synchronize_sched() task that is
-	 *	taking the early exit from freeing a data structure that
-	 *	is still being referenced (out of order) by the task
-	 *	doing the srcu_read_unlock().
-	 *
-	 *	Alternatively, the comparison with "2" on the early exit
-	 *	could be changed to "3", but this increases synchronize_srcu()
-	 *	latency for bulk loads.  So the current code is preferred.
-	 */
-
+	sync_func();
 	mutex_unlock(&sp->mutex);
 }
+
+void synchronize_srcu(struct srcu_struct *sp)
+{
+  __synchronize_srcu(sp, synchronize_sched);
+}
+EXPORT_SYMBOL_GPL(synchronize_srcu);
+
+void synchronize_srcu_expedited(struct srcu_struct *sp)
+{
+  __synchronize_srcu(sp, synchronize_sched_expedited);
+}
+EXPORT_SYMBOL_GPL(synchronize_srcu_expedited);
 
 /**
  * srcu_batches_completed - return batches completed.
@@ -249,9 +194,5 @@ long srcu_batches_completed(struct srcu_struct *sp)
 	return sp->completed;
 }
 
-EXPORT_SYMBOL_GPL(init_srcu_struct);
-EXPORT_SYMBOL_GPL(cleanup_srcu_struct);
-EXPORT_SYMBOL_GPL(srcu_read_lock);
-EXPORT_SYMBOL_GPL(srcu_read_unlock);
-EXPORT_SYMBOL_GPL(synchronize_srcu);
 EXPORT_SYMBOL_GPL(srcu_batches_completed);
+

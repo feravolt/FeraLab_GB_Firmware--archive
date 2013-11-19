@@ -8301,7 +8301,7 @@ static int update_runtime(struct notifier_block *nfb,
 
 	case CPU_DOWN_FAILED:
 	case CPU_DOWN_FAILED_FROZEN:
-	case CPU_ONLINE:
+	case CPU_STARTING:
 	case CPU_ONLINE_FROZEN:
 		enable_runtime(cpu_rq(cpu));
 		return NOTIFY_OK;
