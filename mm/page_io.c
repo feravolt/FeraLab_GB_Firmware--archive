@@ -17,6 +17,8 @@
 #include <linux/bio.h>
 #include <linux/swapops.h>
 #include <linux/writeback.h>
+#include <linux/aio.h>
+#include <linux/blkdev.h>
 #include <asm/pgtable.h>
 
 static struct bio *get_swap_bio(gfp_t gfp_flags, pgoff_t index,
@@ -81,18 +83,31 @@ void end_swap_bio_read(struct bio *bio, int err)
 		printk(KERN_ALERT "Read-error on swap-device (%u:%u:%Lu)\n",
 				imajor(bio->bi_bdev->bd_inode),
 				iminor(bio->bi_bdev->bd_inode),
-				(unsigned long long)bio->bi_sector);
-	} else {
-		SetPageUptodate(page);
-	}
-	unlock_page(page);
-	bio_put(bio);
+				(unsigned long long)bio->bi_sector);                goto out;
+        }
+
+        SetPageUptodate(page);
+
+        if (likely(PageSwapCache(page))) {
+                struct gendisk *disk = bio->bi_bdev->bd_disk;
+                if (disk->fops->swap_slot_free_notify) {
+                        swp_entry_t entry;
+                        unsigned long offset;
+
+                        entry.val = page_private(page);
+                        offset = swp_offset(entry);
+
+                        SetPageDirty(page);
+                        disk->fops->swap_slot_free_notify(bio->bi_bdev,
+                                        offset);
+                }
+        }
+
+out:
+        unlock_page(page);
+        bio_put(bio);
 }
 
-/*
- * We may have stale swap cache pages in memory: notice
- * them here and get rid of the unnecessary final write.
- */
 int swap_writepage(struct page *page, struct writeback_control *wbc)
 {
 	struct bio *bio;
