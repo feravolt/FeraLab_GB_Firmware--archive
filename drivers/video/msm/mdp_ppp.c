@@ -1369,7 +1369,6 @@ int mdp_ppp_blit(struct fb_info *info, struct mdp_blit_req *req)
 #else
 		put_img(p_src_file);
 		put_img(p_dst_file);
-		return -EINVAL;
 #endif
 	}
 
