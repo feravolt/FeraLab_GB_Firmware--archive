@@ -10,10 +10,10 @@
 #include <linux/compiler.h>
 #include <linux/rbtree.h>
 
-static const int read_expire = HZ / 2;
-static const int write_expire = 5 * HZ;
-static const int writes_starved = 2;
-static const int fifo_batch = 16;
+static const int read_expire = HZ / 4;
+static const int write_expire = (HZ / 2) * 5;
+static const int writes_starved = 1;
+static const int fifo_batch = 8;
 
 struct deadline_data {
 	struct rb_root sort_list[2];	

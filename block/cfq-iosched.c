@@ -13,34 +13,19 @@
 #include <linux/ioprio.h>
 #include <linux/blktrace_api.h>
 
-/*
- * tunables
- */
-/* max queue in one round of service */
 static const int cfq_quantum = 4;
-static const int cfq_fifo_expire[2] = { HZ / 4, HZ / 8 };
-/* maximum backwards seek, in KiB */
-static const int cfq_back_max = 16 * 1024;
-/* penalty of a backwards seek */
-static const int cfq_back_penalty = 2;
-static const int cfq_slice_sync = HZ / 10;
-static int cfq_slice_async = HZ / 25;
+static const int cfq_fifo_expire[2] = { 42, 11 };
+static const int cfq_back_max = 12582912;
+static const int cfq_back_penalty = 1;
+static const int cfq_slice_sync = 8;
+static int cfq_slice_async = 7;
 static const int cfq_slice_async_rq = 2;
-static int cfq_slice_idle = HZ / 125;
+static int cfq_slice_idle = 0;
 
-/*
- * offset from end of service tree
- */
 #define CFQ_IDLE_DELAY		(HZ / 5)
-
-/*
- * below this threshold, we consider thinktime immediate
- */
 #define CFQ_MIN_TT		(2)
-
 #define CFQ_SLICE_SCALE		(5)
 #define CFQ_HW_QUEUE_MIN	(5)
-
 #define RQ_CIC(rq)		\
 	((struct cfq_io_context *) (rq)->elevator_private)
 #define RQ_CFQQ(rq)		(struct cfq_queue *) ((rq)->elevator_private2)
