@@ -1,8 +1,9 @@
 /*
- * Simple IO scheduler
+ * Simple IO scheduler plus
  * Based on Noop, Deadline and V(R) IO schedulers.
  *
  * Copyright (C) 2012 Miguel Boton <mboton@gmail.com>
+ *           (C) 2013 Boy Petersen <boypetersen@gmail.com>
  *
  *
  * This algorithm does not do any kind of sorting, as it is aimed for
@@ -12,24 +13,25 @@
  * Asynchronous and synchronous requests are not treated separately, but
  * we relay on deadlines to ensure fairness.
  *
+ * The plus version fixes writes_starved not being initialized on startup
+ * and also modifies the write starvation counting logic.
+ *
  */
 #include <linux/blkdev.h>
 #include <linux/elevator.h>
 #include <linux/bio.h>
 #include <linux/module.h>
 #include <linux/init.h>
-#include <linux/version.h>
+#include <linux/slab.h>
 
 enum { ASYNC, SYNC };
 
 /* Tunables */
-static const int sync_read_expire  = HZ / 2;	/* max time before a sync read is submitted. */
-static const int sync_write_expire = 2 * HZ;	/* max time before a sync write is submitted. */
-
-static const int async_read_expire  =  4 * HZ;	/* ditto for async, these limits are SOFT! */
-static const int async_write_expire = 16 * HZ;	/* ditto for async, these limits are SOFT! */
-
-static const int writes_starved = 2;		/* max times reads can starve a write */
+static const int sync_read_expire = (HZ / 16) * 9;	/* max time before a sync read is submitted. */
+static const int sync_write_expire = (HZ / 2) * 5;	/* max time before a sync write is submitted. */
+static const int async_read_expire = HZ * 4;	/* ditto for async, these limits are SOFT! */
+static const int async_write_expire = HZ * 16;	/* ditto for async, these limits are SOFT! */
+static const int writes_starved = 4;		/* max times reads can starve a write */
 static const int fifo_batch     = 1;		/* # of sequential requests treated as one
 						   by the above parameters. For throughput. */
 
@@ -82,7 +84,6 @@ sio_add_request(struct request_queue *q, struct request *rq)
 	list_add_tail(&rq->queuelist, &sd->fifo_list[sync][data_dir]);
 }
 
-#if LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,38)
 static int
 sio_queue_empty(struct request_queue *q)
 {
@@ -92,7 +93,6 @@ sio_queue_empty(struct request_queue *q)
 	return list_empty(&sd->fifo_list[SYNC][READ]) && list_empty(&sd->fifo_list[SYNC][WRITE]) &&
 	       list_empty(&sd->fifo_list[ASYNC][READ]) && list_empty(&sd->fifo_list[ASYNC][WRITE]);
 }
-#endif
 
 static struct request *
 sio_expired_request(struct sio_data *sd, int sync, int data_dir)
@@ -107,7 +107,7 @@ sio_expired_request(struct sio_data *sd, int sync, int data_dir)
 	rq = rq_entry_fifo(list->next);
 
 	/* Request has expired */
-	if (time_after(jiffies, rq_fifo_time(rq)))
+	if (time_after_eq(jiffies, rq_fifo_time(rq)))
 		return rq;
 
 	return NULL;
@@ -136,6 +136,7 @@ sio_choose_expired_request(struct sio_data *sd)
 	rq = sio_expired_request(sd, SYNC, READ);
 	if (rq)
 		return rq;
+
 
 	return NULL;
 }
@@ -167,6 +168,7 @@ sio_choose_request(struct sio_data *sd, int data_dir)
 static inline void
 sio_dispatch_request(struct sio_data *sd, struct request *rq)
 {
+
 	/*
 	 * Remove the request from the fifo list
 	 * and dispatch it.
@@ -176,10 +178,13 @@ sio_dispatch_request(struct sio_data *sd, struct request *rq)
 
 	sd->batched++;
 
-	if (rq_data_dir(rq))
+	if (rq_data_dir(rq)) {
 		sd->starved = 0;
-	else
-		sd->starved++;
+	} else {
+		if (!list_empty(&sd->fifo_list[SYNC][WRITE]) || 
+				!list_empty(&sd->fifo_list[ASYNC][WRITE]))
+			sd->starved++;
+	}
 }
 
 static int
@@ -265,6 +270,7 @@ sio_init_queue(struct request_queue *q)
 	sd->fifo_expire[ASYNC][READ] = async_read_expire;
 	sd->fifo_expire[ASYNC][WRITE] = async_write_expire;
 	sd->fifo_batch = fifo_batch;
+	sd->writes_starved = writes_starved;
 
 	return sd;
 }
@@ -305,11 +311,11 @@ sio_var_store(int *var, const char *page, size_t count)
 #define SHOW_FUNCTION(__FUNC, __VAR, __CONV)				\
 static ssize_t __FUNC(struct elevator_queue *e, char *page)		\
 {									\
-	struct sio_data *sd = e->elevator_data;				\
+	struct sio_data *sd = e->elevator_data;			\
 	int __data = __VAR;						\
 	if (__CONV)							\
 		__data = jiffies_to_msecs(__data);			\
-	return sio_var_show(__data, (page));				\
+	return sio_var_show(__data, (page));			\
 }
 SHOW_FUNCTION(sio_sync_read_expire_show, sd->fifo_expire[SYNC][READ], 1);
 SHOW_FUNCTION(sio_sync_write_expire_show, sd->fifo_expire[SYNC][WRITE], 1);
@@ -322,7 +328,7 @@ SHOW_FUNCTION(sio_writes_starved_show, sd->writes_starved, 0);
 #define STORE_FUNCTION(__FUNC, __PTR, MIN, MAX, __CONV)			\
 static ssize_t __FUNC(struct elevator_queue *e, const char *page, size_t count)	\
 {									\
-	struct sio_data *sd = e->elevator_data;				\
+	struct sio_data *sd = e->elevator_data;			\
 	int __data;							\
 	int ret = sio_var_store(&__data, (page), count);		\
 	if (__data < (MIN))						\
@@ -357,14 +363,12 @@ static struct elv_fs_entry sio_attrs[] = {
 	__ATTR_NULL
 };
 
-static struct elevator_type iosched_sio = {
+static struct elevator_type iosched_sioplus = {
 	.ops = {
 		.elevator_merge_req_fn		= sio_merged_requests,
 		.elevator_dispatch_fn		= sio_dispatch_requests,
 		.elevator_add_req_fn		= sio_add_request,
-#if LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,38)
 		.elevator_queue_empty_fn	= sio_queue_empty,
-#endif
 		.elevator_former_req_fn		= sio_former_request,
 		.elevator_latter_req_fn		= sio_latter_request,
 		.elevator_init_fn		= sio_init_queue,
@@ -372,32 +376,28 @@ static struct elevator_type iosched_sio = {
 	},
 
 	.elevator_attrs = sio_attrs,
-	.elevator_name = "sio",
+	.elevator_name = "sioplus",
 	.elevator_owner = THIS_MODULE,
 };
 
-static int __init sio_init(void)
+static int __init sioplus_init(void)
 {
 	/* Register elevator */
-	elv_register(&iosched_sio);
+	elv_register(&iosched_sioplus);
 
 	return 0;
 }
 
-static void __exit sio_exit(void)
+static void __exit sioplus_exit(void)
 {
 	/* Unregister elevator */
-	elv_unregister(&iosched_sio);
+	elv_unregister(&iosched_sioplus);
 }
 
-#ifdef CONFIG_FAST_RESUME
-beforeresume_initcall(sio_init);
-#else
-module_init(sio_init);
-#endif
-module_exit(sio_exit);
+module_init(sioplus_init);
+module_exit(sioplus_exit);
 
 MODULE_AUTHOR("Miguel Boton");
 MODULE_LICENSE("GPL");
-MODULE_DESCRIPTION("Simple IO scheduler");
-MODULE_VERSION("0.2");
+MODULE_DESCRIPTION("Simple IO scheduler plus");
+
