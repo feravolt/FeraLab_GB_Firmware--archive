@@ -1,31 +1,3 @@
-/*
- *	NET3	IP device support routines.
- *
- *		This program is free software; you can redistribute it and/or
- *		modify it under the terms of the GNU General Public License
- *		as published by the Free Software Foundation; either version
- *		2 of the License, or (at your option) any later version.
- *
- *	Derived from the IP parts of dev.c 1.0.19
- * 		Authors:	Ross Biro
- *				Fred N. van Kempen, <waltje@uWalt.NL.Mugnet.ORG>
- *				Mark Evans, <evansmp@uhura.aston.ac.uk>
- *
- *	Additional Authors:
- *		Alan Cox, <gw4pts@gw4pts.ampr.org>
- *		Alexey Kuznetsov, <kuznet@ms2.inr.ac.ru>
- *
- *	Changes:
- *		Alexey Kuznetsov:	pa_* fields are replaced with ifaddr
- *					lists.
- *		Cyrus Durgin:		updated for kmod
- *		Matthias Andree:	in devinet_ioctl, compare label and
- *					address (4.4BSD alias style support),
- *					fall back to comparing just the label
- *					if no match found.
- */
-
-
 #include <asm/uaccess.h>
 #include <asm/system.h>
 #include <linux/bitops.h>
@@ -50,11 +22,11 @@
 #include <linux/notifier.h>
 #include <linux/inetdevice.h>
 #include <linux/igmp.h>
+#include <linux/iface_stat.h>
 #ifdef CONFIG_SYSCTL
 #include <linux/sysctl.h>
 #endif
 #include <linux/kmod.h>
-
 #include <net/arp.h>
 #include <net/ip.h>
 #include <net/tcp.h>
@@ -372,6 +344,8 @@ static int __inet_insert_ifa(struct in_ifaddr *ifa, struct nlmsghdr *nlh,
 	   listeners of netlink will know about new ifaddr */
 	rtmsg_ifa(RTM_NEWADDR, ifa, nlh, pid);
 	blocking_notifier_call_chain(&inetaddr_chain, NETDEV_UP, ifa);
+
+	create_iface_stat(in_dev);
 
 	return 0;
 }

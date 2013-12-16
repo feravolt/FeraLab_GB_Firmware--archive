@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.31.17
-# Mon Dec 16 14:53:01 2013
+# Mon Dec 16 15:58:21 2013
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -872,6 +872,7 @@ CONFIG_UID_STAT=y
 CONFIG_SENSORS_ES209RA_PROXIMITY=y
 CONFIG_ES209RA_WLAN_POWER=y
 # CONFIG_TSIF is not set
+CONFIG_IFACE_STAT=y
 # CONFIG_C2PORT is not set
 
 #
