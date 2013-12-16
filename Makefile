@@ -1,7 +1,7 @@
 VERSION = 2
 PATCHLEVEL = 6
 SUBLEVEL = 31
-EXTRAVERSION = .16
+EXTRAVERSION = .17
 NAME = FeraKernel
 MAKEFLAGS += -rR --no-print-directory
 
@@ -181,8 +181,8 @@ MODFLAGS	= -DMODULE
 CFLAGS_MODULE   = $(MODFLAGS)
 AFLAGS_MODULE   = $(MODFLAGS)
 LDFLAGS_MODULE  =
-CFLAGS_KERNEL	= -mcpu=cortex-a8 -ftree-vectorize -ffast-math -fsingle-precision-constant
-AFLAGS_KERNEL	= -mcpu=cortex-a8 -ftree-vectorize -ffast-math -fsingle-precision-constant
+CFLAGS_KERNEL	= -ftree-vectorize -ffast-math -fsingle-precision-constant
+AFLAGS_KERNEL	= -ftree-vectorize -ffast-math -fsingle-precision-constant
 
 LINUXINCLUDE    := -Iinclude \
                    $(if $(KBUILD_SRC),-Iinclude2 -I$(srctree)/include) \
