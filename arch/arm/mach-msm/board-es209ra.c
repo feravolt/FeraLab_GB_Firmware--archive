@@ -1132,6 +1132,7 @@ static struct keyreset_platform_data es209ra_reset_keys_pdata = {
     KEY_HOME,
     0
   },
+  .down_time_ms = 5000,
 };
 
 struct platform_device es209ra_reset_keys_device = {
