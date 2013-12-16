@@ -1787,48 +1787,18 @@ int __vm_enough_memory(struct mm_struct *mm, long pages, int cap_sys_admin)
 		return 0;
 
 	if (sysctl_overcommit_memory == OVERCOMMIT_GUESS) {
-		unsigned long n;
-
-		free = global_page_state(NR_FILE_PAGES);
+		free = global_page_state(NR_FREE_PAGES);
+		free += global_page_state(NR_FILE_PAGES);
 		free += nr_swap_pages;
-
-		/*
-		 * Any slabs which are created with the
-		 * SLAB_RECLAIM_ACCOUNT flag claim to have contents
-		 * which are reclaimable, under pressure.  The dentry
-		 * cache and most inode caches should fall into this
-		 */
 		free += global_page_state(NR_SLAB_RECLAIMABLE);
 
-		/*
-		 * Leave the last 3% for root
-		 */
-		if (!cap_sys_admin)
-			free -= free / 32;
-
-		if (free > pages)
-			return 0;
-
-		/*
-		 * nr_free_pages() is very expensive on large systems,
-		 * only call if we're about to fail.
-		 */
-		n = nr_free_pages();
-
-		/*
-		 * Leave reserved pages. The pages are not for anonymous pages.
-		 */
-		if (n <= totalreserve_pages)
+		if (free <= totalreserve_pages)
 			goto error;
 		else
-			n -= totalreserve_pages;
+			free -= totalreserve_pages;
 
-		/*
-		 * Leave the last 3% for root
-		 */
 		if (!cap_sys_admin)
-			n -= n / 32;
-		free += n;
+			free -= free / 32;
 
 		if (free > pages)
 			return 0;

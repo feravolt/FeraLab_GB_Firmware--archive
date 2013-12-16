@@ -1,70 +1,3 @@
-/*
- * Simple NUMA memory policy for the Linux kernel.
- *
- * Copyright 2003,2004 Andi Kleen, SuSE Labs.
- * (C) Copyright 2005 Christoph Lameter, Silicon Graphics, Inc.
- * Subject to the GNU Public License, version 2.
- *
- * NUMA policy allows the user to give hints in which node(s) memory should
- * be allocated.
- *
- * Support four policies per VMA and per process:
- *
- * The VMA policy has priority over the process policy for a page fault.
- *
- * interleave     Allocate memory interleaved over a set of nodes,
- *                with normal fallback if it fails.
- *                For VMA based allocations this interleaves based on the
- *                offset into the backing object or offset into the mapping
- *                for anonymous memory. For process policy an process counter
- *                is used.
- *
- * bind           Only allocate memory on a specific set of nodes,
- *                no fallback.
- *                FIXME: memory is allocated starting with the first node
- *                to the last. It would be better if bind would truly restrict
- *                the allocation to memory nodes instead
- *
- * preferred       Try a specific node first before normal fallback.
- *                As a special case node -1 here means do the allocation
- *                on the local CPU. This is normally identical to default,
- *                but useful to set in a VMA when you have a non default
- *                process policy.
- *
- * default        Allocate on the local node first, or when on a VMA
- *                use the process policy. This is what Linux always did
- *		  in a NUMA aware kernel and still does by, ahem, default.
- *
- * The process policy is applied for most non interrupt memory allocations
- * in that process' context. Interrupts ignore the policies and always
- * try to allocate on the local CPU. The VMA policy is only applied for memory
- * allocations for a VMA in the VM.
- *
- * Currently there are a few corner cases in swapping where the policy
- * is not applied, but the majority should be handled. When process policy
- * is used it is not remembered over swap outs/swap ins.
- *
- * Only the highest zone in the zone hierarchy gets policied. Allocations
- * requesting a lower zone just use default policy. This implies that
- * on systems with highmem kernel lowmem allocation don't get policied.
- * Same with GFP_DMA allocations.
- *
- * For shmfs/tmpfs/hugetlbfs shared memory the policy is shared between
- * all users and remembered even when nobody has memory mapped.
- */
-
-/* Notebook:
-   fix mmap readahead to honour policy and enable policy for any page cache
-   object
-   statistics for bigpages
-   global policy for page cache? currently it uses process policy. Requires
-   first item above.
-   handle mremap for shared memory (currently ignored for the policy)
-   grows down?
-   make bind policy root only? It can trigger oom much faster and the
-   kernel is not always grateful with that.
-*/
-
 #include <linux/mempolicy.h>
 #include <linux/mm.h>
 #include <linux/highmem.h>
@@ -89,7 +22,7 @@
 #include <linux/security.h>
 #include <linux/syscalls.h>
 #include <linux/ctype.h>
-
+#include <linux/rcupdate.h>
 #include <asm/tlbflush.h>
 #include <asm/uaccess.h>
 
@@ -1130,14 +1063,15 @@ SYSCALL_DEFINE4(migrate_pages, pid_t, pid, unsigned long, maxnode,
 		return err;
 
 	/* Find the mm_struct */
-	read_lock(&tasklist_lock);
+	rcu_read_lock();
 	task = pid ? find_task_by_vpid(pid) : current;
 	if (!task) {
-		read_unlock(&tasklist_lock);
-		return -ESRCH;
+		rcu_read_unlock();
+		err = -ESRCH;
+		goto out;
 	}
 	mm = get_task_mm(task);
-	read_unlock(&tasklist_lock);
+	rcu_read_unlock();
 
 	if (!mm)
 		return -EINVAL;

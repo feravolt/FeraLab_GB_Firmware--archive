@@ -1128,7 +1128,7 @@ static int es209ra_reset_keys_up[] = {
 static struct keyreset_platform_data es209ra_reset_keys_pdata = {
   .keys_up = es209ra_reset_keys_up,
   .keys_down = {
-    KEY_POWER,
+    KEY_VOLUMEUP,
     KEY_HOME,
     0
   },
