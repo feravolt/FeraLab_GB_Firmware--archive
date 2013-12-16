@@ -1,3 +1,20 @@
+/*
+ *  linux/mm/oom_kill.c
+ * 
+ *  Copyright (C)  1998,2000  Rik van Riel
+ *	Thanks go out to Claus Fischer for some serious inspiration and
+ *	for goading me into coding this file...
+ *
+ *  The routines in this file are used to kill a process when
+ *  we're seriously out of memory. This gets called from __alloc_pages()
+ *  in mm/page_alloc.c when we really run out of memory.
+ *
+ *  Since we won't call these routines often (on a well-configured
+ *  machine) this file will double as a 'coding guide' and a signpost
+ *  for newbie kernel hackers. It features several pointers to major
+ *  kernel subsystems and hints as to where to find out what things do.
+ */
+
 #include <linux/oom.h>
 #include <linux/mm.h>
 #include <linux/err.h>
@@ -10,24 +27,31 @@
 #include <linux/notifier.h>
 #include <linux/memcontrol.h>
 #include <linux/security.h>
-#include <linux/ratelimit.h>
 
 int sysctl_panic_on_oom;
 int sysctl_oom_kill_allocating_task;
 int sysctl_oom_dump_tasks;
 static DEFINE_SPINLOCK(zone_scan_lock);
+/* #define DEBUG */
 
-struct task_struct *find_lock_task_mm(struct task_struct *p)
-{
-  struct task_struct *t = p;
-  do {
-                 task_lock(t);
-                 if (likely(t->mm))
-                         return t;
-                 task_unlock(t);
-         } while_each_thread(p, t);
-         return NULL;
-}
+/**
+ * badness - calculate a numeric value for how bad this task has been
+ * @p: task struct of which task we should calculate
+ * @uptime: current uptime in seconds
+ *
+ * The formula used is relatively simple and documented inline in the
+ * function. The main rationale is that we want to select a good task
+ * to kill when we run out of memory.
+ *
+ * Good in this context means that:
+ * 1) we lose the minimum amount of work done
+ * 2) we recover a large amount of memory
+ * 3) we don't kill anything innocent of eating tons of memory
+ * 4) we want to kill the minimum amount of processes (one)
+ * 5) we try to kill the process the user expects us to kill, this
+ *    algorithm has been meticulously tuned to meet the principle
+ *    of least surprise ... (be careful when you change it)
+ */
 
 unsigned long badness(struct task_struct *p, unsigned long uptime)
 {
@@ -363,9 +387,8 @@ static int oom_kill_process(struct task_struct *p, gfp_t gfp_mask, int order,
 			    const char *message)
 {
 	struct task_struct *c;
-	static DEFINE_RATELIMIT_STATE(oom_rs, DEFAULT_RATELIMIT_INTERVAL, DEFAULT_RATELIMIT_BURST);
 
-	if (__ratelimit(&oom_rs)) {{
+	if (printk_ratelimit()) {
 		printk(KERN_WARNING "%s invoked oom-killer: "
 			"gfp_mask=0x%x, order=%d, oomkilladj=%d\n",
 			current->comm, gfp_mask, order, current->oomkilladj);
