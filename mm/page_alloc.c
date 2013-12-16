@@ -1050,6 +1050,30 @@ void split_page(struct page *page, unsigned int order)
 		set_page_refcounted(page + i);
 }
 
+int split_free_page(struct page *page)
+{
+  unsigned int order;
+  struct zone *zone;
+  BUG_ON(!PageBuddy(page));
+
+  zone = page_zone(page);
+  order = page_order(page);
+  list_del(&page->lru);
+  zone->free_area[order].nr_free--;
+  rmv_page_order(page);
+  __mod_zone_page_state(zone, NR_FREE_PAGES, -(1UL << order));
+
+  set_page_refcounted(page);
+  split_page(page, order);
+
+  if (order >= pageblock_order - 1) {
+    struct page *endpage = page + (1 << order) - 1;
+    for (; page < endpage; page += pageblock_nr_pages)
+      set_pageblock_migratetype(page, MIGRATE_MOVABLE);
+  }
+  return 1 << order;
+}
+
 /*
  * Really, prep_compound_page() should be called from __rmqueue_bulk().  But
  * we cheat by calling it from here, in the order > 0 path.  Saves a branch
