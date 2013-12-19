@@ -126,6 +126,9 @@ static int lowmem_shrink(int nr_to_scan, gfp_t gfp_mask)
 	for_each_process(p) {
 		int oom_adj;
 
+		if (tsk->flags & PF_KTHREAD)
+			continue;
+
 		task_lock(p);
 		if (!p->mm) {
 			task_unlock(p);
