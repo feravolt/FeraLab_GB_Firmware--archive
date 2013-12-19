@@ -63,7 +63,7 @@ task_notify_func(struct notifier_block *self, unsigned long val, void *data)
 
 static int lowmem_shrink(int nr_to_scan, gfp_t gfp_mask)
 {
-	struct task_struct *p;
+	struct task_struct *tsk;
 	struct task_struct *selected = NULL;
 	int rem = 0;
 	int tasksize;
@@ -123,13 +123,18 @@ static int lowmem_shrink(int nr_to_scan, gfp_t gfp_mask)
 	selected_oom_adj = min_adj;
 
 	rcu_read_lock();
-	for_each_process(p) {
+	for_each_process(tsk) {
+		struct task_struct *p;
 		int oom_adj;
+
+		p = find_lock_task_mm(tsk);
+
+		if (!p)
+			continue;
 
 		if (tsk->flags & PF_KTHREAD)
 			continue;
 
-		task_lock(p);
 		if (!p->mm) {
 			task_unlock(p);
 			continue;
