@@ -1,23 +1,3 @@
-/*
- * sysctl.c: General linux system control interface
- *
- * Begun 24 March 1995, Stephen Tweedie
- * Added /proc support, Dec 1995
- * Added bdflush entry and intvec min/max checking, 2/23/96, Tom Dyas.
- * Added hooks for /proc/sys/net (minor, minor patch), 96/4/1, Mike Shaver.
- * Added kernel/java-{interpreter,appletviewer}, 96/5/10, Mike Shaver.
- * Dynamic registration fixes, Stephen Tweedie.
- * Added kswapd-interval, ctrl-alt-del, printk stuff, 1/8/97, Chris Horn.
- * Made sysctl support optional via CONFIG_SYSCTL, 1/10/97, Chris
- *  Horn.
- * Added proc_doulongvec_ms_jiffies_minmax, 09/08/99, Carlos H. Bauer.
- * Added proc_doulongvec_minmax, 09/08/99, Carlos H. Bauer.
- * Changed linked lists to use list.h instead of lists.h, 02/24/00, Bill
- *  Wendling.
- * The list_for_each() macro wasn't appropriate for the sysctl loop.
- *  Removed it and replaced it with older style, 03/23/00, Bill Wendling
- */
-
 #include <linux/module.h>
 #include <linux/mm.h>
 #include <linux/swap.h>
@@ -48,21 +28,11 @@
 #include <linux/acpi.h>
 #include <linux/reboot.h>
 #include <linux/ftrace.h>
-
 #include <asm/uaccess.h>
 #include <asm/processor.h>
 
-#ifdef CONFIG_X86
-#include <asm/nmi.h>
-#include <asm/stacktrace.h>
-#include <asm/io.h>
-#endif
-
 static int deprecated_sysctl_warning(struct __sysctl_args *args);
-
 #if defined(CONFIG_SYSCTL)
-
-/* External variables not in a header file. */
 extern int C_A_D;
 extern int print_fatal_signals;
 extern int sysctl_overcommit_memory;
@@ -76,6 +46,7 @@ extern int suid_dumpable;
 extern char core_pattern[];
 extern int pid_max;
 extern int min_free_kbytes;
+extern int extra_free_kbytes;
 extern int min_free_order_shift;
 extern int pid_max_min, pid_max_max;
 extern int sysctl_drop_caches;
@@ -1102,6 +1073,14 @@ static struct ctl_table vm_table[] = {
 		.proc_handler	= &min_free_kbytes_sysctl_handler,
 		.strategy	= &sysctl_intvec,
 		.extra1		= &zero,
+	},
+	{
+		.procname  	= "extra_free_kbytes",
+		.data    	= &extra_free_kbytes,
+		.maxlen    	= sizeof(extra_free_kbytes),
+		.mode    	= 0644,
+		.proc_handler  	= min_free_kbytes_sysctl_handler,
+		.extra1    	= &zero,
 	},
 	{
 		.ctl_name	= CTL_UNNUMBERED,

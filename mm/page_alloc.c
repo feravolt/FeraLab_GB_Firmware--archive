@@ -101,6 +101,7 @@ static char * const zone_names[MAX_NR_ZONES] = {
 
 int min_free_kbytes = 1024;
 int min_free_order_shift = 1;
+int extra_free_kbytes = 0;
 
 unsigned long __meminitdata nr_kernel_pages;
 unsigned long __meminitdata nr_all_pages;
@@ -4316,6 +4317,7 @@ static void setup_per_zone_lowmem_reserve(void)
 void setup_per_zone_pages_min(void)
 {
 	unsigned long pages_min = min_free_kbytes >> (PAGE_SHIFT - 10);
+	unsigned long pages_low = extra_free_kbytes >> (PAGE_SHIFT - 10);
 	unsigned long lowmem_pages = 0;
 	struct zone *zone;
 	unsigned long flags;
@@ -4327,23 +4329,15 @@ void setup_per_zone_pages_min(void)
 	}
 
 	for_each_zone(zone) {
-		u64 tmp;
+		u64 min, low;
 
 		spin_lock_irqsave(&zone->lock, flags);
-		tmp = (u64)pages_min * zone->present_pages;
-		do_div(tmp, lowmem_pages);
+		min = (u64)pages_min * zone->present_pages;
+		do_div(min, lowmem_pages);
+		low = (u64)pages_low * zone->present_pages;
+		do_div(low, vm_total_pages);
 		if (is_highmem(zone)) {
-			/*
-			 * __GFP_HIGH and PF_MEMALLOC allocations usually don't
-			 * need highmem pages, so cap pages_min to a small
-			 * value here.
-			 *
-			 * The (pages_high-pages_low) and (pages_low-pages_min)
-			 * deltas controls asynch page reclaim, and so should
-			 * not be capped for highmem.
-			 */
 			int min_pages;
-
 			min_pages = zone->present_pages / 1024;
 			if (min_pages < SWAP_CLUSTER_MAX)
 				min_pages = SWAP_CLUSTER_MAX;
@@ -4351,15 +4345,11 @@ void setup_per_zone_pages_min(void)
 				min_pages = 128;
 			zone->pages_min = min_pages;
 		} else {
-			/*
-			 * If it's a lowmem zone, reserve a number of pages
-			 * proportionate to the zone's size.
-			 */
-			zone->pages_min = tmp;
+			zone->pages_min = min;
 		}
 
-		zone->pages_low   = zone->pages_min + (tmp >> 2);
-		zone->pages_high  = zone->pages_min + (tmp >> 1);
+		zone->pages_low   = zone->pages_min + low + (min >> 2);
+		zone->pages_high  = zone->pages_min + low + (min >> 1);
 		setup_zone_migrate_reserve(zone);
 		spin_unlock_irqrestore(&zone->lock, flags);
 	}
