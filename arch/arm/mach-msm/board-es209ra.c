@@ -54,7 +54,7 @@
 #include <linux/semc/msm_pmic_vibrator.h>
 #include <linux/bma150_ng.h>
 #include "qdsp6/q6audio.h"
-#include <../../../drivers/video/msm/mddi_tmd_nt35580.h>
+#include <linux/nt35580.h>
 #include "../../../drivers/video/msm/msm_fb_panel.h"
 #include "../../../drivers/video/msm/mddihost.h"
 

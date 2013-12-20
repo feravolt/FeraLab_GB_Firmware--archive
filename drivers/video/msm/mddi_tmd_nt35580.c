@@ -1,4 +1,5 @@
 /* FeraVolt */
+
 #include <linux/kernel.h>
 #include <mach/gpio.h>
 #include <mach/vreg.h>
@@ -273,15 +274,6 @@ static struct reg_data set_disply_on_tmd_panel_new_dric[] = {
 	{0x2280, 0x000C},
 };
 
-#define NV_RPC_PROG		0x3000000e
-#define NV_RPC_VERS		0x00040001
-#define NV_CMD_REMOTE_PROC	9
-#define NV_READ			0
-#define NV_OEMHW_LCD_VSYNC_I	60007
-#define MIN_NV	13389 /* ref100=7468 */
-#define MAX_NV	18181 /* ref100=5500 */
-#define DEF_NV	16766 /* ref100=5964 */
-
 struct rpc_request_nv_cmd {
 	struct rpc_request_hdr hdr;
 	uint32_t cmd;
@@ -465,7 +457,6 @@ static int mddi_nt35580_lcd_lcd_on(struct platform_device *pdev)
 
 static int mddi_nt35580_lcd_lcd_off(struct platform_device *pdev)
 {
-
 	switch (lcd_state) {
 	case LCD_STATE_ON:
 		nt35580_lcd_set_disply_off();
@@ -479,24 +470,16 @@ static int mddi_nt35580_lcd_lcd_off(struct platform_device *pdev)
 	default:
 		break;
 	}
-
 	return 0;
 }
 
 static int __init mddi_nt35580_lcd_lcd_probe(struct platform_device *pdev)
 {
 	struct msm_fb_panel_data *panel_data;
-
-	if (!pdev) {
-		return -1;
-	}
-	if (!pdev->dev.platform_data) {
-		return -1;
-	}
 	panel_data = (struct msm_fb_panel_data *)pdev->dev.platform_data;
 	panel_data->on = mddi_nt35580_lcd_lcd_on;
 	panel_data->off = mddi_nt35580_lcd_lcd_off;
-	panel_data->panel_info.lcd.refx100 = 7468;
+	panel_data->panel_info.lcd.refx100 = 7227;
 	panel_data->panel_info.width = 51;
 	panel_data->panel_info.height = 89;
 	msm_fb_add_device(pdev);

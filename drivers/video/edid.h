@@ -136,3 +136,4 @@
 #define DPMS_STANDBY		(1 << 7)
 
 #endif /* __EDID_H__ */
+

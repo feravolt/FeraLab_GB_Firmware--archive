@@ -1,9 +1,3 @@
-#
-# Display drivers configuration
-#
-
-menu "Display device support"
-
 config DISPLAY_SUPPORT
 	tristate "Display panel/monitor support"
 	---help---
@@ -18,7 +12,4 @@ config DISPLAY_SUPPORT
 	  To have support for your specific display panel you will have to
 	  select the proper drivers which depend on this option.
 
-comment "Display hardware drivers"
-	depends on DISPLAY_SUPPORT
 
-endmenu
