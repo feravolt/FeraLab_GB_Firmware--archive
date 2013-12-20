@@ -1,34 +1,8 @@
-/*
- *  Universal power supply monitor class
- *
- *  Copyright © 2007  Anton Vorontsov <cbou@mail.ru>
- *  Copyright © 2004  Szabolcs Gyurko
- *  Copyright © 2003  Ian Molton <spyro@f2s.com>
- *
- *  Modified: 2004, Oct     Szabolcs Gyurko
- *
- *  You may use this code as per GPL version 2
- */
-
 #ifndef __LINUX_POWER_SUPPLY_H__
 #define __LINUX_POWER_SUPPLY_H__
-
 #include <linux/device.h>
 #include <linux/workqueue.h>
 #include <linux/leds.h>
-
-/*
- * All voltages, currents, charges, energies, time and temperatures in uV,
- * µA, µAh, µWh, seconds and tenths of degree Celsius unless otherwise
- * stated. It's driver's job to convert its raw values to units in which
- * this class operates.
- */
-
-/*
- * For systems where the charger determines the maximum battery capacity
- * the min and max fields should be used to present these values to user
- * space. Unused/unknown fields will not appear in sysfs.
- */
 
 enum {
 	POWER_SUPPLY_STATUS_UNKNOWN = 0,
@@ -59,7 +33,6 @@ enum {
 };
 
 enum power_supply_property {
-	/* Properties of type `int' */
 	POWER_SUPPLY_PROP_STATUS = 0,
 	POWER_SUPPLY_PROP_HEALTH,
 	POWER_SUPPLY_PROP_PRESENT,
@@ -86,14 +59,13 @@ enum power_supply_property {
 	POWER_SUPPLY_PROP_ENERGY_EMPTY,
 	POWER_SUPPLY_PROP_ENERGY_NOW,
 	POWER_SUPPLY_PROP_ENERGY_AVG,
-	POWER_SUPPLY_PROP_CAPACITY, /* in percents! */
+	POWER_SUPPLY_PROP_CAPACITY,
 	POWER_SUPPLY_PROP_TEMP,
 	POWER_SUPPLY_PROP_TEMP_AMBIENT,
 	POWER_SUPPLY_PROP_TIME_TO_EMPTY_NOW,
 	POWER_SUPPLY_PROP_TIME_TO_EMPTY_AVG,
 	POWER_SUPPLY_PROP_TIME_TO_FULL_NOW,
 	POWER_SUPPLY_PROP_TIME_TO_FULL_AVG,
-	/* Properties of type `const char *' */
 	POWER_SUPPLY_PROP_MODEL_NAME,
 	POWER_SUPPLY_PROP_MANUFACTURER,
 	POWER_SUPPLY_PROP_SERIAL_NUMBER,
@@ -116,22 +88,16 @@ struct power_supply {
 	enum power_supply_type type;
 	enum power_supply_property *properties;
 	size_t num_properties;
-
 	char **supplied_to;
 	size_t num_supplicants;
-
 	int (*get_property)(struct power_supply *psy,
 			    enum power_supply_property psp,
 			    union power_supply_propval *val);
 	void (*external_power_changed)(struct power_supply *psy);
-
-	/* For APM emulation, think legacy userspace. */
 	int use_for_apm;
 
-	/* private */
 	struct device *dev;
 	struct work_struct changed_work;
-
 #ifdef CONFIG_LEDS_TRIGGERS
 	struct led_trigger *charging_full_trig;
 	char *charging_full_trig_name;
@@ -143,13 +109,6 @@ struct power_supply {
 	char *online_trig_name;
 #endif
 };
-
-/*
- * This is recommended structure to specify static power supply parameters.
- * Generic one, parametrizable for different power supplies. Power supply
- * class itself does not use it, but that's what implementing most platform
- * drivers, should try reuse for consistency.
- */
 
 struct power_supply_info {
 	const char *name;
@@ -165,18 +124,14 @@ struct power_supply_info {
 
 extern void power_supply_changed(struct power_supply *psy);
 extern int power_supply_am_i_supplied(struct power_supply *psy);
-
 #if defined(CONFIG_POWER_SUPPLY) || defined(CONFIG_POWER_SUPPLY_MODULE)
 extern int power_supply_is_system_supplied(void);
 #else
 static inline int power_supply_is_system_supplied(void) { return -ENOSYS; }
 #endif
-
 extern int power_supply_register(struct device *parent,
 				 struct power_supply *psy);
 extern void power_supply_unregister(struct power_supply *psy);
-
-/* For APM emulation, think legacy userspace. */
 extern struct class *power_supply_class;
+#endif
 
-#endif /* __LINUX_POWER_SUPPLY_H__ */

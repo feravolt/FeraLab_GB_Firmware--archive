@@ -1,24 +1,6 @@
-/*
-
-   Copyright (C) 2010 Sony Ericsson Mobile Communications Japan, Inc.
-
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License, version 2, as
-   published by the Free Software Foundation.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-
-*/
+/* FeraVolt */
 #ifndef __MAX17040_H
 #define __MAX17040_H
-
 #include <linux/types.h>
 
 struct max17040_load_result {
@@ -34,9 +16,9 @@ struct max17040_rcomp_data {
 };
 
 struct max17040_voltage_value {
-	int	max;		/* mV */
-	int	over_voltage;	/* mV */
-	int	dead;		/* mV */
+	int	max;
+	int	over_voltage;
+	int	dead;
 };
 
 struct max17040_device_data {
@@ -49,9 +31,9 @@ struct max17040_device_data {
 	struct max17040_voltage_value	voltage;
 };
 
-
 struct max17040_i2c_platform_data {
 	struct max17040_device_data *data;
 };
 
-#endif /* __MAX17040_H */
+#endif
+
