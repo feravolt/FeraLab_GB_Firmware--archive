@@ -58,9 +58,10 @@
 #include "../../../drivers/video/msm/msm_fb_panel.h"
 #include "../../../drivers/video/msm/mddihost.h"
 
-#define TOUCHPAD_SUSPEND 	34
-#define TOUCHPAD_IRQ 		38
+#define PMIC_VREG_WLAN_LEVEL	2600
+#define PMIC_VREG_GP6_LEVEL	2850
 #define MSM_PMEM_MDP_SIZE 	0x1C91000
+#define PMEM_KERNEL_EBI1_SIZE	0x28000
 #define SMEM_SPINLOCK_I2C	"S:6"
 #define MSM_PMEM_ADSP_SIZE	0x2196000
 #define MSM_FB_SIZE         	0x500000
@@ -75,10 +76,6 @@
 #define MSM_PMEM_SMIPOOL_SIZE	(MSM_PMEM_SMI_SIZE - MSM_FB_SIZE \
 					- MSM_GPU_PHYS_SIZE)
 
-#define PMEM_KERNEL_EBI1_SIZE	0x28000
-#define PMIC_VREG_WLAN_LEVEL	2600
-#define PMIC_VREG_GP6_LEVEL	2850
-#define FPGA_SDCC_STATUS	0x70000280
 
 static char *usb_func_msc[] = {
 	"usb_mass_storage",
@@ -220,7 +217,7 @@ static void msm_fsusb_setup_gpio(unsigned int enable)
 #define MSM_USB_BASE              ((unsigned)addr)
 static unsigned ulpi_read(void __iomem *addr, unsigned reg)
 {
-	unsigned timeout = 100000;
+	unsigned timeout = 90000;
 
 	writel(ULPI_RUN | ULPI_READ | ULPI_ADDR(reg),
 	       USB_ULPI_VIEWPORT);
@@ -238,7 +235,7 @@ static unsigned ulpi_read(void __iomem *addr, unsigned reg)
 
 static int ulpi_write(void __iomem *addr, unsigned val, unsigned reg)
 {
-	unsigned timeout = 10000;
+	unsigned timeout = 9000;
 
 	writel(ULPI_RUN | ULPI_WRITE |
 	       ULPI_ADDR(reg) | ULPI_DATA(val),
@@ -734,10 +731,9 @@ static void tmd_wvga_lcd_power_on(void)
 		return;
 	}
 	local_irq_enable();
-
-	msleep(50);
+	msleep(45);
 	gpio_set_value(NT35580_GPIO_XRST, 1);
-	msleep(10);
+	msleep(9);
 	gpio_set_value(NT35580_GPIO_XRST, 0);
 	msleep(1);
 	gpio_set_value(NT35580_GPIO_XRST, 1);
@@ -747,8 +743,7 @@ static void tmd_wvga_lcd_power_on(void)
 static void tmd_wvga_lcd_power_off(void)
 {
 	gpio_set_value(NT35580_GPIO_XRST, 0);
-	msleep(10);
-
+	msleep(9);
 	local_irq_disable();
 	vreg_disable(vreg_mmc);
 	vreg_disable(vreg_gp2);
@@ -1117,7 +1112,7 @@ struct es209ra_headset_platform_data es209ra_headset_data = {
 	.keypad_name = "es209ra_keypad",
 	.gpio_detout = 114,
 	.gpio_detin = 132,
-	.wait_time = 800,
+	.wait_time = 700,
 };
 
 static int es209ra_reset_keys_up[] = {
@@ -1132,7 +1127,7 @@ static struct keyreset_platform_data es209ra_reset_keys_pdata = {
     KEY_HOME,
     0
   },
-  .down_time_ms = 3000,
+  .down_time_ms = 2700,
 };
 
 struct platform_device es209ra_reset_keys_device = {
@@ -1675,20 +1670,16 @@ static struct msm_pm_platform_data msm_pm_data[MSM_PM_SLEEP_MODE_NR] = {
 	[MSM_PM_SLEEP_MODE_POWER_COLLAPSE].idle_enabled = 1,
 	[MSM_PM_SLEEP_MODE_POWER_COLLAPSE].latency = 8594,
 	[MSM_PM_SLEEP_MODE_POWER_COLLAPSE].residency = 23740,
-
 	[MSM_PM_SLEEP_MODE_POWER_COLLAPSE_NO_XO_SHUTDOWN].supported = 1,
 	[MSM_PM_SLEEP_MODE_POWER_COLLAPSE_NO_XO_SHUTDOWN].suspend_enabled = 1,
 	[MSM_PM_SLEEP_MODE_POWER_COLLAPSE_NO_XO_SHUTDOWN].idle_enabled = 1,
 	[MSM_PM_SLEEP_MODE_POWER_COLLAPSE_NO_XO_SHUTDOWN].latency = 4594,
 	[MSM_PM_SLEEP_MODE_POWER_COLLAPSE_NO_XO_SHUTDOWN].residency = 23740,
-
 	[MSM_PM_SLEEP_MODE_RAMP_DOWN_AND_WAIT_FOR_INTERRUPT].supported = 1,
-	[MSM_PM_SLEEP_MODE_RAMP_DOWN_AND_WAIT_FOR_INTERRUPT].suspend_enabled
-		= 1,
+	[MSM_PM_SLEEP_MODE_RAMP_DOWN_AND_WAIT_FOR_INTERRUPT].suspend_enabled = 1,
 	[MSM_PM_SLEEP_MODE_RAMP_DOWN_AND_WAIT_FOR_INTERRUPT].idle_enabled = 0,
 	[MSM_PM_SLEEP_MODE_RAMP_DOWN_AND_WAIT_FOR_INTERRUPT].latency = 443,
 	[MSM_PM_SLEEP_MODE_RAMP_DOWN_AND_WAIT_FOR_INTERRUPT].residency = 1098,
-
 	[MSM_PM_SLEEP_MODE_WAIT_FOR_INTERRUPT].supported = 1,
 	[MSM_PM_SLEEP_MODE_WAIT_FOR_INTERRUPT].suspend_enabled = 1,
 	[MSM_PM_SLEEP_MODE_WAIT_FOR_INTERRUPT].idle_enabled = 1,
