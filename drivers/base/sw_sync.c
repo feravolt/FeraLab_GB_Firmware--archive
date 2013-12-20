@@ -15,7 +15,7 @@
  */
 
 #include <linux/kernel.h>
-#include <linux/export.h>
+#include <linux/sched.h>
 #include <linux/file.h>
 #include <linux/fs.h>
 #include <linux/miscdevice.h>
@@ -75,8 +75,6 @@ static void sw_sync_print_obj(struct seq_file *s,
 			      struct sync_timeline *sync_timeline)
 {
 	struct sw_sync_timeline *obj = (struct sw_sync_timeline *)sync_timeline;
-
-	seq_printf(s, "%d", obj->value);
 }
 
 static void sw_sync_print_pt(struct seq_file *s, struct sync_pt *sync_pt)
@@ -84,8 +82,6 @@ static void sw_sync_print_pt(struct seq_file *s, struct sync_pt *sync_pt)
 	struct sw_sync_pt *pt = (struct sw_sync_pt *)sync_pt;
 	struct sw_sync_timeline *obj =
 		(struct sw_sync_timeline *)sync_pt->parent;
-
-	seq_printf(s, "%d / %d", pt->value, obj->value);
 }
 
 static int sw_sync_fill_driver_data(struct sync_pt *sync_pt,

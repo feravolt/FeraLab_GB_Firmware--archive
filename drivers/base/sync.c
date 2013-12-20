@@ -15,7 +15,7 @@
  */
 
 #include <linux/debugfs.h>
-#include <linux/export.h>
+#include <linux/module.h>
 #include <linux/file.h>
 #include <linux/fs.h>
 #include <linux/kernel.h>
@@ -133,8 +133,6 @@ void sync_timeline_signal(struct sync_timeline *obj)
 	unsigned long flags;
 	LIST_HEAD(signaled_pts);
 	struct list_head *pos, *n;
-
-	trace_sync_timeline(obj);
 
 	spin_lock_irqsave(&obj->active_list_lock, flags);
 
@@ -256,7 +254,7 @@ static struct sync_fence *sync_fence_alloc(const char *name)
 	if (fence == NULL)
 		return NULL;
 
-	fence->file = anon_inode_getfile("sync_fence", &sync_fence_fops,
+	fence->file = anon_inode_getfd("sync_fence", &sync_fence_fops,
 					 fence, 0);
 	if (fence->file == NULL)
 		goto err;
@@ -584,9 +582,7 @@ int sync_fence_wait(struct sync_fence *fence, long timeout)
 	int err = 0;
 	struct sync_pt *pt;
 
-	trace_sync_wait(fence, 1);
 	list_for_each_entry(pt, &fence->pt_list_head, pt_list)
-		trace_sync_pt(pt);
 
 	if (timeout > 0) {
 		timeout = msecs_to_jiffies(timeout);
@@ -597,7 +593,6 @@ int sync_fence_wait(struct sync_fence *fence, long timeout)
 		err = wait_event_interruptible(fence->wq,
 					       sync_fence_check(fence));
 	}
-	trace_sync_wait(fence, 0);
 
 	if (err < 0)
 		return err;
@@ -991,11 +986,9 @@ void sync_dump(void)
                if ((s.count - i) > DUMP_CHUNK) {
                        char c = s.buf[i + DUMP_CHUNK];
                        s.buf[i + DUMP_CHUNK] = 0;
-                       pr_cont("%s", s.buf + i);
                        s.buf[i + DUMP_CHUNK] = c;
                } else {
                        s.buf[s.count] = 0;
-                       pr_cont("%s", s.buf + i);
                }
        }
 }
