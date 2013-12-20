@@ -76,6 +76,36 @@
 #define MSM_PMEM_SMIPOOL_SIZE	(MSM_PMEM_SMI_SIZE - MSM_FB_SIZE \
 					- MSM_GPU_PHYS_SIZE)
 
+static int msm7227_platform_set_vib_voltage(u16 volt_mv)
+{
+        int rc = pmic_vib_mot_set_volt(volt_mv);
+        if (rc)
+                printk(KERN_ERR "%s: Failed to set motor voltage\n", __func__);
+        return rc;
+}
+
+static int msm7227_platform_init_vib_hw(void)
+{
+        int rc = pmic_vib_mot_set_mode(PM_VIB_MOT_MODE__MANUAL);
+        return pmic_vib_mot_set_volt(0);
+}
+
+static struct msm_pmic_vibrator_platform_data vibrator_platform_data = {
+        .min_voltage = 1200,
+        .max_voltage = 2100,
+        .off_voltage = 0,
+        .default_voltage = 1800,
+        .mimimal_on_time = 10,
+        .platform_set_vib_voltage = msm7227_platform_set_vib_voltage,
+        .platform_init_vib_hw = msm7227_platform_init_vib_hw,
+};
+static struct platform_device vibrator_device = {
+        .name = "msm_pmic_vibrator",
+        .id = -1,
+        .dev = {
+                .platform_data = &vibrator_platform_data,
+        },
+};
 
 static char *usb_func_msc[] = {
 	"usb_mass_storage",
@@ -783,7 +813,7 @@ static void __init msm_mddi_tmd_fwvga_display_device_init(void)
 	panel_data->panel_info.lcd.v_pulse_width = 0;
 	panel_data->panel_info.lcd.hw_vsync_mode = TRUE;
 	panel_data->panel_info.lcd.vsync_notifier_period = 0;
-	panel_data->panel_info.lcd.refx100 = 7468;
+	panel_data->panel_info.lcd.refx100 = 100000000 / 16766;
 	panel_data->panel_info.width = 51;
 	panel_data->panel_info.height = 89;
 	panel_data->panel_ext = &tmd_wvga_panel_ext;
@@ -1478,6 +1508,7 @@ static struct platform_device *devices[] __initdata = {
 	&msm_device_tsif,
 #endif
 	&msm_camera_sensor_semc_imx046_camera,
+	&vibrator_device,
 	&es209ra_audio_jack_device,
 	&lbs_device,
 	&pmic_time_device,
