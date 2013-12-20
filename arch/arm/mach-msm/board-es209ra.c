@@ -87,6 +87,10 @@ static int msm7227_platform_set_vib_voltage(u16 volt_mv)
 static int msm7227_platform_init_vib_hw(void)
 {
         int rc = pmic_vib_mot_set_mode(PM_VIB_MOT_MODE__MANUAL);
+        if (rc) {
+                printk(KERN_ERR "%s: Failed to set pin mode\n", __func__);
+                return rc;
+        }
         return pmic_vib_mot_set_volt(0);
 }
 

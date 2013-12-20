@@ -18,17 +18,17 @@
 #include "mddihost.h"
 
 #ifdef CONFIG_FB_MSM_MDDI_TMD_NT35580
-#include <linux/nt35580.h>
+#include "linux/nt35580.h"
 #endif
+
+/* SEMC added. Todo: Remove. For temporary patch in mdp_dma2_update_lcd */
 #include <linux/autoconf.h>
 
 static uint32 mdp_last_dma2_update_width;
 static uint32 mdp_last_dma2_update_height;
 static uint32 mdp_curr_dma2_update_width;
 static uint32 mdp_curr_dma2_update_height;
-
 ktime_t mdp_dma2_last_update_time = { 0 };
-
 int mdp_lcd_rd_cnt_offset_slow = 20;
 int mdp_lcd_rd_cnt_offset_fast = 40;
 int mdp_vsync_usec_wait_line_too_short = 5;
@@ -64,7 +64,16 @@ static void mdp_dma2_update_lcd(struct msm_fb_data_type *mfd)
 	dma2_cfg_reg = DMA_PACK_ALIGN_LSB |
 		    DMA_OUT_SEL_AHB | DMA_IBUF_NONCONTIGUOUS;
 
+#ifdef CONFIG_FB_MSM_MDP22
+	dma2_cfg_reg |= DMA_PACK_TIGHT;
+#endif
+
 #ifdef CONFIG_FB_MSM_MDP30
+	/*
+	 * Software workaround:  On 7x25/7x27, the MDP will not
+	 * respond if dma_w is 1 pixel.  Set the update width to
+	 * 2 pixels and adjust the x offset if needed.
+	 */
 	if (iBuf->dma_w == 1) {
 		iBuf->dma_w = 2;
 		if (iBuf->dma_x == (iBuf->ibuf_width - 2))
@@ -174,10 +183,19 @@ static void mdp_dma2_update_lcd(struct msm_fb_data_type *mfd)
 #endif	/* CONFIG_FB_MSM_MDDI_HITACHI_HVGA_LCD */
 	/* SEMC End */
 
+	/* MDP cmd block enable */
 	mdp_pipe_ctrl(MDP_CMD_BLOCK, MDP_BLOCK_POWER_ON, FALSE);
+
+#ifdef CONFIG_FB_MSM_MDP22
+	MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x0184,
+			(iBuf->dma_h << 16 | iBuf->dma_w));
+	MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x0188, src);
+	MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x018C, ystride);
+#else
 	MDP_OUTP(MDP_BASE + 0x90004, (iBuf->dma_h << 16 | iBuf->dma_w));
 	MDP_OUTP(MDP_BASE + 0x90008, src);
 	MDP_OUTP(MDP_BASE + 0x9000c, ystride);
+#endif
 
 	if (mfd->panel_info.bpp == 18) {
 		mddi_pkt_desc = MDDI_VDO_PACKET_DESC;
@@ -196,21 +214,33 @@ static void mdp_dma2_update_lcd(struct msm_fb_data_type *mfd)
 #ifndef CONFIG_FB_MSM_MDP303
 
 	if (mddi_dest) {
+#ifdef CONFIG_FB_MSM_MDP22
+		MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x0194,
+			 (iBuf->dma_y << 16) | iBuf->dma_x);
+		MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x01a0, mddi_ld_param);
+		MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x01a4,
+			 (mddi_vdo_packet_descriptor << 16) | mddi_vdo_packet_reg);
+#else
 		MDP_OUTP(MDP_BASE + 0x90010, (iBuf->dma_y << 16) | iBuf->dma_x);
 		MDP_OUTP(MDP_BASE + 0x00090, mddi_ld_param);
 		MDP_OUTP(MDP_BASE + 0x00094,
 			 (mddi_pkt_desc << 16) | mddi_vdo_packet_reg);
+#endif
 	} else {
+		/* setting EBI2 LCDC write window */
 		pdata->set_rect(iBuf->dma_x, iBuf->dma_y, iBuf->dma_w,
 				iBuf->dma_h);
 	}
 #else
 	if (mfd->panel_info.type == MIPI_CMD_PANEL) {
+		/* dma_p = 0, dma_s = 1 */
 		 MDP_OUTP(MDP_BASE + 0xF1000, 0x10);
+		 /* enable dsi trigger on dma_p */
 		 MDP_OUTP(MDP_BASE + 0xF1004, 0x01);
 	}
 #endif
 
+	/* dma2 config register */
 #ifdef MDP_HW_VSYNC
 	MDP_OUTP(MDP_BASE + 0x90000, dma2_cfg_reg);
 
@@ -225,14 +255,24 @@ static void mdp_dma2_update_lcd(struct msm_fb_data_type *mfd)
 			    (mfd->total_lcd_lines - 1) - (vsync_start_y_adjust -
 							  iBuf->dma_y);
 
+		/*
+		 * MDP VSYNC clock must be On by now so, we don't have to
+		 * re-enable it
+		 */
 		MDP_OUTP(MDP_BASE + 0x210, start_y);
-		MDP_OUTP(MDP_BASE + 0x20c, 1);
+		MDP_OUTP(MDP_BASE + 0x20c, 1);	/* enable prim vsync */
 	} else {
-		MDP_OUTP(MDP_BASE + 0x20c, 0);
+		MDP_OUTP(MDP_BASE + 0x20c, 0);	/* disable prim vsync */
 	}
+#else
+#ifdef CONFIG_FB_MSM_MDP22
+	MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x0180, dma2_cfg_reg);
 #else
 	MDP_OUTP(MDP_BASE + 0x90000, dma2_cfg_reg);
 #endif
+#endif /* MDP_HW_VSYNC */
+
+	/* MDP cmd block disable */
 	mdp_pipe_ctrl(MDP_CMD_BLOCK, MDP_BLOCK_POWER_OFF, FALSE);
 }
 
@@ -271,10 +311,21 @@ enum hrtimer_restart mdp_dma2_vsync_hrtimer_handler(struct hrtimer *ht)
 
 static void mdp_dma_schedule(struct msm_fb_data_type *mfd, uint32 term)
 {
+	/*
+	 * dma2 configure VSYNC block
+	 * vsync supported on Primary LCD only for now
+	 */
 	int32 mdp_lcd_rd_cnt;
 	uint32 usec_wait_time;
 	uint32 start_y;
 
+	/*
+	 * ToDo: if we can move HRT timer callback to workqueue, we can
+	 * move DMA2 power on under mdp_pipe_kickoff().
+	 * This will save a power for hrt time wait.
+	 * However if the latency for context switch (hrt irq -> workqueue)
+	 * is too big, we will miss the vsync timing.
+	 */
 	if (term == MDP_DMA2_TERM)
 		mdp_pipe_ctrl(MDP_DMA2_BLOCK, MDP_BLOCK_POWER_ON, FALSE);
 
@@ -286,10 +337,18 @@ static void mdp_dma_schedule(struct msm_fb_data_type *mfd, uint32 term)
 		mdp_pipe_kickoff(term, mfd);
 		return;
 	}
+	/* SW vsync logic starts here */
 
+	/* get current rd counter */
 	mdp_lcd_rd_cnt = mdp_get_lcd_line_counter(mfd);
 	if (mdp_dma2_update_time_in_usec != 0) {
 		uint32 num, den;
+
+		/*
+		 * roi width boundary calculation to know the size of pixel
+		 * width that MDP can send faster or slower than LCD read
+		 * pointer
+		 */
 
 		num = mdp_last_dma2_update_width * mdp_last_dma2_update_height;
 		den =
@@ -306,8 +365,10 @@ static void mdp_dma_schedule(struct msm_fb_data_type *mfd, uint32 term)
 
 	if (mfd->vsync_width_boundary[mdp_last_dma2_update_width] >
 	    mdp_curr_dma2_update_width) {
+		/* MDP wrp is faster than LCD rdp */
 		mdp_lcd_rd_cnt += mdp_lcd_rd_cnt_offset_fast;
 	} else {
+		/* MDP wrp is slower than LCD rdp */
 		mdp_lcd_rd_cnt -= mdp_lcd_rd_cnt_offset_slow;
 	}
 
@@ -315,9 +376,17 @@ static void mdp_dma_schedule(struct msm_fb_data_type *mfd, uint32 term)
 		mdp_lcd_rd_cnt = mfd->total_lcd_lines + mdp_lcd_rd_cnt;
 	else if (mdp_lcd_rd_cnt > mfd->total_lcd_lines)
 		mdp_lcd_rd_cnt = mdp_lcd_rd_cnt - mfd->total_lcd_lines - 1;
+
+	/* get wrt pointer position */
 	start_y = mfd->ibuf.dma_y;
 
+	/* measure line difference between start_y and rd counter */
 	if (start_y > mdp_lcd_rd_cnt) {
+		/*
+		 * *100 for lcd_ref_hzx100 was already multiplied by 100
+		 * *1000000 is for usec conversion
+		 */
+
 		if ((start_y - mdp_lcd_rd_cnt) <=
 		    mdp_vsync_usec_wait_line_too_short)
 			usec_wait_time = 0;

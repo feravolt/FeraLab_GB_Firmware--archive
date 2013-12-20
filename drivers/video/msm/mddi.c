@@ -330,3 +330,4 @@ static int __init mddi_driver_init(void)
 }
 
 module_init(mddi_driver_init);
+

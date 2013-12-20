@@ -638,3 +638,4 @@ boolean mddi_video_stream_black_display(uint32 x0, uint32 y0,
 	}
 }
 EXPORT_SYMBOL(mddi_video_stream_black_display);
+
