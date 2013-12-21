@@ -42,7 +42,7 @@ struct max17040_device_data max17040_dev_data = {
 		.temp_div	= 100,
 	},
 	.voltage = {
-		.max		= 6000,
+		.max		= 5000,
 		.over_voltage	= 4200,
 		.dead		= 3200,
 	},

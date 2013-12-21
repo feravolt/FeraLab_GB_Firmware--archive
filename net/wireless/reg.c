@@ -1481,9 +1481,7 @@ int regulatory_init(void)
 
 	err = __regulatory_hint(NULL, REGDOM_SET_BY_CORE, "00", 0, ENVIRON_ANY);
 	if (err)
-		printk(KERN_ERR "cfg80211: calling CRDA failed - "
-		       "unable to update world regulatory domain, "
-		       "using static definition\n");
+		printk(KERN_ERR "I'm booting, ok?\n");
 #endif
 
 	return 0;

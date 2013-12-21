@@ -437,7 +437,7 @@ static int __init vfp_init(void)
 	barrier();
 	vfp_vector = vfp_null_entry;
 
-	printk(KERN_INFO "VFP support v0.3: ");
+	printk(KERN_INFO "VFP v3: ");
 	if (VFP_arch)
 		printk("not present\n");
 	else if (vfpsid & FPSID_NODOUBLE) {

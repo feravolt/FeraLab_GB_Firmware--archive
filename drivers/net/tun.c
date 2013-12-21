@@ -1,43 +1,7 @@
-/*
- *  TUN - Universal TUN/TAP device driver.
- *  Copyright (C) 1999-2002 Maxim Krasnyansky <maxk@qualcomm.com>
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *
- *  $Id: tun.c,v 1.15 2002/03/01 02:44:24 maxk Exp $
- */
-
-/*
- *  Changes:
- *
- *  Mike Kershaw <dragorn@kismetwireless.net> 2005/08/14
- *    Add TUNSETLINK ioctl to set the link encapsulation
- *
- *  Mark Smith <markzzzsmith@yahoo.com.au>
- *    Use random_ether_addr() for tap MAC address.
- *
- *  Harald Roelle <harald.roelle@ifi.lmu.de>  2004/04/20
- *    Fixes in packet dropping, queue length setting and queue wakeup.
- *    Increased default tx queue length.
- *    Added ethtool API.
- *    Minor cleanups
- *
- *  Daniel Podlejski <underley@underley.eu.org>
- *    Modifications for 2.3.99-pre5 kernel.
- */
-
 #define DRV_NAME	"tun"
 #define DRV_VERSION	"1.6"
 #define DRV_DESCRIPTION	"Universal TUN/TAP device driver"
-#define DRV_COPYRIGHT	"(C) 1999-2004 Max Krasnyansky <maxk@qualcomm.com>"
+#define DRV_COPYRIGHT	"Loaded"
 
 #include <linux/module.h>
 #include <linux/errno.h>

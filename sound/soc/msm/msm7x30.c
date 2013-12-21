@@ -1,22 +1,5 @@
-/* Copyright (c) 2008-2010, Code Aurora Forum. All rights reserved.
- *
- * All source code in this file is licensed under the following license except
- * where indicated.
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
- * See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, you can find it at http://www.fsf.org.
- */
 
-#include <mach/debug_audio_mm.h>
+
 #include <linux/init.h>
 #include <linux/err.h>
 #include <linux/module.h>
@@ -38,6 +21,7 @@
 #include "msm7kv2-pcm.h"
 #include <asm/mach-types.h>
 #include <mach/qdsp5v2/audio_dev_ctl.h>
+#include <mach/debug_mm.h>
 
 static struct platform_device *msm_audio_snd_device;
 struct audio_locks the_locks;
@@ -47,11 +31,10 @@ EXPORT_SYMBOL(msm_vol_ctl);
 static struct snd_kcontrol_new snd_msm_controls[];
 
 char snddev_name[AUDIO_DEV_CTL_MAX_DEV][44];
-#define MSM_MAX_VOLUME 0x3FFF
-#define MSM_VOLUME_STEP ((MSM_MAX_VOLUME+17)/100) /* 17 added to avoid
-						      more deviation */
-static int device_index; /* Count of Device controls */
-static int simple_control; /* Count of simple controls*/
+#define MSM_MAX_VOLUME 0x2000
+#define MSM_VOLUME_STEP ((MSM_MAX_VOLUME+17)/100) 
+static int device_index; 
+static int simple_control; 
 
 static int msm_scontrol_count_info(struct snd_kcontrol *kcontrol,
 				struct snd_ctl_elem_info *uinfo)
@@ -90,9 +73,11 @@ static int msm_v_call_put(struct snd_kcontrol *kcontrol,
 {
 	int start = ucontrol->value.integer.value[0];
 	if (start)
-		mixer_post_event(AUDDEV_EVT_START_VOICE, 0);
+		broadcast_event(AUDDEV_EVT_START_VOICE, DEVICE_IGNORE,
+							SESSION_IGNORE);
 	else
-		mixer_post_event(AUDDEV_EVT_END_VOICE, 0);
+		broadcast_event(AUDDEV_EVT_END_VOICE, DEVICE_IGNORE,
+							SESSION_IGNORE);
 	return 0;
 }
 
@@ -125,7 +110,7 @@ static int msm_v_volume_info(struct snd_kcontrol *kcontrol,
 				struct snd_ctl_elem_info *uinfo)
 {
 	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
-	uinfo->count = 2; /* Volume */
+	uinfo->count = 2; 
 	uinfo->value.integer.min = 0;
 	uinfo->value.integer.max = 100;
 	return 0;
@@ -151,9 +136,11 @@ static int msm_volume_info(struct snd_kcontrol *kcontrol,
 				struct snd_ctl_elem_info *uinfo)
 {
 	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
-	uinfo->count = 2; /* Volume */
+	uinfo->count = 3; 
 	uinfo->value.integer.min = 0;
-	uinfo->value.integer.max = 16383;
+
+	
+	uinfo->value.integer.max = 1000000;
 	return 0;
 }
 static int msm_volume_get(struct snd_kcontrol *kcontrol,
@@ -167,20 +154,33 @@ static int msm_volume_put(struct snd_kcontrol *kcontrol,
 				struct snd_ctl_elem_value *ucontrol)
 {
 	int ret = 0;
-	int dec_id = ucontrol->value.integer.value[0];
+	int session_id = ucontrol->value.integer.value[0];
 	int volume = ucontrol->value.integer.value[1];
+	int factor = ucontrol->value.integer.value[2];
+	u32 session_mask = 0;
 
-	if ((volume < 0) || (volume > 100))
+
+	if (factor > 10000)
+		return -EINVAL;
+
+	if ((volume < 0) || (volume/factor > 100))
 		return -EINVAL;
 
 	volume = (MSM_VOLUME_STEP * volume);
 
+	
+
+	volume = volume/factor;
+
 	if (volume > MSM_MAX_VOLUME)
 		volume = MSM_MAX_VOLUME;
 
+	
+	session_mask = (0x1 << (session_id) << (8 * ((int)AUDDEV_CLNT_DEC-1)));
 	msm_vol_ctl.volume = volume;
-	MM_DBG("dec_id %d, volume %d", dec_id, volume);
-	mixer_post_event(AUDDEV_EVT_STREAM_VOL_CHG, dec_id);
+	MM_DBG("session_id %d, volume %d", session_id, volume);
+	broadcast_event(AUDDEV_EVT_STREAM_VOL_CHG, DEVICE_IGNORE,
+							session_mask);
 
 	return ret;
 }
@@ -189,7 +189,7 @@ static int msm_voice_info(struct snd_kcontrol *kcontrol,
 				struct snd_ctl_elem_info *uinfo)
 {
 	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
-	uinfo->count = 3; /* Device */
+	uinfo->count = 3; 
 
 	uinfo->value.integer.min = 1;
 	uinfo->value.integer.max = msm_snddev_devcount();
@@ -205,10 +205,11 @@ static int msm_voice_put(struct snd_kcontrol *kcontrol,
 	struct msm_snddev_info *rx_dev_info;
 	struct msm_snddev_info *tx_dev_info;
 	int set = ucontrol->value.integer.value[2];
+	u32 session_mask;
 
 	if (!set)
 		return -EPERM;
-	/* Rx Device Routing */
+	
 	rx_dev_id = ucontrol->value.integer.value[0];
 	rx_dev_info = audio_dev_ctrl_find_dev(rx_dev_id);
 
@@ -229,10 +230,12 @@ static int msm_voice_put(struct snd_kcontrol *kcontrol,
 	msm_set_voc_route(rx_dev_info, AUDIO_ROUTE_STREAM_VOICE_RX,
 				rx_dev_id);
 
-	mixer_post_event(AUDDEV_EVT_DEV_CHG_VOICE, rx_dev_id);
+	session_mask =	0x1 << (8 * ((int)AUDDEV_CLNT_VOC-1));
+
+	broadcast_event(AUDDEV_EVT_DEV_CHG_VOICE, rx_dev_id, session_mask);
 
 
-	/* Tx Device Routing */
+	
 	tx_dev_id = ucontrol->value.integer.value[1];
 	tx_dev_info = audio_dev_ctrl_find_dev(tx_dev_id);
 
@@ -252,13 +255,14 @@ static int msm_voice_put(struct snd_kcontrol *kcontrol,
 
 	msm_set_voc_route(tx_dev_info, AUDIO_ROUTE_STREAM_VOICE_TX,
 				tx_dev_id);
-	mixer_post_event(AUDDEV_EVT_DEV_CHG_VOICE, tx_dev_id);
+
+	broadcast_event(AUDDEV_EVT_DEV_CHG_VOICE, tx_dev_id, session_mask);
 
 	if (rx_dev_info->opened)
-		mixer_post_event(AUDDEV_EVT_DEV_RDY, rx_dev_id);
+		broadcast_event(AUDDEV_EVT_DEV_RDY, rx_dev_id,	session_mask);
 
 	if (tx_dev_info->opened)
-		mixer_post_event(AUDDEV_EVT_DEV_RDY, tx_dev_id);
+		broadcast_event(AUDDEV_EVT_DEV_RDY, tx_dev_id, session_mask);
 
 	return rc;
 }
@@ -267,7 +271,7 @@ static int msm_voice_get(struct snd_kcontrol *kcontrol,
 				struct snd_ctl_elem_value *ucontrol)
 {
 	ucontrol->value.integer.value[0] = 0;
-	/* TODO: query Device list */
+	
 	return 0;
 }
 
@@ -275,7 +279,7 @@ static int msm_device_info(struct snd_kcontrol *kcontrol,
 				struct snd_ctl_elem_info *uinfo)
 {
 	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
-	uinfo->count = 1; /* Device */
+	uinfo->count = 1; 
 
 	uinfo->value.integer.min = 0;
 	uinfo->value.integer.max = msm_snddev_devcount();
@@ -331,20 +335,23 @@ static int msm_device_put(struct snd_kcontrol *kcontrol,
 				return rc;
 			}
 			dev_info->opened = 1;
-			mixer_post_event(AUDDEV_EVT_DEV_RDY, route_cfg.dev_id);
+			broadcast_event(AUDDEV_EVT_DEV_RDY, route_cfg.dev_id,
+							SESSION_IGNORE);
 		}
 	} else {
 		if (dev_info->opened) {
-			mixer_post_event(AUDDEV_EVT_REL_PENDING,
-						route_cfg.dev_id);
+			broadcast_event(AUDDEV_EVT_REL_PENDING,
+						route_cfg.dev_id,
+						SESSION_IGNORE);
 			rc = dev_info->dev_ops.close(dev_info);
 			if (rc < 0) {
 				MM_ERR("Snd device failed close!\n");
 				return rc;
 			} else {
 				dev_info->opened = 0;
-				mixer_post_event(AUDDEV_EVT_DEV_RLS,
-					route_cfg.dev_id);
+				broadcast_event(AUDDEV_EVT_DEV_RLS,
+					route_cfg.dev_id,
+					SESSION_IGNORE);
 			}
 		}
 
@@ -378,7 +385,7 @@ static int msm_route_info(struct snd_kcontrol *kcontrol,
 				struct snd_ctl_elem_info *uinfo)
 {
 	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
-	uinfo->count = 3; /* Device */
+	uinfo->count = 3; 
 
 	uinfo->value.integer.min = 0;
 	uinfo->value.integer.max = msm_snddev_devcount();
@@ -389,7 +396,7 @@ static int msm_route_get(struct snd_kcontrol *kcontrol,
 				struct snd_ctl_elem_value *ucontrol)
 {
 	ucontrol->value.integer.value[0] = 0;
-	/* TODO: query Device list */
+	
 	return 0;
 }
 
@@ -411,8 +418,8 @@ static int msm_route_put(struct snd_kcontrol *kcontrol,
 	else
 		route_cfg.stream_type =	AUDIO_ROUTE_STREAM_REC;
 
-	MM_DBG("route cfg %d %d type for popp %d\n",
-		route_cfg.dev_id, route_cfg.stream_type, session_id);
+	MM_DBG("route cfg %d %d type for popp %d set value %d\n",
+		route_cfg.dev_id, route_cfg.stream_type, session_id, set);
 	dev_info = audio_dev_ctrl_find_dev(route_cfg.dev_id);
 
 	if (IS_ERR(dev_info)) {
@@ -425,15 +432,22 @@ static int msm_route_put(struct snd_kcontrol *kcontrol,
 		session_mask =
 			(0x1 << (session_id) << (8 * ((int)AUDDEV_CLNT_DEC-1)));
 		if (!set) {
-			if (dev_info->opened)
-				mixer_post_event(AUDDEV_EVT_DEV_RLS,
-							route_cfg.dev_id);
+			if (dev_info->opened) {
+				broadcast_event(AUDDEV_EVT_REL_PENDING,
+						route_cfg.dev_id,
+						session_mask);
+
+				broadcast_event(AUDDEV_EVT_DEV_RLS,
+							route_cfg.dev_id,
+							session_mask);
+			}
 			dev_info->sessions &= ~(session_mask);
 		} else {
 			dev_info->sessions = dev_info->sessions | session_mask;
 			if (dev_info->opened)
-				mixer_post_event(AUDDEV_EVT_DEV_RDY,
-							route_cfg.dev_id);
+				broadcast_event(AUDDEV_EVT_DEV_RDY,
+							route_cfg.dev_id,
+							session_mask);
 		}
 	} else {
 		rc = msm_snddev_set_enc(session_id, dev_info->copp_id, set);
@@ -441,8 +455,9 @@ static int msm_route_put(struct snd_kcontrol *kcontrol,
 			(0x1 << (session_id)) << (8 * ((int)AUDDEV_CLNT_ENC-1));
 		if (!set) {
 			if (dev_info->opened)
-				mixer_post_event(AUDDEV_EVT_DEV_RLS,
-							route_cfg.dev_id);
+				broadcast_event(AUDDEV_EVT_DEV_RLS,
+							route_cfg.dev_id,
+							session_mask);
 			dev_info->sessions &= ~(session_mask);
 		} else {
 			dev_info->sessions = dev_info->sessions | session_mask;
@@ -461,13 +476,15 @@ static int msm_route_put(struct snd_kcontrol *kcontrol,
 					rc = msm_snddev_withdraw_freq
 						(session_id,
 						SNDDEV_CAP_TX, AUDDEV_CLNT_ENC);
-					mixer_post_event(AUDDEV_EVT_FREQ_CHG,
-							route_cfg.dev_id);
+					broadcast_event(AUDDEV_EVT_FREQ_CHG,
+							route_cfg.dev_id,
+							SESSION_IGNORE);
 				}
 			}
 			if (dev_info->opened)
-				mixer_post_event(AUDDEV_EVT_DEV_RDY,
-							route_cfg.dev_id);
+				broadcast_event(AUDDEV_EVT_DEV_RDY,
+							route_cfg.dev_id,
+							session_mask);
 		}
 	}
 
@@ -478,6 +495,64 @@ static int msm_route_put(struct snd_kcontrol *kcontrol,
 
 	return rc;
 }
+
+static int msm_device_volume_info(struct snd_kcontrol *kcontrol,
+				struct snd_ctl_elem_info *uinfo)
+{
+	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
+	uinfo->count = 2;
+	uinfo->value.integer.min = 0;
+	uinfo->value.integer.max = 100;
+	return 0;
+}
+
+static int msm_device_volume_get(struct snd_kcontrol *kcontrol,
+				struct snd_ctl_elem_value *ucontrol)
+{
+	struct msm_snddev_info *dev_info;
+
+	int dev_id = ucontrol->value.integer.value[0];
+
+	dev_info = audio_dev_ctrl_find_dev(dev_id);
+	ucontrol->value.integer.value[0] = dev_info->dev_volume;
+
+	return 0;
+}
+
+static int msm_device_volume_put(struct snd_kcontrol *kcontrol,
+				struct snd_ctl_elem_value *ucontrol)
+{
+	int rc = -EPERM;
+	struct msm_snddev_info *dev_info;
+
+	int dev_id = ucontrol->value.integer.value[0];
+	int volume = ucontrol->value.integer.value[1];
+
+	MM_DBG("dev_id = %d, volume = %d\n", dev_id, volume);
+
+	dev_info = audio_dev_ctrl_find_dev(dev_id);
+
+	if (IS_ERR(dev_info)) {
+		rc = PTR_ERR(dev_info);
+		MM_ERR("audio_dev_ctrl_find_dev failed. %ld \n",
+				PTR_ERR(dev_info));
+		return rc;
+	}
+
+	MM_DBG("dev_name = %s dev_id = %d, volume = %d\n",
+				dev_info->name, dev_id, volume);
+
+	if (dev_info->dev_ops.set_device_volume)
+		rc = dev_info->dev_ops.set_device_volume(dev_info, volume);
+	else {
+		MM_INFO("device %s does not support device volume "
+				"control.", dev_info->name);
+		return -EPERM;
+	}
+
+	return rc;
+}
+
 
 static struct snd_kcontrol_new snd_dev_controls[AUDIO_DEV_CTL_MAX_DEV];
 
@@ -531,6 +606,8 @@ static struct snd_kcontrol_new snd_msm_controls[] = {
 						 msm_v_mute_put, 0),
 	MSM_EXT("Voice Call", 8, msm_v_call_info, msm_v_call_get, \
 						msm_v_call_put, 0),
+	MSM_EXT("Device_Volume", 9, msm_device_volume_info,
+			msm_device_volume_get, msm_device_volume_put, 0),
 };
 
 static int msm_new_mixer(struct snd_card *card)
@@ -588,7 +665,7 @@ struct snd_soc_card snd_soc_card_msm = {
 	.platform = &msm_soc_platform,
 };
 
-/* msm_audio audio subsystem */
+
 static struct snd_soc_device msm_audio_snd_devdata = {
 	.card = &snd_soc_card_msm,
 	.codec_dev = &soc_codec_dev_msm,

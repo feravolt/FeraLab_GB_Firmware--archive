@@ -1,21 +1,4 @@
-/* sound/soc/msm/msm-pcm.c
- *
- * Copyright (C) 2008 Google, Inc.
- * Copyright (C) 2008 HTC Corporation
- * Copyright (c) 2008-2009, Code Aurora Forum. All rights reserved.
- *
- * This software is licensed under the terms of the GNU General Public
- * License version 2, as published by the Free Software Foundation, and
- * may be copied, distributed, and modified under those terms.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
- * See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, you can find it at http://www.fsf.org.
- */
+
 
 
 #include <linux/init.h>
@@ -56,10 +39,10 @@ struct audio_frame {
 	unsigned char samples[];
 } __attribute__ ((packed));
 
-/* Table contains dB to raw value mapping */
+
 static const unsigned decoder_db_table[] = {
 
-      31 , /* -50 dB */
+      31 , 
       35 ,      39 ,      44 ,      50 ,      56 ,
       63 ,      70 ,      79 ,      89 ,      99 ,
      112 ,     125 ,     141 ,     158 ,     177 ,
@@ -80,18 +63,18 @@ static const unsigned decoder_db_table[] = {
   630957 ,  707945 ,  794328 ,  891250 , 1000000 ,
  1122018 , 1258925 , 1412537 , 1584893 , 1778279 ,
  1995262 , 2238721 , 2511886 , 2818382 , 3162277 ,
- 3548133   /*  51 dB */
+ 3548133   
 
 };
 
 static unsigned compute_db_raw(int db)
 {
-	unsigned reg_val = 0;        /* Computed result for correspondent db */
-	/* Check if the given db is out of range */
+	unsigned reg_val = 0;        
+	
 	if (db <= MIN_DB)
 		return 0;
 	else if (db > MAX_DB)
-		db = MAX_DB;       /* If db is too high then set to max    */
+		db = MAX_DB;       
 	reg_val = decoder_db_table[DB_TABLE_INDEX+db];
 	return reg_val;
 }
@@ -129,7 +112,7 @@ void alsa_dsp_event(void *data, unsigned id, uint16_t *msg)
 				printk(KERN_ERR "bogus buffer idx\n");
 				break;
 			}
-			/* Update with actual sent buffer size */
+			
 			if (prtd->out[idx].used != BUF_INVALID_LEN)
 				prtd->pcm_irq_pos += prtd->out[idx].used;
 
@@ -356,7 +339,7 @@ int alsa_audio_configure(struct msm_audio *prtd)
 	if (prtd->enabled)
 		return 0;
 
-	/* refuse to start if we're not ready with first buffer */
+	
 	if (!prtd->out[0].used)
 		return -EIO;
 
@@ -468,7 +451,7 @@ static int audio_dsp_read_buffer(struct msm_audio *prtd, uint32_t read_cnt)
 
 	memset(&cmd, 0, sizeof(cmd));
 	cmd.cmd_id = AUDREC_CMD_PACKET_EXT_PTR;
-	/* Both WAV and AAC use AUDREC_CMD_TYPE_0 */
+	
 	cmd.type = AUDREC_CMD_TYPE_0;
 	cmd.curr_rec_count_msw = read_cnt >> 16;
 	cmd.curr_rec_count_lsw = read_cnt;
@@ -486,16 +469,13 @@ int audrec_encoder_config(struct msm_audio *prtd)
 	cmd.cmd_id = AUDREC_CMD_AREC0PARAM_CFG;
 	cmd.ptr_to_extpkt_buffer_msw = prtd->phys >> 16;
 	cmd.ptr_to_extpkt_buffer_lsw = prtd->phys;
-	cmd.buf_len = FRAME_NUM;	/* Both WAV and AAC use 8 frames */
+	cmd.buf_len = FRAME_NUM;	
 	cmd.samp_rate_index = prtd->samp_rate_index;
-	/* 0 for mono, 1 for stereo */
+	
 	cmd.stereo_mode = prtd->channel_mode;
 	cmd.rec_quality = 0x1C00;
 
-	/* prepare buffer pointers:
-	 * Mono: 1024 samples + 4 halfword header
-	 * Stereo: 2048 samples + 4 halfword header
-	 */
+	
 
 	for (n = 0; n < FRAME_NUM; n++) {
 		prtd->in[n].data = data + 4;
@@ -563,7 +543,7 @@ int alsa_buffer_read(struct msm_audio *prtd, void __user *buf,
 			}
 			spin_lock_irqsave(&the_locks.read_dsp_lock, flag);
 			if (index != prtd->in_tail) {
-				/* overrun: data is invalid, we need to retry */
+				
 				spin_unlock_irqrestore(&the_locks.read_dsp_lock,
 						       flag);
 				continue;
@@ -628,7 +608,7 @@ void alsa_get_dsp_frames(struct msm_audio *prtd)
 
 		prtd->in_head = (prtd->in_head + 1) & (FRAME_NUM - 1);
 
-		/* If overflow, move the tail index foward. */
+		
 		if (prtd->in_head == prtd->in_tail)
 			prtd->in_tail = (prtd->in_tail + 1) & (FRAME_NUM - 1);
 		else
@@ -639,7 +619,7 @@ void alsa_get_dsp_frames(struct msm_audio *prtd)
 
 		wake_up(&the_locks.read_wait);
 	} else {
-		/* TODO AAC not supported yet. */
+		
 	}
 }
 EXPORT_SYMBOL(alsa_get_dsp_frames);

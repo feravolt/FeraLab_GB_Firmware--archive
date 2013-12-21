@@ -1,22 +1,4 @@
-/* linux/sound/soc/msm/qsd8k.c
- *
- * Copyright (c) 2009, Code Aurora Forum. All rights reserved.
- *
- * All source code in this file is licensed under the following license except
- * where indicated.
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
- * See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, you can find it at http://www.fsf.org.
- */
+
 
 #include <linux/init.h>
 #include <linux/err.h>
@@ -42,7 +24,7 @@ static int snd_qsd_route_info(struct snd_kcontrol *kcontrol,
 				struct snd_ctl_elem_info *uinfo)
 {
 	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
-	uinfo->count = 1; /* Device */
+	uinfo->count = 1; 
 	uinfo->value.integer.min = (int)CAD_HW_DEVICE_ID_HANDSET_MIC;
 	uinfo->value.integer.max = (int)CAD_HW_DEVICE_ID_MAX_NUM;
 	return 0;
@@ -79,7 +61,7 @@ static int snd_vol_info(struct snd_kcontrol *kcontrol,
 				struct snd_ctl_elem_info *uinfo)
 {
 	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
-	uinfo->count = 1; /* Volume */
+	uinfo->count = 1; 
 	uinfo->value.integer.min = 0;
 	uinfo->value.integer.max = 100;
 	return 0;
@@ -141,7 +123,7 @@ static int snd_tx_mute_info(struct snd_kcontrol *kcontrol,
 				struct snd_ctl_elem_info *uinfo)
 {
 	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
-	uinfo->count = 1; /* MUTE */
+	uinfo->count = 1; 
 	uinfo->value.integer.min = 0;
 	uinfo->value.integer.max = 1;
 	return 0;
@@ -175,7 +157,7 @@ static int snd_rx_mute_info(struct snd_kcontrol *kcontrol,
 				struct snd_ctl_elem_info *uinfo)
 {
 	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
-	uinfo->count = 1; /* MUTE */
+	uinfo->count = 1; 
 	uinfo->value.integer.min = 0;
 	uinfo->value.integer.max = 1;
 	return 0;
@@ -209,7 +191,7 @@ static int snd_strm_vol_info(struct snd_kcontrol *kcontrol,
 				struct snd_ctl_elem_info *uinfo)
 {
 	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
-	uinfo->count = 1; /* Volume Param, in gain */
+	uinfo->count = 1; 
 	uinfo->value.integer.min = CAD_STREAM_MIN_GAIN;
 	uinfo->value.integer.max = CAD_STREAM_MAX_GAIN;
 	return 0;
@@ -310,7 +292,7 @@ struct snd_soc_card snd_soc_card_qsd = {
 	.platform = &qsd_soc_platform,
 };
 
-/* qsd_audio audio subsystem */
+
 static struct snd_soc_device qsd_audio_snd_devdata = {
 	.card = &snd_soc_card_qsd,
 	.codec_dev = &soc_codec_dev_msm,

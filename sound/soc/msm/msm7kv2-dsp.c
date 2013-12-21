@@ -1,21 +1,5 @@
-/* Copyright (C) 2008 Google, Inc.
- * Copyright (C) 2008 HTC Corporation
- * Copyright (c) 2008-2010, Code Aurora Forum. All rights reserved.
- *
- * This software is licensed under the terms of the GNU General Public
- * License version 2, as published by the Free Software Foundation, and
- * may be copied, distributed, and modified under those terms.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
- * See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, you can find it at http://www.fsf.org.
- */
 
-#include <mach/debug_audio_mm.h>
+
 #include <linux/init.h>
 #include <linux/err.h>
 #include <linux/module.h>
@@ -30,10 +14,11 @@
 #include <asm/dma.h>
 #include <linux/dma-mapping.h>
 #include <mach/qdsp5v2/audio_dev_ctl.h>
+#include <mach/debug_mm.h>
 
 #include "msm7kv2-pcm.h"
 
-/* Audrec Queue command sent macro's */
+
 #define audrec_send_bitstreamqueue(audio, cmd, len) \
 	msm_adsp_write(audio->audrec, ((audio->queue_id & 0xFFFF0000) >> 16),\
 		cmd, len)
@@ -81,7 +66,7 @@ void alsa_dsp_event(void *data, unsigned id, uint16_t *msg)
 			break;
 		}
 
-		/* Update with actual sent buffer size */
+		
 		if (prtd->out[idx].used != BUF_INVALID_LEN)
 			prtd->pcm_irq_pos += prtd->out[idx].used;
 
@@ -101,9 +86,7 @@ void alsa_dsp_event(void *data, unsigned id, uint16_t *msg)
 			if (frame->used) {
 				alsa_dsp_send_buffer(
 					prtd, prtd->out_tail, frame->used);
-				/* Reset eos_ack flag to avoid stale
-				 * PCMDMAMISS been considered
-				 */
+				
 				prtd->eos_ack = 0;
 				prtd->out_tail ^= 1;
 			} else {
@@ -115,7 +98,7 @@ void alsa_dsp_event(void *data, unsigned id, uint16_t *msg)
 		break;
 	}
 	case AUDPP_MSG_PCMDMAMISSED:
-		MM_ERR("PCMDMAMISSED %d\n", msg[0]);
+		MM_INFO("PCMDMAMISSED %d\n", msg[0]);
 		prtd->eos_ack++;
 		MM_DBG("PCMDMAMISSED Count per Buffer %d\n", prtd->eos_ack);
 		wake_up(&the_locks.eos_wait);
@@ -152,7 +135,7 @@ static void audpreproc_dsp_event(void *data, unsigned id,  void *msg)
 
 		MM_ERR("ERROR_MSG: stream id %d err idx %d\n",
 			err_msg->stream_id, err_msg->aud_preproc_err_idx);
-		/* Error case */
+		
 		break;
 	}
 	case AUDPREPROC_CMD_CFG_DONE_MSG: {
@@ -165,10 +148,10 @@ static void audpreproc_dsp_event(void *data, unsigned id,  void *msg)
 		MM_DBG("CMD_ENC_CFG_DONE_MSG: stream id %d enc type \
 			0x%8x\n", enc_cfg_msg->stream_id,
 			enc_cfg_msg->rec_enc_type);
-		/* Encoder enable success */
+		
 		if (enc_cfg_msg->rec_enc_type & ENCODE_ENABLE)
 			alsa_in_param_config(prtd);
-		else { /* Encoder disable success */
+		else { 
 			prtd->running = 0;
 			alsa_in_record_config(prtd, 0);
 		}
@@ -208,7 +191,7 @@ static void audrec_dsp_event(void *data, unsigned id, size_t len,
 		getevent(&fatal_err_msg, AUDREC_FATAL_ERR_MSG_LEN);
 		MM_ERR("FATAL_ERR_MSG: err id %d\n",
 			fatal_err_msg.audrec_err_id);
-		/* Error stop the encoder */
+		
 		prtd->stopped = 1;
 		wake_up(&the_locks.wait);
 		break;
@@ -326,9 +309,7 @@ ssize_t alsa_send_buffer(struct msm_audio *prtd, const char __user *buf,
 		if (frame->used && prtd->out_needed) {
 			alsa_dsp_send_buffer(prtd, prtd->out_tail,
 					      frame->used);
-			/* Reset eos_ack flag to avoid stale
-			 * PCMDMAMISS been considered
-			 */
+			
 			prtd->eos_ack = 0;
 			prtd->out_tail ^= 1;
 			prtd->out_needed--;
@@ -444,10 +425,7 @@ static int alsa_in_mem_config(struct msm_audio *prtd)
 	cmd.audrec_ext_pkt_start_addr_lsw = prtd->phys;
 	cmd.audrec_ext_pkt_buf_number = FRAME_NUM;
 
-	/* prepare buffer pointers:
-	* Mono: 1024 samples + 4 halfword header
-	* Stereo: 2048 samples + 4 halfword header
-	*/
+	
 	for (n = 0; n < FRAME_NUM; n++) {
 		prtd->in[n].data = data + 4;
 		data += (4 + (prtd->channel_mode ? 2048 : 1024));
@@ -517,7 +495,7 @@ int alsa_buffer_read(struct msm_audio *prtd, void __user *buf,
 
 		if (prtd->abort) {
 			MM_DBG(" prtd->abort ! \n");
-			ret = -EPERM; /* Not permitted due to abort */
+			ret = -EPERM; 
 			break;
 		}
 
@@ -531,7 +509,7 @@ int alsa_buffer_read(struct msm_audio *prtd, void __user *buf,
 			}
 			spin_lock_irqsave(&the_locks.read_dsp_lock, flag);
 			if (index != prtd->in_tail) {
-				/* overrun: data is invalid, we need to retry */
+				
 				spin_unlock_irqrestore(&the_locks.read_dsp_lock,
 						       flag);
 				continue;
@@ -608,7 +586,7 @@ static void alsa_get_dsp_frames(struct msm_audio *prtd)
 
 		prtd->in_head = (prtd->in_head + 1) & (FRAME_NUM - 1);
 
-		/* If overflow, move the tail index foward. */
+		
 		if (prtd->in_head == prtd->in_tail)
 			prtd->in_tail = (prtd->in_tail + 1) & (FRAME_NUM - 1);
 		else

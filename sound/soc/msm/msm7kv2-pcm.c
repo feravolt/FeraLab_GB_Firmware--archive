@@ -1,23 +1,6 @@
-/* Copyright (c) 2008-2010, Code Aurora Forum. All rights reserved.
- *
- * All source code in this file is licensed under the following license except
- * where indicated.
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
- * See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, you can find it at http://www.fsf.org.
- */
 
 
-#include <mach/debug_audio_mm.h>
+
 #include <linux/init.h>
 #include <linux/err.h>
 #include <linux/module.h>
@@ -37,6 +20,7 @@
 
 #include "msm7kv2-pcm.h"
 #include <mach/qdsp5v2/audio_dev_ctl.h>
+#include <mach/debug_mm.h>
 
 #define HOSTPCM_STREAM_ID 5
 
@@ -81,7 +65,7 @@ static struct snd_pcm_hardware msm_pcm_capture_hardware = {
 	.fifo_size =            0,
 };
 
-/* Conventional and unconventional sample rate supported */
+
 static unsigned int supported_sample_rates[] = {
 	8000, 11025, 12000, 16000, 22050, 24000, 32000, 44100, 48000
 };
@@ -104,8 +88,7 @@ static void pcm_in_listener(u32 evt_id, union auddev_evt_data *evt_payload,
 		MM_DBG("dev_type %d\n", evt_payload->freq_info.dev_type);
 		MM_DBG("acdb_dev_id %d\n", evt_payload->freq_info.acdb_dev_id);
 		if (prtd->running == 1) {
-			/* Stop Recording sample rate does not match
-			with device sample rate */
+			
 			if (evt_payload->freq_info.sample_rate !=
 				prtd->samp_rate) {
 				alsa_in_record_config(prtd, 0);
@@ -168,7 +151,7 @@ static int msm_pcm_playback_prepare(struct snd_pcm_substream *substream)
 		return 0;
 
 	MM_DBG("\n");
-	/* rate and channels are sent to audio driver */
+	
 	prtd->out_sample_rate = runtime->rate;
 	prtd->out_channel_mode = runtime->channels;
 	prtd->data = prtd->substream->dma_buffer.area;
@@ -205,7 +188,7 @@ static int msm_pcm_capture_prepare(struct snd_pcm_substream *substream)
 	prtd->pcm_irq_pos = 0;
 	prtd->pcm_buf_pos = 0;
 
-	/* rate and channels are sent to audio driver */
+	
 	prtd->type = ENC_TYPE_WAV;
 	prtd->source = INTERNAL_CODEC_TX_SOURCE_MIX_MASK;
 	prtd->samp_rate = runtime->rate;
@@ -231,8 +214,7 @@ static int msm_pcm_capture_prepare(struct snd_pcm_substream *substream)
 		return ret;
 	}
 
-	/* Configured sample rate is not as requested,
-		reject the request */
+	
 	if (freq != prtd->samp_rate) {
 		MM_DBG("sample rate can not be configured to %d\n",
 							prtd->samp_rate);
@@ -278,7 +260,7 @@ static int msm_pcm_trigger(struct snd_pcm_substream *substream, int cmd)
 	case SNDRV_PCM_TRIGGER_RESUME:
 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
 		if ((substream->stream == SNDRV_PCM_STREAM_CAPTURE)
-			|| prtd->mmap_flag)
+			|| !prtd->mmap_flag)
 			break;
 		if (!prtd->out_needed) {
 			prtd->stopped = 0;
@@ -310,7 +292,8 @@ static int msm_pcm_trigger(struct snd_pcm_substream *substream, int cmd)
 	case SNDRV_PCM_TRIGGER_STOP:
 	case SNDRV_PCM_TRIGGER_SUSPEND:
 	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
-		if (substream->stream == SNDRV_PCM_STREAM_CAPTURE)
+		if ((substream->stream == SNDRV_PCM_STREAM_CAPTURE)
+			|| !prtd->mmap_flag)
 			break;
 		prtd->stopped = 1;
 		break;
@@ -386,7 +369,7 @@ static int msm_pcm_open(struct snd_pcm_substream *substream)
 						&constraints_sample_rates);
 	if (ret < 0)
 		MM_ERR("snd_pcm_hw_constraint_list failed\n");
-	/* Ensure that buffer size is a multiple of period size */
+	
 	ret = snd_pcm_hw_constraint_integer(runtime,
 					    SNDRV_PCM_HW_PARAM_PERIODS);
 	if (ret < 0)
@@ -395,7 +378,7 @@ static int msm_pcm_open(struct snd_pcm_substream *substream)
 	prtd->ops = &snd_msm_audio_ops;
 	prtd->out[0].used = BUF_INVALID_LEN;
 	prtd->out[1].used = 0;
-	prtd->out_head = 1; /* point to second buffer on startup */
+	prtd->out_head = 1; 
 	prtd->out_tail = 0;
 	prtd->dsp_cnt = 0;
 	prtd->in_head = 0;
@@ -457,10 +440,7 @@ static int msm_pcm_playback_close(struct snd_pcm_substream *substream)
 			goto done;
 	}
 
-	/* PCM DMAMISS message is sent only once in
-	 * hpcm interface. So, wait for buffer complete
-	 * and teos flag.
-	 */
+	
 	if (prtd->enabled)
 		ret = wait_event_interruptible(the_locks.eos_wait,
 					prtd->eos_ack);
@@ -574,7 +554,7 @@ int msm_pcm_mmap(struct snd_pcm_substream *substream,
 	struct snd_pcm_runtime *runtime = substream->runtime;
 	struct msm_audio *prtd = runtime->private_data;
 
-	prtd->out_head = 0; /* point to First buffer on startup */
+	prtd->out_head = 0; 
 	prtd->mmap_flag = 1;
 	runtime->dma_bytes = snd_pcm_lib_period_bytes(substream)*2;
 	dma_mmap_coherent(substream->pcm->card->dev, vma,
@@ -607,11 +587,15 @@ static struct snd_pcm_ops msm_pcm_ops = {
 
 static int msm_pcm_remove(struct platform_device *devptr)
 {
+#if 0
 	struct snd_soc_device *socdev = platform_get_drvdata(devptr);
 	snd_soc_free_pcms(socdev);
 	kfree(socdev->codec);
 	platform_set_drvdata(devptr, NULL);
 	return 0;
+#endif
+	printk("DISABLED %s, not 32 compatible!!!!\n", __func__);
+	return -1;
 }
 
 static int pcm_preallocate_buffer(struct snd_pcm *pcm,
@@ -664,7 +648,7 @@ static int msm_pcm_new(struct snd_card *card,
 {
 	int ret = 0;
 	if (!card->dev->coherent_dma_mask)
-		card->dev->coherent_dma_mask = DMA_32BIT_MASK;
+		card->dev->coherent_dma_mask = DMA_BIT_MASK(32);
 
 	if (codec_dai->playback.channels_min) {
 		ret = pcm_preallocate_buffer(pcm,

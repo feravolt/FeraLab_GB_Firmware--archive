@@ -679,8 +679,6 @@ void hsusb_chg_connected(enum chg_type chgtype)
 		return;
 	}
 
-	pr_info("\nCharger Type: %s\n", chg_types[chgtype]);
-
 	msm_chg_usb_charger_connected(chgtype);
 }
 EXPORT_SYMBOL(hsusb_chg_connected);

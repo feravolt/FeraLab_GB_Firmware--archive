@@ -96,9 +96,9 @@ static int msm7227_platform_init_vib_hw(void)
 
 static struct msm_pmic_vibrator_platform_data vibrator_platform_data = {
         .min_voltage = 1200,
-        .max_voltage = 2100,
+        .max_voltage = 1800,
         .off_voltage = 0,
-        .default_voltage = 1800,
+        .default_voltage = 1500,
         .mimimal_on_time = 10,
         .platform_set_vib_voltage = msm7227_platform_set_vib_voltage,
         .platform_init_vib_hw = msm7227_platform_init_vib_hw,
@@ -887,12 +887,6 @@ static void __init audio_gpio_init(void)
 	for (pin = 0; pin < ARRAY_SIZE(audio_gpio_on); pin++) {
 		rc = gpio_tlmm_config(audio_gpio_on[pin],
 			GPIO_ENABLE);
-		if (rc) {
-			printk(KERN_ERR
-				"%s: gpio_tlmm_config(%#x)=%d\n",
-				__func__, audio_gpio_on[pin], rc);
-			return;
-		}
 	}
 	set_audio_gpios(msm_audio_resources[1].start);
 }
@@ -1834,13 +1828,11 @@ int set_predecode_repair_cache(void);
 static void __init es209ra_init(void)
 {
 	smsm_wait_for_modem();
-	if (socinfo_init() < 0)
-		printk(KERN_ERR "%s: socinfo_init() failed!\n", __func__);
 	printk(KERN_INFO "%s: startup_reason: 0x%08x\n",
 					__func__, es209ra_startup_reason);
-	printk(KERN_ERR "PVR0F2: %x\n", get_predecode_repair_cache());
+	printk(KERN_ERR "PVR0F2 (1): %x\n", get_predecode_repair_cache());
 	set_predecode_repair_cache();
-	printk(KERN_ERR "PVR0F2: %x\n", get_predecode_repair_cache());
+	printk(KERN_ERR "PVR0F2 (2): %x\n", get_predecode_repair_cache());
 	msm_acpu_clock_init(&qsd8x50_clock_data);
 	msm_hsusb_pdata.swfi_latency = msm_pm_data
 		[MSM_PM_SLEEP_MODE_RAMP_DOWN_AND_WAIT_FOR_INTERRUPT].latency;
@@ -1939,7 +1931,6 @@ static void __init es209ra_fixup(struct machine_desc *desc, struct tag *tags,
 	mi->bank[0].start = PHYS_OFFSET;
 	mi->bank[0].node = PHYS_TO_NID(mi->bank[0].start);
 	mi->bank[0].size = (232*1024*1024);
-
 	mi->bank[1].start = 0x30000000;
 	mi->bank[1].size = (127*1024*1024);
 	mi->bank[1].node = PHYS_TO_NID(mi->bank[1].start);
@@ -1956,22 +1947,6 @@ static void __init es209ra_map_io(void)
 	msm_clock_init(msm_clocks_8x50, msm_num_clocks_8x50);
 }
 
-static int __init board_serialno_setup(char *serialno)
-{
-#ifdef CONFIG_USB_ANDROID
-	int i;
-	char *src = serialno;
-	android_usb_pdata.serial_number = serialno;
-	printk(KERN_INFO "USB serial number: %s\n", android_usb_pdata.serial_number);
-
-	rndis_pdata.ethaddr[0] = 0x02;
-	for (i = 0; *src; i++)
-		rndis_pdata.ethaddr[i % (ETH_ALEN -1)+1] ^= *src++;
-#endif
-	return 1;
-}
-__setup_param("serialno=", board_serialno_setup_1, board_serialno_setup, 0);
-__setup_param("semcandroidboot.serialno=", board_serialno_setup_2, board_serialno_setup, 0);
 
 MACHINE_START(ES209RA, "ES209RA")
 	.boot_params	= PHYS_OFFSET + 0x100,

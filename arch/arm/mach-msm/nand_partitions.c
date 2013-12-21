@@ -69,15 +69,9 @@ static int __init parse_tag_msm_partition(const struct tag *tag)
 	for (n = 0; n < count; n++) {
 		memcpy(name, entry->name, 15);
 		name[15] = 0;
-
 		ptn->name = name;
 		ptn->offset = entry->offset;
 		ptn->size = entry->size;
-
-		printk(KERN_INFO "Partition (from atag) %s "
-				"-- Offset:%llx Size:%llx\n",
-				ptn->name, ptn->offset, ptn->size);
-
 		name += 16;
 		entry++;
 		ptn++;

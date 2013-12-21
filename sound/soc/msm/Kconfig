@@ -8,7 +8,7 @@ config SND_MSM_SOC
 
 config SND_QSD_SOC
 	tristate "SoC Audio for the QSD8x50 chip"
-	depends on ARCH_QSD8X50 && SND_SOC && QSD_AUDIO
+	depends on ARCH_QSD8X50 && SND_SOC
 	default y
 	help
 	  To add support for ALSA PCM driver for QSD8k board.

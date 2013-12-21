@@ -216,12 +216,6 @@ int driver_register(struct device_driver *drv)
 	int ret;
 	struct device_driver *other;
 
-	if ((drv->bus->probe && drv->probe) ||
-	    (drv->bus->remove && drv->remove) ||
-	    (drv->bus->shutdown && drv->shutdown))
-		printk(KERN_WARNING "Driver '%s' needs updating - please use "
-			"bus_type methods\n", drv->name);
-
 	other = driver_find(drv->name, drv->bus);
 	if (other) {
 		put_driver(other);

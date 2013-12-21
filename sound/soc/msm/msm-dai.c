@@ -1,23 +1,4 @@
-/* sound/soc/msm/msm-dai.c
- *
- * Copyright (C) 2008 Google, Inc.
- * Copyright (C) 2008 HTC Corporation
- * Copyright (c) 2008-2009, Code Aurora Forum. All rights reserved.
- *
- * Derived from msm-pcm.c and msm7201.c.
- *
- * This software is licensed under the terms of the GNU General Public
- * License version 2, as published by the Free Software Foundation, and
- * may be copied, distributed, and modified under those terms.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
- * See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, you can find it at http://www.fsf.org.
- */
+
 
 #include <linux/init.h>
 #include <linux/module.h>
@@ -78,7 +59,6 @@ EXPORT_SYMBOL_GPL(msm_dais);
 
 int msm_pcm_probe(struct platform_device *devptr)
 {
-	struct snd_card *card;
 	struct snd_soc_codec *codec;
 	int ret;
 
@@ -91,20 +71,18 @@ int msm_pcm_probe(struct platform_device *devptr)
 
 	codec->name = "MSM-CARD";
 	codec->owner = THIS_MODULE;
-	socdev->codec = codec;
+	socdev->card->codec = codec;
 	mutex_init(&codec->mutex);
 
 	INIT_LIST_HEAD(&codec->dapm_widgets);
 	INIT_LIST_HEAD(&codec->dapm_paths);
 
-	/* register pcms */
+	
 	ret = snd_soc_new_pcms(socdev, SNDRV_DEFAULT_IDX1, SNDRV_DEFAULT_STR1);
 	if (ret < 0) {
 		printk(KERN_ERR "msm_soc: failed to create pcms\n");
 		goto __nopcm;
 	}
-
-	card = socdev->codec->card;
 
 	ret = snd_soc_init_card(socdev);
 	if (ret < 0) {
@@ -140,6 +118,6 @@ static void __exit msm_dai_exit(void)
 module_init(msm_dai_init);
 module_exit(msm_dai_exit);
 
-/* Module information */
+
 MODULE_DESCRIPTION("MSM Codec/Cpu Dai driver");
 MODULE_LICENSE("GPL v2");

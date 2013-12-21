@@ -1,22 +1,4 @@
-/* linux/sound/soc/msm/msm7k-pcm.c
- *
- * Copyright (c) 2008-2009, Code Aurora Forum. All rights reserved.
- *
- * All source code in this file is licensed under the following license except
- * where indicated.
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
- * See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, you can find it at http://www.fsf.org.
- */
+
 
 
 
@@ -139,7 +121,7 @@ static struct snd_pcm_hardware msm_pcm_capture_hardware = {
 	.fifo_size =		0,
 };
 
-/* Conventional and unconventional sample rate supported */
+
 static unsigned int supported_sample_rates[] = {
 	8000, 11025, 12000, 16000, 22050, 24000, 32000, 44100, 48000
 };
@@ -172,7 +154,7 @@ static int msm_pcm_playback_prepare(struct snd_pcm_substream *substream)
 	prtd->pcm_irq_pos = 0;
 	prtd->pcm_buf_pos = 0;
 
-	/* rate and channels are sent to audio driver */
+	
 	prtd->out_sample_rate = runtime->rate;
 	prtd->out_channel_mode = runtime->channels;
 
@@ -191,7 +173,7 @@ static int msm_pcm_capture_prepare(struct snd_pcm_substream *substream)
 	prtd->pcm_irq_pos = 0;
 	prtd->pcm_buf_pos = 0;
 
-	/* rate and channels are sent to audio driver */
+	
 	prtd->samp_rate = convert_samp_rate(runtime->rate);
 	prtd->samp_rate_index = convert_dsp_samp_index(runtime->rate);
 	prtd->channel_mode = (runtime->channels - 1);
@@ -326,7 +308,7 @@ static int msm_pcm_open(struct snd_pcm_substream *substream)
 		return ret;
 	}
 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
-		msm_vol_ctl.update = 1; /* Update Volume, with Cached value */
+		msm_vol_ctl.update = 1; 
 		runtime->hw = msm_pcm_playback_hardware;
 		prtd->dir = SNDRV_PCM_STREAM_PLAYBACK;
 		prtd->playback_substream = substream;
@@ -341,7 +323,7 @@ static int msm_pcm_open(struct snd_pcm_substream *substream)
 						&constraints_sample_rates);
 	if (ret < 0)
 		goto out;
-	/* Ensure that buffer size is a multiple of period size */
+	
 	ret = snd_pcm_hw_constraint_integer(runtime,
 					    SNDRV_PCM_HW_PARAM_PERIODS);
 	if (ret < 0)
@@ -349,7 +331,7 @@ static int msm_pcm_open(struct snd_pcm_substream *substream)
 
 	prtd->ops = &snd_msm_audio_ops;
 	prtd->out[0].used = BUF_INVALID_LEN;
-	prtd->out_head = 1; /* point to second buffer on startup */
+	prtd->out_head = 1; 
 	runtime->private_data = prtd;
 
 	ret = alsa_adsp_configure(prtd);
@@ -399,10 +381,7 @@ static int msm_pcm_playback_close(struct snd_pcm_substream *substream)
 
 	pr_debug("%s()\n", __func__);
 
-	/* pcm dmamiss message is sent continously
-	 * when decoder is starved so no race
-	 * condition concern
-	 */
+	
 	if (prtd->enabled)
 		rc = wait_event_interruptible(the_locks.eos_wait,
 					prtd->eos_ack);
@@ -487,11 +466,15 @@ static struct snd_pcm_ops msm_pcm_ops = {
 
 static int msm_pcm_remove(struct platform_device *devptr)
 {
+#if 0
 	struct snd_soc_device *socdev = platform_get_drvdata(devptr);
 	snd_soc_free_pcms(socdev);
 	kfree(socdev->codec);
 	platform_set_drvdata(devptr, NULL);
 	return 0;
+#endif
+	printk("DISABLED %s\n", __func__);
+	return -1;
 }
 
 static int pcm_preallocate_dma_buffer(struct snd_pcm *pcm,
