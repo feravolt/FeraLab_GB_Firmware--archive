@@ -69,7 +69,7 @@ EXPORT_SYMBOL_GPL(platform_get_irq);
  * @name: resource name
  */
 struct resource *platform_get_resource_byname(struct platform_device *dev,
-					      unsigned int type, char *name)
+					      unsigned int type, const char *name)
 {
 	int i;
 
@@ -88,7 +88,7 @@ EXPORT_SYMBOL_GPL(platform_get_resource_byname);
  * @dev: platform device
  * @name: IRQ name
  */
-int platform_get_irq_byname(struct platform_device *dev, char *name)
+int platform_get_irq_byname(struct platform_device *dev, const char *name)
 {
 	struct resource *r = platform_get_resource_byname(dev, IORESOURCE_IRQ,
 							  name);
@@ -584,9 +584,25 @@ static int platform_uevent(struct device *dev, struct kobj_uevent_env *env)
 {
 	struct platform_device	*pdev = to_platform_device(dev);
 
-	add_uevent_var(env, "MODALIAS=platform:%s", pdev->name);
+	add_uevent_var(env, "MODALIAS=%s%s", PLATFORM_MODULE_PREFIX,
+		(pdev->id_entry) ? pdev->id_entry->name : pdev->name);
 	return 0;
 }
+
+static const struct platform_device_id *platform_match_id(
+			struct platform_device_id *id,
+			struct platform_device *pdev)
+{
+	while (id->name[0]) {
+		if (strcmp(pdev->name, id->name) == 0) {
+			pdev->id_entry = id;
+			return id;
+		}
+		id++;
+	}
+	return NULL;
+}
+
 
 /**
  * platform_match - bind platform device to platform driver.
@@ -603,9 +619,14 @@ static int platform_uevent(struct device *dev, struct kobj_uevent_env *env)
  */
 static int platform_match(struct device *dev, struct device_driver *drv)
 {
-	struct platform_device *pdev;
+	struct platform_device *pdev = to_platform_device(dev);
+	struct platform_driver *pdrv = to_platform_driver(drv);
 
-	pdev = container_of(dev, struct platform_device, dev);
+	/* match against the id table first */
+	if (pdrv->id_table)
+		return platform_match_id(pdrv->id_table, pdev) != NULL;
+
+	/* fall-back to driver name match */
 	return (strcmp(pdev->name, drv->name) == 0);
 }
 

@@ -12,6 +12,7 @@
 #define _PLATFORM_DEVICE_H_
 
 #include <linux/device.h>
+#include <linux/mod_devicetable.h>
 
 struct platform_device {
 	const char	* name;
@@ -19,7 +20,14 @@ struct platform_device {
 	struct device	dev;
 	u32		num_resources;
 	struct resource	* resource;
+
+	struct platform_device_id	*id_entry;
+
+	/* arch specific additions */
+//	struct pdev_archdata	archdata;
 };
+
+#define platform_get_device_id(pdev)	((pdev)->id_entry)
 
 #define to_platform_device(x) container_of((x), struct platform_device, dev)
 
@@ -31,8 +39,8 @@ extern struct device platform_bus;
 
 extern struct resource *platform_get_resource(struct platform_device *, unsigned int, unsigned int);
 extern int platform_get_irq(struct platform_device *, unsigned int);
-extern struct resource *platform_get_resource_byname(struct platform_device *, unsigned int, char *);
-extern int platform_get_irq_byname(struct platform_device *, char *);
+extern struct resource *platform_get_resource_byname(struct platform_device *, unsigned int, const char *);
+extern int platform_get_irq_byname(struct platform_device *, const char *);
 extern int platform_add_devices(struct platform_device **, int);
 
 extern struct platform_device *platform_device_register_simple(const char *, int id,
@@ -56,6 +64,7 @@ struct platform_driver {
 	int (*resume_early)(struct platform_device *);
 	int (*resume)(struct platform_device *);
 	struct device_driver driver;
+	struct platform_device_id *id_table;
 };
 
 extern int platform_driver_register(struct platform_driver *);

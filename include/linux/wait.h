@@ -332,6 +332,34 @@ do {									\
 	__ret;								\
 })
 
+#define __wait_io_event_interruptible_timeout(wq, condition, ret)        \
+do {                                                                        \
+        DEFINE_WAIT(__wait);                                                \
+                                                                        \
+        for (;;) {                                                        \
+                prepare_to_wait(&wq, &__wait, TASK_INTERRUPTIBLE);        \
+                if (condition)                                                \
+                        break;                                                \
+                if (!signal_pending(current)) {                                \
+                        ret = io_schedule_timeout(ret);                        \
+                        if (!ret)                                        \
+                                break;                                        \
+                        continue;                                        \
+                }                                                        \
+                ret = -ERESTARTSYS;                                        \
+                break;                                                        \
+        }                                                                \
+        finish_wait(&wq, &__wait);                                        \
+} while (0)
+
+#define wait_io_event_interruptible_timeout(wq, condition, timeout)        \
+({                                                                        \
+        long __ret = timeout;                                                \
+        if (!(condition))                                                \
+                __wait_io_event_interruptible_timeout(wq, condition, __ret); \
+        __ret;                                                                \
+})
+
 #define __wait_event_interruptible_exclusive(wq, condition, ret)	\
 do {									\
 	DEFINE_WAIT(__wait);						\

@@ -17,6 +17,7 @@
 #include <linux/mm.h>
 #include <linux/mm_types.h>
 #include <linux/bootmem.h>
+#include <linux/memory_alloc.h>
 #include <linux/module.h>
 #include <asm/pgtable.h>
 #include <asm/io.h>
@@ -28,6 +29,7 @@
 #include <linux/completion.h>
 #include <linux/err.h>
 #endif
+#include <mach/msm_memtypes.h>
 
 int arch_io_remap_pfn_range(struct vm_area_struct *vma, unsigned long addr,
 			    unsigned long pfn, unsigned long size, pgprot_t prot)
@@ -224,3 +226,11 @@ int platform_physical_low_power_pages(unsigned long start_pfn,
 	return change_memory_power_state(start_pfn, nr_pages,
 		MEMORY_SELF_REFRESH);
 }
+
+unsigned long allocate_contiguous_ebi_nomap(unsigned long size,
+  unsigned long align)
+{
+  return _allocate_contiguous_memory_nomap(size, MEMTYPE_EBI0,
+    align, __builtin_return_address(0));
+}
+EXPORT_SYMBOL(allocate_contiguous_ebi_nomap);
