@@ -15,7 +15,7 @@ echo '### Compiling modules... ###'
 cd /home/feravolt/wlan/host
 ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi- KERNEL_DIR=/home/feravolt/ferra-gb make clobber
 ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi- KERNEL_DIR=/home/feravolt/ferra-gb make
-cp -f /home/feravolt/wlan/host/.output/QSD8K_BSP3240_ARM_NATIVEMMC-SDIO/image/ar6000.ko /home/feravolt/ferra-gb/0UTPUT
+cp -f /home/feravolt/wlan/host/.output/QUALCOMM_ARM_NATIVEMMC-SDIO/image/ar6000.ko /home/feravolt/ferra-gb/0UTPUT
 cd
 cd /home/feravolt/ferra-gb/0UTPUT
 echo '### Cleaning binaries... ###'
