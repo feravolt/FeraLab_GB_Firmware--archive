@@ -668,3 +668,29 @@ void sdio_f0_writeb(struct sdio_func *func, unsigned char b, unsigned int addr,
 		*err_ret = ret;
 }
 EXPORT_SYMBOL_GPL(sdio_f0_writeb);
+
+mmc_pm_flag_t sdio_get_host_pm_caps(struct sdio_func *func)
+{
+        BUG_ON(!func);
+        BUG_ON(!func->card);
+
+        return func->card->host->pm_caps;
+}
+EXPORT_SYMBOL_GPL(sdio_get_host_pm_caps);
+
+int sdio_set_host_pm_flags(struct sdio_func *func, mmc_pm_flag_t flags)
+{
+        struct mmc_host *host;
+
+        BUG_ON(!func);
+        BUG_ON(!func->card);
+
+        host = func->card->host;
+
+        if (flags & ~host->pm_caps)
+                return -EINVAL;
+        host->pm_flags |= flags;
+        return 0;
+}
+EXPORT_SYMBOL_GPL(sdio_set_host_pm_flags);
+
