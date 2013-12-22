@@ -23,4 +23,3 @@ struct xt_quota_mtinfo2 {
 };
 
 #endif /* _XT_QUOTA_H */
-

@@ -642,7 +642,7 @@ resolve_normal_ct(struct net *net,
 
 	/* It exists; we have (non-exclusive) reference. */
 	if (NF_CT_DIRECTION(h) == IP_CT_DIR_REPLY) {
-		*ctinfo = IP_CT_ESTABLISHED_REPLY;
+		*ctinfo = IP_CT_ESTABLISHED + IP_CT_IS_REPLY;
 		/* Please set reply bit if this packet OK */
 		*set_reply = 1;
 	} else {
@@ -913,7 +913,7 @@ static void nf_conntrack_attach(struct sk_buff *nskb, struct sk_buff *skb)
 	/* This ICMP is in reverse direction to the packet which caused it */
 	ct = nf_ct_get(skb, &ctinfo);
 	if (CTINFO2DIR(ctinfo) == IP_CT_DIR_ORIGINAL)
-		ctinfo = IP_CT_RELATED_REPLY;
+		ctinfo = IP_CT_RELATED + IP_CT_IS_REPLY;
 	else
 		ctinfo = IP_CT_RELATED;
 

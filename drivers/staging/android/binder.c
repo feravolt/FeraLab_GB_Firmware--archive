@@ -103,7 +103,7 @@ enum {
 static uint32_t binder_debug_mask;
 module_param_named(debug_mask, binder_debug_mask, uint, S_IWUSR | S_IRUGO);
 
-static int binder_debug_no_lock;
+static bool binder_debug_no_lock;
 module_param_named(proc_no_lock, binder_debug_no_lock, bool, S_IWUSR | S_IRUGO);
 
 static DECLARE_WAIT_QUEUE_HEAD(binder_user_error_wait);
@@ -3536,7 +3536,7 @@ static int binder_state_show(struct seq_file *m, void *unused)
 	struct binder_proc *proc;
 	struct hlist_node *pos;
 	struct binder_node *node;
-	int do_lock = !binder_debug_no_lock;
+	bool do_lock = !binder_debug_no_lock;
 
 	if (do_lock)
 		mutex_lock(&binder_lock);
@@ -3559,7 +3559,7 @@ static int binder_stats_show(struct seq_file *m, void *unused)
 {
 	struct binder_proc *proc;
 	struct hlist_node *pos;
-	int do_lock = !binder_debug_no_lock;
+	bool do_lock = !binder_debug_no_lock;
 
 	if (do_lock)
 		mutex_lock(&binder_lock);
@@ -3579,7 +3579,7 @@ static int binder_transactions_show(struct seq_file *m, void *unused)
 {
 	struct binder_proc *proc;
 	struct hlist_node *pos;
-	int do_lock = !binder_debug_no_lock;
+	bool do_lock = !binder_debug_no_lock;
 
 	if (do_lock)
 		mutex_lock(&binder_lock);
@@ -3595,7 +3595,7 @@ static int binder_transactions_show(struct seq_file *m, void *unused)
 static int binder_proc_show(struct seq_file *m, void *unused)
 {
 	struct binder_proc *proc = m->private;
-	int do_lock = !binder_debug_no_lock;
+	bool do_lock = !binder_debug_no_lock;
 
 	if (do_lock)
 		mutex_lock(&binder_lock);

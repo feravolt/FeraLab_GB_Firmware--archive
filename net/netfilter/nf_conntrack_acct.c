@@ -17,12 +17,12 @@
 #include <net/netfilter/nf_conntrack_acct.h>
 
 #ifdef CONFIG_NF_CT_ACCT
-#define NF_CT_ACCT_DEFAULT 1
+#define NF_CT_ACCT_DEFAULT true
 #else
-#define NF_CT_ACCT_DEFAULT 0
+#define NF_CT_ACCT_DEFAULT false
 #endif
 
-static int nf_ct_acct __read_mostly = NF_CT_ACCT_DEFAULT;
+static bool nf_ct_acct __read_mostly = NF_CT_ACCT_DEFAULT;
 
 module_param_named(acct, nf_ct_acct, bool, 0644);
 MODULE_PARM_DESC(acct, "Enable connection tracking flow accounting.");

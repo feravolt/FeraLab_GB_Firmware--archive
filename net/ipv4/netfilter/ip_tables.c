@@ -88,9 +88,6 @@ ip_packet_match(const struct iphdr *ip,
 
 #define FWINV(bool, invflg) ((bool) ^ !!(ipinfo->invflags & (invflg)))
 
-		if (ipinfo->flags & IPT_F_NO_DEF_MATCH)
-						return true;
-
 	if (FWINV((ip->saddr&ipinfo->smsk.s_addr) != ipinfo->src.s_addr,
 		  IPT_INV_SRCIP)
 	    || FWINV((ip->daddr&ipinfo->dmsk.s_addr) != ipinfo->dst.s_addr,
@@ -150,34 +147,13 @@ ip_packet_match(const struct iphdr *ip,
 		return false;
 	}
 
-#undef FWINV
 	return true;
 }
 
 static bool
-ip_checkentry(struct ipt_ip *ip)
+ip_checkentry(const struct ipt_ip *ip)
 {
-
-#define FWINV(bool, invflg) ((bool) || (ip->invflags & (invflg)))
-
-		if (FWINV(ip->smsk.s_addr, IPT_INV_SRCIP) ||
-				FWINV(ip->dmsk.s_addr, IPT_INV_DSTIP))
-				goto has_match_rules;
-
-		if (FWINV(!!((const unsigned long *)ip->iniface_mask)[0],
-				IPT_INV_VIA_IN) ||
-			FWINV(!!((const unsigned long *)ip->outiface_mask)[0],
-				IPT_INV_VIA_OUT))
-				goto has_match_rules;
-
-		if (FWINV(ip->flags&IPT_F_FRAG, IPT_INV_FRAG))
-				goto has_match_rules;
-
-		ip->flags |= IPT_F_NO_DEF_MATCH;
-
-has_match_rules:
-		if (ip->flags & ~(IPT_F_MASK|IPT_F_NO_DEF_MATCH)) {
-
+	if (ip->flags & ~IPT_F_MASK) {
 		duprintf("Unknown flag bits set: %08X\n",
 			 ip->flags & ~IPT_F_MASK);
 		return false;
@@ -187,8 +163,6 @@ has_match_rules:
 			 ip->invflags & ~IPT_INV_MASK);
 		return false;
 	}
-
-#undef FWINV
 	return true;
 }
 
@@ -236,6 +210,7 @@ unconditional(const struct ipt_ip *ip)
 			return 0;
 
 	return 1;
+#undef FWINV
 }
 
 #if defined(CONFIG_NETFILTER_XT_TARGET_TRACE) || \
@@ -521,7 +496,9 @@ mark_source_chains(struct xt_table_info *newinfo,
 			    && unconditional(&e->ip)) || visited) {
 				unsigned int oldpos, size;
 
-				if (t->verdict < -NF_MAX_VERDICT - 1) {
+				if ((strcmp(t->target.u.user.name,
+			    		    IPT_STANDARD_TARGET) == 0) &&
+				    t->verdict < -NF_MAX_VERDICT - 1) {
 					duprintf("mark_source_chains: bad "
 						"negative verdict (%i)\n",
 								t->verdict);

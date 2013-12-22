@@ -46,7 +46,7 @@
 
 const char *usbcore_name = "usbcore";
 
-static int nousb;	/* Disable USB when built into kernel image */
+static bool nousb;	/* Disable USB when built into kernel image */
 
 /* Workqueue for autosuspend and for remote wakeup of root hubs */
 struct workqueue_struct *ksuspend_usb_wq;
