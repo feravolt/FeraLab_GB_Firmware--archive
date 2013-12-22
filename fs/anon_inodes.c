@@ -64,6 +64,84 @@ static struct dentry_operations anon_inodefs_dentry_operations = {
  *
  * Creates a new file by hooking it on a single inode. This is useful for files
  * that do not need to have a full-fledged inode in order to operate correctly.
+ * All the files created with anon_inode_getfile() will share a single inode,
+ * hence saving memory and avoiding code duplication for the file/inode/dentry
+ * setup.  Returns the newly created file* or an error pointer.
+ */
+struct file *anon_inode_getfile(const char *name,
+				const struct file_operations *fops,
+				void *priv, int flags)
+{
+	struct qstr this;
+	struct dentry *dentry;
+	struct file *file;
+	int error;
+
+	if (IS_ERR(anon_inode_inode))
+		return ERR_PTR(-ENODEV);
+
+	if (fops->owner && !try_module_get(fops->owner))
+		return ERR_PTR(-ENOENT);
+
+	/*
+	 * Link the inode to a directory entry by creating a unique name
+	 * using the inode sequence number.
+	 */
+	error = -ENOMEM;
+	this.name = name;
+	this.len = strlen(name);
+	this.hash = 0;
+	dentry = d_alloc(anon_inode_mnt->mnt_sb->s_root, &this);
+	if (!dentry)
+		goto err_module;
+
+	/*
+	 * We know the anon_inode inode count is always greater than zero,
+	 * so we can avoid doing an igrab() and we can use an open-coded
+	 * atomic_inc().
+	 */
+	atomic_inc(&anon_inode_inode->i_count);
+
+	dentry->d_op = &anon_inodefs_dentry_operations;
+	/* Do not publish this dentry inside the global dentry hash table */
+	dentry->d_flags &= ~DCACHE_UNHASHED;
+	d_instantiate(dentry, anon_inode_inode);
+
+	error = -ENFILE;
+	file = alloc_file(anon_inode_mnt, dentry,
+			  FMODE_READ | FMODE_WRITE, fops);
+	if (!file)
+		goto err_dput;
+	file->f_mapping = anon_inode_inode->i_mapping;
+
+	file->f_pos = 0;
+	file->f_flags = O_RDWR | (flags & O_NONBLOCK);
+	file->f_version = 0;
+	file->private_data = priv;
+
+	return file;
+
+err_dput:
+	dput(dentry);
+err_module:
+	module_put(fops->owner);
+	return ERR_PTR(error);
+}
+EXPORT_SYMBOL_GPL(anon_inode_getfile);
+
+
+/**
+ * anon_inode_getfd - creates a new file instance by hooking it up to an
+ *                    anonymous inode, and a dentry that describe the "class"
+ *                    of the file
+ *
+ * @name:    [in]    name of the "class" of the new file
+ * @fops:    [in]    file operations for the new file
+ * @priv:    [in]    private data for the new file (will be file's private_data)
+ * @flags:   [in]    flags
+ *
+ * Creates a new file by hooking it on a single inode. This is useful for files
+ * that do not need to have a full-fledged inode in order to operate correctly.
  * All the files created with anon_inode_getfd() will share a single inode,
  * hence saving memory and avoiding code duplication for the file/inode/dentry
  * setup.  Returns new descriptor or -error.
