@@ -96,7 +96,7 @@ static DECLARE_WAIT_QUEUE_HEAD(khubd_wait);
 static struct task_struct *khubd_task;
 
 /* cycle leds on hubs that aren't blinking for attention */
-static bool old_scheme_first = false;
+static bool blinkenlights = false;
 module_param (blinkenlights, bool, S_IRUGO);
 MODULE_PARM_DESC (blinkenlights, "true to cycle leds on hubs");
 
@@ -125,12 +125,12 @@ MODULE_PARM_DESC(initial_descriptor_timeout,
  * otherwise the new scheme is used.  If that fails and "use_both_schemes"
  * is set, then the driver will make another attempt, using the other scheme.
  */
-static int old_scheme_first = 0;
+static bool old_scheme_first = false;
 module_param(old_scheme_first, bool, S_IRUGO | S_IWUSR);
 MODULE_PARM_DESC(old_scheme_first,
 		 "start with the old device initialization scheme");
 
-static int use_both_schemes = 1;
+static bool use_both_schemes = true;
 module_param(use_both_schemes, bool, S_IRUGO | S_IWUSR);
 MODULE_PARM_DESC(use_both_schemes,
 		"try the other device initialization scheme if the "

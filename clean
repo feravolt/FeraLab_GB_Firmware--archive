@@ -8,10 +8,5 @@ ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi- make 
 echo '### Applying latest config... ###'
 ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi- make fera_es209ra_defconfig
 echo '### Kernel tree ready. ###'
-echo '### Cleaning binaries... ###'
-cd /home/feravolt/wlan/host
-ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi- KERNEL_DIR=/home/feravolt/ferra-gb make clobber
-cd
-cd /home/feravolt/ferra-gb
-echo '### Cleaned ###'
+
 
