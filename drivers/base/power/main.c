@@ -116,7 +116,7 @@ void device_pm_remove(struct device *dev)
  *	@ops:	PM operations to choose from.
  *	@state:	PM transition of the system being carried out.
  */
-static int pm_op(struct device *dev, struct dev_pm_ops *ops,
+static int pm_op(struct device *dev, const struct dev_pm_ops *ops,
 			pm_message_t state)
 {
 	int error = 0;
@@ -179,7 +179,7 @@ static int pm_op(struct device *dev, struct dev_pm_ops *ops,
  *	The operation is executed with interrupts disabled by the only remaining
  *	functional CPU in the system.
  */
-static int pm_noirq_op(struct device *dev, struct dev_pm_ops *ops,
+static int pm_noirq_op(struct device *dev, const struct dev_pm_ops *ops,
 			pm_message_t state)
 {
 	int error = 0;
@@ -421,7 +421,7 @@ static void dpm_drv_timeout(unsigned long data)
 static void dpm_drv_wdset(struct device *dev)
 {
 	dpm_drv_wd.data = (unsigned long) dev;
-	mod_timer(&dpm_drv_wd, jiffies + (HZ * 9));
+	mod_timer(&dpm_drv_wd, jiffies + (HZ * 3));
 }
 
 /**
