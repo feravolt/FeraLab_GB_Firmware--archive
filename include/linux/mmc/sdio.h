@@ -155,10 +155,12 @@
 
 #define SDIO_FBR_BLKSIZE	0x10	/* block size (2 bytes) */
 
-#define SDIO_DEVICE_ID_MARVELL_88W8688 0x9104
-#define SDIO_VENDOR_ID_ATHEROS 0x0271
-#define SDIO_DEVICE_ID_ATHEROS_AR6001 0x0100
-#define SDIO_DEVICE_ID_ATHEROS_AR6002 0x0200
+
+//Required for Atheros
+#define SDIO_DEVICE_ID_MARVELL_88W8688         0x9104
+#define SDIO_VENDOR_ID_ATHEROS                 0x0271
+#define SDIO_DEVICE_ID_ATHEROS_AR6001          0x0100
+#define SDIO_DEVICE_ID_ATHEROS_AR6002          0x0200
 
 #endif
 

@@ -1,0 +1,5 @@
+config ATH6K_X10
+	tristate "Atheros WLAN for es209ra"
+	help
+        Atherosa a6000 wifi module for es209ra
+
