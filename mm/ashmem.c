@@ -1,3 +1,21 @@
+/* mm/ashmem.c
+**
+** Anonymous Shared Memory Subsystem, ashmem
+**
+** Copyright (C) 2008 Google, Inc.
+**
+** Robert Love <rlove@google.com>
+**
+** This software is licensed under the terms of the GNU General Public
+** License version 2, as published by the Free Software Foundation, and
+** may be copied, distributed, and modified under those terms.
+**
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+*/
+
 #include <linux/module.h>
 #include <linux/file.h>
 #include <linux/fs.h>
@@ -11,18 +29,26 @@
 #include <linux/mutex.h>
 #include <linux/shmem_fs.h>
 #include <linux/ashmem.h>
-#include <asm/cacheflush.h>
 
+/*
+ * ashmem_area - anonymous shared memory area
+ * Lifecycle: From our parent file's open() until its release()
+ * Locking: Protected by `ashmem_mutex'
+ * Big Note: Mappings do NOT pin this structure; it dies on close()
+ */
 struct ashmem_area {
 	char name[ASHMEM_NAME_LEN];	/* optional name for /proc/pid/maps */
 	struct list_head unpinned_list;	/* list of all ashmem areas */
 	struct file *file;		/* the shmem-based backing file */
 	size_t size;			/* size of the mapping, in bytes */
-	unsigned long vm_start;		/* Start address of vm_area
-					 * which maps this ashmem */
 	unsigned long prot_mask;	/* allowed prot bits, as vm_flags */
 };
 
+/*
+ * ashmem_range - represents an interval of unpinned (evictable) pages
+ * Lifecycle: From unpin to pin
+ * Locking: Protected by `ashmem_mutex'
+ */
 struct ashmem_range {
 	struct list_head lru;		/* entry in LRU list */
 	struct list_head unpinned;	/* entry in its area's unpinned list */
@@ -32,9 +58,19 @@ struct ashmem_range {
 	unsigned int purged;		/* ASHMEM_NOT or ASHMEM_WAS_PURGED */
 };
 
+/* LRU list of unpinned pages, protected by ashmem_mutex */
 static LIST_HEAD(ashmem_lru_list);
+
+/* Count of pages on our LRU list, protected by ashmem_mutex */
 static unsigned long lru_count;
+
+/*
+ * ashmem_mutex - protects the list of and each individual ashmem_area
+ *
+ * Lock Ordering: ashmex_mutex -> i_mutex -> i_alloc_sem
+ */
 static DEFINE_MUTEX(ashmem_mutex);
+
 static struct kmem_cache *ashmem_area_cachep __read_mostly;
 static struct kmem_cache *ashmem_range_cachep __read_mostly;
 
@@ -74,6 +110,17 @@ static inline void lru_del(struct ashmem_range *range)
 	lru_count -= range_size(range);
 }
 
+/*
+ * range_alloc - allocate and initialize a new ashmem_range structure
+ *
+ * 'asma' - associated ashmem_area
+ * 'prev_range' - the previous ashmem_range in the sorted asma->unpinned list
+ * 'purged' - initial purge value (ASMEM_NOT_PURGED or ASHMEM_WAS_PURGED)
+ * 'start' - starting page, inclusive
+ * 'end' - ending page, inclusive
+ *
+ * Caller must hold ashmem_mutex.
+ */
 static int range_alloc(struct ashmem_area *asma,
 		       struct ashmem_range *prev_range, unsigned int purged,
 		       size_t start, size_t end)
@@ -147,9 +194,7 @@ static int ashmem_release(struct inode *ignored, struct file *file)
 	struct ashmem_area *asma = file->private_data;
 	struct ashmem_range *range, *next;
 
-	if (!mutex_trylock(&ashmem_mutex))
-	return -1;
-
+	mutex_lock(&ashmem_mutex);
 	list_for_each_entry_safe(range, next, &asma->unpinned_list, unpinned)
 		range_del(range);
 	mutex_unlock(&ashmem_mutex);
@@ -215,7 +260,6 @@ static int ashmem_mmap(struct file *file, struct vm_area_struct *vma)
 		vma->vm_file = asma->file;
 	}
 	vma->vm_flags |= VM_CAN_NONLINEAR;
-	asma->vm_start = vma->vm_start;
 
 out:
 	mutex_unlock(&ashmem_mutex);
@@ -514,100 +558,6 @@ static int ashmem_pin_unpin(struct ashmem_area *asma, unsigned long cmd,
 	return ret;
 }
 
-#ifdef CONFIG_OUTER_CACHE
-static unsigned int kgsl_virtaddr_to_physaddr(unsigned int virtaddr)
-{
-	unsigned int physaddr = 0;
-	pgd_t *pgd_ptr = NULL;
-	pmd_t *pmd_ptr = NULL;
-	pte_t *pte_ptr = NULL, pte;
-
-	pgd_ptr = pgd_offset(current->mm, virtaddr);
-	if (pgd_none(*pgd) || pgd_bad(*pgd)) {
-		pr_info
-		    ("Invalid pgd entry found while trying to convert virtual "
-		     "address to physical\n");
-		return 0;
-	}
-
-	pmd_ptr = pmd_offset(pgd_ptr, virtaddr);
-	if (pmd_none(*pmd_ptr) || pmd_bad(*pmd_ptr)) {
-		pr_info
-		    ("Invalid pmd entry found while trying to convert virtual "
-		     "address to physical\n");
-		return 0;
-	}
-
-	pte_ptr = pte_offset_map(pmd_ptr, virtaddr);
-	if (!pte_ptr) {
-		pr_info
-		    ("Unable to map pte entry while trying to convert virtual "
-		     "address to physical\n");
-		return 0;
-	}
-	pte = *pte_ptr;
-	physaddr = pte_pfn(pte);
-	pte_unmap(pte_ptr);
-	physaddr <<= PAGE_SHIFT;
-	return physaddr;
-}
-#endif
-
-static int ashmem_flush_cache_range(struct ashmem_area *asma, unsigned long cmd)
-{
-#ifdef CONFIG_OUTER_CACHE
-	unsigned long end;
-#endif
-	unsigned long addr;
-	unsigned int size, result = 0;
-
-	mutex_lock(&ashmem_mutex);
-
-	size = asma->size;
-	addr = asma->vm_start;
-	if (!addr || (addr & (PAGE_SIZE - 1)) || !size ||
-		(size & (PAGE_SIZE - 1))) {
-		result =  -EINVAL;
-		goto done;
-	}
-
-	switch (cmd) {
-	case ASHMEM_CACHE_FLUSH_RANGE:
-		dmac_flush_range((const void *)addr,
-			(const void *)(addr + size));
-		break;
-	case ASHMEM_CACHE_CLEAN_RANGE:
-		dmac_clean_range((const void *)addr,
-			(const void *)(addr + size));
-		break;
-	default:
-		result = -EINVAL;
-		goto done;
-	}
-#ifdef CONFIG_OUTER_CACHE
-	for (end = addr; end < (addr + size); end += PAGE_SIZE) {
-		unsigned long physaddr;
-		physaddr = kgsl_virtaddr_to_physaddr(end);
-		if (!physaddr) {
-			result =  -EINVAL;
-			goto done;
-		}
-
-		switch (cmd) {
-		case ASHMEM_CACHE_FLUSH_RANGE:
-			outer_flush_range(physaddr, physaddr + PAGE_SIZE);
-			break;
-		case ASHMEM_CACHE_CLEAN_RANGE:
-			outer_clean_range(physaddr, physaddr + PAGE_SIZE);
-			break;
-		}
-	}
-#endif
-done:
-	mutex_unlock(&ashmem_mutex);
-	return 0;
-}
-
 static long ashmem_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 {
 	struct ashmem_area *asma = file->private_data;
@@ -647,10 +597,6 @@ static long ashmem_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 			ret = ashmem_shrink(0, GFP_KERNEL);
 			ashmem_shrink(ret, GFP_KERNEL);
 		}
-		break;
-	case ASHMEM_CACHE_FLUSH_RANGE:
-	case ASHMEM_CACHE_CLEAN_RANGE:
-		ret = ashmem_flush_cache_range(asma, cmd);
 		break;
 	}
 

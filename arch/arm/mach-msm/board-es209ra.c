@@ -68,8 +68,13 @@
 #define MSM_GPU_PHYS_SIZE 	SZ_2M
 #define MSM_SMI_BASE		0x00000000
 #define MSM_SHARED_RAM_PHYS	(MSM_SMI_BASE + 0x00100000)
-#define MSM_FB_BASE		(MSM_SMI_BASE + 0x02B00000)
+#define MSM_PMEM_SMI_BASE	(MSM_SMI_BASE + 0x02B00000)
+#define MSM_PMEM_SMI_SIZE	0x01500000
+#define MSM_FB_BASE		MSM_PMEM_SMI_BASE
 #define MSM_GPU_PHYS_BASE 	(MSM_FB_BASE + MSM_FB_SIZE)
+#define MSM_PMEM_SMIPOOL_BASE	(MSM_GPU_PHYS_BASE + MSM_GPU_PHYS_SIZE)
+#define MSM_PMEM_SMIPOOL_SIZE	(MSM_PMEM_SMI_SIZE - MSM_FB_SIZE \
+					- MSM_GPU_PHYS_SIZE)
 
 static int msm7227_platform_set_vib_voltage(u16 volt_mv)
 {
@@ -439,6 +444,14 @@ static struct android_pmem_platform_data android_pmem_adsp_pdata = {
 	.cached = 0,
 };
 
+static struct android_pmem_platform_data android_pmem_smipool_pdata = {
+	.name = "pmem_smipool",
+	.start = MSM_PMEM_SMIPOOL_BASE,
+	.size = MSM_PMEM_SMIPOOL_SIZE,
+	.allocator_type = PMEM_ALLOCATORTYPE_BITMAP,
+	.cached = 0,
+};
+
 static struct platform_device android_pmem_device = {
 	.name = "android_pmem",
 	.id = 0,
@@ -449,6 +462,12 @@ static struct platform_device android_pmem_adsp_device = {
 	.name = "android_pmem",
 	.id = 1,
 	.dev = { .platform_data = &android_pmem_adsp_pdata },
+};
+
+static struct platform_device android_pmem_smipool_device = {
+	.name = "android_pmem",
+	.id = 2,
+	.dev = { .platform_data = &android_pmem_smipool_pdata },
 };
 
 static struct platform_device android_pmem_kernel_ebi1_device = {
@@ -1420,6 +1439,7 @@ static struct platform_device *devices[] __initdata = {
 	&android_pmem_kernel_ebi1_device,
 	&android_pmem_device,
 	&android_pmem_adsp_device,
+	&android_pmem_smipool_device,
 	&msm_device_nand,
 	&msm_device_i2c,
 	&qsd_device_spi,
@@ -1841,6 +1861,7 @@ static void __init es209ra_map_io(void)
 	es209ra_allocate_memory_regions();
 	msm_clock_init(msm_clocks_8x50, msm_num_clocks_8x50);
 }
+
 
 MACHINE_START(ES209RA, "ES209RA")
 	.boot_params	= PHYS_OFFSET + 0x100,

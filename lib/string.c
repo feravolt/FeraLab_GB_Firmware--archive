@@ -23,7 +23,6 @@
 #include <linux/string.h>
 #include <linux/ctype.h>
 #include <linux/module.h>
-#include <linux/memcopy.h>
 
 #ifndef __HAVE_ARCH_STRNICMP
 /**
@@ -162,6 +161,48 @@ size_t strlcpy(char *dest, const char *src, size_t size)
 EXPORT_SYMBOL(strlcpy);
 #endif
 
+/**
+* skip_spaces - Removes leading whitespace from @str.
+* @str: The string to be stripped.
+*
+* Returns a pointer to the first non-whitespace character in @str.
+*/
+char *skip_spaces(const char *str)
+{
+while (isspace(*str))
+++str;
+return (char *)str;
+}
+EXPORT_SYMBOL(skip_spaces);
+
+
+/**
+* strim - Removes leading and trailing whitespace from @s.
+* @s: The string to be stripped.
+*
+* Note that the first trailing whitespace is replaced with a %NUL-terminator
+* in the given string @s. Returns a pointer to the first non-whitespace
+* character in @s.
+*/
+char *strim(char *s)
+{
+size_t size;
+char *end;
+
+s = skip_spaces(s);
+size = strlen(s);
+if (!size)
+return s;
+
+end = s + size - 1;
+while (end >= s && isspace(*end))
+end--;
+*(end + 1) = '\0';
+
+return s;
+}
+EXPORT_SYMBOL(strim);
+
 #ifndef __HAVE_ARCH_STRCAT
 /**
  * strcat - Append one %NUL-terminated string to another
@@ -247,17 +288,13 @@ EXPORT_SYMBOL(strlcat);
 #undef strcmp
 int strcmp(const char *cs, const char *ct)
 {
-	unsigned char c1, c2;
+	signed char __res;
 
 	while (1) {
-		c1 = *cs++;
-		c2 = *ct++;
-		if (c1 != c2)
-			return c1 < c2 ? -1 : 1;
-		if (!c1)
+		if ((__res = *cs - *ct++) != 0 || !*cs++)
 			break;
 	}
-	return 0;
+	return __res;
 }
 EXPORT_SYMBOL(strcmp);
 #endif
@@ -271,18 +308,14 @@ EXPORT_SYMBOL(strcmp);
  */
 int strncmp(const char *cs, const char *ct, size_t count)
 {
-	unsigned char c1, c2;
+	signed char __res = 0;
 
 	while (count) {
-		c1 = *cs++;
-		c2 = *ct++;
-		if (c1 != c2)
-			return c1 < c2 ? -1 : 1;
-		if (!c1)
+		if ((__res = *cs - *ct++) != 0 || !*cs++)
 			break;
 		count--;
 	}
-	return 0;
+	return __res;
 }
 EXPORT_SYMBOL(strncmp);
 #endif
@@ -367,43 +400,6 @@ char *strstrip(char *s)
 	return s;
 }
 EXPORT_SYMBOL(strstrip);
-
-char *skip_spaces(const char *str)
-{
-	while (isspace(*str))
-		++str;
-	return (char *)str;
-}
-EXPORT_SYMBOL(skip_spaces);
-
-/**
- * strim - Removes leading and trailing whitespace from @s.
- * @s: The string to be stripped.
- *
- * Note that the first trailing whitespace is replaced with a %NUL-terminator
- * in the given string @s. Returns a pointer to the first non-whitespace
- * character in @s.
- */
-
-char *strim(char *s)
-{
-	size_t size;
-	char *end;
-
-	s = skip_spaces(s);
-	size = strlen(s);
-	if (!size)
-		return s;
-
-	end = s + size - 1;
-	while (end >= s && isspace(*end))
-		end--;
-	*(end + 1) = '\0';
-
-	return s;
-}
-EXPORT_SYMBOL(strim);
-
 
 #ifndef __HAVE_ARCH_STRLEN
 /**
@@ -598,12 +594,11 @@ EXPORT_SYMBOL(memset);
  */
 void *memcpy(void *dest, const void *src, size_t count)
 {
-	unsigned long dstp = (unsigned long)dest;
-	unsigned long srcp = (unsigned long)src;
+	char *tmp = dest;
+	const char *s = src;
 
-	/* Copy from the beginning to the end */
-	mem_copy_fwd(dstp, srcp, count);
-
+	while (count--)
+		*tmp++ = *s++;
 	return dest;
 }
 EXPORT_SYMBOL(memcpy);
@@ -620,15 +615,21 @@ EXPORT_SYMBOL(memcpy);
  */
 void *memmove(void *dest, const void *src, size_t count)
 {
-	unsigned long dstp = (unsigned long)dest;
-	unsigned long srcp = (unsigned long)src;
+	char *tmp;
+	const char *s;
 
-	if (dest - src >= count) {
-		/* Copy from the beginning to the end */
-		mem_copy_fwd(dstp, srcp, count);
+	if (dest <= src) {
+		tmp = dest;
+		s = src;
+		while (count--)
+			*tmp++ = *s++;
 	} else {
-		/* Copy from the end to the beginning */
-		mem_copy_bwd(dstp, srcp, count);
+		tmp = dest;
+		tmp += count;
+		s = src;
+		s += count;
+		while (count--)
+			*--tmp = *--s;
 	}
 	return dest;
 }
@@ -728,4 +729,3 @@ void *memchr(const void *s, int c, size_t n)
 }
 EXPORT_SYMBOL(memchr);
 #endif
-
