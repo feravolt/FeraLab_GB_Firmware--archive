@@ -191,6 +191,9 @@ extern void _memset_io(volatile void __iomem *, int, size_t);
 #define writel(v,c)		__raw_writel((__force __u32) \
 					cpu_to_le32(v),__mem_pci(c))
 
+#define writel_relaxed(v,c)  ((void)__raw_writel((__force u32) \
+				        cpu_to_le32(v),__mem_pci(c)))
+
 #define writesb(p,d,l)		__raw_writesb(__mem_pci(p),d,l)
 #define writesw(p,d,l)		__raw_writesw(__mem_pci(p),d,l)
 #define writesl(p,d,l)		__raw_writesl(__mem_pci(p),d,l)
