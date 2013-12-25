@@ -7,7 +7,6 @@
 #include <linux/sched.h>
 #include <linux/notifier.h>
 #include <linux/rcupdate.h>
-#include <linux/compaction.h>
 
 #define SEC_ADJUST_LMK
 #ifdef CONFIG_SWAP
@@ -33,7 +32,6 @@ static int lowmem_minfree_size = 4;
 
 static struct task_struct *lowmem_deathpending;
 static unsigned long lowmem_deathpending_timeout;
-extern int compact_nodes(bool sync);
 #ifdef CONFIG_SWAP
 static int fudgeswap = 0;
 #endif
@@ -174,8 +172,6 @@ static int lowmem_shrink(int nr_to_scan, gfp_t gfp_mask)
 	lowmem_print(4, "lowmem_shrink %d, %x, return %d\n",
 		     nr_to_scan, gfp_mask, rem);
 	rcu_read_unlock();
-	if (selected)
-		compact_nodes(false)
 	return rem;
 }
 
