@@ -1825,6 +1825,21 @@ static inline void check_class_changed(struct rq *rq, struct task_struct *p,
 		p->sched_class->prio_changed(rq, p, oldprio, running);
 }
 
+void kthread_bind(struct task_struct *k, unsigned int cpu)
+{
+	/* Must have done schedule() in kthread() before we set_task_cpu */
+	if (!wait_task_inactive(k, TASK_UNINTERRUPTIBLE)) {
+		WARN_ON(1);
+		return;
+	}
+	set_task_cpu(k, cpu);
+	k->cpus_allowed = cpumask_of_cpu(cpu);
+	k->rt.nr_cpus_allowed = 1;
+	k->flags |= PF_THREAD_BOUND;
+}
+EXPORT_SYMBOL(kthread_bind);
+
+
 #ifdef CONFIG_SMP
 
 /* Used instead of source_load when we know the type == 0 */
