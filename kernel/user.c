@@ -333,10 +333,9 @@ static void free_user(struct user_struct *up, unsigned long flags)
 {
 	/* restore back the count */
 	atomic_inc(&up->__count);
-	spin_unlock_irqrestore(&uidhash_lock, flags);
-
 	INIT_WORK(&up->work, cleanup_user_struct);
 	schedule_work(&up->work);
+	spin_unlock_irqrestore(&uidhash_lock, flags);
 }
 
 #else	/* CONFIG_USER_SCHED && CONFIG_SYSFS */
