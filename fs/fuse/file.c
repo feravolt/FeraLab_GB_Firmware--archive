@@ -1520,7 +1520,7 @@ static int fuse_ioctl_copy_user(struct page **pages, struct iovec *iov,
 			kaddr += copy;
 		}
 
-		kunmap(map);
+		kunmap(page);
 	}
 
 	return 0;
