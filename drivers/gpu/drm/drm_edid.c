@@ -327,6 +327,11 @@ static struct drm_display_mode *drm_mode_detailed(struct drm_device *dev,
 		 pt->vsync_pulse_width_lo);
 	mode->vtotal = mode->vdisplay + ((pt->vblank_hi << 8) | pt->vblank_lo);
 
+	if (mode->hsync_end > mode->htotal)
+		mode->htotal = mode->hsync_end + 1;
+	if (mode->vsync_end > mode->vtotal)
+		mode->vtotal = mode->vsync_end + 1;
+
 	drm_mode_set_name(mode);
 
 	if (pt->interlaced)

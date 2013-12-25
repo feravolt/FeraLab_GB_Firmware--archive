@@ -137,8 +137,6 @@ static struct drm_mm_node *drm_mm_split_at_start(struct drm_mm_node *parent,
 	return child;
 }
 
-
-
 struct drm_mm_node *drm_mm_get_block(struct drm_mm_node * parent,
 				unsigned long size, unsigned alignment)
 {
@@ -201,8 +199,10 @@ void drm_mm_put_block(struct drm_mm_node * cur)
 				prev_node->size += next_node->size;
 				list_del(&next_node->ml_entry);
 				list_del(&next_node->fl_entry);
+				spin_lock(&mm->unused_lock);
 				drm_free(next_node, sizeof(*next_node),
 					 DRM_MEM_MM);
+				spin_unlock(&mm->unused_lock);
 			} else {
 				next_node->size += cur->size;
 				next_node->start = cur->start;
@@ -215,7 +215,9 @@ void drm_mm_put_block(struct drm_mm_node * cur)
 		list_add(&cur->fl_entry, &mm->fl_entry);
 	} else {
 		list_del(&cur->ml_entry);
+		spin_lock(&mm->unused_lock);
 		drm_free(cur, sizeof(*cur), DRM_MEM_MM);
+		spin_unlock(&mm->unused_lock);
 	}
 }
 EXPORT_SYMBOL(drm_mm_put_block);
