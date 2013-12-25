@@ -63,7 +63,7 @@ EXPORT_SYMBOL_GPL(rcu_lock_map);
 		NUM_RCU_LVL_2, \
 		NUM_RCU_LVL_3, /* == MAX_RCU_LVLS */ \
 	}, \
-	.signaled = RCU_SIGNAL_INIT, \
+	.signaled = RCU_GP_IDLE, \
 	.gpnum = -300, \
 	.completed = -300, \
 	.onofflock = __SPIN_LOCK_UNLOCKED(&name.onofflock), \
@@ -625,7 +625,10 @@ rcu_start_gp(struct rcu_state *rsp, unsigned long flags)
 		spin_unlock(&rnp_cur->lock);	/* irqs already disabled. */
 	}
 
+	rnp = rcu_get_root(rsp);
+	spin_lock(&rnp->lock);
 	rsp->signaled = RCU_SIGNAL_INIT; /* force_quiescent_state now OK. */
+	spin_unlock(&rnp->lock);
 	spin_unlock_irqrestore(&rsp->onofflock, flags);
 }
 
@@ -704,6 +707,7 @@ cpu_quiet_msk(unsigned long mask, struct rcu_state *rsp, struct rcu_node *rnp,
 	 * will release it.
 	 */
 	rsp->completed = rsp->gpnum;
+	rsp->signaled = RCU_GP_IDLE;
 	rcu_process_gp_end(rsp, rsp->rda[smp_processor_id()]);
 	rcu_start_gp(rsp, flags);  /* releases rnp->lock. */
 }
@@ -1063,6 +1067,7 @@ static void force_quiescent_state(struct rcu_state *rsp, int relaxed)
 	}
 	spin_unlock(&rnp->lock);
 	switch (signaled) {
+	case RCU_GP_IDLE:
 	case RCU_GP_INIT:
 
 		break; /* grace period still initializing, ignore. */
@@ -1079,7 +1084,8 @@ static void force_quiescent_state(struct rcu_state *rsp, int relaxed)
 
 		/* Update state, record completion counter. */
 		spin_lock(&rnp->lock);
-		if (lastcomp == rsp->completed) {
+		if (lastcomp == rsp->completed &&
+			rsp->signaled == RCU_SAVE_DYNTICK) {
 			rsp->signaled = RCU_FORCE_QS;
 			dyntick_record_completed(rsp, lastcomp);
 		}
