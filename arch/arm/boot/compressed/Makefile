@@ -1,3 +1,4 @@
+plus_sec := $(call as-instr,.arch_extension sec,+sec)
 HEAD	= head.o
 OBJS	= misc.o
 FONTC	= $(srctree)/drivers/video/console/font_acorn_8x8.c
@@ -56,7 +57,7 @@ KBUILD_CFLAGS = $(subst -pg, , $(ORIG_CFLAGS))
 endif
 
 ccflags-y := -fpic -fno-builtin
-asflags-y := -Wa,-march=armv7-a
+asflags-y := -Wa,-march=armv7-a$(plus_sec)
 
 LDFLAGS_vmlinux := --defsym zreladdr=$(ZRELADDR)
 ifneq ($(INITRD_PHYS),)
