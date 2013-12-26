@@ -9,13 +9,13 @@ mkdir 0UTPUT
 ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi- make fera_es209ra_defconfig
 echo '### Compiling kernel... ###'
 ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi- make -j2
-cp -f /home/feravolt/ferra-gb/arch/arm/boot/zImage /home/feravolt/ferra-gb/0UTPUT
-cp -f /home/feravolt/ferra-gb/drivers/net/wireless/ath6k/ar6000.ko /home/feravolt/ferra-gb/0UTPUT
-cd /home/feravolt/ferra-gb/0UTPUT
+cp -f /home/feravolt/ferra/arch/arm/boot/zImage /home/feravolt/ferra/0UTPUT
+cp -f /home/feravolt/ferra/drivers/net/wireless/ath6k/ar6000.ko /home/feravolt/ferra/0UTPUT
+cd /home/feravolt/ferra/0UTPUT
 echo '### Cleaning binaries... ###'
 /home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi-strip --strip-unneeded ar6000.ko
-mv /home/feravolt/ferra-gb/0UTPUT/zImage /home/feravolt/ferra-gb/0UTPUT/Image
-mv /home/feravolt/ferra-gb/0UTPUT/ar6000.ko /home/feravolt/ferra-gb/0UTPUT/wifi.ko
+mv /home/feravolt/ferra/0UTPUT/zImage /home/feravolt/ferra/0UTPUT/Image
+mv /home/feravolt/ferra/0UTPUT/ar6000.ko /home/feravolt/ferra/0UTPUT/wifi.ko
 cd
 echo '### DONE! ###'
 

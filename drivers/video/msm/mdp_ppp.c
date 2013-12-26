@@ -1,3 +1,18 @@
+/* drivers/video/msm/src/drv/mdp/mdp_ppp.c
+ *
+ * Copyright (C) 2007 Google Incorporated
+ * Copyright (c) 2008-2012, Code Aurora Forum. All rights reserved.
+ *
+ * This software is licensed under the terms of the GNU General Public
+ * License version 2, as published by the Free Software Foundation, and
+ * may be copied, distributed, and modified under those terms.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/sched.h>
@@ -45,17 +60,13 @@ static uint32_t bytes_per_pixel[] = {
 extern uint32 mdp_plv[];
 extern struct semaphore mdp_ppp_mutex;
 
-int mdp_get_bytes_per_pixel(uint32_t format,
-				 struct msm_fb_data_type *mfd)
+uint32_t mdp_get_bytes_per_pixel(uint32_t format)
 {
-	int bpp = -EINVAL;
-	if (format == MDP_FB_FORMAT)
-		format = mfd->fb_imgType;
+	uint32_t bpp = 0;
 	if (format < ARRAY_SIZE(bytes_per_pixel))
 		bpp = bytes_per_pixel[format];
 
-	if (bpp <= 0)
-		printk(KERN_ERR "%s incorrect format %d\n", __func__, format);
+	BUG_ON(!bpp);
 	return bpp;
 }
 
@@ -540,27 +551,16 @@ static void get_len(struct mdp_img *img, struct mdp_rect *rect, uint32_t bpp,
 }
 
 static void flush_imgs(struct mdp_blit_req *req, int src_bpp, int dst_bpp,
-			struct file *p_src_file, struct file *p_dst_file)
+                        struct file *p_src_file, struct file *p_dst_file)
 {
-	uint32_t src0_len, src1_len, dst0_len, dst1_len;
+        uint32_t src0_len, src1_len;
+	get_len(&req->src, &req->src_rect, src_bpp, &src0_len, &src1_len);
+	flush_pmem_file(p_src_file, req->src.offset, src0_len);
 
-	/* flush src images to memory before dma to mdp */
-	get_len(&req->src, &req->src_rect, src_bpp,
-	&src0_len, &src1_len);
+        if (IS_PSEUDOPLNR(req->src.format))
+               flush_pmem_file(p_src_file,
+                     req->src.offset + src0_len, src1_len);
 
-	flush_pmem_file(p_src_file,
-	req->src.offset, src0_len);
-
-	if (IS_PSEUDOPLNR(req->src.format))
-		flush_pmem_file(p_src_file,
-			req->src.offset + src0_len, src1_len);
-
-	get_len(&req->dst, &req->dst_rect, dst_bpp, &dst0_len, &dst1_len);
-	flush_pmem_file(p_dst_file, req->dst.offset, dst0_len);
-
-	if (IS_PSEUDOPLNR(req->dst.format))
-		flush_pmem_file(p_dst_file,
-			req->dst.offset + dst0_len, dst1_len);
 }
 #else
 static void flush_imgs(struct mdp_blit_req *req, int src_bpp, int dst_bpp,
@@ -577,6 +577,7 @@ struct mdp_blit_req *req, struct file *p_src_file, struct file *p_dst_file)
 	uint32 src_width;
 	uint32 src_height;
 	uint32 src0_ystride;
+	uint32 src0_y1stride;
 	uint32 dst_roi_width;
 	uint32 dst_roi_height;
 	uint32 ppp_src_cfg_reg, ppp_operation_reg, ppp_dst_cfg_reg;
@@ -1048,19 +1049,14 @@ struct mdp_blit_req *req, struct file *p_src_file, struct file *p_dst_file)
 	}
 
 	src0_ystride = src_width * inpBpp;
+	src0_y1stride = src0_ystride;
 	dest0_ystride = iBuf->ibuf_width * iBuf->bpp;
-
-	/* no need to care about rotation since it's the real-XY. */
 	dst_roi_width = iBuf->roi.dst_width;
 	dst_roi_height = iBuf->roi.dst_height;
-
 	src0 = (uint8 *) iBuf->mdpImg.bmy_addr;
 	dest0 = (uint8 *) iBuf->buf;
-
-	/* Jumping from Y-Plane to Chroma Plane */
 	dest1 = mdp_get_chroma_addr(iBuf);
 
-	/* first pixel addr calculation */
 	mdp_adjust_start_addr(&src0, &src1, sv_slice, sh_slice, iBuf->roi.x,
 			      iBuf->roi.y, src_width, src_height, inpBpp, iBuf,
 			      0);
@@ -1109,7 +1105,7 @@ struct mdp_blit_req *req, struct file *p_src_file, struct file *p_dst_file)
 	MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x010c, src0); /* comp.plane 0 */
 	MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x0110, src1); /* comp.plane 1 */
 	MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x011c,
-		 (src0_ystride << 16 | src0_ystride));
+		 (src0_y1stride << 16 | src0_ystride));
 
 	/* setup for rgb 565 */
 	MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x0124, ppp_src_cfg_reg);

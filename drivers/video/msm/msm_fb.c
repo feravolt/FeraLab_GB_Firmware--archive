@@ -49,9 +49,7 @@
 #define INIT_IMAGE_FILE "/logo.rle"
 extern int load_565rle_image(char *filename);
 #endif
-#ifdef CONFIG_FB_MSM_TRIPLE_BUFFER
 #define MSM_FB_NUM  3
-#endif
 static unsigned char *fbram;
 static unsigned char *fbram_phys;
 static int fbram_size;
@@ -2680,20 +2678,7 @@ void msm_fb_add_device(struct platform_device *pdev)
 	if (!pdata)
 		return;
 	type = pdata->panel_info.type;
-#if defined MSM_FB_NUM
-    /*
-     * over written fb_num which defined
-     * at panel_info
-     *
-     */
-    if (type == HDMI_PANEL || type == DTV_PANEL || type == TV_PANEL)
-        pdata->panel_info.fb_num = 1;
-    else
         pdata->panel_info.fb_num = MSM_FB_NUM;
-
-    MSM_FB_INFO("setting pdata->panel_info.fb_num to %d. type: %d\n",
-            pdata->panel_info.fb_num, type);
-#endif
 	fb_num = pdata->panel_info.fb_num;
 
 	if (fb_num <= 0)
@@ -2703,9 +2688,7 @@ void msm_fb_add_device(struct platform_device *pdev)
 		printk(KERN_ERR "msm_fb: no more framebuffer info list!\n");
 		return;
 	}
-	/*
-	 * alloc panel device data
-	 */
+
 	this_dev = msm_fb_device_alloc(pdata, type, id);
 
 	if (!this_dev) {
@@ -2714,9 +2697,6 @@ void msm_fb_add_device(struct platform_device *pdev)
 		return;
 	}
 
-	/*
-	 * alloc framebuffer info + par data
-	 */
 	fbi = framebuffer_alloc(sizeof(struct msm_fb_data_type), NULL);
 	if (fbi == NULL) {
 		platform_device_put(this_dev);
@@ -2732,10 +2712,7 @@ void msm_fb_add_device(struct platform_device *pdev)
 	mfd->fb_page = fb_num;
 	mfd->index = fbi_list_index;
 	mfd->mdp_fb_page_protection = MDP_FB_PAGE_PROTECTION_WRITECOMBINE;
-
-	/* link to the latest pdev */
 	mfd->pdev = this_dev;
-
 	mfd_list[mfd_list_index++] = mfd;
 	fbi_list[fbi_list_index++] = fbi;
 

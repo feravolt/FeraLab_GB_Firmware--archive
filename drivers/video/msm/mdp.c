@@ -81,7 +81,7 @@
 #include <linux/autoconf.h>
 
 #ifdef CONFIG_FB_MSM_MDDI_TMD_NT35580
-#include "mddi_tmd_nt35580.h"
+#include "linux/nt35580.h"
 #endif
 
 static struct clk *mdp_clk;
