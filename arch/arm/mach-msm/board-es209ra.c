@@ -1046,50 +1046,58 @@ static void __init bt_power_init(void)
 #define bt_power_init(x) do {} while (0)
 #endif
 
-static struct resource kgsl_resources[] = {
+static struct resource kgsl_3d0_resources[] = {
        {
-		.name  = "kgsl_reg_memory",
+		.name  = KGSL_3D0_REG_MEMORY,
 		.start = 0xA0000000,
 		.end = 0xA001ffff,
 		.flags = IORESOURCE_MEM,
        },
        {
-		.name   = "kgsl_phys_memory",
-		.start = MSM_GPU_PHYS_BASE,
-		.end = MSM_GPU_PHYS_BASE + MSM_GPU_PHYS_SIZE - 1,
-		.flags = IORESOURCE_MEM,
-       },
-       {
-		.name = "kgsl_yamato_irq",
+		.name = KGSL_3D0_IRQ,
 		.start = INT_GRAPHICS,
 		.end = INT_GRAPHICS,
 		.flags = IORESOURCE_IRQ,
        },
 };
 
-static struct kgsl_platform_data kgsl_pdata = {
-	.high_axi_3d = 192000,
-	.max_grp2d_freq = 192000000,
-	.min_grp2d_freq = 128000000,
-	.set_grp2d_async = NULL,
-	.max_grp3d_freq = 192000000,
-	.min_grp3d_freq = 128000000,
-	.set_grp3d_async = NULL,
-	.imem_clk_name = "imem_clk",
-	.grp3d_clk_name = "grp_clk",
-	.grp2d0_clk_name = NULL,
-};
-
-static struct platform_device msm_device_kgsl = {
-       .name = "kgsl",
-       .id = -1,
-       .num_resources = ARRAY_SIZE(kgsl_resources),
-       .resource = kgsl_resources,
-	.dev = {
-		.platform_data = &kgsl_pdata,
+static struct kgsl_device_platform_data kgsl_3d0_pdata = {
+	.pwr_data = {
+		.pwrlevel = {
+			{
+				.gpu_freq = 192000000,
+				.bus_freq = 192000000,
+			},
+			{
+				.gpu_freq = 192000000,
+				.bus_freq = 0,
+			},
+		},
+		.init_level = 0,
+		.num_levels = 2,
+		.set_grp_async = NULL,
+		.idle_timeout = HZ/5,
+		.nap_allowed = true,
+	},
+	.clk = {
+		.name = {
+			.clk = "grp_clk",
+		},
+	},
+	.imem_clk_name = {
+		.clk = "imem_clk",
 	},
 };
 
+static struct platform_device msm_kgsl_3d0 = {
+       .name = "kgsl-3d0",
+       .id = 0,
+       .num_resources = ARRAY_SIZE(kgsl_3d0_resources),
+       .resource = kgsl_3d0_resources,
+	.dev = {
+		.platform_data = &kgsl_3d0_pdata,
+	},
+};
 struct es209ra_headset_platform_data es209ra_headset_data = {
 	.keypad_name = "es209ra_keypad",
 	.gpio_detout = 114,
@@ -1451,7 +1459,7 @@ static struct platform_device *devices[] __initdata = {
 	&msm_bluesleep_device,
 	&msm_bt_power_device,
 	&msm_device_uart_dm2,
-	&msm_device_kgsl,
+	&msm_kgsl_3d0,
 	&hs_device,
 #if defined(CONFIG_TSIF) || defined(CONFIG_TSIF_MODULE)
 	&msm_device_tsif,

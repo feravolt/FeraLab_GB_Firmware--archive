@@ -1,18 +1,3 @@
-/* drivers/video/msm/src/drv/mdp/mdp_ppp.c
- *
- * Copyright (C) 2007 Google Incorporated
- * Copyright (c) 2008-2009, Code Aurora Forum. All rights reserved.
- *
- * This software is licensed under the terms of the GNU General Public
- * License version 2, as published by the Free Software Foundation, and
- * may be copied, distributed, and modified under those terms.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- */
-
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/sched.h>
@@ -1535,3 +1520,4 @@ int mdp_ppp_blit(struct fb_info *info, struct mdp_blit_req *req)
 	put_img(p_dst_file);
 	return 0;
 }
+

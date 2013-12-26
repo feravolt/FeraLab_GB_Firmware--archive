@@ -1,3 +1,32 @@
+/* Copyright (c) 2008-2009, Code Aurora Forum. All rights reserved.
+ * Copyright (C) 2010 Sony Ericsson Mobile Communications AB.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *     * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *     * Neither the name of Code Aurora nor
+ *       the names of its contributors may be used to endorse or promote
+ *       products derived from this software without specific prior written
+ *       permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NON-INFRINGEMENT ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
 #ifndef MDDIHOSTI_H
 #define MDDIHOSTI_H
 
@@ -5,6 +34,8 @@
 #include "mddihost.h"
 #include <linux/clk.h>
 
+/* Register offsets in MDDI, applies to both msm_pmdh_base and
+ * (u32)msm_emdh_base. */
 #define MDDI_CMD   		0x0000
 #define MDDI_VERSION   		0x0004
 #define MDDI_PRI_PTR		0x0008
@@ -35,6 +66,7 @@
 
 extern u32 mddi_msg_level;
 
+/* No longer need to write to clear these registers */
 #define xxxx_mddi_host_reg_outm(reg, mask, val)  \
 do { \
 	if (host_idx == MDDI_HOST_PRIM) \
@@ -88,12 +120,19 @@ do { \
 	readl((u32)msm_emdh_base + MDDI_##reg) & (mask) : \
 	readl((u32)msm_pmdh_base + MDDI_##reg) & (mask)) \
 
+/* Using non-cacheable pmem, so do nothing */
 #define mddi_invalidate_cache_lines(addr_start, num_bytes)
+/*
+ * Using non-cacheable pmem, so do nothing with cache
+ * but, ensure write goes out to memory
+ */
 #define mddi_flush_cache_lines(addr_start, num_bytes)  \
     (void) addr_start; \
     (void) num_bytes;  \
     memory_barrier()
 
+/* Since this translates to Remote Procedure Calls to check on clock status
+* just use a local variable to keep track of io_clock */
 #define MDDI_HOST_IS_IO_CLOCK_ON mddi_host_io_clock_on
 #define MDDI_HOST_ENABLE_IO_CLOCK
 #define MDDI_HOST_DISABLE_IO_CLOCK
@@ -110,14 +149,21 @@ do { \
 #define MDP_LINE_COUNT      \
 (readl(msm_mdp_base + MDP_SYNC_STATUS) & MDP_LINE_COUNT_BMSK)
 
+/* MDP sends 256 pixel packets, so lower value hibernates more without
+* significantly increasing latency of waiting for next subframe */
 #define MDDI_HOST_BYTES_PER_SUBFRAME  0x3C00
 
 #if defined(CONFIG_FB_MSM_MDP31) || defined(CONFIG_FB_MSM_MDP40)
 #define MDDI_HOST_TA2_LEN       0x001a
 #define MDDI_HOST_REV_RATE_DIV  0x0004
 #else
-
+/*
+ * SEMC Patch: TA2 length should be 9 according to HITACHI specs
+ *
+ * #define MDDI_HOST_TA2_LEN       0x000c
+ */
 #define MDDI_HOST_TA2_LEN       0x0009
+
 #define MDDI_HOST_REV_RATE_DIV  0x0002
 #endif
 
@@ -151,25 +197,60 @@ do { \
 #define GCC_PACKED __attribute__((packed))
 typedef struct GCC_PACKED {
 	uint16 packet_length;
+	/* total # of bytes in the packet not including
+		the packet_length field. */
+
 	uint16 packet_type;
+	/* A Packet Type of 70 identifies the packet as
+		a Client status Packet. */
+
 	uint16 bClient_ID;
+	/* This field is reserved for future use and shall
+		be set to zero. */
+
 } mddi_rev_packet_type;
 
 typedef struct GCC_PACKED {
 	uint16 packet_length;
+	/* total # of bytes in the packet not including
+		the packet_length field. */
+
 	uint16 packet_type;
+	/* A Packet Type of 70 identifies the packet as
+		a Client status Packet. */
+
 	uint16 bClient_ID;
+	/* This field is reserved for future use and shall
+		be set to zero. */
+
 	uint16 reverse_link_request;
+	/* 16 bit unsigned integer with number of bytes client
+		needs in the * reverse encapsulation message
+		to transmit data. */
+
 	uint8 crc_error_count;
 	uint8 capability_change;
 	uint16 graphics_busy_flags;
+
 	uint16 parameter_CRC;
+	/* 16-bit CRC of all the bytes in the packet
+		including Packet Length. */
+
 } mddi_client_status_type;
 
 typedef struct GCC_PACKED {
 	uint16 packet_length;
+	/* total # of bytes in the packet not including
+		the packet_length field. */
+
 	uint16 packet_type;
+	/* A Packet Type of 66 identifies the packet as
+		a Client Capability Packet. */
+
 	uint16 bClient_ID;
+	/* This field is reserved for future use and
+		shall be set to zero. */
+
 	uint16 Protocol_Version;
 	uint16 Minimum_Protocol_Version;
 	uint16 Data_Rate_Capability;
@@ -207,46 +288,142 @@ typedef struct GCC_PACKED {
 	uint32 Serial_Number;
 	uint8 Week_of_Manufacture;
 	uint8 Year_of_Manufacture;
+
 	uint16 parameter_CRC;
+	/* 16-bit CRC of all the bytes in the packet including Packet Length. */
+
 } mddi_client_capability_type;
 
 typedef struct GCC_PACKED {
 	uint16 packet_length;
+	/* total # of bytes in the packet not including the packet_length field. */
+
 	uint16 packet_type;
+	/* A Packet Type of 16 identifies the packet as a Video Stream Packet. */
+
 	uint16 bClient_ID;
+	/* This field is reserved for future use and shall be set to zero. */
+
 	uint16 video_data_format_descriptor;
+	/* format of each pixel in the Pixel Data in the present stream in the
+	 * present packet.
+	 * If bits [15:13] = 000 monochrome
+	 * If bits [15:13] = 001 color pixels (palette).
+	 * If bits [15:13] = 010 color pixels in raw RGB
+	 * If bits [15:13] = 011 data in 4:2:2 Y Cb Cr format
+	 * If bits [15:13] = 100 Bayer pixels
+	 */
+
 	uint16 pixel_data_attributes;
+	/* interpreted as follows:
+	 * Bits [1:0] = 11  pixel data is displayed to both eyes
+	 * Bits [1:0] = 10  pixel data is routed to the left eye only.
+	 * Bits [1:0] = 01  pixel data is routed to the right eye only.
+	 * Bits [1:0] = 00  pixel data is routed to the alternate display.
+	 * Bit 2 is 0  Pixel Data is in the standard progressive format.
+	 * Bit 2 is 1  Pixel Data is in interlace format.
+	 * Bit 3 is 0  Pixel Data is in the standard progressive format.
+	 * Bit 3 is 1  Pixel Data is in alternate pixel format.
+	 * Bit 4 is 0  Pixel Data is to or from the display frame buffer.
+	 * Bit 4 is 1  Pixel Data is to or from the camera.
+	 * Bit 5 is 0  pixel data contains the next consecutive row of pixels.
+	 * Bit 5 is 1  X Left Edge, Y Top Edge, X Right Edge, Y Bottom Edge,
+	 *             X Start, and Y Start parameters are not defined and
+	 *             shall be ignored by the client.
+	 * Bits [7:6] = 01  Pixel data is written to the offline image buffer.
+	 * Bits [7:6] = 00  Pixel data is written to the buffer to refresh display.
+	 * Bits [7:6] = 11  Pixel data is written to all image buffers.
+	 * Bits [7:6] = 10  Invalid. Reserved for future use.
+	 * Bits 8 through 11 alternate display number.
+	 * Bits 12 through 14 are reserved for future use and shall be set to zero.
+	 * Bit 15 is 1 the row of pixels is the last row of pixels in a frame.
+	 */
+
 	uint16 x_left_edge;
 	uint16 y_top_edge;
+	/* X,Y coordinate of the top left edge of the screen window */
+
 	uint16 x_right_edge;
 	uint16 y_bottom_edge;
+	/*  X,Y coordinate of the bottom right edge of the window being updated. */
+
 	uint16 x_start;
 	uint16 y_start;
+	/*  (X Start, Y Start) is the first pixel in the Pixel Data field below. */
+
 	uint16 pixel_count;
+	/*  number of pixels in the Pixel Data field below. */
+
 	uint16 parameter_CRC;
+	/*  16-bit CRC of all bytes from the Packet Length to the Pixel Count. */
+
 	uint16 reserved;
+	/* 16-bit variable to make structure align on 4 byte boundary */
+
 } mddi_video_stream_packet_type;
 
 typedef struct GCC_PACKED {
 	uint16 packet_length;
+	/* total # of bytes in the packet not including the packet_length field. */
+
 	uint16 packet_type;
+	/* A Packet Type of 146 identifies the packet as a Register Access Packet. */
+
 	uint16 bClient_ID;
+	/* This field is reserved for future use and shall be set to zero. */
+
 	uint16 read_write_info;
+	/* Bits 13:0  a 14-bit unsigned integer that specifies the number of
+	 *            32-bit Register Data List items to be transferred in the
+	 *            Register Data List field.
+	 * Bits[15:14] = 00  Write to register(s);
+	 * Bits[15:14] = 10  Read from register(s);
+	 * Bits[15:14] = 11  Response to a Read.
+	 * Bits[15:14] = 01  this value is reserved for future use. */
+
 	uint32 register_address;
+	/* the register address that is to be written to or read from. */
+
 	uint16 parameter_CRC;
+	/* 16-bit CRC of all bytes from the Packet Length to the Register Address. */
+
 	uint32 register_data_list;
+	/* list of 4-byte register data values for/from client registers */
+
 	uint32 register_data_list_ext[3];
+	/* SEMC Added register data values */
 } mddi_register_access_packet_type;
 
 typedef struct GCC_PACKED {
 	uint16 packet_length;
+	/* total # of bytes in the packet not including the packet_length field. */
+
 	uint16 packet_type;
+	/* A Packet Type of 146 identifies the packet as a Register Access Packet. */
+
 	uint16 bClient_ID;
+	/* This field is reserved for future use and shall be set to zero. */
+
 	uint16 read_write_info;
+	/* Bits 13:0  a 14-bit unsigned integer that specifies the number of
+	 *            32-bit Register Data List items to be transferred in the
+	 *            Register Data List field.
+	 * Bits[15:14] = 00  Write to register(s);
+	 * Bits[15:14] = 10  Read from register(s);
+	 * Bits[15:14] = 11  Response to a Read.
+	 * Bits[15:14] = 01  this value is reserved for future use. */
+
 	uint32 register_address;
+	/* the register address that is to be written to or read from. */
+
 	uint16 parameter_CRC;
+	/* 16-bit CRC of all bytes from the Packet Length to the Register Address. */
+
 	uint32 register_data_list;
+	/* list of 4-byte register data values for/from client registers */
+
 	uint32 register_data_list_ext[MDDI_ACCESS_PKT_REG_DATA_EXT];
+	/* SEMC Added register data values */
 } mddi_register_access_packet_xl_type;
 
 typedef union GCC_PACKED {
@@ -274,10 +451,19 @@ typedef struct {
 } mddi_linked_list_notify_type;
 
 #define MDDI_LLIST_POOL_SIZE 0x8000
+
 #define MDDI_MAX_NUM_LLIST_ITEMS (MDDI_LLIST_POOL_SIZE / \
 		 sizeof(mddi_linked_list_type))
 #define UNASSIGNED_INDEX MDDI_MAX_NUM_LLIST_ITEMS
 #define MDDI_FIRST_DYNAMIC_LLIST_IDX 0
+
+/* Static llist items can be used for applications that frequently send
+ * the same set of packets using the linked list interface. */
+/* Here we configure for 6 static linked list items:
+ *  The 1st is used for a the adaptive backlight setting.
+ *  and the remaining 5 are used for sending window adjustments for
+ *  MDDI clients that need windowing info sent separate from video
+ *  packets. */
 #define MDDI_NUM_STATIC_ABL_ITEMS 1
 #define MDDI_NUM_STATIC_WINDOW_ITEMS 5
 #define MDDI_NUM_STATIC_LLIST_ITEMS (MDDI_NUM_STATIC_ABL_ITEMS + \
@@ -290,12 +476,15 @@ typedef struct {
 #define MDDI_FIRST_STATIC_WINDOW_IDX  (MDDI_FIRST_STATIC_LLIST_IDX + \
 				MDDI_NUM_STATIC_ABL_ITEMS)
 
+/* GPIO registers */
 #define VSYNC_WAKEUP_REG          0x80
 #define GPIO_REG                  0x81
 #define GPIO_OUTPUT_REG           0x82
 #define GPIO_INTERRUPT_REG        0x83
 #define GPIO_INTERRUPT_ENABLE_REG 0x84
 #define GPIO_POLARITY_REG         0x85
+
+/* Interrupt Bits */
 #define MDDI_INT_PRI_PTR_READ       0x0001
 #define MDDI_INT_SEC_PTR_READ       0x0002
 #define MDDI_INT_REV_DATA_AVAIL     0x0004
@@ -326,6 +515,7 @@ typedef struct {
 #define MDDI_INT_LINK_STATE_CHANGES ( \
 	MDDI_INT_LINK_ACTIVE | MDDI_INT_IN_HIBERNATION)
 
+/* Status Bits */
 #define MDDI_STAT_LINK_ACTIVE        0x0001
 #define MDDI_STAT_NEW_REV_PTR        0x0002
 #define MDDI_STAT_NEW_PRI_PTR        0x0004
@@ -338,6 +528,8 @@ typedef struct {
 #define MDDI_STAT_PENDING_POWERDOWN  0x0200
 #define MDDI_STAT_RTD_MEAS_FAIL      0x0800
 #define MDDI_STAT_CLIENT_WAKEUP_REQ  0x1000
+
+/* Command Bits */
 #define MDDI_CMD_POWERDOWN           0x0100
 #define MDDI_CMD_POWERUP             0x0200
 #define MDDI_CMD_HIBERNATE           0x0300
@@ -350,7 +542,6 @@ typedef struct {
 #define MDDI_CMD_SEND_RTD            0x0700
 #define MDDI_CMD_LINK_ACTIVE         0x0900
 #define MDDI_CMD_PERIODIC_REV_ENCAP  0x0A00
-#define MDDI_CMD_FW_LINK_SKEW_CAL    0x0D00
 
 extern void mddi_host_init(mddi_host_type host);
 extern void mddi_host_powerdown(mddi_host_type host);
@@ -366,6 +557,7 @@ extern void mddi_host_write_pix_attr_reg(uint32 value);
 extern void mddi_client_lcd_gpio_poll(uint32 poll_reg_val);
 extern void mddi_client_lcd_vsync_detected(boolean detected);
 extern void mddi_host_disable_hibernation(boolean disable);
+
 extern mddi_linked_list_type *llist_extern[];
 extern mddi_linked_list_type *llist_dma_extern[];
 extern mddi_linked_list_notify_type *llist_extern_notify[];
@@ -394,7 +586,5 @@ typedef struct {
 uint32 mddi_get_client_id(void);
 void mddi_mhctl_remove(mddi_host_type host_idx);
 void mddi_host_timer_service(unsigned long data);
-void mddi_host_client_cnt_reset(void);
 uint32 mddi_host_get_error_count(void);
-#endif
-
+#endif /* MDDIHOSTI_H */

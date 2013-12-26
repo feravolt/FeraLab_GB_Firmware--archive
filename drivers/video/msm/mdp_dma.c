@@ -1,3 +1,61 @@
+/* Copyright (c) 2008-2009, Code Aurora Forum. All rights reserved.
+ * Copyright (C) 2010 Sony Ericsson Mobile Communications AB.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *     * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *     * Neither the name of Code Aurora Forum nor
+ *       the names of its contributors may be used to endorse or promote
+ *       products derived from this software without specific prior written
+ *       permission.
+ *
+ * Alternatively, provided that this notice is retained in full, this software
+ * may be relicensed by the recipient under the terms of the GNU General Public
+ * License version 2 ("GPL") and only version 2, in which case the provisions of
+ * the GPL apply INSTEAD OF those given above.  If the recipient relicenses the
+ * software under the GPL, then the identification text in the MODULE_LICENSE
+ * macro must be changed to reflect "GPLv2" instead of "Dual BSD/GPL".  Once a
+ * recipient changes the license terms to the GPL, subsequent recipients shall
+ * not relicense under alternate licensing terms, including the BSD or dual
+ * BSD/GPL terms.  In addition, the following license statement immediately
+ * below and between the words START and END shall also then apply when this
+ * software is relicensed under the GPL:
+ *
+ * START
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License version 2 and only version 2 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * END
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/sched.h>
@@ -5,20 +63,25 @@
 #include <linux/init.h>
 #include <linux/interrupt.h>
 #include <linux/hrtimer.h>
+
 #include <mach/hardware.h>
 #include <linux/io.h>
+
 #include <asm/system.h>
 #include <asm/mach-types.h>
 #include <linux/semaphore.h>
 #include <linux/spinlock.h>
+
 #include <linux/fb.h>
 
 #include "mdp.h"
 #include "msm_fb.h"
 #include "mddihost.h"
 
+#include <linux/autoconf.h>
+
 #ifdef CONFIG_FB_MSM_MDDI_TMD_NT35580
-#include "linux/nt35580.h"
+#include "mddi_tmd_nt35580.h"
 #endif
 
 /* SEMC added. Todo: Remove. For temporary patch in mdp_dma2_update_lcd */
@@ -28,7 +91,9 @@ static uint32 mdp_last_dma2_update_width;
 static uint32 mdp_last_dma2_update_height;
 static uint32 mdp_curr_dma2_update_width;
 static uint32 mdp_curr_dma2_update_height;
+
 ktime_t mdp_dma2_last_update_time = { 0 };
+
 int mdp_lcd_rd_cnt_offset_slow = 20;
 int mdp_lcd_rd_cnt_offset_fast = 40;
 int mdp_vsync_usec_wait_line_too_short = 5;
@@ -49,12 +114,10 @@ static void mdp_dma2_update_lcd(struct msm_fb_data_type *mfd)
 	uint8 *src;
 	uint32 mddi_ld_param;
 	uint16 mddi_vdo_packet_reg;
-#ifndef CONFIG_FB_MSM_MDP303
+	uint16 mddi_vdo_packet_descriptor = 0;
 	struct msm_fb_panel_data *pdata =
 	    (struct msm_fb_panel_data *)mfd->pdev->dev.platform_data;
-#endif
 	uint32 ystride = mfd->fbi->fix.line_length;
-	uint32 mddi_pkt_desc;
 
 #if defined(CONFIG_FB_MSM_MDDI_TMD_NT35580)
 	if (iBuf->dma_h == mfd->panel_info.yres)
@@ -83,15 +146,11 @@ static void mdp_dma2_update_lcd(struct msm_fb_data_type *mfd)
 
 	if (mfd->fb_imgType == MDP_BGR_565)
 		dma2_cfg_reg |= DMA_PACK_PATTERN_BGR;
-	else if (mfd->fb_imgType == MDP_RGBA_8888)
-		dma2_cfg_reg |= DMA_PACK_PATTERN_BGR;
 	else
 		dma2_cfg_reg |= DMA_PACK_PATTERN_RGB;
 
-	if (outBpp == 4) {
+	if (outBpp == 4)
 		dma2_cfg_reg |= DMA_IBUF_C3ALPHA_EN;
-		//dma2_cfg_reg |= DMA_IBUF_FORMAT_xRGB8888_OR_ARGB8888;
-	}
 
 	if (outBpp == 2)
 		dma2_cfg_reg |= DMA_IBUF_FORMAT_RGB565;
@@ -139,6 +198,8 @@ static void mdp_dma2_update_lcd(struct msm_fb_data_type *mfd)
 			outp32(MDP_EBI2_LCD1, mfd->data_port_phys);
 		}
 	}
+
+	dma2_cfg_reg |= DMA_DITHER_EN;
 
 	src = (uint8 *) iBuf->buf;
 	/* starting input address */
@@ -197,21 +258,21 @@ static void mdp_dma2_update_lcd(struct msm_fb_data_type *mfd)
 	MDP_OUTP(MDP_BASE + 0x9000c, ystride);
 #endif
 
-	if (mfd->panel_info.bpp == 18) {
-		mddi_pkt_desc = MDDI_VDO_PACKET_DESC;
-		dma2_cfg_reg |= DMA_DSTC0G_6BITS |	/* 666 18BPP */
-		    DMA_DSTC1B_6BITS | DMA_DSTC2R_6BITS;
-	} else if (mfd->panel_info.bpp == 24) {
-		mddi_pkt_desc = MDDI_VDO_PACKET_DESC_24;
-		dma2_cfg_reg |= DMA_DSTC0G_8BITS |      /* 888 24BPP */
-			DMA_DSTC1B_8BITS | DMA_DSTC2R_8BITS;
-	} else {
-		mddi_pkt_desc = MDDI_VDO_PACKET_DESC_16;
+	/* adding dynamic setup of register */
+	if (mfd->panel_info.bpp == 16) {
+		mddi_vdo_packet_descriptor = 0x5565;
 		dma2_cfg_reg |= DMA_DSTC0G_6BITS |	/* 565 16BPP */
 		    DMA_DSTC1B_5BITS | DMA_DSTC2R_5BITS;
+	} else if (mfd->panel_info.bpp == 18) {
+		mddi_vdo_packet_descriptor = 0x5666;
+		dma2_cfg_reg |= DMA_DSTC0G_6BITS |	/* 666 18BPP */
+		    DMA_DSTC1B_6BITS | DMA_DSTC2R_6BITS;
+	} else {
+		/* assuming 24 bpp */
+		mddi_vdo_packet_descriptor = 0x5888;
+		dma2_cfg_reg |= DMA_DSTC0G_8BITS |	/* 888 24BPP */
+		    DMA_DSTC1B_8BITS | DMA_DSTC2R_8BITS;
 	}
-
-#ifndef CONFIG_FB_MSM_MDP303
 
 	if (mddi_dest) {
 #ifdef CONFIG_FB_MSM_MDP22
@@ -224,21 +285,13 @@ static void mdp_dma2_update_lcd(struct msm_fb_data_type *mfd)
 		MDP_OUTP(MDP_BASE + 0x90010, (iBuf->dma_y << 16) | iBuf->dma_x);
 		MDP_OUTP(MDP_BASE + 0x00090, mddi_ld_param);
 		MDP_OUTP(MDP_BASE + 0x00094,
-			 (mddi_pkt_desc << 16) | mddi_vdo_packet_reg);
+			 (mddi_vdo_packet_descriptor << 16) | mddi_vdo_packet_reg);
 #endif
 	} else {
 		/* setting EBI2 LCDC write window */
 		pdata->set_rect(iBuf->dma_x, iBuf->dma_y, iBuf->dma_w,
 				iBuf->dma_h);
 	}
-#else
-	if (mfd->panel_info.type == MIPI_CMD_PANEL) {
-		/* dma_p = 0, dma_s = 1 */
-		 MDP_OUTP(MDP_BASE + 0xF1000, 0x10);
-		 /* enable dsi trigger on dma_p */
-		 MDP_OUTP(MDP_BASE + 0xF1004, 0x01);
-	}
-#endif
 
 	/* dma2 config register */
 #ifdef MDP_HW_VSYNC
@@ -508,14 +561,14 @@ void mdp_set_dma_pan_info(struct fb_info *info, struct mdp_dirty_region *dirty,
 			  boolean sync)
 {
 	struct msm_fb_data_type *mfd = (struct msm_fb_data_type *)info->par;
+	struct fb_info *fbi = mfd->fbi;
 	MDPIBUF *iBuf;
 	int bpp = info->var.bits_per_pixel / 8;
 
 	down(&mfd->sem);
 	iBuf = &mfd->ibuf;
 	iBuf->buf = (uint8 *) info->fix.smem_start;
-	iBuf->buf += info->var.xoffset * bpp +
-			info->var.yoffset * info->fix.line_length;
+	iBuf->buf += calc_fb_offset(mfd, fbi, bpp);
 
 	iBuf->ibuf_width = info->var.xres_virtual;
 	iBuf->bpp = bpp;
@@ -590,4 +643,3 @@ void mdp_refresh_screen(unsigned long data)
 			complete(&mfd->refresher_comp);
 	}
 }
-

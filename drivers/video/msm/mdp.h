@@ -1,3 +1,31 @@
+/* Copyright (c) 2008-2010, Code Aurora Forum. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *     * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *     * Neither the name of Code Aurora nor
+ *       the names of its contributors may be used to endorse or promote
+ *       products derived from this software without specific prior written
+ *       permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NON-INFRINGEMENT ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
 #ifndef MDP_H
 #define MDP_H
 
@@ -9,11 +37,15 @@
 #include <linux/fb.h>
 #include <linux/hrtimer.h>
 #include <linux/msm_mdp.h>
+
 #include <mach/hardware.h>
 #include <linux/io.h>
+
 #include <asm/system.h>
 #include <asm/mach-types.h>
+
 #include "msm_fb_panel.h"
+
 #include <linux/autoconf.h>
 
 #ifdef BIT
@@ -185,8 +217,8 @@ struct mdp_dma_data {
 #define MDP_DMA3_TERM 0x2
 #define MDP_PPP_TERM 0x4
 #define MDP_DMA_S_TERM 0x8
-#define MDP_DMA_E_TERM 0x10
 #ifdef CONFIG_FB_MSM_MDP40
+#define MDP_DMA_E_TERM 0x10
 #define MDP_OVERLAY0_TERM 0x20
 #define MDP_OVERLAY1_TERM 0x40
 #endif
@@ -196,7 +228,6 @@ struct mdp_dma_data {
 #define ACTIVE_HIGH 0
 #define ACTIVE_LOW 1
 #define MDP_DMA_S_DONE  BIT(2)
-#define MDP_DMA_E_DONE  BIT(3)
 #define LCDC_FRAME_START    BIT(15)
 #define LCDC_UNDERFLOW      BIT(16)
 
@@ -220,7 +251,6 @@ struct mdp_dma_data {
 #define MDP_ANY_INTR_MASK (MDP_PPP_DONE| \
 			MDP_DMA_P_DONE| \
 			MDP_DMA_S_DONE| \
-			MDP_DMA_E_DONE| \
 			LCDC_UNDERFLOW| \
 			MDP_HIST_DONE| \
 			TV_ENC_UNDERRUN)
@@ -520,7 +550,6 @@ struct mdp_dma_data {
 #define DMA_AHBM_LCD_SEL_PRIMARY            0
 #define DMA_AHBM_LCD_SEL_SECONDARY          0
 #define DMA_IBUF_C3ALPHA_EN                 0
-#define DMA_BUF_FORMAT_RGB565		BIT(25)
 #define DMA_DITHER_EN                       BIT(24)	/* dma_p */
 #define DMA_DEFLKR_EN                       BIT(24)	/* dma_e */
 #define DMA_MDDI_DMAOUT_LCD_SEL_PRIMARY     0
@@ -533,9 +562,7 @@ struct mdp_dma_data {
 /*
  * MDDI Register
  */
-#define MDDI_VDO_PACKET_DESC_16  0x5565
-#define MDDI_VDO_PACKET_DESC	 0x5666	/* 18 bits */
-#define MDDI_VDO_PACKET_DESC_24  0x5888
+#define MDDI_VDO_PACKET_DESC  0x5666
 
 #ifdef CONFIG_FB_MSM_MDP40
 #define MDP_INTR_ENABLE		(msm_mdp_base + 0x0050)
@@ -637,14 +664,12 @@ int mdp_hw_cursor_update(struct fb_info *info, struct fb_cursor *cursor);
 void mdp_enable_irq(uint32 term);
 void mdp_disable_irq(uint32 term);
 void mdp_disable_irq_nolock(uint32 term);
-int mdp_get_bytes_per_pixel(uint32_t format,
-				 struct msm_fb_data_type *mfd);
+uint32_t mdp_get_bytes_per_pixel(uint32_t format);
 
 #ifdef MDP_HW_VSYNC
 void mdp_hw_vsync_clk_enable(struct msm_fb_data_type *mfd);
 void mdp_hw_vsync_clk_disable(struct msm_fb_data_type *mfd);
 #endif
 
-u32 mdp_get_panel_framerate(struct msm_fb_data_type *mfd);
 void mdp_dma_s_update(struct msm_fb_data_type *mfd);
 #endif /* MDP_H */
