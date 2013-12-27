@@ -59,23 +59,17 @@ struct bus_type {
 	int (*probe)(struct device *dev);
 	int (*remove)(struct device *dev);
 	void (*shutdown)(struct device *dev);
-
 	int (*suspend)(struct device *dev, pm_message_t state);
 	int (*suspend_late)(struct device *dev, pm_message_t state);
 	int (*resume_early)(struct device *dev);
 	int (*resume)(struct device *dev);
-
 	const struct dev_pm_ops *pm;
-
 	struct bus_type_private *p;
 };
 
 extern int __must_check bus_register(struct bus_type *bus);
 extern void bus_unregister(struct bus_type *bus);
-
 extern int __must_check bus_rescan_devices(struct bus_type *bus);
-
-/* iterator helpers for buses */
 
 int bus_for_each_dev(struct bus_type *bus, struct device *start, void *data,
 		     int (*fn)(struct device *dev, void *data));
