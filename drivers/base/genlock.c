@@ -290,7 +290,7 @@ static int _genlock_lock(struct genlock *lock, struct genlock_handle *handle,
 {
 	unsigned long irqflags;
 	int ret = 0;
-	unsigned long ticks = msecs_to_jiffies(timeout);
+	unsigned int ticks = msecs_to_jiffies(timeout);
 
 	spin_lock_irqsave(&lock->lock, irqflags);
 
@@ -309,15 +309,12 @@ static int _genlock_lock(struct genlock *lock, struct genlock_handle *handle,
 	if (handle_has_lock(lock, handle)) {
 
 		/*
-		 * If the handle already holds the lock and the lock type is
-		 * a read lock then just increment the active pointer. This
-		 * allows the handle to do recursive read locks. Recursive
-		 * write locks are not allowed in order to support
-		 * synchronization within a process using a single gralloc
-		 * handle.
+		 * If the handle already holds the lock and the type matches,
+		 * then just increment the active pointer. This allows the
+		 * handle to do recursive locks
 		 */
 
-		if (lock->state == _RDLOCK && op == _RDLOCK) {
+		if (lock->state == op) {
 			handle->active++;
 			goto done;
 		}
@@ -326,45 +323,32 @@ static int _genlock_lock(struct genlock *lock, struct genlock_handle *handle,
 		 * If the handle holds a write lock then the owner can switch
 		 * to a read lock if they want. Do the transition atomically
 		 * then wake up any pending waiters in case they want a read
-		 * lock too. In order to support synchronization within a
-		 * process the caller must explicity request to convert the
-		 * lock type with the GENLOCK_WRITE_TO_READ flag.
+		 * lock too.
 		 */
 
-		if (flags & GENLOCK_WRITE_TO_READ) {
-			if (lock->state == _WRLOCK && op == _RDLOCK) {
-				lock->state = _RDLOCK;
-				wake_up(&lock->queue);
-				goto done;
-			} else {
-				GENLOCK_LOG_ERR("Invalid state to convert"
-					"write to read\n");
-				ret = -EINVAL;
-				goto done;
-			}
-		}
-	} else {
-
-		/*
-		 * Check to ensure the caller has not attempted to convert a
-		 * write to a read without holding the lock.
-		 */
-
-		if (flags & GENLOCK_WRITE_TO_READ) {
-			GENLOCK_LOG_ERR("Handle must have lock to convert"
-				"write to read\n");
-			ret = -EINVAL;
+		if (op == _RDLOCK && handle->active == 1) {
+			lock->state = _RDLOCK;
+			wake_up(&lock->queue);
 			goto done;
 		}
 
 		/*
-		 * If we request a read and the lock is held by a read, then go
-		 * ahead and share the lock
+		 * Otherwise the user tried to turn a read into a write, and we
+		 * don't allow that.
 		 */
-
-		if (op == GENLOCK_RDLOCK && lock->state == _RDLOCK)
-			goto dolock;
+		GENLOCK_LOG_ERR("Trying to upgrade a read lock to a write"
+				"lock\n");
+		ret = -EINVAL;
+		goto done;
 	}
+
+	/*
+	 * If we request a read and the lock is held by a read, then go
+	 * ahead and share the lock
+	 */
+
+	if (op == GENLOCK_RDLOCK && lock->state == _RDLOCK)
+		goto dolock;
 
 	/* Treat timeout 0 just like a NOBLOCK flag and return if the
 	   lock cannot be aquired without blocking */
@@ -374,26 +358,15 @@ static int _genlock_lock(struct genlock *lock, struct genlock_handle *handle,
 		goto done;
 	}
 
-	/*
-	 * Wait while the lock remains in an incompatible state
-	 * state    op    wait
-	 * -------------------
-	 * unlocked n/a   no
-	 * read     read  no
-	 * read     write yes
-	 * write    n/a   yes
-	 */
+	/* Wait while the lock remains in an incompatible state */
 
-	while ((lock->state == _RDLOCK && op == _WRLOCK) ||
-			lock->state == _WRLOCK) {
-		signed long elapsed;
+	while (lock->state != _UNLOCKED) {
+		unsigned int elapsed;
 
 		spin_unlock_irqrestore(&lock->lock, irqflags);
 
 		elapsed = wait_event_interruptible_timeout(lock->queue,
-			lock->state == _UNLOCKED ||
-			(lock->state == _RDLOCK && op == _RDLOCK),
-			ticks);
+			lock->state == _UNLOCKED, ticks);
 
 		spin_lock_irqsave(&lock->lock, irqflags);
 
@@ -402,7 +375,7 @@ static int _genlock_lock(struct genlock *lock, struct genlock_handle *handle,
 			goto done;
 		}
 
-		ticks = (unsigned long) elapsed;
+		ticks = elapsed;
 	}
 
 dolock:
@@ -410,7 +383,7 @@ dolock:
 
 	list_add_tail(&handle->entry, &lock->active);
 	lock->state = op;
-	handle->active++;
+	handle->active = 1;
 
 done:
 	spin_unlock_irqrestore(&lock->lock, irqflags);
@@ -419,7 +392,7 @@ done:
 }
 
 /**
- * genlock_lock - Acquire or release a lock (depreciated)
+ * genlock_lock - Acquire or release a lock
  * @handle - pointer to the genlock handle that is requesting the lock
  * @op - the operation to perform (RDLOCK, WRLOCK, UNLOCK)
  * @flags - flags to control the operation
@@ -432,7 +405,6 @@ int genlock_lock(struct genlock_handle *handle, int op, int flags,
 	uint32_t timeout)
 {
 	struct genlock *lock;
-	unsigned long irqflags;
 
 	int ret = 0;
 
@@ -453,13 +425,6 @@ int genlock_lock(struct genlock_handle *handle, int op, int flags,
 		ret = _genlock_unlock(lock, handle);
 		break;
 	case GENLOCK_RDLOCK:
-		spin_lock_irqsave(&lock->lock, irqflags);
-		if (handle_has_lock(lock, handle)) {
-			/* request the WRITE_TO_READ flag for compatibility */
-			flags |= GENLOCK_WRITE_TO_READ;
-		}
-		spin_unlock_irqrestore(&lock->lock, irqflags);
-		/* fall through to take lock */
 	case GENLOCK_WRLOCK:
 		ret = _genlock_lock(lock, handle, op, flags, timeout);
 		break;
@@ -474,53 +439,6 @@ int genlock_lock(struct genlock_handle *handle, int op, int flags,
 EXPORT_SYMBOL(genlock_lock);
 
 /**
- * genlock_dreadlock - Acquire or release a lock
- * @handle - pointer to the genlock handle that is requesting the lock
- * @op - the operation to perform (RDLOCK, WRLOCK, UNLOCK)
- * @flags - flags to control the operation
- * @timeout - optional timeout to wait for the lock to come free
- *
- * Returns: 0 on success or error code on failure
- */
-
-int genlock_dreadlock(struct genlock_handle *handle, int op, int flags,
-	uint32_t timeout)
-{
-	struct genlock *lock;
-
-	int ret = 0;
-
-	if (IS_ERR_OR_NULL(handle)) {
-		GENLOCK_LOG_ERR("Invalid handle\n");
-		return -EINVAL;
-	}
-
-	lock = handle->lock;
-
-	if (lock == NULL) {
-		GENLOCK_LOG_ERR("Handle does not have a lock attached\n");
-		return -EINVAL;
-	}
-
-	switch (op) {
-	case GENLOCK_UNLOCK:
-		ret = _genlock_unlock(lock, handle);
-		break;
-	case GENLOCK_RDLOCK:
-	case GENLOCK_WRLOCK:
-		ret = _genlock_lock(lock, handle, op, flags, timeout);
-		break;
-	default:
-		GENLOCK_LOG_ERR("Invalid lock operation\n");
-		ret = -EINVAL;
-		break;
-	}
-
-	return ret;
-}
-EXPORT_SYMBOL(genlock_dreadlock);
-
-/**
  * genlock_wait - Wait for the lock to be released
  * @handle - pointer to the genlock handle that is waiting for the lock
  * @timeout - optional timeout to wait for the lock to get released
@@ -531,7 +449,7 @@ int genlock_wait(struct genlock_handle *handle, uint32_t timeout)
 	struct genlock *lock;
 	unsigned long irqflags;
 	int ret = 0;
-	unsigned long ticks = msecs_to_jiffies(timeout);
+	unsigned int ticks = msecs_to_jiffies(timeout);
 
 	if (IS_ERR_OR_NULL(handle)) {
 		GENLOCK_LOG_ERR("Invalid handle\n");
@@ -558,7 +476,7 @@ int genlock_wait(struct genlock_handle *handle, uint32_t timeout)
 	}
 
 	while (lock->state != _UNLOCKED) {
-		signed long elapsed;
+		unsigned int elapsed;
 
 		spin_unlock_irqrestore(&lock->lock, irqflags);
 
@@ -572,7 +490,7 @@ int genlock_wait(struct genlock_handle *handle, uint32_t timeout)
 			break;
 		}
 
-		ticks = (unsigned long) elapsed;
+		ticks = elapsed;
 	}
 
 done:
@@ -739,14 +657,6 @@ static long genlock_dev_ioctl(struct file *filep, unsigned int cmd,
 			return -EFAULT;
 
 		return genlock_lock(handle, param.op, param.flags,
-			param.timeout);
-	}
-	case GENLOCK_IOC_DREADLOCK: {
-		if (copy_from_user(&param, (void __user *) arg,
-		sizeof(param)))
-			return -EFAULT;
-
-		return genlock_dreadlock(handle, param.op, param.flags,
 			param.timeout);
 	}
 	case GENLOCK_IOC_WAIT: {
