@@ -1,6 +1,6 @@
 config DRM
-	tristate "Direct Rendering Manager"
-    	depends on !EMULATED_CMPXCHG && MMU
+	tristate "Direct Rendering Manager (XFree86 4.1.0 and higher DRI support)"
+	depends on !EMULATED_CMPXCHG && MMU
 	select I2C
 	select I2C_ALGOBIT
 	help
@@ -11,4 +11,20 @@ config DRM
 	  DMA transfers. Please see <http://dri.sourceforge.net/> for more
 	  details.  You should also select and configure AGP
 	  (/dev/agpgart) support if it is available for your platform.
+
+config DRM_KMS_HELPER
+	tristate
+	depends on DRM
+	select FB
+	select FRAMEBUFFER_CONSOLE if !EMBEDDED
+	help
+	  FB and CRTC helpers for KMS drivers.
+
+config DRM_TTM
+	tristate
+	depends on DRM
+	help
+	  GPU memory management subsystem for devices with multiple
+	  GPU memory types. Will be enabled automatically if a device driver
+	  uses it.
 

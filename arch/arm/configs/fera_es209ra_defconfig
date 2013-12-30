@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.32.17.2
-# Fri Dec 27 17:01:52 2013
+# Linux kernel version: 2.6.32.17.3
+# Fri Dec 27 18:34:44 2013
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -1393,6 +1393,7 @@ CONFIG_MSM_KGSL=y
 # CONFIG_MSM_KGSL_PSTMRTMDMP_CP_STAT_NO_DETAIL is not set
 # CONFIG_MSM_KGSL_PSTMRTMDMP_NO_IB_DUMP is not set
 # CONFIG_MSM_KGSL_PSTMRTMDMP_RB_HEX is not set
+CONFIG_MSM_KGSL_2D=y
 # CONFIG_MSM_KGSL_DRM is not set
 CONFIG_MSM_KGSL_GPUMMU=y
 CONFIG_MSM_KGSL_MMU=y

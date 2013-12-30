@@ -11,7 +11,6 @@
  *
  * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.
  * Copyright 2000 VA Linux Systems, Inc., Sunnyvale, California.
- * Copyright (c) 2009, Code Aurora Forum.
  * All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -79,9 +78,6 @@ int drm_getunique(struct drm_device *dev, void *data,
  * in interface version 1.1 and will return EBUSY when setversion has requested
  * version 1.1 or greater.
  */
-
-/* JHC: This will fail in platform mode, but it is depreciated in 1.1 mode */
-
 int drm_setunique(struct drm_device *dev, void *data,
 		  struct drm_file *file_priv)
 {
@@ -97,7 +93,7 @@ int drm_setunique(struct drm_device *dev, void *data,
 
 	master->unique_len = u->unique_len;
 	master->unique_size = u->unique_len + 1;
-	master->unique = drm_alloc(master->unique_size, DRM_MEM_DRIVER);
+	master->unique = kmalloc(master->unique_size, GFP_KERNEL);
 	if (!master->unique)
 		return -ENOMEM;
 	if (copy_from_user(master->unique, u->unique, master->unique_len))
@@ -105,9 +101,8 @@ int drm_setunique(struct drm_device *dev, void *data,
 
 	master->unique[master->unique_len] = '\0';
 
-	dev->devname =
-	    drm_alloc(strlen(dev->driver->pci_driver.name) +
-		      strlen(master->unique) + 2, DRM_MEM_DRIVER);
+	dev->devname = kmalloc(strlen(dev->driver->pci_driver.name) +
+			       strlen(master->unique) + 2, GFP_KERNEL);
 	if (!dev->devname)
 		return -ENOMEM;
 
@@ -137,13 +132,9 @@ static int drm_set_busid(struct drm_device *dev, struct drm_file *file_priv)
 	struct drm_master *master = file_priv->master;
 	int len;
 
-	if (master->unique != NULL)
-		return -EBUSY;
-
 	if (drm_core_check_feature(dev, DRIVER_USE_PLATFORM_DEVICE)) {
 		master->unique_len = 10 + strlen(dev->platformdev->name);
-		master->unique = drm_alloc(master->unique_len + 1,
-			DRM_MEM_DRIVER);
+		master->unique = kmalloc(master->unique_len + 1, GFP_KERNEL);
 
 		if (master->unique == NULL)
 			return -ENOMEM;
@@ -155,8 +146,8 @@ static int drm_set_busid(struct drm_device *dev, struct drm_file *file_priv)
 			DRM_ERROR("Unique buffer overflowed\n");
 
 		dev->devname =
-			drm_alloc(strlen(dev->platformdev->name) +
-				master->unique_len + 2, DRM_MEM_DRIVER);
+			kmalloc(strlen(dev->platformdev->name) +
+				master->unique_len + 2, GFP_KERNEL);
 
 		if (dev->devname == NULL)
 			return -ENOMEM;
@@ -167,7 +158,7 @@ static int drm_set_busid(struct drm_device *dev, struct drm_file *file_priv)
 	} else {
 		master->unique_len = 40;
 		master->unique_size = master->unique_len;
-		master->unique = drm_alloc(master->unique_size, DRM_MEM_DRIVER);
+		master->unique = kmalloc(master->unique_size, GFP_KERNEL);
 		if (master->unique == NULL)
 			return -ENOMEM;
 
@@ -183,8 +174,8 @@ static int drm_set_busid(struct drm_device *dev, struct drm_file *file_priv)
 			master->unique_len = len;
 
 		dev->devname =
-			drm_alloc(strlen(dev->driver->pci_driver.name) +
-				master->unique_len + 2, DRM_MEM_DRIVER);
+			kmalloc(strlen(dev->driver->pci_driver.name) +
+				master->unique_len + 2, GFP_KERNEL);
 
 		if (dev->devname == NULL)
 			return -ENOMEM;
