@@ -52,7 +52,6 @@ static DECLARE_WAIT_QUEUE_HEAD(random_write_wait);
 static struct fasync_struct *fasync;
 
 #define DEBUG_ENT(fmt, arg...) do {} while (0)
-#endif
 
 struct entropy_store;
 struct entropy_store {
