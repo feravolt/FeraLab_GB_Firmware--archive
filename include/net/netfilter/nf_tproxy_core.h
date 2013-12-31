@@ -218,5 +218,5 @@ nf_tproxy_get_sock_v6(struct net *net, const u8 protocol,
 	return sk;
 }
 #endif
-
 #endif
+

@@ -531,3 +531,4 @@ remove_sta(AR_SOFTC_T *ar, A_UINT8 *mac, A_UINT16 reason);
 #endif
 
 #endif /* _AR6000_H_ */
+

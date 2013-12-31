@@ -1473,7 +1473,7 @@ void android_ar6k_check_wow_status(AR_SOFTC_T *ar, struct sk_buff *skb, A_BOOL i
                 A_UINT16 cmd = *(const A_UINT16 *)A_NETBUF_DATA(skb);
                 switch (cmd) {
                 case WMI_CONNECT_EVENTID:
-                //case WMI_DISCONNECT_EVENTID:
+                case WMI_DISCONNECT_EVENTID:
                     needWake = TRUE;
                     break;
                 default:
@@ -5731,3 +5731,4 @@ void ar6000_peer_event(
         printk("%02x: ",*(macAddr+pos));
     printk("\n");
 }
+
