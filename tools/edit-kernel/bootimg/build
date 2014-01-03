@@ -1,0 +1,36 @@
+#!/bin/bash
+DIR=$(cd $(dirname "$0"); pwd)
+cd $DIR
+rm -f initrd.img zImage *.cfg boot.img
+
+if [ ! $1 -o ! $2 ]
+then
+	if [ -e  ../../input/zImage -a -e ../../input/initrd.img ]
+	then
+		cp ../../input/zImage ./zImage
+		cp ../../input/initrd.img ./initrd.img
+		
+	else
+		echo "Image and Ramdisk not found!"
+		exit
+	fi
+else
+	cp $1 ./zImage
+	cp $2 ./initrd.img
+fi
+
+BASE=0x20000000
+CMDLINE=
+ARCH=$(uname -s).$(uname -m)
+
+if [ ! -e ./mkbootimg.$ARCH ]
+then
+	gcc -c rsa.c
+	gcc -c sha.c
+	gcc rsa.o sha.o mkbootimg.c -w -o mkbootimg.$ARCH
+	rm -f *.o
+fi
+./mkbootimg.$ARCH --cmdline "$CMDLINE" --base $BASE --kernel ./zImage --ramdisk ./initrd.img -o ./boot.img
+rm -f zImage initrd.img
+mv -f boot.img ../../output/.
+

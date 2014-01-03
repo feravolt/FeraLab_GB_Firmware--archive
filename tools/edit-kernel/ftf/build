@@ -1,0 +1,41 @@
+#!/bin/bash
+DIR=$(cd $(dirname "$0"); pwd)
+cd $DIR
+if [ ! $1 -o ! $2 ]
+then
+	if [ -e  ../../input/zImage -a -e ../../input/ramdisk.cpio.gz ]
+	then
+		cp ../../input/zImage ./image
+		cp ../../input/ramdisk.cpio.gz ./ramdisk
+	else
+		echo "Kernel and Ramdisk not found!"
+		exit
+	fi
+else
+	cp $1 ./image
+	cp $2 ./ramdisk
+fi
+
+./bin2elf 2 0x20008000 image 0x20008000 0x0 ramdisk 0x24000000 0x80000000
+./bin2sin result.elf 03000000220000007502000062000000
+
+rm result.elf
+mv result.elf.sin kernel.sin
+echo Manifest-Version: 1.0 > manifest.mf
+echo
+echo "Enter kernel name or branding [eg. custom-kernel] :"
+read FTF_BRAND
+echo "Enter kernel version [eg. v0.0.0] :"
+read FTF_VER
+echo device: x10 >>  manifest.mf
+echo branding: $FTF_BRAND >>  manifest.mf
+echo Created-By: FeraVolt >>  manifest.mf
+echo version: $FTF_VER >>  manifest.mf
+jar cvfm0 kernel.jar manifest.mf loader.sin kernel.sin
+mv kernel.jar $FTF_BRAND-$FTF_VER.ftf
+mv $FTF_BRAND-$FTF_VER.ftf ../../output/
+rm manifest.mf 
+rm image
+rm ramdisk
+rm kernel.sin
+
