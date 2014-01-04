@@ -1,0 +1,23 @@
+#!/sbin/sh
+
+echo 998400 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+echo 0 > /sys/class/android_usb/android0/enable
+echo 0FCE > /sys/class/android_usb/android0/idVendor
+echo 614F > /sys/class/android_usb/android0/idProduct
+echo mass_storage,adb > /sys/class/android_usb/android0/functions
+echo 1 > /sys/class/android_usb/android0/enable
+cat /dev/input/event2 > /dev/keycheck&
+echo '50' > /sys/class/timed_output/vibrator/enable
+echo '255' > /sys/class/leds/lv5219lg:rgb1:blue/brightness
+sleep 0.5
+echo '0' > /sys/class/leds/lv5219lg:rgb1:blue/brightness
+sleep 0.5
+echo '255' > /sys/class/leds/lv5219lg:rgb1:blue/brightness
+sleep 0.5
+echo '0' > /sys/class/leds/lv5219lg:rgb1:blue/brightness
+sleep 0.5
+echo '255' > /sys/class/leds/lv5219lg:rgb1:blue/brightness
+sleep 1
+echo '0' > /sys/class/leds/lv5219lg:rgb1:blue/brightness
+
+kill -9 $!

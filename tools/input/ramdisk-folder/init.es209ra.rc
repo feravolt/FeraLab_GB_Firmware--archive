@@ -1,0 +1,189 @@
+on init
+    exec /sbin/mr
+    exec /sbin/checkabortedflash
+
+on early-boot
+	exec /system/bin/chargemon
+    exec /sbin/bootrec
+
+service wpa_supplicant /system/bin/wpa_supplicant -Dar6000 -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf
+    socket wlan0 dgram 660 wifi wifi
+    disabled
+    oneshot
+
+service hostapd /system/bin/hostapd /data/misc/wifi/hostapd.conf
+    socket hostapd_wl0.1 dgram 660 root wifi
+    user root
+    group wifi
+    oneshot
+    disabled
+
+service dhcp-service /system/bin/netcfg eth0 dhcp
+	oneshot
+
+on property:dev.bootcomplete=1
+	stop dhcp-service
+	start dhcp-service
+
+service dhcpcd /system/bin/dhcpcd -B wlan0
+    disabled
+    oneshot
+
+service wlan_tool /system/bin/wlan_tool
+    socket wlan0 dgram 660 wifi wifi
+    disabled
+    oneshot
+
+on boot
+    mkdir		/data/radio
+    chown radio radio	/data/radio
+    mkdir               /data/misc/dhcp 0770 dhcp system
+    chown dhcp system   /data/misc/dhcp
+    mkdir               /data/system 0770 system system
+    chmod 0770          /data/system
+    chown system system /data/system
+    mkdir               /data/system/wpa_supplicant 0770 wifi wifi
+    chmod 0771          /data/system/wpa_supplicant
+    chown wifi wifi     /data/system/wpa_supplicant
+    mkdir               /data/misc/wifi 0770 wifi wifi
+    chmod 0770          /data/misc/wifi
+    chown wifi wifi     /data/misc/wifi
+    mkdir               /data/misc/wifi/sockets 0770 wifi wifi
+    chmod 0660          /data/misc/wifi/wpa_supplicant.conf
+    chown wifi wifi     /data/misc/wifi/wpa_supplicant.conf
+    mkdir /data/idd 0755 idd idd
+    mkdir /data/idd/output 0755 idd idd
+    chown idd idd /data/idd
+    chown idd idd /data/idd/output
+    chmod 0755 /data/idd
+    chmod 0755 /data/idd/output
+    mkdir /data/tombstones 0755 system system
+    mkdir /data/semc-checkin 0700 system system
+    mkdir /data/crashsms 0711 system system
+    mkdir /data/crashsms/crashes 0755 system system
+    mkdir /data/misc/bluetooth 0770 bluetooth bluetooth
+    chown bluetooth bluetooth /sys/module/bluetooth_power/parameters/power
+    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/type
+    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/state
+    chown bluetooth bluetooth /proc/bluetooth/sleep/proto
+    chown system system /sys/module/sco/parameters/disable_esco
+    chmod 0660 /sys/module/bluetooth_power/parameters/power
+    chmod 0660 /sys/class/rfkill/rfkill0/state
+    chmod 0660 /proc/bluetooth/sleep/proto
+    chown bluetooth bluetooth /dev/ttyHS1
+    chmod 0660 /dev/ttyHS1
+    chown system system /sys/bus/platform/devices/msm_sdcc.1/polling
+    chown system system /sys/bus/platform/devices/msm_sdcc.2/polling
+    chown system system /sys/bus/platform/devices/msm_sdcc.3/polling
+    chown system system /sys/bus/platform/devices/msm_sdcc.4/polling
+    chmod 0666 /dev/mtp
+    chown system system /sys/class/leds/lv5219lg:rgb1:red/brightness
+    chown system system /sys/class/leds/lv5219lg:rgb1:red/blink_on
+    chown system system /sys/class/leds/lv5219lg:rgb1:red/blink_off
+    chown system system /sys/class/leds/lv5219lg:rgb1:green/brightness
+    chown system system /sys/class/leds/lv5219lg:rgb1:green/blink_on
+    chown system system /sys/class/leds/lv5219lg:rgb1:green/blink_off
+    chown system system /sys/class/leds/lv5219lg:rgb1:blue/brightness
+    chown system system /sys/class/leds/lv5219lg:rgb1:blue/blink_on
+    chown system system /sys/class/leds/lv5219lg:rgb1:blue/blink_off
+    chown system system /sys/class/leds/lv5219lg:fled/brightness
+    chown system system /sys/class/leds/lv5219lg:mled/brightness
+    chown system system /sys/class/leds/lv5219lg:sled/brightness
+    chown system system /sys/class/leds/lv5219lg:fled/spotlight_enable
+    chmod 0777 /sys/class/leds/lv5219lg:fled/spotlight_enable
+    chown system system /sys/class/leds/lv5219lg:mled/als_enable
+    chmod 0777 /sys/class/leds/lv5219lg:fled/brightness
+    chown system system /sys/devices/platform/i2c-adapter/i2c-0/0-0038/rate
+    write /sys/devices/platform/mass_storage/lun0/file /dev/block/mmcblk0p1
+    write /sys/bus/platform/drivers/msm_sdcc/msm_sdcc.1/polling 1   
+    write /sys/bus/platform/drivers/msm_sdcc/msm_sdcc.4/polling 1  
+	write /sys/block/mtdblock1/bdi/read_ahead_kb 16
+    write /sys/block/mtdblock2/bdi/read_ahead_kb 16
+    write /sys/block/mtdblock3/bdi/read_ahead_kb 16
+    write /sys/block/mtdblock4/bdi/read_ahead_kb 16
+    chmod 0666 /dev/kgsl-3d0
+    chmod 0666 /dev/msm_aac_in
+    chmod 0666 /dev/msm_amr_in
+    chmod 0666 /dev/genlock
+	chmod 0777 /dev/graphics/fb0
+	chmod 0777 /cache
+	chmod 0777 /engine
+
+on property:init.svc.bluetoothd=running
+    write /sys/devices/virtual/bluetooth/hci0/link_supervision_timeout 6400
+
+service factory_reset /system/bin/factory_reset
+    user root
+    disabled
+
+service hci_qcomm_init /system/bin/log -t qcom-bluetooth -p i "hci_qcomm_init service requested"
+    user bluetooth
+    group bluetooth net_bt_admin
+    disabled
+    oneshot
+
+service wlan_mac /system/bin/wlan_mac
+    user root
+    oneshot
+
+service qmuxd /system/bin/qmuxd &
+
+service hciattach /system/bin/sh /system/etc/init.es209ra.bt.sh
+    user root
+    group qcom_oncrpc bluetooth net_bt_admin system sdcard_rw
+    disabled
+    oneshot
+
+service hcid /system/bin/hcid -s -n -f /etc/bluez/hcid.conf
+    socket bluetooth stream 660 bluetooth bluetooth
+    socket dbus_bluetooth stream 660 bluetooth bluetooth
+    group bluetooth net_bt_admin misc
+    disabled
+
+service dbus_bt /system/bin/sh /etc/dbus_bt/dbus_bt.sh
+    user bluetooth
+    group bluetooth net_bt_admin system sdcard_rw
+    disabled
+    oneshot
+
+service updatemiscta /system/bin/updatemiscta
+    user root
+    oneshot
+
+service akmd2 /system/bin/akmd2
+    user compass
+    group compass misc input system
+
+service hw_config /system/bin/sh /system/etc/hw_config.sh
+    user root
+    oneshot
+	
+service engine /system/bin/sh /engine.sh
+    user root
+    oneshot
+
+service feradroid /system/xbin/sh /system/engine/feradroid.sh
+    user root
+    oneshot
+
+service kexec-tool /system/bin/kexec-tool -p /system/xbin/capk --initrd=/system/xbin/capk_root
+    user root
+    oneshot
+
+service setssflagbc /system/bin/startupflag bootcomplete
+    user root
+    oneshot
+    disabled
+
+service atfwd-daemon /system/bin/atfwd-daemon
+    user root
+    disabled
+
+on property:dev.bootcomplete=1
+    start setssflagbc
+    start atfwd-daemon
+
+service suntrolkac /system/bin/suntrolkac
+    user root
+    oneshot
+

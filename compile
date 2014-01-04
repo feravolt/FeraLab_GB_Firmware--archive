@@ -4,10 +4,12 @@ echo '##################################'
 echo ' '
 echo ' '
 echo '### Applying latest config... ###'
+cd
+cd /home/feravolt/ferra
 rm -R 0UTPUT
 mkdir 0UTPUT
 ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi- make fera_es209ra_defconfig
-echo '### Compiling kernel... ###'
+echo '### Compiling FeraKernel... ###'
 ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi- make -j2
 cd /home/feravolt/ferra/drivers/net/wireless/ath6k/
 echo '### Cleaning binaries... ###'
@@ -28,7 +30,9 @@ mv /home/feravolt/ferra/tools/input/ramdisk.cpio.gz /home/feravolt/ferra/tools/i
 cd /home/feravolt/ferra/tools/edit-kernel/bootimg
 ./build
 cd
-mv -t /home/feravolt/ferra/tools/output /home/feravolt/ferra/0UTPUT
+mv -t /home/feravolt/ferra/0UTPUT /home/feravolt/ferra/tools/output/*
+rm /home/feravolt/ferra/tools/input/initrd.img
+rm /home/feravolt/ferra/tools/input/zImage
 fi;
 echo '### DONE! ###'
 
