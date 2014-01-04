@@ -5,8 +5,6 @@ echo ' '
 echo ' '
 echo '### Cleaning Kernel... ###'
 ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi- make distclean
-echo '### Applying latest config... ###'
-ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi- make fera_es209ra_defconfig
 echo '### Kernel tree ready. ###'
 
 

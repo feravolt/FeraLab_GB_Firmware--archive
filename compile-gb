@@ -1,0 +1,34 @@
+echo '##################################'
+echo '###       ***FeraLab***        ###'
+echo '##################################'
+echo ' '
+echo ' '
+echo '### Applying latest config... ###'
+rm -R 0UTPUT
+mkdir 0UTPUT
+ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi- make fera-gb_es209ra_defconfig
+echo '### Compiling kernel... ###'
+ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi- make -j2
+cd /home/feravolt/ferra/drivers/net/wireless/ath6k/
+echo '### Cleaning binaries... ###'
+/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi-strip --strip-unneeded ar6000.ko
+cd
+if [ -e /home/feravolt/ferra/arch/arm/boot/zImage ]; then
+rm -f /home/feravolt/ferra/tools/input/zImage
+rm -f /home/feravolt/ferra/tools/input/ramdisk-folder/modules/wifi.ko
+mv /home/feravolt/ferra/arch/arm/boot/zImage /home/feravolt/ferra/tools/input/zImage
+mv /home/feravolt/ferra/drivers/net/wireless/ath6k/ar6000.ko /home/feravolt/ferra/tools/input/ramdisk-folder/modules/wifi.ko
+cd /home/feravolt/ferra/tools/edit-ramdisk
+./pack
+cd
+cd /home/feravolt/ferra/tools/edit-kernel/ftf
+./build
+cd
+mv /home/feravolt/ferra/tools/input/ramdisk.cpio.gz /home/feravolt/ferra/tools/input/initrd.img
+cd /home/feravolt/ferra/tools/edit-kernel/bootimg
+./build
+cd
+mv -t /home/feravolt/ferra/tools/output /home/feravolt/ferra/0UTPUT
+fi;
+echo '### DONE! ###'
+
