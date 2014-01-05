@@ -23,15 +23,13 @@ rm result.elf
 mv result.elf.sin kernel.sin
 echo Manifest-Version: 1.0 > manifest.mf
 echo
-echo "Enter kernel version [eg. v0.0] :"
-read FTF_VER
 echo device: x10 >>  manifest.mf
 echo branding: FeraKernel >>  manifest.mf
 echo Created-By: FeraVolt >>  manifest.mf
-echo version: $FTF_VER >>  manifest.mf
+echo version: v18 >>  manifest.mf
 jar cvfm0 kernel.jar manifest.mf loader.sin kernel.sin
-mv kernel.jar FeraKernel-$FTF_VER.ftf
-mv FeraKernel-$FTF_VER.ftf ../../output/
+mv kernel.jar FeraKernel-v18.ftf
+mv FeraKernel-v18.ftf ../../output/
 rm manifest.mf 
 rm image
 rm ramdisk

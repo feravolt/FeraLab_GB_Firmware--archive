@@ -8,17 +8,17 @@ cd
 cd /home/feravolt/ferra
 rm -R 0UTPUT
 mkdir 0UTPUT
-ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi- make fera_es209ra_defconfig
+ARCH=ferra/linaro CROSS_COMPILE=/home/feravolt/ferra/linaro/bin/ferra/linaro-cortex_a8-linux-gnueabi- make fera_es209ra_defconfig
 echo '### Compiling FeraKernel... ###'
-ARCH=arm CROSS_COMPILE=/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi- make -j2
+ARCH=ferra/linaro CROSS_COMPILE=/home/feravolt/ferra/linaro/bin/ferra/linaro-cortex_a8-linux-gnueabi- make -j2
 cd /home/feravolt/ferra/drivers/net/wireless/ath6k/
 echo '### Cleaning binaries... ###'
-/home/feravolt/arm/bin/arm-cortex_a8-linux-gnueabi-strip --strip-unneeded ar6000.ko
+/home/feravolt/ferra/linaro/bin/ferra/linaro-cortex_a8-linux-gnueabi-strip --strip-unneeded ar6000.ko
 cd
-if [ -e /home/feravolt/ferra/arch/arm/boot/zImage ]; then
+if [ -e /home/feravolt/ferra/arch/ferra/linaro/boot/zImage ]; then
 rm -f /home/feravolt/ferra/tools/input/zImage
 rm -f /home/feravolt/ferra/tools/input/ramdisk-folder/modules/wifi.ko
-cp /home/feravolt/ferra/arch/arm/boot/zImage /home/feravolt/ferra/tools/input/zImage
+cp /home/feravolt/ferra/arch/ferra/linaro/boot/zImage /home/feravolt/ferra/tools/input/zImage
 mv /home/feravolt/ferra/drivers/net/wireless/ath6k/ar6000.ko /home/feravolt/ferra/tools/input/ramdisk-folder/modules/wifi.ko
 cd /home/feravolt/ferra/tools/edit-ramdisk
 ./pack
