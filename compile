@@ -18,7 +18,7 @@ cd
 if [ -e /home/feravolt/ferra/arch/arm/boot/zImage ]; then
 rm -f /home/feravolt/ferra/tools/input/zImage
 rm -f /home/feravolt/ferra/tools/input/ramdisk-folder/modules/wifi.ko
-mv /home/feravolt/ferra/arch/arm/boot/zImage /home/feravolt/ferra/tools/input/zImage
+cp /home/feravolt/ferra/arch/arm/boot/zImage /home/feravolt/ferra/tools/input/zImage
 mv /home/feravolt/ferra/drivers/net/wireless/ath6k/ar6000.ko /home/feravolt/ferra/tools/input/ramdisk-folder/modules/wifi.ko
 cd /home/feravolt/ferra/tools/edit-ramdisk
 ./pack

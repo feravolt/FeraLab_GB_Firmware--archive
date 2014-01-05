@@ -1133,6 +1133,8 @@ static struct file_system_type cgroup_fs_type = {
 	.kill_sb = cgroup_kill_sb,
 };
 
+static struct kobject *cgroup_kobj;
+
 static inline struct cgroup *__d_cgrp(struct dentry *dentry)
 {
 	return dentry->d_fsdata;
@@ -2710,13 +2712,18 @@ int __init cgroup_init(void)
 			cgroup_init_subsys(ss);
 	}
 
-	/* Add init_css_set to the hash table */
 	hhead = css_set_hash(init_css_set.subsys);
 	hlist_add_head(&init_css_set.hlist, hhead);
-
+	cgroup_kobj = kobject_create_and_add("cgroup", fs_kobj);
+        if (!cgroup_kobj) {
+                err = -ENOMEM;
+                goto out;
+        }
 	err = register_filesystem(&cgroup_fs_type);
-	if (err < 0)
-		goto out;
+	if (err < 0) {
+                kobject_put(cgroup_kobj);
+                 goto out;
+        }
 
 	proc_create("cgroups", 0, NULL, &proc_cgroupstats_operations);
 

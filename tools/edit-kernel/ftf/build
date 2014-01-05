@@ -22,6 +22,7 @@ fi
 rm result.elf
 mv result.elf.sin kernel.sin
 echo Manifest-Version: 1.0 > manifest.mf
+echo
 echo "Enter kernel version [eg. v0.0] :"
 read FTF_VER
 echo device: x10 >>  manifest.mf
