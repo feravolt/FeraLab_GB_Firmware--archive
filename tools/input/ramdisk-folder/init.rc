@@ -23,40 +23,6 @@ loglevel 3
     symlink /system/etc /etc
     symlink /sys/kernel/debug /d
     symlink /system/usr/vendor /vendor
-    mkdir /acct
-    mount cgroup none /acct cpuacct
-    mkdir /acct/uid
-    mkdir /dev/cpuctl
-    mount cgroup none /dev/cpuctl cpu
-    chown system system /dev/cpuctl
-    chown system system /dev/cpuctl/tasks
-    chmod 0777 /dev/cpuctl/tasks
-    write /dev/cpuctl/cpu.shares 1024
-    write /dev/cpuctl/cpu.rt_runtime_us 950000
-    write /dev/cpuctl/cpu.rt_period_us 1000000
-    mkdir /dev/cpuctl/apps
-    chown system system /dev/cpuctl/apps/tasks
-    chmod 0777 /dev/cpuctl/apps/tasks
-    write /dev/cpuctl/apps/cpu.shares 1024
-    write /dev/cpuctl/apps/cpu.rt_runtime_us 800000
-    write /dev/cpuctl/apps/cpu.rt_period_us 1000000
-    mkdir /dev/cpuctl/apps/bg_non_interactive
-    chown system system /dev/cpuctl/apps/bg_non_interactive/tasks
-    chmod 0777 /dev/cpuctl/apps/bg_non_interactive/tasks
-    write /dev/cpuctl/apps/bg_non_interactive/cpu.shares 52
-    write /dev/cpuctl/apps/bg_non_interactive/cpu.rt_runtime_us 700000
-    write /dev/cpuctl/apps/bg_non_interactive/cpu.rt_period_us 1000000
-    mount tmpfs none /sys/fs/cgroup mode=0750,uid=0,gid=1000
-    mkdir /sys/fs/cgroup/memory 0750 root system
-    mount cgroup none /sys/fs/cgroup/memory memory
-    write /sys/fs/cgroup/memory/memory.move_charge_at_immigrate 1
-    chown root system /sys/fs/cgroup/memory/tasks
-    chmod 0777 /sys/fs/cgroup/memory/tasks
-    mkdir /sys/fs/cgroup/memory/sw 0750 root system
-    write /sys/fs/cgroup/memory/sw/memory.swappiness 100
-    write /sys/fs/cgroup/memory/sw/memory.move_charge_at_immigrate 1
-    chown root system /sys/fs/cgroup/memory/sw/tasks
-    chmod 0777 /sys/fs/cgroup/memory/sw/tasks
     mkdir /mnt 0775 root system
     mkdir /mnt/sdcard 0000 system system
     symlink /mnt/sdcard /sdcard
