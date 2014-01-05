@@ -765,6 +765,7 @@ modules modules_install: FORCE
 endif
 
 CLEAN_DIRS  += $(MODVERDIR)
+CLEAN_DIRS  -= tools
 CLEAN_FILES +=	vmlinux System.map \
                 .tmp_kallsyms* .tmp_version .tmp_vmlinux* .tmp_System.map
 
