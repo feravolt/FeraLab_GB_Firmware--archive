@@ -4,7 +4,7 @@ echo '##################################'
 echo ' '
 echo ' '
 echo '### Entering menu... ###'
-ARCH=arm CROSS_COMPILE=/home/feravolt/ferra/linaro/bin/arm-cortex_a8-linux-gnueabi- make menuconfig
+ARCH=arm CROSS_COMPILE=/home/feravolt/ferra/tools/linaro/bin/arm-cortex_a8-linux-gnueabi- make menuconfig
 
 
 
