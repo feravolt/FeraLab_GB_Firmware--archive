@@ -16,8 +16,9 @@ cd /home/feravolt/ferra/kernel/drivers/net/wireless/ath6k/
 echo '### Cleaning binaries... ###'
 /home/feravolt/ferra/toolchain/bin/arm-cortex_a8-linux-gnueabi-strip --strip-unneeded ar6000.ko
 cd
+cd ferra
+if [ -e /home/feravolt/ferra/kernel/arch/arm/boot/zImage ]; then
 echo '### Packing kernel... ###'
-if [ -e /home/feravolt/ferra/kerne/arch/arm/boot/zImage ]; then
 rm -f /home/feravolt/ferra/kernel/tools/input/zImage
 rm -f /home/feravolt/ferra/kernel/tools/input/ramdisk/modules/wifi.ko
 cp /home/feravolt/ferra/kernel/arch/arm/boot/zImage /home/feravolt/ferra/kernel/tools/input/zImage
@@ -28,6 +29,7 @@ cd
 cd /home/feravolt/ferra/kernel/tools/ftf
 ./build
 cd
+cd ferra
 mv -t /home/feravolt/ferra/0UTPUT /home/feravolt/ferra/kernel/tools/output/*
 rm -f /home/feravolt/ferra/kernel/tools/input/zImage
 rm -f /home/feravolt/ferra/kernel/tools/input/ramdisk.cpio.gz
