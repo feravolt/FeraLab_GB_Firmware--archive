@@ -4,8 +4,10 @@ echo '##################################'
 echo ' '
 echo ' '
 echo '### Cleaning Kernel... ###'
-ARCH=arm CROSS_COMPILE=/home/feravolt/ferra/tools/linaro/bin/arm-cortex_a8-linux-gnueabi- make distclean
-ARCH=arm CROSS_COMPILE=/home/feravolt/ferra/tools/linaro/bin/arm-cortex_a8-linux-gnueabi- make fera_es209ra_defconfig
+cd kernel
+ARCH=arm CROSS_COMPILE=/home/feravolt/ferra/toolchain/bin/arm-cortex_a8-linux-gnueabi- make distclean
+ARCH=arm CROSS_COMPILE=/home/feravolt/ferra/toolchain/bin/arm-cortex_a8-linux-gnueabi- make fera_es209ra_defconfig
+cd
 echo '### Kernel tree ready. ###'
 
 

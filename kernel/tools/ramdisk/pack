@@ -1,27 +1,26 @@
 #!/bin/bash
 DIR=$(cd $(dirname "$0"); pwd)
 cd $DIR
-rm -f -r ramdisk-folder
+rm -f -r ramdisk
 if [ ! $1 ]
 then
-if [ -d ../input/ramdisk-folder ]
+if [ -d ../input/ramdisk ]
 	then 
-		cp -f -r ../input/ramdisk-folder ./ramdisk-folder
+		cp -f -r ../input/ramdisk ./ramdisk
 	fi
 else
-	cp -f -r $1 ./ramdisk-folder
+	cp -f -r $1 ./ramdisk
 fi
 
-if [ -d ramdisk-folder ]
+if [ -d ramdisk ]
 then
 	rm -f ramdisk.cpio.gz
-	cd ramdisk-folder
+	cd ramdisk
 	find . | cpio -o -H newc | gzip > ../ramdisk.cpio.gz
 	cd ..
 	mv ramdisk.cpio.gz ../input
-	rm -f -r ramdisk-folder
+	rm -f -r ramdisk
 	echo "Ramdisk created."
-
 else
 	echo "Ramdisk Folder not found!"
 	exit
