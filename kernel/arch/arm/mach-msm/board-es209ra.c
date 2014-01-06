@@ -58,21 +58,23 @@
 #include "../../../drivers/video/msm/msm_fb_panel.h"
 #include "../../../drivers/video/msm/mddihost.h"
 
-#define SMEM_SPINLOCK_I2C	"S:6"
 #define PMIC_VREG_WLAN_LEVEL	2600
 #define PMIC_VREG_GP6_LEVEL	2850
+#define MSM_PMEM_MDP_SIZE 	0x1C91000
 #define PMEM_KERNEL_EBI1_SIZE	0x28000
-#define MSM_PMEM_SF_SIZE 	0x1C91000
+#define SMEM_SPINLOCK_I2C	"S:6"
 #define MSM_PMEM_ADSP_SIZE	0x2196000
-#define MSM_SHARED_RAM_PHYS	0x00100000
-#define MSM_PMEM_SMI_SIZE	0x01500000
-#define MSM_PMEM_SMI_BASE	0x02B00000
-#define MSM_FB_BASE		0x02B00000
 #define MSM_FB_SIZE         	0x500000
 #define MSM_GPU_PHYS_SIZE 	SZ_2M
+#define MSM_SMI_BASE		0x00000000
+#define MSM_SHARED_RAM_PHYS	(MSM_SMI_BASE + 0x00100000)
+#define MSM_PMEM_SMI_BASE	(MSM_SMI_BASE + 0x02B00000)
+#define MSM_PMEM_SMI_SIZE	0x01500000
+#define MSM_FB_BASE		MSM_PMEM_SMI_BASE
 #define MSM_GPU_PHYS_BASE 	(MSM_FB_BASE + MSM_FB_SIZE)
 #define MSM_PMEM_SMIPOOL_BASE	(MSM_GPU_PHYS_BASE + MSM_GPU_PHYS_SIZE)
-#define MSM_PMEM_SMIPOOL_SIZE	(MSM_PMEM_SMI_SIZE - MSM_FB_SIZE - MSM_GPU_PHYS_SIZE)
+#define MSM_PMEM_SMIPOOL_SIZE	(MSM_PMEM_SMI_SIZE - MSM_FB_SIZE \
+					- MSM_GPU_PHYS_SIZE)
 
 static int msm7227_platform_set_vib_voltage(u16 volt_mv)
 {
@@ -681,13 +683,13 @@ static struct mddi_platform_data mddi_pdata = {
 	.mddi_sel_clk = msm_fb_mddi_sel_clk,
 };
 
-static struct msm_panel_common_pdata sf_pdata = {
+static struct msm_panel_common_pdata mdp_pdata = {
 	.gpio = 98,
 };
 
 static void __init msm_fb_add_devices(void)
 {
-	msm_fb_register_device("sf", &sf_pdata);
+	msm_fb_register_device("mdp", &mdp_pdata);
 	msm_fb_register_device("pmdh", &mddi_pdata);
 	msm_fb_register_device("emdh", &mddi_pdata);
 	msm_fb_register_device("tvenc", 0);
@@ -1728,12 +1730,12 @@ static void __init pmem_kernel_ebi1_size_setup(char **p)
 }
 __early_param("pmem_kernel_ebi1_size=", pmem_kernel_ebi1_size_setup);
 
-static unsigned pmem_sf_size = MSM_PMEM_SF_SIZE;
-static void __init pmem_sf_size_setup(char **p)
+static unsigned pmem_mdp_size = MSM_PMEM_MDP_SIZE;
+static void __init pmem_mdp_size_setup(char **p)
 {
-	pmem_sf_size = memparse(*p, p);
+	pmem_mdp_size = memparse(*p, p);
 }
-__early_param("pmem_sf_size=", pmem_sf_size_setup);
+__early_param("pmem_mdp_size=", pmem_mdp_size_setup);
 
 static unsigned pmem_adsp_size = MSM_PMEM_ADSP_SIZE;
 static void __init pmem_adsp_size_setup(char **p)
@@ -1817,12 +1819,12 @@ static void __init es209ra_allocate_memory_regions(void)
 			" ebi1 pmem arena\n", size, addr, __pa(addr));
 	}
 
-	size = pmem_sf_size;
+	size = pmem_mdp_size;
 	if (size) {
 		addr = alloc_bootmem(size);
 		android_pmem_pdata.start = __pa(addr);
 		android_pmem_pdata.size = size;
-		pr_info("allocating %lu bytes at %p (%lx physical) for sf "
+		pr_info("allocating %lu bytes at %p (%lx physical) for mdp "
 			"pmem arena\n", size, addr, __pa(addr));
 	}
 
