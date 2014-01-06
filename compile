@@ -35,5 +35,8 @@ rm -f /home/feravolt/ferra/kernel/tools/input/zImage
 rm -f /home/feravolt/ferra/kernel/tools/input/ramdisk.cpio.gz
 rm -f /home/feravolt/ferra/kernel/tools/input/ramdisk/modules/wifi.ko
 fi;
+cd
+cd ferra
+cp -f /home/feravolt/ferra/0UTPUT/* /home/feravolt/ferra/flashtool/firmwares/
 echo '### DONE! ###'
 

@@ -1,0 +1,10 @@
+echo '##################################'
+echo '###       ***FeraLab***        ###'
+echo '##################################'
+echo ' '
+echo ' '
+echo '### FlashTool ###'
+cd
+cd ferra/flashtool
+sudo ./FlashTool
+
