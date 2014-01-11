@@ -1,3 +1,6 @@
+export ARCH=arm
+export SUBARCH=arm
+export CROSS_COMPILE=/home/feravolt/ferra/toolchain/bin/arm-cortex_a8-linux-gnueabi-
 echo '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
 echo '~         ***FeraLab***          ~'
 echo '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
@@ -12,10 +15,10 @@ cd ferra
 rm -R 0UTPUT
 mkdir 0UTPUT
 cd kernel
-ARCH=arm CROSS_COMPILE=/home/feravolt/ferra/toolchain/bin/arm-cortex_a8-linux-gnueabi- make fera_es209ra_defconfig
+make fera_es209ra_defconfig
 echo ' '
 echo '>> Compiling FeraKernel...'
-ARCH=arm CROSS_COMPILE=/home/feravolt/ferra/toolchain/bin/arm-cortex_a8-linux-gnueabi- make -j2
+make -j2
 cd /home/feravolt/ferra/kernel/drivers/net/wireless/ath6k/
 echo ' '
 echo '>> Cleaning modules...'

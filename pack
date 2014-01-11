@@ -9,13 +9,17 @@ echo ' '
 echo ' '
 echo ' '
 echo ' '
-echo '>> Cleaning kernel directory...'
+echo '>> Making ROM package...'
 cd
-cd ferra/kernel
-make distclean
-make fera_es209ra_defconfig
+cp -f /home/feravolt/ferra/flashtool/firmwares/* /home/feravolt/ferra/rom/
+cd ferra
+zip FeraLab.zip rom -9
+rm -R 0UTPUT
+mkdir 0UTPUT
+mv /home/feravolt/ferra/FeraLab.zip /home/feravolt/ferra/0UTPUT/FeraLab.zip
 cd
-echo '>> FeraKernel ready.'
+echo ' '
+echo '>> FeraLab firmware package ready.'
 echo ' '
 echo ' '
 
