@@ -1,13 +1,16 @@
-echo '##################################'
-echo '###       ***FeraLab***        ###'
-echo '##################################'
+echo '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+echo '~         ***FeraLab***          ~'
+echo '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
 echo ' '
 echo ' '
-echo '### Entering menu... ###'
-cd kernel
+echo ' '
+echo ' '
+echo ' '
+echo '>> Entering kernel menu...'
+cd
+cd ferra/kernel
 ARCH=arm CROSS_COMPILE=/home/feravolt/ferra/toolchain/bin/arm-cortex_a8-linux-gnueabi- make menuconfig
 cd
-
-
-
-
+echo '>> FeraKernel ready.'
+echo ' '
+echo ' '

@@ -1,13 +1,18 @@
-echo '##################################'
-echo '###       ***FeraLab***        ###'
-echo '##################################'
+echo '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+echo '~         ***FeraLab***          ~'
+echo '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
 echo ' '
 echo ' '
-echo '### Cleaning Kernel... ###'
-cd kernel
+echo ' '
+echo ' '
+echo ' '
+echo '>> Cleaning kernel directory...'
+cd
+cd ferra/kernel
 ARCH=arm CROSS_COMPILE=/home/feravolt/ferra/toolchain/bin/arm-cortex_a8-linux-gnueabi- make distclean
 ARCH=arm CROSS_COMPILE=/home/feravolt/ferra/toolchain/bin/arm-cortex_a8-linux-gnueabi- make fera_es209ra_defconfig
 cd
-echo '### Kernel tree ready. ###'
-
+echo '>> FeraKernel ready.'
+echo ' '
+echo ' '
 

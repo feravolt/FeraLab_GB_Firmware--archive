@@ -1,10 +1,17 @@
-echo '##################################'
-echo '###       ***FeraLab***        ###'
-echo '##################################'
+echo '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+echo '~         ***FeraLab***          ~'
+echo '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
 echo ' '
 echo ' '
-echo '### FlashTool ###'
+echo ' '
+echo ' '
+echo ' '
+echo '>> Running FlashTool...'
 cd
 cd ferra/flashtool
 sudo ./FlashTool
+cd
+echo '>> Flashing completed.'
+echo ' '
+echo ' '
 
