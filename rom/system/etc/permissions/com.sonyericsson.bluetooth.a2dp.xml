@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<permissions>
+  <library name="com.sonyericsson.bluetooth.a2dp"
+        file="/system/framework/com.sonyericsson.bluetooth.a2dp.jar"/>
+</permissions>

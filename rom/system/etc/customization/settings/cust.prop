@@ -1,0 +1,9 @@
+
+      ######################## Customized property values #########################
+      
+ro.semc.version.cust=1257-5102
+ro.semc.version.cust_revision=R1C
+persist.ro.ril.sms_sync_sending=1
+persist.sys.timezone=Europe/Istanbul
+      #########################################################################
+      

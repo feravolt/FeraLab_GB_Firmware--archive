@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<permissions>
+    <library name="com.sonyericsson.music.like_1"
+        file="/system/framework/com.sonyericsson.music.like_1_impl.jar"/>
+</permissions>

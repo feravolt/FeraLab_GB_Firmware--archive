@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings version="1">
+    <setting key="sw_keyboard_trace" type="boolean">false</setting>
+    <setting key="sw_keyboard_trace_auto_accept" type="boolean">false</setting>
+</settings>

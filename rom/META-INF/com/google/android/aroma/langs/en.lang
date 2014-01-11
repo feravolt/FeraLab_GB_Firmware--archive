@@ -1,0 +1,142 @@
+###FeraVolt
+
+text_ok=OK
+text_next=Next >
+text_back=< Back
+text_yes=Yes
+text_no=No
+text_about=About
+text_calibrating=Calibrating Tools
+text_quit=Quit Installation
+text_quit_msg=Are you sure to quit the installer?
+
+common.for=for
+
+langtest.title=Welcome
+langtest.multiline=Hello and welcome to ***FeraLab*** ROM installation.\
+You can customize ROM now.\
+\
+Happy Flashing and Good Luck!\
+\
+Thanks for Choosing <b>***FeraLab***</b>
+
+welcome.title=Welcome
+welcome.text1=You are about to Install
+welcome.text2=Please carefully read installer option's descriptions!
+welcome.version=VERSION
+welcome.codename=DEVELOPER
+welcome.updated=ANDROID
+welcome.next=Press Next to Continue the Installation...
+
+terms.title=DISCLAIMER
+terms.desc=Please read carefully!!!
+terms.check=I Agree with this Terms and Conditions...
+terms.confirm=Please check the agreement or exit...
+
+changelog.title=Changelog
+changelog.desc=***FeraLab*** ROM changelog
+
+fde.title=Changelog
+fde.desc=FeraDroidEngine changelog
+
+sys.title=System Information
+sys.titlee=Your Device System Information
+sys.free=Free Space
+sys.system=System Size
+sys.data=Data Size
+sys.sd=SDCard Size
+sys.sdext=SD-EXT Size
+
+hz.ready=Ready to Install
+hz.readyy=The wizard is ready to begin installation
+hz.aha=If you want to review or change any of your installation settings, press <b>Back</b>. Press Menu Key -> Quit Installation to exit the wizard
+hz.next=Next >
+hz.now=Install Now
+
+inst.title=Installing...
+inst.is=are being installed.
+inst.wait=Please wait while installation wizard installs
+inst.min=This may take several minutes
+inst.fin=The installation wizard has successfully installed
+inst.next=Press Next to continue
+
+finish.fin=Finish
+reboot.title=Finish!
+reboot.titlee=Installed successfully.
+reboot.box=Reboot your device now...
+
+cbox.ch=Choose Extra Apps
+cbox.ea=Extra Applications
+cbox.aa=Game Graphics Customizer.
+cbox.bb=Chinese IME. Select this if you will use Chinese language input.
+cbox.cc=Universal cleaner application for android. Cleans cache and tasks.
+cbox.dd=Set of apps with floating window support.
+cbox.ee=Simple notes with widget.
+cbox.ff=Official Google mail application.
+cbox.gg=Google cloud storage servise.
+cbox.hh=Google Hangouts social application.
+cbox.ii=Official Google Maps application.
+cbox.jj=Barcode scanner application.
+cbox.kk=Application for changing CPU frequency and I/O scheduler.
+cbox.ll=Fast and simple browser with data compression support.
+cbox.mm=Application for making panorama pictures.
+cbox.nn=Pdroid Privacy application. Android firewall.
+cbox.oo=Similar to Paranoid pie control. Must-choose if you have any broken HW buttons.
+cbox.pp=Official PlayStation Mobile store & emulator.
+cbox.qq=Standart Sim Toolkit.
+cbox.ss=Modified YouTube application.
+
+lite.a=Enlighter
+lite.b=By selecting this option, following system applications will be deleted:\
+\BatteryUsageWidget\
+\GoogleLyricsPlugin\
+\LearningClient\
+\PicoTts\
+\Powersavemode\
+\QuickSearchBox\
+\SemcDlna\
+\SemcEmail\
+\SemcMetadataCleanup\
+\Smartcontacts\
+\TtsService\
+\UserDictionaryProvider\
+\WikipediaPlugin\
+\widgetfavouritepeople\
+\MediaWidget
+lite.c=Want to Enlight your ROM?
+lite.d=Yes..Do it.
+
+opt.a=Extra Configuration
+opt.b=Select the options you wish to be included. If you don't select - will be used by default option.
+opt.c=Options
+opt.d=By checking this you won't be able to unlock LockScreen by HOME button.
+opt.z=By checking this you will completely disable HW LED's on bottom keys.
+opt.k=By checking this you will boost WiFi signal strength in cost of battery life.
+opt.xxxx=Viper Sound Engine with advanced audio processing features.
+opt.xyyx=Set default maximum CPU frequency to 768Mhz. This will greatly save your battery in cost of overall performance. Option can be overrided later using CPU frequency config. apps (like No-Fril CPU, etc..).
+opt.xyxy=Disable zRam memory compression.
+opt.xyxyz=Install black-themed keyboard (Sony keyboard).
+
+rom.title=Data
+rom.titlee=Choose if you want to keep your data from previous ROM (SDcard data won't be touched). Warning! Clean installation is VERY recommended!
+rom.d=Clean my data for 100% fast and stable ROM installation.
+rom.s=Keep my data. I agree that some problems may occur.
+
+omg.title=ROM
+omg.titlee=Install ROM. Choose Don't re-install only if you have already installed THIS version of ROM.
+omg.d=Install ROM as usual.
+omg.s=I already have installed this version of ROM and just want to configure it.
+
+game.title=Game Mode
+game.titlee=Choose if you want to enable Gaming mode in ROM. See website for more info on how it works.
+game.a=Disable Game Mode and use default settings.
+game.b=Enable Game Mode. Change device ID and disable frame filtering.
+
+theme.title=Theme
+theme.titlee=Choose default system theme.
+theme.aa=Keep original one.
+
+uxp.title=Lockscreen
+uxp.titlee=Select default lockscreen for ROM.
+uxp.a=JB-styled lockscreen with instant camera access.
+uxp.b=Stock UXP lockscreen.

@@ -1,0 +1,4 @@
+base=/system
+export CLASSPATH=$base/framework/bmgr.jar
+exec app_process $base/bin com.android.commands.bmgr.Bmgr "$@"
+

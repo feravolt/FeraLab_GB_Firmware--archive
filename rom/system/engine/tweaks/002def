@@ -1,0 +1,8 @@
+#!/system/xbin/sh
+### FeraDroid Engine v15 | By FeraVolt. 2013
+
+READ_AHEAD_KB="2048"
+
+echo $READ_AHEAD_KB > /sys/devices/virtual/bdi/179:0/read_ahead_kb
+echo $READ_AHEAD_KB > /sys/devices/virtual/bdi/default/read_ahead_kb
+

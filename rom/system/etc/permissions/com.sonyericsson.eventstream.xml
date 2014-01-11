@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<permissions>
+    <library name="com.sonyericsson.eventstream_1"
+        file="/system/framework/com.sonyericsson.eventstream.jar"/>
+    <library name="com.sonyericsson.eventstream_2"
+        file="/system/framework/com.sonyericsson.eventstream.jar"/>
+    <library name="com.sonyericsson.eventstream_3"
+        file="/system/framework/com.sonyericsson.eventstream.jar"/>
+</permissions>

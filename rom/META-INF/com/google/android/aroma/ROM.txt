@@ -1,0 +1,418 @@
+<b><#selectbg_g>***FeraLab*** v33 ~Platinum~</#></b>
+ROM - v33:
+   (Warning! FeraKernel v17+ requied)
+   - Updated All apps
+   - FDE v16.02
+   - New EGL library
+   - New androidGLES
+   - Tuned bluetooth configs
+   - Cleaned tweaks
+   - Added JellyBean theme
+   - Added more AROMA options
+   - Few UI updates
+   - Full FeraKernel v17+ integration
+   - Sony Widgets updates (thx 2 Jesus Miranda Sifuentes)
+   - Added walpapers
+   - Reworked Build.prop
+   - Networking speed-up
+   - Wifi optimizations
+   - IPv6 fix
+   - misc..
+
+
+<b><#selectbg_g>***FeraLab*** v32.x ~BulletProof~</#></b>
+ROM - v32.1:
+   - Updated All apps
+   - Aroma installer fixed and updated
+   - JellyBean Android GLES
+   - Ads blocking policy update
+   - SuperSu updated
+   - Viper4Android updated
+   - Revert bootanimation
+   - misc..
+
+ROM - v32:
+   - Built-in fixed LB kernel (v16.1)
+   - Updated & Fixed Camera application and config
+   - Fixed few tweaks
+   - All apps updated and zipalligned
+   - SuperSu
+   - Removed un-useful libraries
+   - Fixed file dublications
+   - Fixed offline charging
+   - Fixed audio
+   - Fixed bluetooth
+   - Fixed semc-apps configuration
+   - Fixed touch-screen
+   - Fixed DRM
+   - Faster Boot-up
+   - Cleaned framework and permissions
+   - All apps updated and zipalligned
+   - X-Reality fix
+   - Build.prop fixes and updates
+   - Added apps to AROMA
+   - Removed Timescape support
+   - Enlighter option update
+   - Faster home launcher
+   - OG Battery icon mod (icons for choice)
+   - New bootanimation
+   - Updated wallpapers
+   - misc..
+
+
+<b><#selectbg_g>***FeraLab*** v31 ~Dragon~</#></b>
+ROM - v31:
+   - Fixed Game Mode
+   - Updated all apps
+   - ZipAlligned all apps
+   - JB animations
+   - Camera fixed
+   - Updated statusbar
+   - All SEMC apps reworked & optimized
+   - Xperia Honami parts (widgets, UI, etc.)
+   - Updated & fixed UI
+   - Extra settings enabled
+   - SEMC apps configuration update
+   - Rearranged settings
+   - FDE v15.05
+   - Faster boot-up
+   - Many more...
+
+
+<b><#selectbg_g>***FeraLab*** v30.x ~Final~ ROM series</#></b>
+ROM - v30.6:
+   - Fixed Messaging app
+   - Aroma installer update
+   - Game Mode update
+   - Build.prop fixes
+   - FDE adapted to v16+ kernel
+   - Dalvik optimizations
+   - GPS optimization
+   - misc..
+
+ROM - v30.5.1:
+   - Fixed offline charging animation
+   - Removed LB kernel
+   - SuperUser
+   - New Lockscreen with instant camera
+   - More UI changes..
+   - All apps zipalligned
+   - Ads blocking policy updated
+   - Busybox fix
+   - misc..
+
+ROM - v30.5:
+   - Fixed offline charging animation
+   - Fixed LB kernel
+   - SuperUser
+   - New Lockscreen with instant camera
+   - More UI changes..
+   - All apps zipalligned
+   - misc..
+
+ROM - v30.4:
+   - Updated Viper4Android
+   - Fixed Battery drain
+   - Camera SpeedUp
+   - All Apps Updated
+   - SDcard speed fix
+   - HW UI acceleration
+   - Fixed audio hiss
+   - Adreno200 optimization
+   - Wifi optimization
+   - Modified YouTube app
+   - AROMA installer updates and fixes
+   - Fixed small UI bug
+   - misc..
+
+ROM - v30.3:
+   - Updated Google play
+   - Added Sim Toolkit in AROMA
+   - New Offline charging animation
+   - misc..
+
+ROM - v30.2:
+   - All apps updated
+   - FDE v14.07
+   - Pop-up windows fix
+   - Tuned & fixed Build.prop
+   - Resigned all themes and modes
+   - Updated ROM configurations in AROMA
+   - Viper4Updaroid fixed & updated
+   - Full 32bpp compatibility
+   - All apps zipalligned
+   - Fixed Enlighter option
+   - Updated Game-mode
+   - zRam (20MB default)
+   - Home launcher speed-up
+   - New wallpapers
+   - OpenAL support
+   - Removed unused tweaks
+   - Tripple Buffering
+   - Many more else...
+
+ROM - v30:
+   - All Apps updated
+   - FDE v13
+   - Wifi Module dublication fix
+   - Tuned Build.prop
+   - Resigned all themes and modes
+   - Force-disable bootanimation sound
+   - Removed few tweaks for stability
+   - Updated ROM configurations in AROMA
+   - Battery-Saving mode added for choice
+   - Kernel Modules for choice
+   - Dalvik optimization level for choice
+   - Fixed framework
+   - Viper Sound Engine IRS samples update
+   - Updated SuperUser
+   - misc..
+
+
+
+<b><#selectbg_g>***FeraLab*** v29 ~Sirius~</#></b>
+ROM - v29:
+   - Ads Block fixed
+   - FDE Updated to v12.54
+   - Touch-screen optimization
+   - Encoding/decoding settings calibration
+   - AAC streaming fix
+   - GPS fixed and tuned (now global only)
+   - AGPS fixes
+   - Search-by-name contact is back
+   - Fixed missing certificates and framework stuff
+   - Updated busybox
+   - Keyboard configuration fix
+   - All application resources & libs and system framework optimized and zipalligned
+   - FeraLab Boot-animation
+   - Updated AROMA installer
+   - Optimized Installation script
+   - Fixed and tuned Animations
+   - Fixed HW LEDs
+   - Updated and optimized framework
+   - Optimized Camera application & configuration
+   - Network scanning time-out set to 9ms
+   - Tuned power profile
+   - Fixed signatures for several applications
+   - DRM configuration, libs and keys fix
+   - All applications updated
+   - Build.prop fix
+   - Game Mode updated
+   - Fixed X-Reality
+   - Updated & fixed system fonts
+   - Added & re-organized extra system settings
+   - Updated font (thx 2 Pasha T.@xda)
+   - Updated design (thx 2 Pasha T.@xda) & recompiled Statusbar
+   - Tuned GPU UI rendering
+   - Fixed Download provider
+   - misc
+
+
+
+<b><#selectbg_g>***FeraLab*** v28 ~Harmony~</#></b>
+   - Lockscreen wallpapers fix
+   - build.prop fix
+   - Animations fix
+   - Updated SuperSu
+   - Updated Busybox
+   - All apps updated & Zipalligned
+   - Modded YouTube app (all qualities, downloader, screen-off playback)
+   - Updated Viper Sound Engine (new IRS samples)
+   - New apps in AROMA
+   - X-Reality image processing engine
+   - Installation script optimization
+   - Updated Wallpapers
+   - Updated Sounds from android 4.3
+   - Bluetooth timeout fix
+   - HW Led fix
+   - Enlighter option
+   - Latest v11 LB kernel included
+   - Framework fix
+   - GPS Optimization
+   - misc tweaks
+
+
+
+<b><#selectbg_g>***FeraLab*** v27 ~Fire~</#></b>
+ROM - v27:
+   - Adreno fix
+   - Updated Sound Engine
+   - New Gallery
+   - Fixed Bravia Engine
+   - Chainfire libs preinstalled
+   - JB animations tuning
+   - GLES Debugging ON
+   - EGLswap optimizations
+   - More stable game graphics
+   - All flashable addons are CWM-capable
+   - Viper and Chainfire plugins
+   - ICS-like LockScreen as option in AROMA (thx 2 Bares)
+   - Optimized installation script
+   - Reverted to Qcom Adreno Drivers
+   - Updated sounds
+   - Tuned Video Drivers
+   - All Apps Updated
+   - Changed Bootanimation
+   - Faster System Loading
+   - Rendering fix
+   - misc tunings & fixes
+
+
+
+<b><#selectbg_g>***FeraLab*** v26 ~Iron~</#></b>
+ROM - v26:
+   - Drivers fix
+   - 16bit mode fix
+   - GPS Tunings
+   - Updated Apps
+   - Fixed Aroma
+   - Animations fix
+   - Camera fix
+   - Changed Bootanimation
+   - Latest Xperia 2012 Adreno Drivers
+   - New Offline Charging Animation
+   - Back to 2D GPU Rendering
+   - misc bugfixes
+
+
+
+<b><#selectbg_g>***FeraLab*** v25 ~Pirate~</#></b>
+ROM - v25:
+   - New Aroma Installer theme
+   - FeraDroid Engine v9
+   - Disabled Bootanimation
+   - Fixed Font
+   - Rendering fix
+   - DRM fix
+   - JB animations
+   - more..
+
+
+
+<b><#selectbg_g>***FeraLab*** v24 ~Phoenix~</#></b>
+ROM - v24:
+   - Aroma Installer
+   - All Addons moved to aroma
+   - Fixed installation on older Xrecovery
+   - Forced 2D rendering (back)
+   - Removed all unused/dangerous tweaks
+   - Removed Fast-dormacy (saves battery)
+   - Updated & Zipalligned all apps
+   - Adreno tunings
+   - LB kernel load fix
+   - Speedy Animations
+   - Additional UI settings
+   - Zdzihu GPU fixes
+   - USB Debugging fix
+   - Changed GPU rendering mode
+   - Walkman styled music player
+   - SmartASSv2 CPU Governor as default
+   - many more..
+
+
+
+<b><#selectbg_g>***FeraLab*** v23 ~Voltage~</#></b>
+ROM - v23:
+   - Percentage Battery Theme addon
+   - Extreme Gamer Mode addons included
+   - GTalk & SimToolkit addon included (thx Bares)
+   - Removed some bloatware
+   - Removed some unused files
+   - Added some missing files
+   - Added SGS III Notes App
+   - Fixed some tweaks
+   - Fixed permissions
+   - Added Pdroid Privacy Protection App
+   - Fixed Font
+   - Fixed & Updated SuperSu
+   - All Apps updeted & zipalligned
+   - New File Explorer
+   - Updated UI translations
+   - WiFi signal strength increaser addon incuded
+   - Chineese IME as addon now
+   - UB Addon included
+   - Optimized/fixed installation script
+   - Misc updates and fixes
+   - Settings rearrangment
+   - CPU app removed
+   - No-HOME-Unlock addon included
+   - MMS fixed (thx 2 Tof)
+   - ADRENO fixes
+   - Added missing VPN related files
+   - New Installation logic
+   - more..
+
+
+
+<b><#selectbg_g>***FeraLab*** v22 ~Marvel~</#></b>
+ROM - v22:
+   - New SuperUser App (SuperSU)
+   - Updated Viper Sound Engine
+   - Added few Sony Widgets
+   - Timescape Addon included
+   - Added TTS files
+   - Browser fix (thx 2 biablo)
+   - SMS/MMS fix
+   - Adreno fix
+   - Xperia Z Theme Update
+   - Theme packs updated
+   - Installation script optimization
+   - Audio playback hack
+   - Sqlite database tweak
+   - 270-degree rotation support
+   - WPA tuning
+   - Scrolling tweaked
+   - Emergency Logic for LB phones
+   - Font fix (thx 2 Bares)
+   - Removed some bloatware
+   - 1GHz CPU Kernel addon
+
+
+
+<b><#selectbg_g>***FeraLab*** v21 ~Unlimited~</#></b>
+ROM - v21:
+   - Based on Latest GB 6.0.B.0.743 Firmware 
+   - Full Rebuild
+   - FeraDroid Engine v6.18
+   - Xperia Z Themed
+   - Improved and and Fixed Audio
+   - Viper Sound Engine Integrated with Sony Clearbass Sound Enchasement
+   - Mobile Bravia Engine v2
+   - New wallpapers
+   - Volume key Rocker
+   - Back-to-Kill option
+   - Battery Health checling
+   - ICS-like themed Settings menu
+   - Integrated CPU control
+   - Modified Camera (see http://forum.xda-developers.com/showthread.php?t=2091509)
+   - Android 4.2 sounds
+   - HD video playback fix
+   - All Apps Updated & Zipalligned
+   - Xperia Home with settings
+   - New Adreno Video Drivers
+   - Floating-Touch-like smooth touchscreen
+   - Stock Player libs update
+   - Japaneese & Chineese IME included
+   - Swipre-to-clear notification option
+   - Centered Statusbar Clock
+   - Scrolling fix
+   - NXT Lockscreen
+   - Almost working Theming engine
+   - GPU Rendering
+   - Misc Grafics optimizations
+   - Slightly Edited stock theme
+   - Customizable Libdroid panel (+torch and brightness bar) in Statusbar
+   - Latest Busybox and SU
+   - JellyBean Fonts
+   - Updated APN list
+   - Adreno tuning
+   - InCall Noise suspension
+   - Reboot & Screenshot option in power menu
+   - Removed Bloatware
+   - 30-step volume
+   - many more..
+
+
+Starting from v21 ROM was totally reworked from scratches basing on new firmware..
+Kernel Changelog is avaiable on http://code.google.com/p/feralab
+

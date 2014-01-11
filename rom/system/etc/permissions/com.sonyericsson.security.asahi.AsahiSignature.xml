@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright(C) 2009 Sony Ericsson Mobile Communications AB.
+    All rights, including trade secret rights, reserved
+-->
+<permissions>
+    <library name="AsahiSignature"
+             file="/system/framework/AsahiSignature.jar"/>
+</permissions>
+
+
+

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<permissions>
+    <library name="com.sonyericsson.android.socialphonebook.api"
+        file="/system/framework/com.sonyericsson.android.socialphonebook.jar"/>
+</permissions>
+

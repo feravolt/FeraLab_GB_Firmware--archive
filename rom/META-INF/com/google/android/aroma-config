@@ -1,0 +1,252 @@
+### ***FeraLab*** 2014 ###
+
+ini_set("dp","3");
+
+calibrate("0.9695","16","0.9900","0");
+
+theme("touchwiz");
+
+ini_set("rom_name",             "***FeraLab***");
+ini_set("rom_version",          "v33 Platinum");
+ini_set("rom_author",           "FeraVolt");
+ini_set("rom_device",           "Xperia X10");
+ini_set("rom_api",              "2.3.9");
+
+anisplash(
+    1,
+
+    "splash/a1", 100,
+    "splash/a2", 60,
+    "splash/a3", 60,
+    "splash/a4", 60,
+    "splash/a5", 60,
+    "splash/a6", 1100
+);
+
+fontresload( "0", "ttf/SoMARegular.ttf", "12" );
+fontresload( "1", "ttf/SoMARegular.ttf", "18" );
+
+selectbox(
+    "Select Language",
+    "Please select installer language:",
+    "@default",
+    "lang.prop",
+    "English",            "Hello!",                                        1,      #-- selected.0 = 1
+    "Russian",            "Здравствуйте!",                                 0
+);
+
+if prop("lang.prop","selected.0")=="1" then
+  loadlang("langs/en.lang");
+endif;
+
+if prop("lang.prop","selected.0")=="2" then
+  loadlang("langs/ru.lang");
+endif;
+
+viewbox(
+    lang("langtest.title"),  
+    "<~langtest.multiline>",
+    "@info"
+);
+
+viewbox(
+    "<~welcome.title>",
+    "<~welcome.text1> <b>"+
+	  ini_get("rom_name")+
+	"</b> <~common.for> <b>"+ini_get("rom_device")+"</b>.\n\n"+
+    "<~welcome.text2>\n\n"+
+      "  <~welcome.version>\t: <b><#selectbg_g>"+ini_get("rom_version")+"</#></b>\n"+
+      "  <~welcome.codename>\t: <b><#selectbg_g>FeraVolt</#></b>\n\n"+
+    "<~welcome.next>",
+    "@welcome"
+);
+
+agreebox(
+    "<~terms.title>",
+    "<~terms.desc>",
+    "@license",
+    resread("license.txt"),
+    "<~terms.check>",
+    "<~terms.confirm>"
+);
+
+textbox(
+    "<~changelog.title>",
+    "<~changelog.desc>",
+    "@update",
+    resread("ROM.txt")
+);
+
+textbox(
+    "<~fde.title>",
+    "<~fde.desc>",
+    "@update",
+    resread("FDE.txt")
+);
+
+pleasewait("Processing..");
+
+setvar(
+      "sysinfo",
+      "<@center><b><~sys.titlee></b></@>\n\n"+
+      "<~sys.system>\t\t: <b><#selectbg_g>"+getdisksize("/system","m")+" MB</#></b>\n"+
+        "\t<~sys.free>\t\t: <b><#selectbg_g>"+getdiskfree("/system","m")+" MB</#></b>\n\n"+
+      "<~sys.data>\t\t: <b><#selectbg_g>"+getdisksize("/data","m")+" MB</#></b>\n"+
+        "\t<~sys.free>\t\t: <b><#selectbg_g>"+getdiskfree("/data","m")+" MB</#></b>\n\n"+
+      "<~sys.sd>\t\t: <b><#selectbg_g>"+getdisksize("/sdcard","m")+" MB</#></b>\n"+
+        "\t<~sys.free>\t\t: <b><#selectbg_g>"+getdiskfree("/sdcard","m")+" MB</#></b>\n\n"+
+      "<~sys.sdext>\t\t: <b><#selectbg_g>"+getdisksize("/sd-ext","m")+" MB</#></b>\n"+
+        "\t<~sys.free>\t\t: <b><#selectbg_g>"+getdiskfree("/sd-ext","m")+" MB</#></b>\n\n"+
+      ""
+);
+
+textbox(
+      "<~sys.title>",
+      " ",
+      "@info",
+      getvar("sysinfo")
+);
+
+selectbox(
+    "<~omg.title>",
+    "<~omg.titlee>:",
+    "@default",
+    "omg.prop",
+    "Install ROM",                   "<~omg.d>",                                 1,      #-- selected.0 = 1
+    "Don't Re-install",              "<~omg.s>",                                 0       #-- selected.0 = 2
+);
+
+selectbox(
+    "<~rom.title>",
+    "<~rom.titlee>:",
+    "@default",
+    "rom.prop",
+    "Clean Data",                   "<~rom.d>",                                 1,      #-- selected.0 = 1
+    "Keep Data",                    "<~rom.s>",                                 0       #-- selected.0 = 2
+);
+
+selectbox(
+    "<~theme.title>",
+    "<~theme.titlee>:",
+    "@default",
+    "theme.prop",
+    "<~theme.aa>",                    " ",                                 1,      #-- selected.0 = 1
+    "Amethyst",                       " ",                                 0,      #-- selected.0 = 2
+    "Emerald",                        " ",                                 0,      #-- selected.0 = 3
+    "Gold",                           " ",                                 0,      #-- selected.0 = 4
+    "Ruby",                           " ",                                 0,      #-- selected.0 = 5
+    "Sapphire",                       " ",                                 0,      #-- selected.0 = 6
+    "Silk",                           " ",                                 0,      #-- selected.0 = 7
+    "Turquoise",                      " ",                                 0,      #-- selected.0 = 8
+    "JellyBean",                      " ",                                 0       #-- selected.0 = 9
+);
+
+selectbox(
+    "<~uxp.title>",
+    "<~uxp.titlee>:",
+    "@default",
+    "uxp.prop",
+    "Modified",                    "<~uxp.a>",                                 1,      #-- selected.0 = 1
+    "Original",                    "<~uxp.b>",                                 0       #-- selected.0 = 2
+);
+
+selectbox(
+    "<~game.title>",
+    "<~game.titlee>:",
+    "@default",
+    "game.prop",
+    "Game Mode OFF",                  "<~game.a>",                                 1,      #-- selected.0 = 1
+    "Game Mode ON",                   "<~game.b>",                                 0       #-- selected.0 = 2
+);
+
+checkbox(
+      "<~opt.a>",
+	  "<~opt.b>",
+      "@personalize",
+      "opt.prop",
+	  "<~opt.c>",            "",                                     2,
+	    "No-Home-Unlock",     "<~opt.d>",0,
+	    "No-HW-LED",          "<~opt.z>",0,
+	    "WiFi TX",            "<~opt.k>",0,
+	    "Viper4Android",      "<~opt.xxxx>",0,
+	    "Save My Battery",    "<~opt.xyyx>",0,
+	    "Disable zRam",       "<~opt.xyxy>",0,
+	    "Black Keyboard",     "<~opt.xyxyz>",0
+);
+
+checkbox(
+  "***FeraLab***",
+  "<~cbox.ch>:",
+  "@personalize",
+  "extraapps.prop",
+  "<~cbox.ea>:","",2,
+	"ChainFire",               "<~cbox.aa>",0,
+	"Chinese IME",             "<~cbox.bb>",0,
+	"CleanMaster",             "<~cbox.cc>",0,
+	"Floating Apps",           "<~cbox.dd>",0,
+	"Color Note",              "<~cbox.ee>",0,
+	"Gmail",                   "<~cbox.ff>",0,
+	"Google Drive",            "<~cbox.gg>",0,
+	"Google Hangouts",         "<~cbox.hh>",0,
+	"Google Maps",             "<~cbox.ii>",0,
+	"NeoReader",               "<~cbox.jj>",0,
+	"No-Frills CPU",           "<~cbox.kk>",0,
+	"Opera Mini",              "<~cbox.ll>",0,
+	"Panorama",                "<~cbox.mm>",0,
+	"Pdroid",                  "<~cbox.nn>",0,
+	"Pie Control",             "<~cbox.oo>",0,
+	"PlayStation",             "<~cbox.pp>",0,
+	"Sim Toolkit",             "<~cbox.qq>",0,
+	"YouTube",                 "<~cbox.ss>",0
+);
+
+checkbox(
+      "<~lite.a>",
+	  "<~lite.b>",
+      "@personalize",
+      "lite.prop",
+	  "<~lite.c>",            "",                                                              2,
+	    "<~lite.d>",          "",                        								   0
+);
+
+ini_set("text_next", "<~hz.now>");
+
+viewbox(
+    "<~hz.ready>",
+    "<~hz.readyy>.\n\n"+
+	"<~hz.aha>.",
+    "@install"
+);
+
+ini_set("text_next", "<~hz.next>");
+
+setvar("retstatus",
+  install(
+      "<~inst.title>",
+	  "<b>"+ini_get("rom_name")+"</b> <~inst.is>\n\n"+
+      "<~inst.wait> <b>"+ini_get("rom_name")+
+	  "</b>. <~inst.min>.",
+      "@install",
+      "<~inst.fin> <b>"+ini_get("rom_name")+
+	  "</b>. <~inst.next>."
+  )
+);
+
+ini_set("text_next", "<~finish.fin>");
+
+checkviewbox(
+    "<~reboot.title>",
+    "<#selectbg_g><b><~reboot.titlee></b></#>\n\n",
+    "@welcome",
+    "<~reboot.box>",
+    "1",
+    "reboot_it"
+);
+
+if
+  getvar("reboot_it")=="1"
+then
+  reboot("onfinish");
+endif;
+
+### All Rights Fucked. 2013 ###

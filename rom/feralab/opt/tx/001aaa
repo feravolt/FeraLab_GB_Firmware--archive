@@ -1,0 +1,6 @@
+#!/system/xbin/sh
+### FeraDroid Engine v15 | By FeraVolt. 2013
+
+/system/xbin/iwconfig wlan0 txpower 15
+iwconfig wlan0 txpower 15
+

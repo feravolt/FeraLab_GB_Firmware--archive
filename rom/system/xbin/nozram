@@ -1,0 +1,8 @@
+#!/system/xbin/sh
+### FeraDroid Engine v15 | By FeraVolt. 2013
+export PATH=/sbin
+
+busybox swapoff /dev/block/ramzswap0
+rzscontrol /dev/block/ramzswap0 --reset
+busybox swapoff /dev/block/ramzswap0
+echo 0 > /proc/sys/vm/swappiness

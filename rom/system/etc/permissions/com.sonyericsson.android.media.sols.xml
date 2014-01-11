@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<permissions>
+    <library name="com.sonyericsson.android.media.sols"
+        file="/system/framework/com.sonyericsson.android.media.sols.jar"/>
+</permissions>
+
