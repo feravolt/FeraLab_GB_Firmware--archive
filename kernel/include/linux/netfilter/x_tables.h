@@ -173,39 +173,27 @@ struct xt_counters_info
 
 #include <linux/netdevice.h>
 
-
-#define xt_match_param xt_action_param
-#define xt_target_param xt_action_param
 /**
- * struct xt_action_param - parameters for matches/targets
+ * struct xt_match_param - parameters for match extensions' match functions
  *
- * @match:	the match extension
- * @target:	the target extension
- * @matchinfo:	per-match data
- * @targetinfo:	per-target data
  * @in:		input netdevice
  * @out:	output netdevice
+ * @match:	struct xt_match through which this function was invoked
+ * @matchinfo:	per-match data
  * @fragoff:	packet is a fragment, this is the data offset
  * @thoff:	position of transport header relative to skb->data
- * @hook:	hook number given packet came from
+ * @hotdrop:	drop packet if we had inspection problems
  * @family:	Actual NFPROTO_* through which the function is invoked
  * 		(helpful when match->family == NFPROTO_UNSPEC)
- * @hotdrop:	drop packet if we had inspection problems
  */
-struct xt_action_param {
-	union {
-		const struct xt_match *match;
-		const struct xt_target *target;
-	};
-	union {
-		const void *matchinfo, *targinfo;
-	};
+struct xt_match_param {
 	const struct net_device *in, *out;
+	const struct xt_match *match;
+	const void *matchinfo;
 	int fragoff;
 	unsigned int thoff;
-	unsigned int hooknum;
-	u_int8_t family;
 	bool *hotdrop;
+	u_int8_t family;
 };
 
 /**
@@ -244,13 +232,13 @@ struct xt_mtdtor_param {
  *
  * Other fields see above.
  */
-/*struct xt_target_param {
+struct xt_target_param {
 	const struct net_device *in, *out;
 	unsigned int hooknum;
 	const struct xt_target *target;
 	const void *targinfo;
 	u_int8_t family;
-};*/
+};
 
 /**
  * struct xt_tgchk_param - parameters for target extensions'

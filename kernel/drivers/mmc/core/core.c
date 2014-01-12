@@ -45,7 +45,7 @@ static struct wake_lock mmc_delayed_work_wake_lock;
  * performance cost, and for other reasons may not always be desired.
  * So we allow it it to be disabled.
  */
-bool use_spi_crc = true;
+int use_spi_crc = 1;
 module_param(use_spi_crc, bool, 0);
 
 /*

@@ -349,6 +349,8 @@ unsigned int tcp_poll(struct file *file, struct socket *sock, poll_table *wait)
 	 */
 
 	mask = 0;
+	if (sk->sk_err)
+		mask = POLLERR;
 
 	/*
 	 * POLLHUP is certainly not done right. But poll() doesn't
@@ -417,11 +419,6 @@ unsigned int tcp_poll(struct file *file, struct socket *sock, poll_table *wait)
 		if (tp->urg_data & TCP_URG_VALID)
 			mask |= POLLPRI;
 	}
-	/* This barrier is coupled with smp_wmb() in tcp_reset() */
-	smp_rmb();
-	if (sk->sk_err)
-		mask |= POLLERR;
-
 	return mask;
 }
 
@@ -1289,7 +1286,6 @@ int tcp_recvmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,
 	struct task_struct *user_recv = NULL;
 	int copied_early = 0;
 	struct sk_buff *skb;
-	u32 urg_hole = 0;
 
 	lock_sock(sk);
 
@@ -1501,8 +1497,7 @@ do_prequeue:
 				}
 			}
 		}
-		if ((flags & MSG_PEEK) &&
-		    (peek_seq - copied - urg_hole != tp->copied_seq)) {
+		if ((flags & MSG_PEEK) && peek_seq != tp->copied_seq) {
 			if (net_ratelimit())
 				printk(KERN_DEBUG "TCP(%s:%d): Application bug, race in MSG_PEEK.\n",
 				       current->comm, task_pid_nr(current));
@@ -1523,7 +1518,6 @@ do_prequeue:
 				if (!urg_offset) {
 					if (!sock_flag(sk, SOCK_URGINLINE)) {
 						++*seq;
-						urg_hole++;
 						offset++;
 						used--;
 						if (!used)

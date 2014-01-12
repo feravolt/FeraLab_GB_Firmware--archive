@@ -11,9 +11,8 @@
 #define LINUX_MMC_HOST_H
 
 #include <linux/leds.h>
-#include <linux/sched.h>
+
 #include <linux/mmc/core.h>
-#include <linux/mmc/pm.h>
 
 struct mmc_ios {
 	unsigned int	clock;			/* clock rate */
@@ -123,9 +122,6 @@ struct mmc_host {
 #define MMC_CAP_NEEDS_POLL	(1 << 5)	/* Needs polling for card-detection */
 #define MMC_CAP_8_BIT_DATA	(1 << 6)	/* Can the host do 8 bit transfers */
 
-	mmc_pm_flag_t		pm_caps;
-	
-
 	/* host specific block data */
 	unsigned int		max_seg_size;	/* see blk_queue_max_segment_size */
 	unsigned short		max_hw_segs;	/* see blk_queue_max_hw_segments */
@@ -168,7 +164,6 @@ struct mmc_host {
 	unsigned int		sdio_irqs;
 	struct task_struct	*sdio_irq_thread;
 	atomic_t		sdio_irq_thread_abort;
-	mmc_pm_flag_t		pm_flags;
 
 #ifdef CONFIG_LEDS_TRIGGERS
 	struct led_trigger	*led;		/* activity led */

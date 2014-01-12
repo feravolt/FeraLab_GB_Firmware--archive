@@ -99,8 +99,9 @@ EXPORT_SYMBOL(nf_log_packet);
 
 #ifdef CONFIG_PROC_FS
 static void *seq_start(struct seq_file *seq, loff_t *pos)
+	__acquires(RCU)
 {
-	mutex_lock(&nf_log_mutex);
+	rcu_read_lock();
 
 	if (*pos >= ARRAY_SIZE(nf_loggers))
 		return NULL;
@@ -119,8 +120,9 @@ static void *seq_next(struct seq_file *s, void *v, loff_t *pos)
 }
 
 static void seq_stop(struct seq_file *s, void *v)
+	__releases(RCU)
 {
-	mutex_unlock(&nf_log_mutex);
+	rcu_read_unlock();
 }
 
 static int seq_show(struct seq_file *s, void *v)
@@ -128,7 +130,8 @@ static int seq_show(struct seq_file *s, void *v)
 	loff_t *pos = v;
 	const struct nf_logger *logger;
 
-	logger = nf_loggers[*pos];
+	logger = rcu_dereference(nf_loggers[*pos]);
+
 	if (!logger)
 		return seq_printf(s, "%2lld NONE\n", *pos);
 
