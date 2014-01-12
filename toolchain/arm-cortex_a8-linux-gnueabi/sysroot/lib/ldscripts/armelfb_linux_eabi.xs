@@ -64,7 +64,7 @@ SECTIONS
   .iplt           : { *(.iplt) }
   .text           :
   {
-    *(.text.unlikely .text.*_unlikely)
+    *(.text.unlikely .text.*_unlikely .text.unlikely.*)
     *(.text.exit .text.exit.*)
     *(.text.startup .text.startup.*)
     *(.text.hot .text.hot.*)
@@ -110,12 +110,12 @@ SECTIONS
   .init_array     :
   {
     KEEP (*(SORT(.init_array.*)))
-    KEEP (*(.init_array))
+    KEEP (*(.init_array ))
   }
   .fini_array     :
   {
     KEEP (*(SORT(.fini_array.*)))
-    KEEP (*(.fini_array))
+    KEEP (*(.fini_array ))
   }
   .ctors          :
   {
@@ -176,6 +176,7 @@ SECTIONS
   }
   _bss_end__ = . ; __bss_end__ = . ;
   . = ALIGN(32 / 8);
+  . = SEGMENT_START("ldata-segment", .);
   . = ALIGN(32 / 8);
   __end__ = . ;
   _end = .; PROVIDE (end = .);
@@ -203,7 +204,7 @@ SECTIONS
   /* DWARF 2 */
   .debug_info     0 : { *(.debug_info .gnu.linkonce.wi.*) }
   .debug_abbrev   0 : { *(.debug_abbrev) }
-  .debug_line     0 : { *(.debug_line) }
+  .debug_line     0 : { *(.debug_line .debug_line.* .debug_line_end ) }
   .debug_frame    0 : { *(.debug_frame) }
   .debug_str      0 : { *(.debug_str) }
   .debug_loc      0 : { *(.debug_loc) }

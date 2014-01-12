@@ -3,7 +3,7 @@ This is libc.info, produced by makeinfo version 5.1 from libc.texinfo.
 This file documents the GNU C Library.
 
    This is 'The GNU C Library Reference Manual', for version 2.18
-(crosstool-NG hg+default-388793b84c11 - Linaro GCC 2013.11 - Cortex-A8).
+(crosstool-NG hg+default-2b7744ca8ad8 - Linaro GCC 2013.12 - Cortex-A8).
 
    Copyright (C) 1993-2013 Free Software Foundation, Inc.
 
@@ -1710,7 +1710,7 @@ Main Menu
 *********
 
 This is 'The GNU C Library Reference Manual', for Version 2.18
-(crosstool-NG hg+default-388793b84c11 - Linaro GCC 2013.11 - Cortex-A8)
+(crosstool-NG hg+default-2b7744ca8ad8 - Linaro GCC 2013.12 - Cortex-A8)
 of the GNU C Library.
 
 * Menu:

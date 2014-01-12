@@ -117,3 +117,7 @@
 #define CLEAR_INSN_CACHE(BEG, END) not_used
 
 #define ARM_TARGET2_DWARF_FORMAT (DW_EH_PE_pcrel | DW_EH_PE_indirect)
+
+/* We do not have any MULTILIB_OPTIONS specified, so there are no
+   MULTILIB_DEFAULTS.  */
+#undef  MULTILIB_DEFAULTS

@@ -1,6 +1,6 @@
 export ARCH=arm
 export SUBARCH=arm
-export CROSS_COMPILE=/home/feravolt/ferra/toolchain/bin/arm-cortex_a8-linux-gnueabi-
+export CROSS_COMPILE=/home/feravolt/ferra/toolchain/bin/arm-gnueabi-
 echo '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
 echo '~         ***FeraLab***          ~'
 echo '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'

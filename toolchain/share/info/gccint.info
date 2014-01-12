@@ -59,7 +59,7 @@ Introduction
 This manual documents the internals of the GNU compilers, including how
 to port them to new targets and some information about how to write
 front ends for new languages.  It corresponds to the compilers
-(crosstool-NG hg+default-388793b84c11 - Linaro GCC 2013.11 - Cortex-A8)
+(crosstool-NG hg+default-2b7744ca8ad8 - Linaro GCC 2013.12 - Cortex-A8)
 version 4.7.4.  The use of the GNU compilers is documented in a separate
 manual.  *Note Introduction: (gcc)Top.
 

@@ -1,6 +1,6 @@
 export ARCH=arm
 export SUBARCH=arm
-export CROSS_COMPILE=/home/feravolt/ferra/toolchain/bin/arm-cortex_a8-linux-gnueabi-
+export CROSS_COMPILE=/home/feravolt/ferra/toolchain/bin/arm-gnueabi-
 echo '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
 echo '~         ***FeraLab***          ~'
 echo '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
@@ -23,11 +23,14 @@ cd
 cd /home/feravolt/ferra/vendor/host
 echo ' '
 echo '>> Compiling modules...'
-make clean
-make
+ARCH=arm CROSS_COMPILE=/home/feravolt/ferra/toolchain/bin/arm-gnueabi- make clean
+ARCH=arm CROSS_COMPILE=/home/feravolt/ferra/toolchain/bin/arm-gnueabi- make
+cp /home/feravolt/ferra/vendor/host/.output/QUALCOMM_ARM_NATIVEMMC-SDIO/image/ar6000.ko /home/feravolt/ferra/0UTPUT/wifi.ko
 echo ' '
 echo '>> Cleaning modules...'
-/home/feravolt/ferra/toolchain/bin/arm-cortex_a8-linux-gnueabi-strip --strip-unneeded ar6000.ko
+cd
+cd 0UTPUT
+/home/feravolt/ferra/toolchain/bin/arm-gnueabi-strip --strip-unneeded wifi.ko
 cd
 cd ferra
 if [ -e /home/feravolt/ferra/kernel/arch/arm/boot/zImage ]; then
@@ -36,7 +39,7 @@ echo '>> Packing ramdisk...'
 rm -f /home/feravolt/ferra/kernel/tools/input/zImage
 rm -f /home/feravolt/ferra/kernel/tools/input/ramdisk/modules/wifi.ko
 cp /home/feravolt/ferra/kernel/arch/arm/boot/zImage /home/feravolt/ferra/kernel/tools/input/zImage
-mv /home/feravolt/ferra/kernel/drivers/net/wireless/ath6k/ar6000.ko /home/feravolt/ferra/kernel/tools/input/ramdisk/modules/wifi.ko
+mv /home/feravolt/ferra/0UTPUT/wifi.ko /home/feravolt/ferra/kernel/tools/input/ramdisk/modules/wifi.ko
 cd /home/feravolt/ferra/kernel/tools/ramdisk
 ./pack
 cd
