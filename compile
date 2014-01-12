@@ -19,7 +19,12 @@ make fera_es209ra_defconfig
 echo ' '
 echo '>> Compiling FeraKernel...'
 make -j2
-cd /home/feravolt/ferra/kernel/drivers/net/wireless/ath6k/
+cd
+cd /home/feravolt/ferra/vendor/host
+echo ' '
+echo '>> Compiling modules...'
+make clean
+make
 echo ' '
 echo '>> Cleaning modules...'
 /home/feravolt/ferra/toolchain/bin/arm-cortex_a8-linux-gnueabi-strip --strip-unneeded ar6000.ko

@@ -126,7 +126,7 @@
 #include <linux/in.h>
 #include <linux/jhash.h>
 #include <linux/random.h>
-
+#include <linux/iface_stat.h>
 #include "net-sysfs.h"
 
 /* Instead of increasing this, you should create a hash table. */
@@ -4900,6 +4900,7 @@ int dev_change_net_namespace(struct net_device *dev, struct net *net, const char
 	unlist_netdevice(dev);
 
 	synchronize_net();
+	iface_stat_update(dev);
 
 	/* Shutdown queueing discipline. */
 	dev_shutdown(dev);

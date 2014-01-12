@@ -3960,6 +3960,8 @@ static void tcp_reset(struct sock *sk)
 		sk->sk_err = ECONNRESET;
 	}
 
+	smp_wmb();
+
 	if (!sock_flag(sk, SOCK_DEAD))
 		sk->sk_error_report(sk);
 
