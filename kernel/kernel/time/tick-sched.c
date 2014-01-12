@@ -270,8 +270,7 @@ void tick_nohz_stop_sched_tick(int inidle)
 	next_jiffies = get_next_timer_interrupt(last_jiffies);
 	delta_jiffies = next_jiffies - last_jiffies;
 
-	if (rcu_needs_cpu(cpu) || printk_needs_cpu(cpu)) || 
-		arch_needs_cpu(cpu) || this_cpu_load()) {
+	if (rcu_needs_cpu(cpu) || printk_needs_cpu(cpu))
 		next_jiffies = last_jiffies + 1;
 		delta_jiffies = 1;
 	/*

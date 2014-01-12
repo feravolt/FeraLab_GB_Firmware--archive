@@ -1064,6 +1064,7 @@ static struct resource kgsl_resources[] = {
 		.flags = IORESOURCE_IRQ,
        },
 };
+
 static struct kgsl_platform_data kgsl_pdata = {
 	.high_axi_3d = 192000,
 	.max_grp2d_freq = 0,
@@ -1448,7 +1449,7 @@ static struct platform_device *devices[] __initdata = {
 	&msm_bluesleep_device,
 	&msm_bt_power_device,
 	&msm_device_uart_dm2,
-	&msm_device_kgsl
+	&msm_device_kgsl,
 	&hs_device,
 #if defined(CONFIG_TSIF) || defined(CONFIG_TSIF_MODULE)
 	&msm_device_tsif,
