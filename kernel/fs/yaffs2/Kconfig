@@ -93,7 +93,7 @@ config YAFFS_AUTO_YAFFS2
 config YAFFS_DISABLE_TAGS_ECC
 	bool "Disable yaffs from doing ECC on tags by default"
 	depends on YAFFS_FS && YAFFS_YAFFS2
-	default n
+	default y
 	help
 	  This defaults yaffs to using its own ECC calculations on tags instead of
 	  just relying on the MTD.
