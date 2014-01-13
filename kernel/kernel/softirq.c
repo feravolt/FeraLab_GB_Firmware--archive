@@ -158,22 +158,13 @@ void local_bh_enable_ip(unsigned long ip)
 }
 EXPORT_SYMBOL(local_bh_enable_ip);
 
-/*
- * We restart softirq processing MAX_SOFTIRQ_RESTART times,
- * and we fall back to softirqd after that.
- *
- * This number has been established via experimentation.
- * The two things to balance is latency against fairness -
- * we want to handle softirqs as soon as possible, but they
- * should not be able to lock up the box.
- */
-#define MAX_SOFTIRQ_RESTART 10
+#define MAX_SOFTIRQ_TIME  msecs_to_jiffies(2)
 
 asmlinkage void __do_softirq(void)
 {
 	struct softirq_action *h;
 	__u32 pending;
-	int max_restart = MAX_SOFTIRQ_RESTART;
+	unsigned long end = jiffies + MAX_SOFTIRQ_TIME;
 	int cpu;
 
 	pending = local_softirq_pending();
@@ -210,18 +201,16 @@ restart:
 		h++;
 		pending >>= 1;
 	} while (pending);
-
 	local_irq_disable();
-
 	pending = local_softirq_pending();
-	if (pending && --max_restart)
-		goto restart;
 
-	if (pending)
+	if (pending) {
+		if (time_before(jiffies, end) && !need_resched())
+			goto restart;
 		wakeup_softirqd();
+		}
 
 	trace_softirq_exit();
-
 	account_system_vtime(current);
 	_local_bh_enable();
 }
