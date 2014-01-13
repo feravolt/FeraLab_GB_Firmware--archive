@@ -179,6 +179,8 @@ __dma_alloc(struct device *dev, size_t size, dma_addr_t *handle, gfp_t gfp,
 		}
 	}
 
+	gfp &= ~(__GFP_COMP);
+
 	/*
 	 * Sanity check the allocation size.
 	 */
