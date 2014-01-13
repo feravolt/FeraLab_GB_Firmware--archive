@@ -15,6 +15,11 @@ cd ferra/kernel
 make distclean
 make fera_es209ra_defconfig
 cd
+cd ferra/vendor/host
+make clobber
+cd
+rm -f /home/feravolt/ferra/flashtool/firmwares/FeraKernel.ftf
+cd ferra
 echo '>> FeraKernel ready.'
 echo ' '
 echo ' '

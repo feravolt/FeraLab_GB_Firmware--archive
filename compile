@@ -13,6 +13,7 @@ echo '>> Applying latest kernel configuration...'
 cd
 cd ferra
 rm -R 0UTPUT
+mkdir 0UTPUT
 cd kernel
 make fera_es209ra_defconfig
 echo ' '
@@ -22,15 +23,12 @@ cd
 cd /home/feravolt/ferra/vendor/host
 echo ' '
 echo '>> Compiling modules...'
-ARCH=arm CROSS_COMPILE=/home/feravolt/ferra/toolchain/bin/arm-gnueabi- make clean
-ARCH=arm CROSS_COMPILE=/home/feravolt/ferra/toolchain/bin/arm-gnueabi- make
+make
 cd
-cd ferra
-mkdir 0UTPUT
 cp /home/feravolt/ferra/vendor/host/.output/QUALCOMM_ARM_NATIVEMMC-SDIO/image/ar6000.ko /home/feravolt/ferra/0UTPUT/wifi.ko
 echo ' '
 echo '>> Cleaning modules...'
-cd 0UTPUT
+cd ferra/0UTPUT
 /home/feravolt/ferra/toolchain/bin/arm-gnueabi-strip --strip-unneeded wifi.ko
 cd
 cd ferra
@@ -53,12 +51,12 @@ cd ferra
 mv -t /home/feravolt/ferra/0UTPUT /home/feravolt/ferra/kernel/tools/output/*
 rm -f /home/feravolt/ferra/kernel/tools/input/zImage
 rm -f /home/feravolt/ferra/kernel/tools/input/ramdisk.cpio.gz
-rm -f /home/feravolt/ferra/kernel/tools/input/ramdisk/modules/wifi.ko
 fi;
 echo ' '
 echo '>> Compilation completed.'
 cd
 cd ferra
+rm -f /home/feravolt/ferra/flashtool/firmwares/FeraKernel.ftf
 cp -f /home/feravolt/ferra/0UTPUT/* /home/feravolt/ferra/flashtool/firmwares/
 echo ' '
 echo '>> FeraKernel ready.'
