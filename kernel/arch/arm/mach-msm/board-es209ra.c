@@ -1623,7 +1623,7 @@ static struct mmc_platform_data es209ra_sdcc_data1 = {
 };
 
 static struct mmc_platform_data es209ra_sdcc_data2 = {
-	.ocr_mask	= MMC_VDD_27_28 | MMC_VDD_28_29,
+	.ocr_mask	= MMC_VDD_22_23 | MMC_VDD_24_25,
 	.translate_vdd	= msm_sdcc_setup_power,
 	.mmc_bus_width  = MMC_CAP_4_BIT_DATA,
 };

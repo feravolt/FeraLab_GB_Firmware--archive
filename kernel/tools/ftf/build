@@ -28,8 +28,8 @@ echo branding: FeraKernel >>  manifest.mf
 echo Created-By: FeraVolt >>  manifest.mf
 echo version: v18.1 >>  manifest.mf
 jar cvfm0 kernel.jar manifest.mf loader.sin kernel.sin
-mv kernel.jar FeraKernel-v18.1.ftf
-mv FeraKernel-v18.ftf ../output/
+mv kernel.jar FeraKernel.ftf
+mv FeraKernel.ftf ../output/
 rm manifest.mf 
 rm image
 rm ramdisk
