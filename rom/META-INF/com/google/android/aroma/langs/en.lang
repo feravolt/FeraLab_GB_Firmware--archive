@@ -28,10 +28,10 @@ welcome.codename=DEVELOPER
 welcome.updated=ANDROID
 welcome.next=Press Next to Continue the Installation...
 
-terms.title=DISCLAIMER
-terms.desc=Please read carefully!!!
-terms.check=I Agree with this Terms and Conditions...
-terms.confirm=Please check the agreement or exit...
+terms.title=License
+terms.desc=GPLv2 OpenSource License.
+terms.check=I Agree with this Terms and Conditions.
+terms.confirm=Please check the agreement or exit.
 
 changelog.title=Changelog
 changelog.desc=***FeraLab*** ROM changelog
@@ -111,7 +111,6 @@ opt.b=Select the options you wish to be included. If you don't select - will be 
 opt.c=Options
 opt.d=By checking this you won't be able to unlock LockScreen by HOME button.
 opt.z=By checking this you will completely disable HW LED's on bottom keys.
-opt.k=By checking this you will boost WiFi signal strength in cost of battery life.
 opt.xxxx=Viper Sound Engine with advanced audio processing features.
 opt.xyyx=Set default maximum CPU frequency to 768Mhz. This will greatly save your battery in cost of overall performance. Option can be overrided later using CPU frequency config. apps (like No-Fril CPU, etc..).
 opt.xyxy=Disable zRam memory compression.
@@ -119,7 +118,7 @@ opt.xyxyz=Install black-themed keyboard (Sony keyboard).
 
 rom.title=Data
 rom.titlee=Choose if you want to keep your data from previous ROM (SDcard data won't be touched). Warning! Clean installation is VERY recommended!
-rom.d=Clean my data for 100% fast and stable ROM installation.
+rom.d=Clean my data for 100% fast and stable ROM installation. Must choose if you were using non-FeraLab ROM before or FeraLab ROM version below v34.
 rom.s=Keep my data. I agree that some problems may occur.
 
 omg.title=ROM

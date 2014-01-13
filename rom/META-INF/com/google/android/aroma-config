@@ -7,7 +7,7 @@ calibrate("0.9695","16","0.9900","0");
 theme("touchwiz");
 
 ini_set("rom_name",             "***FeraLab***");
-ini_set("rom_version",          "v33 Platinum");
+ini_set("rom_version",          "v34");
 ini_set("rom_author",           "FeraVolt");
 ini_set("rom_device",           "Xperia X10");
 ini_set("rom_api",              "2.3.9");
@@ -167,7 +167,6 @@ checkbox(
 	  "<~opt.c>",            "",                                     2,
 	    "No-Home-Unlock",     "<~opt.d>",0,
 	    "No-HW-LED",          "<~opt.z>",0,
-	    "WiFi TX",            "<~opt.k>",0,
 	    "Viper4Android",      "<~opt.xxxx>",0,
 	    "Save My Battery",    "<~opt.xyyx>",0,
 	    "Disable zRam",       "<~opt.xyxy>",0,
