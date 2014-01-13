@@ -1850,6 +1850,17 @@ extern int __filemap_fdatawrite_range(struct address_space *mapping,
 extern int filemap_fdatawrite_range(struct address_space *mapping,
 				loff_t start, loff_t end);
 
+#ifdef CONFIG_FILE_SYNC_DISABLE
+static inline int
+vfs_fsync_range(struct file *file, loff_t start, loff_t end, int datasync)
+{
+  return 0;
+}
+#else
+extern int vfs_fsync_range(struct file *file, loff_t start, loff_t end,
+         int datasync);
+#endif
+
 extern int vfs_fsync(struct file *file, struct dentry *dentry, int datasync);
 extern void sync_supers(void);
 extern void sync_filesystems(int wait);

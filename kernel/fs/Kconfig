@@ -39,6 +39,13 @@ config FS_POSIX_ACL
 	bool
 	default n
 
+config FILE_SYNC_DISABLE
+	bool "Disble fsync"
+	default y
+	help
+	  File system buffers will be flushed all at once by the
+	  kernel or by calling sync() syscall.
+
 config FILE_LOCKING
 	bool "Enable POSIX file locking API" if EMBEDDED
 	default y

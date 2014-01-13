@@ -47,6 +47,13 @@ void emergency_sync(void)
 	pdflush_operation(do_sync, 0);
 }
 
+#ifdef CONFIG_FILE_SYNC_DISABLE
+static inline int do_fsync(unsigned int fd, int datasync)
+{
+  return 0;
+}
+#else
+
 /*
  * Generic function to fsync a file.
  *
@@ -74,6 +81,20 @@ int file_fsync(struct file *filp, struct dentry *dentry, int datasync)
 		ret = err;
 	return ret;
 }
+
+static int do_fsync(unsigned int fd, int datasync)
+{
+  struct file *file;
+  int ret = -EBADF;
+
+  file = fget(fd);
+  if (file) {
+    ret = vfs_fsync(file, datasync);
+    fput(file);
+  }
+  return ret;
+}
+#endif
 
 /**
  * vfs_fsync - perform a fsync or fdatasync on a file
@@ -131,19 +152,6 @@ out:
 }
 EXPORT_SYMBOL(vfs_fsync);
 
-static int do_fsync(unsigned int fd, int datasync)
-{
-	struct file *file;
-	int ret = -EBADF;
-
-	file = fget(fd);
-	if (file) {
-		ret = vfs_fsync(file, file->f_path.dentry, datasync);
-		fput(file);
-	}
-	return ret;
-}
-
 SYSCALL_DEFINE1(fsync, unsigned int, fd)
 {
 	return do_fsync(fd, 0);
@@ -153,6 +161,14 @@ SYSCALL_DEFINE1(fdatasync, unsigned int, fd)
 {
 	return do_fsync(fd, 1);
 }
+
+#ifdef CONFIG_FILE_SYNC_DISABLE
+SYSCALL_DEFINE(sync_file_range)(int fd, loff_t offset, loff_t nbytes,
+  unsigned int flags)
+{
+  return 0;
+}
+#else
 
 /*
  * sys_sync_file_range() permits finely controlled syncing over a segment of
@@ -262,6 +278,8 @@ out_put:
 out:
 	return ret;
 }
+#endif
+
 #ifdef CONFIG_HAVE_SYSCALL_WRAPPERS
 asmlinkage long SyS_sync_file_range(long fd, loff_t offset, loff_t nbytes,
 				    long flags)
