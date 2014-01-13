@@ -88,22 +88,23 @@ cbox.rr=Диспетчер задач Samsung.
 cbox.ss=Модифицированое приложение Youtube.
 
 lite.a=Легкая версия
-lite.b=Выбирая эту опцию, вы удалите следующие системные приложения:
-\BatteryUsageWidget\
-\GoogleLyricsPlugin\
-\LearningClient\
-\PicoTts\
-\Powersavemode\
-\QuickSearchBox\
-\SemcDlna\
-\SemcEmail\
-\SemcMetadataCleanup\
-\Smartcontacts\
-\TtsService\
-\UserDictionaryProvider\
-\WikipediaPlugin\
-\widgetfavouritepeople\
-\MediaWidget
+lite.b=Выбирая эту опцию, вы удалите следующие системные приложения:\
+\
+BatteryUsageWidget\
+GoogleLyricsPlugin\
+LearningClient\
+PicoTts\
+Powersavemode\
+QuickSearchBox\
+SemcDlna\
+SemcEmail\
+SemcMetadataCleanup\
+Smartcontacts\
+TtsService\
+UserDictionaryProvider\
+WikipediaPlugin\
+widgetfavouritepeople\
+MediaWidget
 lite.c=Хотите легкую версию прошивки?
 lite.d=Да, хорошо..
 

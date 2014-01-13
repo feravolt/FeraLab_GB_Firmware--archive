@@ -120,7 +120,6 @@ ro.bluetooth.remote.autoconnect=true
 debug.camera.landscape=true
 media.stagefright.enable-player=true
 media.stagefright.enable-meta=true
-media.stagefright.enable-scan=false
 media.stagefright.enable-http=true
 media.stagefright.enable-record=true
 media.a1026.nsForVoicRec=1
@@ -150,7 +149,7 @@ dalvik.vm.checkjni=false
 dalvik.vm.dexopt-flags=m=y,v=n,o=v,u=y
 dalvik.vm.execution-mode=int:jit
 dalvik.vm.lockprof.threshold=500
-dalvik.vm.heapstartsize=7m
+dalvik.vm.heapstartsize=5m
 dalvik.vm.heapgrowthlimit=48m
 dalvik.vm.heapsize=48m
 dalvik.vm.stack-trace-file=/data/anr/traces.txt

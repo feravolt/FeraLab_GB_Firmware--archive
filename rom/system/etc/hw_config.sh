@@ -27,6 +27,7 @@ chmod -R 777 /cache
 chmod 777 /dev/log/main
 chmod 777 /dev/log/events
 chmod 777 /dev/log/radio
+chmod 777 /dev/log/system
 chmod 777 /sys/class/leds/lv5219lg:fled/spotlight_enable
 chmod 777 /sys/class/leds/lv5219lg:fled/brightness
 

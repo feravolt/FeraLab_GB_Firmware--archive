@@ -88,21 +88,22 @@ cbox.ss=Modified YouTube application.
 
 lite.a=Enlighter
 lite.b=By selecting this option, following system applications will be deleted:\
-\BatteryUsageWidget\
-\GoogleLyricsPlugin\
-\LearningClient\
-\PicoTts\
-\Powersavemode\
-\QuickSearchBox\
-\SemcDlna\
-\SemcEmail\
-\SemcMetadataCleanup\
-\Smartcontacts\
-\TtsService\
-\UserDictionaryProvider\
-\WikipediaPlugin\
-\widgetfavouritepeople\
-\MediaWidget
+\
+BatteryUsageWidget\
+GoogleLyricsPlugin\
+LearningClient\
+PicoTts\
+Powersavemode\
+QuickSearchBox\
+SemcDlna\
+SemcEmail\
+SemcMetadataCleanup\
+Smartcontacts\
+TtsService\
+UserDictionaryProvider\
+WikipediaPlugin\
+widgetfavouritepeople\
+MediaWidget
 lite.c=Want to Enlight your ROM?
 lite.d=Yes..Do it.
 
