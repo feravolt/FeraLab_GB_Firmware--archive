@@ -1,6 +1,3 @@
-export ARCH=arm
-export SUBARCH=arm
-export CROSS_COMPILE=/home/feravolt/ferra/toolchain/bin/arm-gnueabi-
 echo '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
 echo '~         ***FeraLab***          ~'
 echo '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
@@ -10,13 +7,16 @@ echo ' '
 echo ' '
 echo ' '
 echo '>> Making ROM package...'
-cd
 cp -f /home/feravolt/ferra/flashtool/firmwares/* /home/feravolt/ferra/rom/
+cd
+cd ferra/rom
+zip -r FeraLab.zip ./* -9
+sleep 1
+cd
 cd ferra
-zip FeraLab.zip rom -9
 rm -R 0UTPUT
 mkdir 0UTPUT
-mv /home/feravolt/ferra/FeraLab.zip /home/feravolt/ferra/0UTPUT/FeraLab.zip
+mv /home/feravolt/ferra/rom/FeraLab.zip /home/feravolt/ferra/0UTPUT/FeraLab.zip
 cd
 echo ' '
 echo '>> FeraLab firmware package ready.'
