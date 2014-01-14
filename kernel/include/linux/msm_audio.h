@@ -1,7 +1,7 @@
 /* include/linux/msm_audio.h
  *
  * Copyright (C) 2008 Google, Inc.
- * Copyright (c) 2009, Code Aurora Forum. All rights reserved.
+ * Copyright (c) 2009-2010, Code Aurora Forum. All rights reserved.
  *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and
@@ -19,7 +19,6 @@
 
 #include <linux/types.h>
 #include <linux/ioctl.h>
-#include <asm/sizes.h>
 
 /* PCM Audio */
 
@@ -83,6 +82,14 @@
 #define AUDIO_SET_AGC        _IOW(AUDIO_IOCTL_MAGIC, 90, unsigned)
 #define AUDIO_SET_NS         _IOW(AUDIO_IOCTL_MAGIC, 91, unsigned)
 #define AUDIO_SET_TX_IIR     _IOW(AUDIO_IOCTL_MAGIC, 92, unsigned)
+#define AUDIO_GET_BUF_CFG    _IOW(AUDIO_IOCTL_MAGIC, 93, \
+					struct msm_audio_buf_cfg)
+#define AUDIO_SET_BUF_CFG    _IOW(AUDIO_IOCTL_MAGIC, 94, \
+					struct msm_audio_buf_cfg)
+#define AUDIO_SET_ACDB_BLK _IOW(AUDIO_IOCTL_MAGIC, 95,  \
+					struct msm_acdb_cmd_device)
+#define AUDIO_GET_ACDB_BLK _IOW(AUDIO_IOCTL_MAGIC, 96,  \
+					struct msm_acdb_cmd_device)
 
 #define	AUDIO_MAX_COMMON_IOCTL_NUM	100
 
@@ -115,15 +122,6 @@
 #define HEADSET_STEREO_PLUS_SPKR_MONO_RX       0x13
 #define HEADSET_STEREO_PLUS_SPKR_STEREO_RX     0x14
 
-/* SEMC:<closed> CRS: 2009-09-04: add the DeviceID(BT Acc Identification).start */
-#define BTDSP_SCO_MIC		0x16
-#define BTDSP_SCO_SPKR		0x17
-#define BTC_SCO_MIC			0x18
-#define BTC_SCO_SPKR		0x19
-#define BTCDSP_SCO_MIC		0x1A
-#define BTCDSP_SCO_SPKR		0x1B
-/* SEMC:<closed> CRS: 2009-09-04: add the DeviceID(BT Acc Identification).end */
-
 #define I2S_RX				0x20
 #define I2S_TX				0x21
 
@@ -136,6 +134,7 @@
 #define AGC_ENABLE		0x0001
 #define NS_ENABLE		0x0002
 #define TX_IIR_ENABLE		0x0004
+#define FLUENCE_ENABLE		0x0008
 
 #define VOC_REC_UPLINK		0x00
 #define VOC_REC_DOWNLINK	0x01
@@ -155,6 +154,11 @@ struct msm_audio_config {
 struct msm_audio_stream_config {
 	uint32_t buffer_size;
 	uint32_t buffer_count;
+};
+
+struct msm_audio_buf_cfg{
+	uint32_t meta_info_enable;
+	uint32_t frames_per_buf;
 };
 
 struct msm_audio_stats {
@@ -334,5 +338,17 @@ struct msm_audio_eq_stream_config {
 	uint32_t	num_bands;
 	struct msm_audio_eq_band	eq_bands[AUDIO_MAX_EQ_BANDS];
 } __attribute__ ((packed));
+
+struct msm_acdb_cmd_device {
+	uint32_t     command_id;
+	uint32_t     device_id;
+	uint32_t     network_id;
+	uint32_t     sample_rate_id;      /* Actual sample rate value */
+	uint32_t     interface_id;        /* See interface id's above */
+	uint32_t     algorithm_block_id;  /* See enumerations above */
+	uint32_t     total_bytes;         /* Length in bytes used by buffer */
+	uint32_t     *phys_buf;           /* Physical Address of data */
+};
+
 
 #endif
