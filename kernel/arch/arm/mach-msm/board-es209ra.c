@@ -495,7 +495,6 @@ static struct ion_platform_data ion_pdata = {
                         .id = ION_SF_HEAP_ID,
                         .type = ION_HEAP_TYPE_CARVEOUT,
                         .name = ION_SF_HEAP_NAME,
-                        .size = MSM_PMEM_MDP_SIZE,
                         .memory_type = ION_EBI_TYPE,
                         .extra_data = (void *)&co_ion_pdata,
                 },
@@ -1860,11 +1859,15 @@ static void __init es209ra_allocate_memory_regions(void)
 		addr = alloc_bootmem(size);
 		#ifdef CONFIG_ION_MSM
 		ion_pdata.heaps[1].base = __pa(addr);
+		ion_pdata.heaps[1].size = size;
+		pr_info("allocating %lu bytes at %p (%lx physical) for ION "
+			"ion arena\n", size, addr, __pa(addr));
 		#else
 		android_pmem_pdata.start = __pa(addr);
 		android_pmem_pdata.size = size;
 		pr_info("allocating %lu bytes at %p (%lx physical) for mdp "
 			"pmem arena\n", size, addr, __pa(addr));
+		#endif
 	}
 
 	size = pmem_adsp_size;
