@@ -30,7 +30,7 @@
 #include <linux/dma-mapping.h>
 #include <mach/board.h>
 #include <linux/uaccess.h>
-
+#include <linux/ion.h>
 #include <linux/workqueue.h>
 #include <linux/string.h>
 #include <linux/version.h>
@@ -304,7 +304,6 @@ static int msm_fb_probe(struct platform_device *pdev)
 		return -EPERM;
 
 	mfd = (struct msm_fb_data_type *)platform_get_drvdata(pdev);
-
 	err = pm_runtime_set_active(&pdev->dev);
 	if (err < 0)
 		printk(KERN_ERR "pm_runtime: fail to set active.\n");
@@ -320,10 +319,12 @@ static int msm_fb_probe(struct platform_device *pdev)
 
 	mfd->panel_info.frame_count = 0;
 	mfd->bl_level = mfd->panel_info.bl_max;
+#ifdef CONFIG_ION_MSM
+        mfd->iclient = msm_ion_client_create(-1, pdev->name);
+#endif
 #ifdef CONFIG_FB_MSM_OVERLAY
 	mfd->overlay_play_enable = 1;
 #endif
-
 	rc = msm_fb_register(mfd);
 	if (rc)
 		return rc;
@@ -331,7 +332,6 @@ static int msm_fb_probe(struct platform_device *pdev)
 #ifdef CONFIG_FB_BACKLIGHT
 	msm_fb_config_backlight(mfd);
 #else
-	/* android supports only one lcd-backlight/lcd for now */
 	if (!lcd_backlight_registered) {
 		if (led_classdev_register(&pdev->dev, &backlight_led))
 			printk(KERN_ERR "led_classdev_register failed\n");
@@ -341,7 +341,6 @@ static int msm_fb_probe(struct platform_device *pdev)
 #endif
 
 	pm_runtime_enable(&pdev->dev);
-
 	pdev_list[pdev_list_cnt++] = pdev;
 	msm_fb_create_sysfs(pdev);
 	return 0;
