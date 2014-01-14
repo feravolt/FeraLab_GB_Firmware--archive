@@ -3,14 +3,10 @@ obj-$(CONFIG_FB)                  += fb.o
 fb-y                              := fbmem.o fbmon.o fbcmap.o fbsysfs.o \
                                      modedb.o fbcvt.o
 fb-objs                           := $(fb-y)
-obj-y				  += backlight/ display/
+obj-y				  += backlight/
 
 obj-$(CONFIG_FB_MSM)              += msm/
 obj-$(CONFIG_FB_CFB_FILLRECT)  += cfbfillrect.o
 obj-$(CONFIG_FB_CFB_COPYAREA)  += cfbcopyarea.o
 obj-$(CONFIG_FB_CFB_IMAGEBLIT) += cfbimgblt.o
-obj-$(CONFIG_FB_SYS_FILLRECT)  += sysfillrect.o
-obj-$(CONFIG_FB_SYS_COPYAREA)  += syscopyarea.o
-obj-$(CONFIG_FB_SYS_IMAGEBLIT) += sysimgblt.o
-obj-$(CONFIG_FB_SYS_FOPS)      += fb_sys_fops.o
 

@@ -1,2 +1,2 @@
-obj-y			+= drm/
+obj-y			+= drm/ ion/
 obj-$(CONFIG_MSM_KGSL)	+= msm/

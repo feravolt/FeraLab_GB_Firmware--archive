@@ -215,37 +215,10 @@ config FB_CFB_REV_PIXELS_IN_BYTE
 	  and 4 bits per pixel depths which has opposite order of pixels in
 	  byte order to bytes in long order.
 
-config FB_SYS_FILLRECT
-	bool "Enable SYS_FILLRECT Support"
-	depends on FB
-	default n
-	---help---
-	  Include the sys_fillrect function for generic software rectangle
-	  filling. This is used by drivers that don't provide their own
-	  (accelerated) version and the framebuffer is in system RAM.
-
-config FB_SYS_COPYAREA
-	bool "Enable SYS_COPYAREA Support"
-	depends on FB
-	default n
-	---help---
-	  Include the sys_copyarea function for generic software area copying.
-	  This is used by drivers that don't provide their own (accelerated)
-	  version and the framebuffer is in system RAM.
-
-config FB_SYS_IMAGEBLIT
-	bool "Enable SYS_IMAGEBLIT Support"
-	depends on FB
-	default n
-	---help---
-	  Include the sys_imageblit function for generic software image
-	  blitting. This is used by drivers that don't provide their own
-	  (accelerated) version and the framebuffer is in system RAM.
-
 source "drivers/video/backlight/Kconfig"
-source "drivers/video/display/Kconfig"
 source "drivers/gpu/drm/Kconfig"
 source "drivers/gpu/msm/Kconfig"
+source "drivers/gpu/ion/Kconfig"
 
 endmenu
 

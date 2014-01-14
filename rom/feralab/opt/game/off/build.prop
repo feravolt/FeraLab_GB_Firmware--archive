@@ -13,7 +13,7 @@ ro.build.version.release=2.3.9
 ro.build.type=user
 ro.build.description=X10i-user 2.3.9 3.0.1.G.0.75 tB_P test-keys
 ro.build.id=6.0.B.0.743
-ro.build.display.id=***FeraLab*** v34 (G) | 6.0.B.0.743
+ro.build.display.id=***FeraLab*** v34 | 6.0.B.0.743
 ro.build.tags=release-keys
 ro.build.fingerprint=SEMC/X10i_1232-9897/X10i:2.3.3/3.0.1.G.0.75/tB_P:user/release-keys
 
