@@ -742,8 +742,8 @@ _sleep(struct kgsl_device *device)
 		kgsl_pwrctrl_clk(device, KGSL_PWRFLAGS_OFF, KGSL_STATE_SLEEP);
 		kgsl_pwrctrl_set_state(device, KGSL_STATE_SLEEP);
 		wake_unlock(&device->idle_wakelock);
-		pm_qos_update_request(&device->pm_qos_req_dma,
-					PM_QOS_DEFAULT_VALUE);
+		pm_qos_update_requirement(PM_QOS_CPU_DMA_LATENCY, "kgsl",
+                                PM_QOS_DEFAULT_VALUE);
 		break;
 	case KGSL_STATE_SLEEP:
 	case KGSL_STATE_SLUMBER:
@@ -778,8 +778,8 @@ _slumber(struct kgsl_device *device)
 		kgsl_pwrctrl_set_state(device, KGSL_STATE_SLUMBER);
 		if (device->idle_wakelock.name)
 			wake_unlock(&device->idle_wakelock);
-		pm_qos_update_request(&device->pm_qos_req_dma,
-						PM_QOS_DEFAULT_VALUE);
+		pm_qos_update_requirement(PM_QOS_CPU_DMA_LATENCY, "kgsl",
+                                PM_QOS_DEFAULT_VALUE);
 		break;
 	case KGSL_STATE_SLUMBER:
 		break;
@@ -850,8 +850,8 @@ void kgsl_pwrctrl_wake(struct kgsl_device *device)
 				jiffies + device->pwrctrl.interval_timeout);
 		wake_lock(&device->idle_wakelock);
 		if (device->pwrctrl.restore_slumber == false)
-			pm_qos_update_request(&device->pm_qos_req_dma,
-						GPU_SWFI_LATENCY);
+			pm_qos_update_requirement(PM_QOS_CPU_DMA_LATENCY, "kgsl",
+                                        GPU_SWFI_LATENCY);
 	case KGSL_STATE_ACTIVE:
 		break;
 	default:

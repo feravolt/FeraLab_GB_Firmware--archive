@@ -1358,7 +1358,7 @@ static void config_camera_off_gpios(void)
 static struct resource msm_camera_resources[] = {
 	{
 		.start	= 0xA0F00000,
-		.end	= 0xA0F00000 + SZ_1M - 1,
+		.end	= 0xA0F00000 + SZ_2M - 1,
 		.flags	= IORESOURCE_MEM,
 	},
 	{
