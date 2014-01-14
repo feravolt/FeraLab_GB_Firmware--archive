@@ -375,7 +375,6 @@ kgsl_gem_free_object(struct drm_gem_object *obj)
 {
 	kgsl_gem_free_memory(obj);
 	kgsl_gem_free_mmap_offset(obj);
-	drm_gem_object_release(obj);
 	kfree(obj->driver_private);
 }
 
@@ -1586,26 +1585,24 @@ error:
 }
 
 struct drm_ioctl_desc kgsl_drm_ioctls[] = {
-	DRM_IOCTL_DEF_DRV(KGSL_GEM_CREATE, kgsl_gem_create_ioctl, 0),
-	DRM_IOCTL_DEF_DRV(KGSL_GEM_PREP, kgsl_gem_prep_ioctl, 0),
-	DRM_IOCTL_DEF_DRV(KGSL_GEM_SETMEMTYPE, kgsl_gem_setmemtype_ioctl, 0),
-	DRM_IOCTL_DEF_DRV(KGSL_GEM_GETMEMTYPE, kgsl_gem_getmemtype_ioctl, 0),
-	DRM_IOCTL_DEF_DRV(KGSL_GEM_BIND_GPU, kgsl_gem_bind_gpu_ioctl, 0),
-	DRM_IOCTL_DEF_DRV(KGSL_GEM_UNBIND_GPU, kgsl_gem_unbind_gpu_ioctl, 0),
-	DRM_IOCTL_DEF_DRV(KGSL_GEM_ALLOC, kgsl_gem_alloc_ioctl, 0),
-	DRM_IOCTL_DEF_DRV(KGSL_GEM_MMAP, kgsl_gem_mmap_ioctl, 0),
-	DRM_IOCTL_DEF_DRV(KGSL_GEM_GET_BUFINFO, kgsl_gem_get_bufinfo_ioctl, 0),
-	DRM_IOCTL_DEF_DRV(KGSL_GEM_SET_BUFCOUNT,
+	DRM_IOCTL_DEF(DRM_KGSL_GEM_CREATE, kgsl_gem_create_ioctl, 0),
+	DRM_IOCTL_DEF(DRM_KGSL_GEM_PREP, kgsl_gem_prep_ioctl, 0),
+	DRM_IOCTL_DEF(DRM_KGSL_GEM_SETMEMTYPE, kgsl_gem_setmemtype_ioctl, 0),
+	DRM_IOCTL_DEF(DRM_KGSL_GEM_GETMEMTYPE, kgsl_gem_getmemtype_ioctl, 0),
+	DRM_IOCTL_DEF(DRM_KGSL_GEM_BIND_GPU, kgsl_gem_bind_gpu_ioctl, 0),
+	DRM_IOCTL_DEF(DRM_KGSL_GEM_UNBIND_GPU, kgsl_gem_unbind_gpu_ioctl, 0),
+	DRM_IOCTL_DEF(DRM_KGSL_GEM_ALLOC, kgsl_gem_alloc_ioctl, 0),
+	DRM_IOCTL_DEF(DRM_KGSL_GEM_MMAP, kgsl_gem_mmap_ioctl, 0),
+	DRM_IOCTL_DEF(DRM_KGSL_GEM_GET_BUFINFO, kgsl_gem_get_bufinfo_ioctl, 0),
+	DRM_IOCTL_DEF(DRM_KGSL_GEM_SET_BUFCOUNT,
 		      kgsl_gem_set_bufcount_ioctl, 0),
-	DRM_IOCTL_DEF_DRV(KGSL_GEM_SET_ACTIVE, kgsl_gem_set_active_ioctl, 0),
-	DRM_IOCTL_DEF_DRV(KGSL_GEM_LOCK_HANDLE,
+	DRM_IOCTL_DEF(DRM_KGSL_GEM_SET_ACTIVE, kgsl_gem_set_active_ioctl, 0),
+	DRM_IOCTL_DEF(DRM_KGSL_GEM_LOCK_HANDLE,
 				  kgsl_gem_lock_handle_ioctl, 0),
-	DRM_IOCTL_DEF_DRV(KGSL_GEM_UNLOCK_HANDLE,
+	DRM_IOCTL_DEF(DRM_KGSL_GEM_UNLOCK_HANDLE,
 				  kgsl_gem_unlock_handle_ioctl, 0),
-	DRM_IOCTL_DEF_DRV(KGSL_GEM_UNLOCK_ON_TS,
+	DRM_IOCTL_DEF(DRM_KGSL_GEM_UNLOCK_ON_TS,
 				  kgsl_gem_unlock_on_ts_ioctl, 0),
-	DRM_IOCTL_DEF_DRV(KGSL_GEM_CREATE_FD, kgsl_gem_create_fd_ioctl,
-		      DRM_MASTER),
 };
 
 static struct drm_driver driver = {
@@ -1626,7 +1623,7 @@ static struct drm_driver driver = {
 		 .owner = THIS_MODULE,
 		 .open = drm_open,
 		 .release = drm_release,
-		 .unlocked_ioctl = drm_ioctl,
+		 .ioctl = drm_ioctl,
 		 .mmap = msm_drm_gem_mmap,
 		 .poll = drm_poll,
 		 .fasync = drm_fasync,
