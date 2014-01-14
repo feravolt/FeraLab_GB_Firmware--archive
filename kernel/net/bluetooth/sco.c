@@ -50,7 +50,7 @@
 
 #define VERSION "0.6"
 
-static int disable_esco = 0;
+static bool disable_esco = false;
 
 static const struct proto_ops sco_sock_ops;
 

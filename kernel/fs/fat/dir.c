@@ -849,7 +849,7 @@ const struct file_operations fat_dir_operations = {
 #ifdef CONFIG_COMPAT
 	.compat_ioctl	= fat_compat_dir_ioctl,
 #endif
-	.fsync		= file_fsync,
+//	.fsync		= file_fsync,
 };
 
 static int fat_get_short_entry(struct inode *dir, loff_t *pos,

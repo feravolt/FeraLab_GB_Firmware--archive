@@ -142,7 +142,7 @@ const struct file_operations fat_file_operations = {
 	.mmap		= generic_file_mmap,
 	.release	= fat_file_release,
 	.ioctl		= fat_generic_ioctl,
-	.fsync		= file_fsync,
+	//.fsync		= file_fsync,
 	.splice_read	= generic_file_splice_read,
 };
 
