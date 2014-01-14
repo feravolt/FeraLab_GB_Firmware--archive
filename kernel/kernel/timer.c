@@ -736,6 +736,22 @@ int del_timer(struct timer_list *timer)
 
 EXPORT_SYMBOL(del_timer);
 
+/**
+* mod_timer_pending - modify a pending timer's timeout
+* @timer: the pending timer to be modified
+* @expires: new timeout in jiffies
+*
+* mod_timer_pending() is the same for pending timers as mod_timer(),
+* but will not re-activate and modify already deleted timers.
+*
+* It is useful for unserialized use of timers.
+*/
+int mod_timer_pending(struct timer_list *timer, unsigned long expires)
+{
+        return __mod_timer(timer, expires);
+}
+EXPORT_SYMBOL(mod_timer_pending);
+
 #ifdef CONFIG_SMP
 /**
  * try_to_del_timer_sync - Try to deactivate a timer
