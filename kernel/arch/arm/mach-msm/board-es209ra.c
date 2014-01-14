@@ -55,7 +55,6 @@
 #include <linux/bma150_ng.h>
 #include "qdsp6/q6audio.h"
 #include <linux/nt35580.h>
-#include <linux/ion.h>
 #include "../../../drivers/video/msm/msm_fb_panel.h"
 #include "../../../drivers/video/msm/mddihost.h"
 
@@ -431,19 +430,11 @@ static struct android_pmem_platform_data android_pmem_kernel_ebi1_pdata = {
 	.cached = 0,
 };
 
-#ifndef CONFIG_ION_MSM
 static struct android_pmem_platform_data android_pmem_pdata = {
 	.name = "pmem",
 	.allocator_type = PMEM_ALLOCATORTYPE_BITMAP,
 	.cached = 1,
 };
-
-static struct platform_device android_pmem_device = {
-	.name = "android_pmem",
-	.id = 0,
-	.dev = { .platform_data = &android_pmem_pdata },
-};
-#endif
 
 static struct android_pmem_platform_data android_pmem_adsp_pdata = {
 	.name = "pmem_adsp",
@@ -457,6 +448,12 @@ static struct android_pmem_platform_data android_pmem_smipool_pdata = {
 	.size = MSM_PMEM_SMIPOOL_SIZE,
 	.allocator_type = PMEM_ALLOCATORTYPE_BITMAP,
 	.cached = 0,
+};
+
+static struct platform_device android_pmem_device = {
+	.name = "android_pmem",
+	.id = 0,
+	.dev = { .platform_data = &android_pmem_pdata },
 };
 
 static struct platform_device android_pmem_adsp_device = {
@@ -476,37 +473,6 @@ static struct platform_device android_pmem_kernel_ebi1_device = {
 	.id = 3,
 	.dev = { .platform_data = &android_pmem_kernel_ebi1_pdata },
 };
-
-#ifdef CONFIG_ION_MSM
-static struct ion_co_heap_pdata co_ion_pdata = {
-        .adjacent_mem_id = INVALID_HEAP_ID,
-        .align = PAGE_SIZE,
-};
-
-static struct ion_platform_data ion_pdata = {
-        .nr = 2,
-        .heaps = {
-                {
-                        .id = ION_SYSTEM_HEAP_ID,
-                        .type = ION_HEAP_TYPE_SYSTEM,
-                        .name = ION_VMALLOC_HEAP_NAME,
-                },
-                {
-                        .id = ION_SF_HEAP_ID,
-                        .type = ION_HEAP_TYPE_CARVEOUT,
-                        .name = ION_SF_HEAP_NAME,
-                        .memory_type = ION_EBI_TYPE,
-                        .extra_data = (void *)&co_ion_pdata,
-                },
-        }
-};
-
-static struct platform_device ion_dev = {
-        .name = "ion-msm",
-        .id = 1,
-        .dev = { .platform_data = &ion_pdata },
-};
-#endif
 
 static struct resource msm_fb_resources[] = {
 	{
@@ -1464,11 +1430,7 @@ static struct platform_device *devices[] __initdata = {
 	&msm_device_smd,
 	&msm_device_dmov,
 	&android_pmem_kernel_ebi1_device,
-#ifndef CONFIG_ION_MSM
 	&android_pmem_device,
-#else
-	&ion_dev,
-#endif
 	&android_pmem_adsp_device,
 	&android_pmem_smipool_device,
 	&msm_device_nand,
@@ -1845,17 +1807,10 @@ static void __init es209ra_allocate_memory_regions(void)
 	size = pmem_mdp_size;
 	if (size) {
 		addr = alloc_bootmem(size);
-		#ifdef CONFIG_ION_MSM
-		ion_pdata.heaps[1].base = __pa(addr);
-		ion_pdata.heaps[1].size = size;
-		pr_info("allocating %lu bytes at %p (%lx physical) for ION "
-			"ion arena\n", size, addr, __pa(addr));
-		#else
 		android_pmem_pdata.start = __pa(addr);
 		android_pmem_pdata.size = size;
 		pr_info("allocating %lu bytes at %p (%lx physical) for mdp "
 			"pmem arena\n", size, addr, __pa(addr));
-		#endif
 	}
 
 	size = pmem_adsp_size;
