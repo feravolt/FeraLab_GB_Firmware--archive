@@ -529,8 +529,8 @@ static int kgsl_runtime_resume(struct device *dev)
 }
 
 const struct dev_pm_ops kgsl_pm_ops = {
-	.suspend = kgsl_suspend,
-	.resume = kgsl_resume,
+	//.suspend = kgsl_suspend,
+	//.resume = kgsl_resume,
 	.runtime_suspend = kgsl_runtime_suspend,
 	.runtime_resume = kgsl_runtime_resume,
 };
