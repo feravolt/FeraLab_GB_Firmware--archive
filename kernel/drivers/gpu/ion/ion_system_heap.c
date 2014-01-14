@@ -210,14 +210,6 @@ int ion_system_heap_cache_ops(struct ion_heap *heap, struct ion_buffer *buffer,
 	return 0;
 }
 
-static int ion_system_print_debug(struct ion_heap *heap, struct seq_file *s)
-{
-	seq_printf(s, "total bytes currently allocated: %lx\n",
-			(unsigned long) atomic_read(&system_heap_allocated));
-
-	return 0;
-}
-
 int ion_system_heap_map_iommu(struct ion_buffer *buffer,
 				struct ion_iommu_map *data,
 				unsigned int domain_num,
@@ -315,7 +307,6 @@ static struct ion_heap_ops vmalloc_ops = {
 	.unmap_kernel = ion_system_heap_unmap_kernel,
 	.map_user = ion_system_heap_map_user,
 	.cache_op = ion_system_heap_cache_ops,
-	.print_debug = ion_system_print_debug,
 	.map_iommu = ion_system_heap_map_iommu,
 	.unmap_iommu = ion_system_heap_unmap_iommu,
 };
@@ -436,15 +427,6 @@ int ion_system_contig_heap_cache_ops(struct ion_heap *heap,
 	return 0;
 }
 
-static int ion_system_contig_print_debug(struct ion_heap *heap,
-					 struct seq_file *s)
-{
-	seq_printf(s, "total bytes currently allocated: %lx\n",
-		(unsigned long) atomic_read(&system_contig_heap_allocated));
-
-	return 0;
-}
-
 int ion_system_contig_heap_map_iommu(struct ion_buffer *buffer,
 				struct ion_iommu_map *data,
 				unsigned int domain_num,
@@ -533,7 +515,6 @@ static struct ion_heap_ops kmalloc_ops = {
 	.unmap_kernel = ion_system_heap_unmap_kernel,
 	.map_user = ion_system_contig_heap_map_user,
 	.cache_op = ion_system_contig_heap_cache_ops,
-	.print_debug = ion_system_contig_print_debug,
 	.map_iommu = ion_system_contig_heap_map_iommu,
 	.unmap_iommu = ion_system_heap_unmap_iommu,
 };

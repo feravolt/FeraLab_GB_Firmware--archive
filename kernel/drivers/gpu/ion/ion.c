@@ -296,9 +296,6 @@ static struct ion_handle *ion_handle_create(struct ion_client *client,
 static void ion_handle_destroy(struct kref *kref)
 {
 	struct ion_handle *handle = container_of(kref, struct ion_handle, ref);
-	/* XXX Can a handle be destroyed while it's map count is non-zero?:
-	   if (handle->map_cnt) unmap
-	 */
 	WARN_ON(handle->kmap_cnt || handle->dmap_cnt || handle->usermap_cnt);
 	ion_buffer_put(handle->buffer);
 	if (!RB_EMPTY_NODE(&handle->node))
@@ -1554,7 +1551,7 @@ static int ion_debug_heap_show(struct seq_file *s, void *unused)
 			   size);
 	}
 	if (heap->ops->print_debug)
-		heap->ops->print_debug(heap, s);
+		heap->ops->print_debug(heap);
 	return 0;
 }
 

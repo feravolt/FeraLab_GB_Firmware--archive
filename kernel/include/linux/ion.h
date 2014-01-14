@@ -121,7 +121,6 @@ enum ion_fixed_position {
 #define ION_WB_HEAP_NAME	"wb"
 #define ION_MM_FIRMWARE_HEAP_NAME	"mm_fw"
 #define ION_QSECOM_HEAP_NAME	"qsecom"
-#define ION_FMEM_HEAP_NAME	"fmem"
 
 #define CACHED          1
 #define UNCACHED        0
@@ -152,7 +151,6 @@ struct ion_buffer;
    be converted to phys_addr_t.  For the time being many kernel interfaces
    do not accept phys_addr_t's that would have to */
 #define ion_phys_addr_t unsigned long
-#define ion_virt_addr_t unsigned long
 
 /**
  * struct ion_platform_heap - defines a heap in the given platform
@@ -208,12 +206,10 @@ struct ion_cp_heap_pdata {
 	unsigned int align;
 	ion_phys_addr_t secure_base; /* Base addr used when heap is shared */
 	size_t secure_size; /* Size used for securing heap when heap is shared*/
-	int reusable;
 	int mem_is_fmem;
 	enum ion_fixed_position fixed_position;
 	int iommu_map_all;
 	int iommu_2x_map_domain;
-	ion_virt_addr_t *virt_addr;
 	int (*request_region)(void *);
 	int (*release_region)(void *);
 	void *(*setup_region)(void);

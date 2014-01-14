@@ -15,7 +15,6 @@
 #include <linux/platform_device.h>
 #include <linux/slab.h>
 #include <linux/memory_alloc.h>
-#include <linux/fmem.h>
 #include <linux/mm.h>
 #include <linux/mm_types.h>
 #include <linux/sched.h>
@@ -86,44 +85,12 @@ static struct ion_platform_heap *find_heap(const struct ion_platform_heap
 	return 0;
 }
 
-static void ion_set_base_address(struct ion_platform_heap *heap,
-			    struct ion_platform_heap *shared_heap,
-			    struct ion_co_heap_pdata *co_heap_data,
-			    struct ion_cp_heap_pdata *cp_data)
-{
-	if (cp_data->reusable) {
-		const struct fmem_data *fmem_info = fmem_get_info();
-
-		if (!fmem_info) {
-			pr_err("fmem info pointer NULL!\n");
-			BUG();
-		}
-
-		heap->base = fmem_info->phys - fmem_info->reserved_size_low;
-		cp_data->virt_addr = fmem_info->virt;
-		pr_info("ION heap %s using FMEM\n", shared_heap->name);
-	} else {
-		heap->base = msm_ion_get_base(heap->size + shared_heap->size,
-						shared_heap->memory_type,
-						co_heap_data->align);
-	}
-	if (heap->base) {
-		shared_heap->base = heap->base + heap->size;
-		cp_data->secure_base = heap->base;
-		cp_data->secure_size = heap->size + shared_heap->size;
-	} else {
-		pr_err("%s: could not get memory for heap %s (id %x)\n",
-			__func__, heap->name, heap->id);
-	}
-}
-
 static void allocate_co_memory(struct ion_platform_heap *heap,
 			       struct ion_platform_heap heap_data[],
 			       unsigned int nr_heaps)
 {
 	struct ion_co_heap_pdata *co_heap_data =
 		(struct ion_co_heap_pdata *) heap->extra_data;
-
 	if (co_heap_data->adjacent_mem_id != INVALID_HEAP_ID) {
 		struct ion_platform_heap *shared_heap =
 			find_heap(heap_data, nr_heaps,
@@ -131,23 +98,20 @@ static void allocate_co_memory(struct ion_platform_heap *heap,
 		if (shared_heap) {
 			struct ion_cp_heap_pdata *cp_data =
 			   (struct ion_cp_heap_pdata *) shared_heap->extra_data;
-			if (cp_data->fixed_position == FIXED_MIDDLE) {
-				const struct fmem_data *fmem_info =
-					fmem_get_info();
-
-				if (!fmem_info) {
-					pr_err("fmem info pointer NULL!\n");
-					BUG();
-				}
-
-				cp_data->virt_addr = fmem_info->virt;
+			heap->base = msm_ion_get_base(
+				heap->size + shared_heap->size,
+				shared_heap->memory_type,
+				co_heap_data->align);
+			if (heap->base) {
+				shared_heap->base = heap->base + heap->size;
 				cp_data->secure_base = heap->base;
 				cp_data->secure_size =
 						heap->size + shared_heap->size;
-			} else if (!heap->base) {
-				ion_set_base_address(heap, shared_heap,
-					co_heap_data, cp_data);
+			} else {
+				pr_err("%s: could not get memory for heap %s "
+				   "(id %x)\n", __func__, heap->name, heap->id);
 			}
+
 		}
 	}
 }
@@ -168,7 +132,7 @@ static void msm_ion_heap_fixup(struct ion_platform_heap heap_data[],
 
 	for (i = 0; i < nr_heaps; i++) {
 		struct ion_platform_heap *heap = &heap_data[i];
-		if (heap->type == ION_HEAP_TYPE_CARVEOUT) {
+		if (!heap->base && heap->type == ION_HEAP_TYPE_CARVEOUT) {
 			if (heap->extra_data)
 				allocate_co_memory(heap, heap_data, nr_heaps);
 		}
@@ -178,44 +142,29 @@ static void msm_ion_heap_fixup(struct ion_platform_heap heap_data[],
 static void msm_ion_allocate(struct ion_platform_heap *heap)
 {
 
-	if (!heap->base && heap->extra_data) {
-		unsigned int align = 0;
-		switch (heap->type) {
-		case ION_HEAP_TYPE_CARVEOUT:
-			align =
-			((struct ion_co_heap_pdata *) heap->extra_data)->align;
-			break;
-		case ION_HEAP_TYPE_CP:
-		{
-			struct ion_cp_heap_pdata *data =
-				(struct ion_cp_heap_pdata *)
-				heap->extra_data;
-			if (data->reusable) {
-				const struct fmem_data *fmem_info =
-					fmem_get_info();
-				heap->base = fmem_info->phys;
-				data->virt_addr = fmem_info->virt;
-				pr_info("ION heap %s using FMEM\n", heap->name);
-			} else if (data->mem_is_fmem) {
-				const struct fmem_data *fmem_info =
-					fmem_get_info();
-				heap->base = fmem_info->phys + fmem_info->size;
-			}
-			align = data->align;
-			break;
-		}
-		default:
-			break;
-		}
-		if (align && !heap->base) {
-			heap->base = msm_ion_get_base(heap->size,
-						      heap->memory_type,
-						      align);
-			if (!heap->base)
-				pr_err("%s: could not get memory for heap %s "
-				   "(id %x)\n", __func__, heap->name, heap->id);
-		}
-	}
+        if (!heap->base && heap->extra_data) {
+                unsigned int align = 0;
+                switch (heap->type) {
+                case ION_HEAP_TYPE_CARVEOUT:
+                        align =
+                        ((struct ion_co_heap_pdata *) heap->extra_data)->align;
+                        break;
+                case ION_HEAP_TYPE_CP:
+                        align =
+                        ((struct ion_cp_heap_pdata *) heap->extra_data)->align;
+                        break;
+                default:
+                        break;
+                }
+                if (align) {
+                        heap->base = msm_ion_get_base(heap->size,
+                                                 heap->memory_type,
+                                                 align);
+                        if (!heap->base)
+                                pr_err("%s: could not get memory for heap %s "
+                                 "(id %x)\n", __func__, heap->name, heap->id);
+                }
+        }
 }
 
 static int check_vaddr_bounds(unsigned long start, unsigned long end)
@@ -401,5 +350,4 @@ static void __exit msm_ion_exit(void)
 
 subsys_initcall(msm_ion_init);
 module_exit(msm_ion_exit);
-
 

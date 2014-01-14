@@ -259,18 +259,6 @@ int ion_carveout_cache_ops(struct ion_heap *heap, struct ion_buffer *buffer,
 	return 0;
 }
 
-static int ion_carveout_print_debug(struct ion_heap *heap, struct seq_file *s)
-{
-	struct ion_carveout_heap *carveout_heap =
-		container_of(heap, struct ion_carveout_heap, heap);
-
-	seq_printf(s, "total bytes currently allocated: %lx\n",
-		carveout_heap->allocated_bytes);
-	seq_printf(s, "total heap size: %lx\n", carveout_heap->total_size);
-
-	return 0;
-}
-
 int ion_carveout_heap_map_iommu(struct ion_buffer *buffer,
 					struct ion_iommu_map *data,
 					unsigned int domain_num,
@@ -386,7 +374,6 @@ static struct ion_heap_ops carveout_heap_ops = {
 	.map_dma = ion_carveout_heap_map_dma,
 	.unmap_dma = ion_carveout_heap_unmap_dma,
 	.cache_op = ion_carveout_cache_ops,
-	.print_debug = ion_carveout_print_debug,
 	.map_iommu = ion_carveout_heap_map_iommu,
 	.unmap_iommu = ion_carveout_heap_unmap_iommu,
 };
