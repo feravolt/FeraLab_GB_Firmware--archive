@@ -231,7 +231,7 @@ int ion_carveout_cache_ops(struct ion_heap *heap, struct ion_buffer *buffer,
 			void *vaddr, unsigned int offset, unsigned int length,
 			unsigned int cmd)
 {
-	void (*outer_cache_op)(phys_addr_t, phys_addr_t);
+	void (*outer_cache_op)(unsigned long, unsigned long);
 	struct ion_carveout_heap *carveout_heap =
 	     container_of(heap, struct  ion_carveout_heap, heap);
 
