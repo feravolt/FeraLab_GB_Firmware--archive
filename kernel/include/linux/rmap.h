@@ -26,19 +26,31 @@
  */
 struct anon_vma {
 	spinlock_t lock;	/* Serialize access to vma list */
-	/*
-	 * NOTE: the LSB of the head.next is set by
-	 * mm_take_all_locks() _after_ taking the above lock. So the
-	 * head must only be read/written after taking the above lock
-	 * to be sure to see a valid next pointer. The LSB bit itself
-	 * is serialized by a system wide lock only visible to
-	 * mm_take_all_locks() (mm_all_locks_mutex).
-	 */
+#ifdef CONFIG_KSM
+	atomic_t ksm_refcount;
+#endif
 	struct list_head head;	/* List of private "related" vmas */
 };
 
 #ifdef CONFIG_MMU
-
+#ifdef CONFIG_KSM
+static inline void ksm_refcount_init(struct anon_vma *anon_vma)
+{
+ atomic_set(&anon_vma->ksm_refcount, 0);
+}
+static inline int ksm_refcount(struct anon_vma *anon_vma)
+{
+ return atomic_read(&anon_vma->ksm_refcount);
+}
+#else
+static inline void ksm_refcount_init(struct anon_vma *anon_vma)
+{
+}
+static inline int ksm_refcount(struct anon_vma *anon_vma)
+{
+ return 0;
+}
+#endif
 static inline void anon_vma_lock(struct vm_area_struct *vma)
 {
 	struct anon_vma *anon_vma = vma->anon_vma;
@@ -62,6 +74,7 @@ void __anon_vma_merge(struct vm_area_struct *, struct vm_area_struct *);
 void anon_vma_unlink(struct vm_area_struct *);
 void anon_vma_link(struct vm_area_struct *);
 void __anon_vma_link(struct vm_area_struct *);
+void anon_vma_free(struct anon_vma *);
 
 /*
  * rmap interfaces called when adding or removing pte of page

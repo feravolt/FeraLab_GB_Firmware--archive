@@ -110,10 +110,8 @@ static inline int is_mlocked_vma(struct vm_area_struct *vma, struct page *page)
 	return 1;
 }
 
-/*
- * must be called with vma's mmap_sem held for read, and page locked.
- */
 extern void mlock_vma_page(struct page *page);
+extern void munlock_vma_page(struct page *page);
 
 /*
  * Clear the page's PageMlocked().  This can be useful in a situation where
