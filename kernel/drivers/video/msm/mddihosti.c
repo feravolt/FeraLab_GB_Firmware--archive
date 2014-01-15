@@ -1667,6 +1667,12 @@ static void mddi_host_powerup(mddi_host_type host_idx)
 		mddi_host_timer_service(0);
 }
 
+void mddi_send_fw_link_skew_cal(mddi_host_type host_idx)
+{
+  mddi_host_reg_out(CMD, MDDI_CMD_FW_LINK_SKEW_CAL);
+  MDDI_MSG_DEBUG("%s: Skew Calibration done!!\n", __func__);
+}
+
 void mddi_host_init(mddi_host_type host_idx)
 /* Write out the MDDI configuration registers */
 {
@@ -1871,51 +1877,10 @@ uint32 mddi_get_client_id(void)
 
 		if (!mddi_client_id)
 			mddi_disable(1);
-	}
-
-#if 0
-	switch (mddi_client_capability_pkt.Mfr_Name) {
-	case 0x4474:
-		if ((mddi_client_capability_pkt.Product_Code != 0x8960) &&
-		    (target == DISPLAY_1)) {
-			ret = PRISM_WVGA;
-		}
-		break;
-
-	case 0xD263:
-		if (target == DISPLAY_1)
-			ret = TOSHIBA_VGA_PRIM;
-		else if (target == DISPLAY_2)
-			ret = TOSHIBA_QCIF_SECD;
-		break;
-
-	case 0:
-		if (mddi_client_capability_pkt.Product_Code == 0x8835) {
-			if (target == DISPLAY_1)
-				ret = SHARP_QVGA_PRIM;
-			else if (target == DISPLAY_2)
-				ret = SHARP_128x128_SECD;
-		}
-		break;
-
-	default:
-		break;
-	}
-
-	if ((!client_detection_try) && (ret != TOSHIBA_VGA_PRIM)
-	    && (ret != TOSHIBA_QCIF_SECD)) {
-		/* Not a Toshiba display, so change drive_lo back to default value */
-		mddi_host_reg_out(DRIVE_LO, 0x0032);
-	}
 #endif
-
-#endif
-
+	}
 	return mddi_client_id;
 }
-/*
- * XXX: #endif
- */
 
 void mddi_host_powerdown(mddi_host_type host_idx)
 {
