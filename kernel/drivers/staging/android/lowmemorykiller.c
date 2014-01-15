@@ -72,7 +72,7 @@ static int lowmem_shrink(int nr_to_scan, gfp_t gfp_mask)
 	int selected_oom_adj;
 	int array_size = ARRAY_SIZE(lowmem_adj);
 	int other_free = global_page_state(NR_FREE_PAGES) - totalreserve_pages;
-	int other_file = global_page_state(NR_INACTIVE_FILE) + global_page_state(NR_ACTIVE_FILE);
+	int other_file = global_page_state(NR_FILE_PAGES) - total_swapcache_pages;
 
 	if (lowmem_deathpending &&
 	    time_before_eq(jiffies, lowmem_deathpending_timeout))

@@ -897,7 +897,7 @@ static int ramzswap_write(struct ramzswap *rzs, struct bio *bio)
 		}
 
 		clen = PAGE_SIZE;
-		page_store = alloc_page(GFP_NOIO | __GFP_HIGHMEM);
+		page_store = alloc_page(GFP_NOIO | __GFP_HIGHMEM | __GFP_NOWARN);
 		if (unlikely(!page_store)) {
 			mutex_unlock(&rzs->lock);
 			pr_info("Error allocating memory for incompressible "
@@ -916,7 +916,7 @@ static int ramzswap_write(struct ramzswap *rzs, struct bio *bio)
 
 	if (xv_malloc(rzs->mem_pool, clen + sizeof(*zheader),
 			&rzs->table[index].page, &offset,
-			GFP_NOIO | __GFP_HIGHMEM)) {
+			GFP_NOIO | __GFP_HIGHMEM | __GFP_NOWARN)) {
 		mutex_unlock(&rzs->lock);
 		pr_info("Error allocating memory for compressed "
 			"page: %u, size=%zu\n", index, clen);
