@@ -243,7 +243,7 @@ static int mddi_probe(struct platform_device *pdev)
 	else
 		mfd->fb_imgType = MDP_RGB_565;	/* secondary */
 #else
-	mfd->fb_imgType = MDP_RGB_565;
+	mfd->fb_imgType = MDP_RGBA_8888;
 #endif
 
 	clk_rate = mfd->panel_info.clk_max;

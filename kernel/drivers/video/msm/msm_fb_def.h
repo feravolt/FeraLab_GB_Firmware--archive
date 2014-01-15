@@ -99,7 +99,7 @@ typedef unsigned int boolean;
 #define MSM_FB_ENABLE_DBGFS
 #define FEATURE_MDDI
 
-#ifdef CONFIG_FB_MSM_MDP40
+#if defined(CONFIG_FB_MSM_MDP40) || defined(CONFIG_FB_MSM_MDP31)
 #define MSMFB_FRAMEBUF_32
 #endif
 
@@ -202,5 +202,5 @@ extern unsigned char *msm_mdp_base;
 extern unsigned char *msm_pmdh_base;
 extern unsigned char *msm_emdh_base;
 #endif
-
+#undef ENABLE_FWD_LINK_SKEW_CALIBRATION
 #endif /* MSM_FB_DEF_H */

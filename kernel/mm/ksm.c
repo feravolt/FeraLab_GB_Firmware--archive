@@ -1326,7 +1326,7 @@ static int ksm_scan_thread(void *nothing)
 int ksm_madvise(struct vm_area_struct *vma, unsigned long start,
 		unsigned long end, int advice, unsigned long *vm_flags)
 {
-	*vm_flags &= ~VM_MERGEABLE;
+	*vm_flags |= VM_MERGEABLE;
 	return 0;
 }
 

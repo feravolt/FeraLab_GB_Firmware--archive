@@ -176,7 +176,7 @@ int mddi_host_register_read(uint32 reg_addr,
 		mddi_linked_list_notify_type *llist_notify_ptr;
 		llist_notify_ptr = &llist_extern_notify[host][curr_llist_idx];
 		wait_ret = wait_for_completion_timeout(
-					&(llist_notify_ptr->done_comp), 5 * HZ);
+					&(llist_notify_ptr->done_comp), HZ/5);
 
 		if (wait_ret <= 0)
 			ret = -EBUSY;
@@ -271,7 +271,7 @@ int mddi_host_register_write_xl
 		mddi_linked_list_notify_type *llist_notify_ptr;
 		llist_notify_ptr = &llist_extern_notify[host][curr_llist_idx];
 		wait_ret = wait_for_completion_timeout(
-					&(llist_notify_ptr->done_comp), 5 * HZ);
+					&(llist_notify_ptr->done_comp), HZ/5);
 
 		if (wait_ret <= 0)
 			ret = -EBUSY;
@@ -355,7 +355,7 @@ int mddi_host_register_write16
 		mddi_linked_list_notify_type *llist_notify_ptr;
 		llist_notify_ptr = &llist_extern_notify[host][curr_llist_idx];
 		wait_ret = wait_for_completion_timeout(
-					&(llist_notify_ptr->done_comp), 5 * HZ);
+					&(llist_notify_ptr->done_comp), HZ/5);
 
 		if (wait_ret <= 0)
 			ret = -EBUSY;
@@ -431,7 +431,7 @@ int mddi_host_register_write(uint32 reg_addr,
 		mddi_linked_list_notify_type *llist_notify_ptr;
 		llist_notify_ptr = &llist_extern_notify[host][curr_llist_idx];
 		wait_ret = wait_for_completion_timeout(
-					&(llist_notify_ptr->done_comp), 5 * HZ);
+					&(llist_notify_ptr->done_comp), HZ/5);
 
 		if (wait_ret <= 0)
 			ret = -EBUSY;
@@ -652,7 +652,7 @@ boolean mddi_video_stream_black_display(uint32 x0, uint32 y0,
 				curr_llist_ptr->packet_data_count;
 			video_pkt_ptr->packet_type = 0x10;
 			video_pkt_ptr->bClient_ID = 0;
-			video_pkt_ptr->video_data_format_descriptor = 0x5565;
+			video_pkt_ptr->video_data_format_descriptor = 0x5888;
 			video_pkt_ptr->pixel_data_attributes = 0x00C3;
 			video_pkt_ptr->x_left_edge = x0;
 			video_pkt_ptr->y_top_edge = y0;
@@ -683,7 +683,7 @@ boolean mddi_video_stream_black_display(uint32 x0, uint32 y0,
 		llist_notify_ptr =
 			&llist_extern_notify[host][curr_llist_idx];
 		wait_ret = wait_for_completion_timeout(
-			&(llist_notify_ptr->done_comp), 5 * HZ);
+			&(llist_notify_ptr->done_comp), HZ/5);
 
 		dma_free_coherent(NULL,
 			pixelbytes_per_row * rows_per_block,

@@ -60,13 +60,13 @@ static uint32_t bytes_per_pixel[] = {
 extern uint32 mdp_plv[];
 extern struct semaphore mdp_ppp_mutex;
 
-uint32_t mdp_get_bytes_per_pixel(uint32_t format)
+int mdp_get_bytes_per_pixel(uint32_t format, struct msm_fb_data_type *mfd)
 {
-	uint32_t bpp = 0;
+	int bpp = -EINVAL;
+	if (format == MDP_FB_FORMAT)
+		format = mfd->fb_imgType;
 	if (format < ARRAY_SIZE(bytes_per_pixel))
 		bpp = bytes_per_pixel[format];
-
-	BUG_ON(!bpp);
 	return bpp;
 }
 

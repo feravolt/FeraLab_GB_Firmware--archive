@@ -107,7 +107,7 @@ void mlock_vma_page(struct page *page)
  * either of which will restore the PageMlocked state by calling
  * mlock_vma_page() above, if it can grab the vma's mmap sem.
  */
-static void munlock_vma_page(struct page *page)
+void munlock_vma_page(struct page *page)
 {
 	BUG_ON(!PageLocked(page));
 
@@ -115,22 +115,11 @@ static void munlock_vma_page(struct page *page)
 		dec_zone_page_state(page, NR_MLOCK);
 		if (!isolate_lru_page(page)) {
 			int ret = try_to_munlock(page);
-			/*
-			 * did try_to_unlock() succeed or punt?
-			 */
 			if (ret == SWAP_SUCCESS || ret == SWAP_AGAIN)
 				count_vm_event(UNEVICTABLE_PGMUNLOCKED);
 
 			putback_lru_page(page);
 		} else {
-			/*
-			 * We lost the race.  let try_to_unmap() deal
-			 * with it.  At least we get the page state and
-			 * mlock stats right.  However, page is still on
-			 * the noreclaim list.  We'll fix that up when
-			 * the page is eventually freed or we scan the
-			 * noreclaim list.
-			 */
 			if (PageUnevictable(page))
 				count_vm_event(UNEVICTABLE_PGSTRANDED);
 			else
@@ -138,7 +127,6 @@ static void munlock_vma_page(struct page *page)
 		}
 	}
 }
-EXPORT_SYMBOL(munlock_vma_page);
 
 /**
  * __mlock_vma_pages_range() -  mlock/munlock a range of pages in the vma.
