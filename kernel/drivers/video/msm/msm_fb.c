@@ -666,17 +666,6 @@ static int msm_fb_blank_sub(int blank_mode, struct fb_info *info,
 #endif
 				msm_fb_set_backlight(mfd,
 						     mfd->bl_level, 0);
-
-/* ToDo: possible conflict with android which doesn't expect sw refresher */
-/*
-	  if (!mfd->hw_refresh)
-	  {
-	    if ((ret = msm_fb_resume_sw_refresher(mfd)) != 0)
-	    {
-	      MSM_FB_INFO("msm_fb_blank_sub: msm_fb_resume_sw_refresher failed = %d!\n",ret);
-	    }
-	  }
-*/
 			}
 		}
 		break;

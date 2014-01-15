@@ -114,7 +114,7 @@ static void mdp_dma2_update_lcd(struct msm_fb_data_type *mfd)
 	uint8 *src;
 	uint32 mddi_ld_param;
 	uint16 mddi_vdo_packet_reg;
-	uint16 mddi_vdo_packet_descriptor = 0;
+	uint32 mddi_vdo_packet_descriptor;
 	struct msm_fb_panel_data *pdata =
 	    (struct msm_fb_panel_data *)mfd->pdev->dev.platform_data;
 	uint32 ystride = mfd->fbi->fix.line_length;
@@ -262,21 +262,19 @@ static void mdp_dma2_update_lcd(struct msm_fb_data_type *mfd)
 	MDP_OUTP(MDP_BASE + 0x9000c, ystride);
 #endif
 
-	/* adding dynamic setup of register */
-	if (mfd->panel_info.bpp == 16) {
-		mddi_vdo_packet_descriptor = 0x5565;
-		dma2_cfg_reg |= DMA_DSTC0G_6BITS |	/* 565 16BPP */
-		    DMA_DSTC1B_5BITS | DMA_DSTC2R_5BITS;
-	} else if (mfd->panel_info.bpp == 18) {
-		mddi_vdo_packet_descriptor = 0x5666;
-		dma2_cfg_reg |= DMA_DSTC0G_6BITS |	/* 666 18BPP */
-		    DMA_DSTC1B_6BITS | DMA_DSTC2R_6BITS;
-	} else {
-		/* assuming 24 bpp */
-		mddi_vdo_packet_descriptor = 0x5888;
-		dma2_cfg_reg |= DMA_DSTC0G_8BITS |	/* 888 24BPP */
-		    DMA_DSTC1B_8BITS | DMA_DSTC2R_8BITS;
-	}
+        if (mfd->panel_info.bpp == 18) {
+                mddi_vdo_packet_descriptor = 0x5666;
+                dma2_cfg_reg |= DMA_DSTC0G_6BITS |        /* 666 18BPP */
+                 DMA_DSTC1B_6BITS | DMA_DSTC2R_6BITS;
+        } else if (mfd->panel_info.bpp == 24) {
+                mddi_vdo_packet_descriptor = 0x5888;
+                dma2_cfg_reg |= DMA_DSTC0G_8BITS | 	  /* 888 24BPP */
+                 DMA_DSTC1B_8BITS | DMA_DSTC2R_8BITS;
+        } else {
+                mddi_vdo_packet_descriptor = 0x5565;
+                dma2_cfg_reg |= DMA_DSTC0G_6BITS |        /* 565 16BPP */
+                 DMA_DSTC1B_5BITS | DMA_DSTC2R_5BITS;
+        }
 
 	if (mddi_dest) {
 #ifdef CONFIG_FB_MSM_MDP22

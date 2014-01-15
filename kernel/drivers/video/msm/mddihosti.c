@@ -1667,12 +1667,6 @@ static void mddi_host_powerup(mddi_host_type host_idx)
 		mddi_host_timer_service(0);
 }
 
-void mddi_send_fw_link_skew_cal(mddi_host_type host_idx)
-{
-  mddi_host_reg_out(CMD, MDDI_CMD_FW_LINK_SKEW_CAL);
-  MDDI_MSG_DEBUG("%s: Skew Calibration done!!\n", __func__);
-}
-
 void mddi_host_init(mddi_host_type host_idx)
 /* Write out the MDDI configuration registers */
 {
@@ -1811,15 +1805,10 @@ void mddi_host_init(mddi_host_type host_idx)
 	pmhctl = &(mhctl[host_idx]);
 }
 
-/*
- * XXX: #ifdef CONFIG_FB_MSM_MDDI_AUTO_DETECT
- */
 static uint32 mddi_client_id;
 
 uint32 mddi_get_client_id(void)
 {
-
-#ifndef FEATURE_MDDI_DISABLE_REVERSE
 	mddi_host_type host_idx = MDDI_HOST_PRIM;
 	static boolean client_detection_try = FALSE;
 	mddi_host_cntl_type *pmhctl;
@@ -1877,7 +1866,6 @@ uint32 mddi_get_client_id(void)
 
 		if (!mddi_client_id)
 			mddi_disable(1);
-#endif
 	}
 	return mddi_client_id;
 }
