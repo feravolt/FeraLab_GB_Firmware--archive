@@ -138,6 +138,7 @@ static void munlock_vma_page(struct page *page)
 		}
 	}
 }
+EXPORT_SYMBOL(munlock_vma_page);
 
 /**
  * __mlock_vma_pages_range() -  mlock/munlock a range of pages in the vma.

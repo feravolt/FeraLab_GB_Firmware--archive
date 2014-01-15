@@ -51,6 +51,14 @@ static inline int ksm_refcount(struct anon_vma *anon_vma)
  return 0;
 }
 #endif
+static inline struct anon_vma *page_anon_vma(struct page *page)
+{
+ if (((unsigned long)page->mapping & PAGE_MAPPING_FLAGS) !=
+ PAGE_MAPPING_ANON)
+ return NULL;
+ return page_rmapping(page);
+}
+
 static inline void anon_vma_lock(struct vm_area_struct *vma)
 {
 	struct anon_vma *anon_vma = vma->anon_vma;
@@ -74,7 +82,6 @@ void __anon_vma_merge(struct vm_area_struct *, struct vm_area_struct *);
 void anon_vma_unlink(struct vm_area_struct *);
 void anon_vma_link(struct vm_area_struct *);
 void __anon_vma_link(struct vm_area_struct *);
-void anon_vma_free(struct anon_vma *);
 
 /*
  * rmap interfaces called when adding or removing pte of page

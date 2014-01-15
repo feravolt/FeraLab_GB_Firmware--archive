@@ -622,16 +622,9 @@ void page_address_init(void);
 #define page_address_init()  do { } while(0)
 #endif
 
-/*
- * On an anonymous page mapped into a user virtual memory area,
- * page->mapping points to its anon_vma, not to a struct address_space;
- * with the PAGE_MAPPING_ANON bit set to distinguish it.
- *
- * Please note that, confusingly, "page_mapping" refers to the inode
- * address_space which maps the page from disk; whereas "page_mapped"
- * refers to user virtual address space into which the page is mapped.
- */
 #define PAGE_MAPPING_ANON	1
+#define PAGE_MAPPING_KSM 2
+#define PAGE_MAPPING_FLAGS (PAGE_MAPPING_ANON | PAGE_MAPPING_KSM)
 
 extern struct address_space swapper_space;
 static inline struct address_space *page_mapping(struct page *page)
@@ -647,6 +640,11 @@ static inline struct address_space *page_mapping(struct page *page)
 	if (unlikely((unsigned long)mapping & PAGE_MAPPING_ANON))
 		mapping = NULL;
 	return mapping;
+}
+
+static inline void *page_rmapping(struct page *page)
+{
+ return (void *)((unsigned long)page->mapping & ~PAGE_MAPPING_FLAGS);
 }
 
 static inline int PageAnon(struct page *page)

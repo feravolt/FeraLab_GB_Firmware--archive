@@ -24,10 +24,6 @@ static int madvise_need_mmap_write(int behavior)
 	case MADV_REMOVE:
 	case MADV_WILLNEED:
 	case MADV_DONTNEED:
-#ifdef CONFIG_KSM
-	case MADV_MERGEABLE:
-	case MADV_UNMERGEABLE:
-#endif
 		return 0;
 	default:
 		/* be safe, default to 1. list exceptions explicitly */
@@ -63,12 +59,6 @@ static long madvise_behavior(struct vm_area_struct * vma,
 		break;
 	case MADV_DOFORK:
 		new_flags &= ~VM_DONTCOPY;
-		break;
-	case MADV_MERGEABLE:
-	case MADV_UNMERGEABLE:
-		error = ksm_madvise(vma, start, end, behavior, &new_flags);
-		if (error)
-			goto out;
 		break;
 	}
 

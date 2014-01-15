@@ -111,7 +111,6 @@ static inline int is_mlocked_vma(struct vm_area_struct *vma, struct page *page)
 }
 
 extern void mlock_vma_page(struct page *page);
-extern void munlock_vma_page(struct page *page);
 
 /*
  * Clear the page's PageMlocked().  This can be useful in a situation where
