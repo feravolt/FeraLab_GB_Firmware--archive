@@ -403,6 +403,7 @@ extern int get_dumpable(struct mm_struct *mm);
 #define MMF_DUMPABLE      0  /* core dump is permitted */
 #define MMF_DUMP_SECURELY 1  /* core file is readable only by root */
 #define MMF_DUMPABLE_BITS 2
+#define MMF_DUMPABLE_MASK ((1 << MMF_DUMPABLE_BITS) - 1)
 
 /* coredump filter bits */
 #define MMF_DUMP_ANON_PRIVATE	2
@@ -425,6 +426,9 @@ extern int get_dumpable(struct mm_struct *mm);
 #else
 # define MMF_DUMP_MASK_DEFAULT_ELF	0
 #endif
+
+#define MMF_VM_MERGEABLE 16 /* KSM may merge identical pages */
+#define MMF_INIT_MASK (MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK)
 
 struct sighand_struct {
 	atomic_t		count;
