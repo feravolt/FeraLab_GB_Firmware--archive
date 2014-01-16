@@ -49,7 +49,6 @@ loglevel 3
     write /proc/sys/kernel/sched_compat_yield 1
     write /proc/sys/kernel/sched_child_runs_first 0
     write /proc/sys/kernel/randomize_va_space 2
-    write /proc/sys/vm/mmap_min_addr 32768
     write /proc/sys/net/ipv4/ping_group_range "0 2147483647"
     write /proc/sys/kernel/sched_rt_runtime_us 950000
     write /proc/sys/kernel/sched_rt_period_us 1000000
@@ -84,11 +83,11 @@ on post-fs
     chown root system /proc/sysrq-trigger
     chmod 0220 /proc/sysrq-trigger
     mkdir /data/misc 01771 system misc
-	mkdir /data/misc/adb 02750 system shell
-	mkdir /data/misc/bluedroid 0770 bluetooth net_bt_stack
+    mkdir /data/misc/adb 02750 system shell
+    mkdir /data/misc/bluedroid 0770 bluetooth net_bt_stack
     mkdir /data/misc/bluetoothd 0770 bluetooth bluetooth
     mkdir /data/misc/bluetooth 0770 system system
-	mkdir /data/misc/keychain 0771 system system
+    mkdir /data/misc/keychain 0771 system system
     mkdir /data/misc/keystore 0700 keystore keystore
     mkdir /data/misc/radio 0770 system radio
     mkdir /data/misc/sms 0770 system radio
@@ -99,13 +98,13 @@ on post-fs
     mkdir /data/misc/wifi 0770 wifi wifi
     chmod 0770 /data/misc/wifi
     chmod 0660 /data/misc/wifi/wpa_supplicant.conf
-	mkdir /data/misc/media 0700 media media
+    mkdir /data/misc/media 0700 media media
     mkdir /data/local 0751 root root
     mkdir /data/local/tmp 0771 shell shell
     mkdir /data/data 0771 system system
     mkdir /data/app-private 0771 system system
-	mkdir /data/app-asec 0700 root root
-	mkdir /data/app-lib 0771 system system
+    mkdir /data/app-asec 0700 root root
+    mkdir /data/app-lib 0771 system system
     mkdir /data/app 0771 system system
     mkdir /data/property 0700 root root
     mkdir /data/ssh 0750 root shell
@@ -121,16 +120,16 @@ on post-fs
     chmod 0770 /cache/lost+found
     mkdir /data/drm 0774 drm drm
     chown drm drm /data/drm
-	chmod 0774 /data/drm
+    chmod 0774 /data/drm
     mkdir /data/mediadrm 0770 mediadrm mediadrm
-	mkdir /data/security 0711 system system
+    mkdir /data/security 0711 system system
     chown root system /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
     chmod 0664 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
     chown root system /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
     chmod 0664 /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
     chown root system /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
     chmod 0664 /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
-	mount rootfs rootfs / ro remount
+    mount rootfs rootfs / ro remount
 
 on boot
     ifup lo
@@ -160,11 +159,11 @@ on boot
     write /proc/sys/vm/min_free_order_shift 4
     write /sys/module/lowmemorykiller/parameters/minfree 2048,3072,4096,6144,7168,14336
     write /proc/1/oom_adj -16
-	write /sys/module/wakelock/parameters/debug_mask 7
+    write /sys/module/wakelock/parameters/debug_mask 7
     write /proc/sys/vm/dirty_expire_centisecs 200
     write /proc/sys/vm/dirty_ratio  4
     write /proc/sys/vm/dirty_background_ratio  2
-	chmod 0660 /sys/class/rfkill/rfkill0/state
+    chmod 0660 /sys/class/rfkill/rfkill0/state
     chown root system /sys/module/lowmemorykiller/parameters/adj
     chmod 0664 /sys/module/lowmemorykiller/parameters/adj
     chown root system /sys/module/lowmemorykiller/parameters/minfree
@@ -206,7 +205,7 @@ on boot
     chown system system /sys/kernel/ipv4/tcp_rmem_def
     chown system system /sys/kernel/ipv4/tcp_rmem_max
     chown root radio /proc/cmdline
-	write /proc/sys/net/core/rmem_max  2097152
+    write /proc/sys/net/core/rmem_max  2097152
     write /proc/sys/net/core/wmem_max  2097152
     write /proc/sys/net/ipv6/conf/rmnet0/accept_ra 2
     write /proc/sys/net/ipv6/conf/rmnet1/accept_ra 2
@@ -349,3 +348,4 @@ service dumpstate /system/bin/dumpstate -s
     socket dumpstate stream 0660 shell log
     disabled
     oneshot
+

@@ -1,9 +1,6 @@
 #!/system/xbin/sh
-### FeraDroid Engine v15 | By FeraVolt. 2013
+### FeraDroid Engine v16 | By FeraVolt. 2013
 
-mount -t ext2 -o rw /dev/block/vold/179:2 /mnt/sd-ext
-mount -t ext2 -o rw /dev/block/mmcblk0p2 /mnt/sd-ext
-sleep 1
 mount -t ext3 -o rw /dev/block/vold/179:2 /mnt/sd-ext
 mount -t ext3 -o rw /dev/block/mmcblk0p2 /mnt/sd-ext
 sleep 1

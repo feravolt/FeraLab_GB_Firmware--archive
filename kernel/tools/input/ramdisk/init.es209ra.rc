@@ -1,6 +1,5 @@
 on init
     exec /sbin/mr
-    exec /sbin/checkabortedflash
 
 on early-boot
     exec /system/bin/chargemon
@@ -19,11 +18,11 @@ service hostapd /system/bin/hostapd /data/misc/wifi/hostapd.conf
     disabled
 
 service dhcp-service /system/bin/netcfg eth0 dhcp
-	oneshot
+    oneshot
 
 on property:dev.bootcomplete=1
-	stop dhcp-service
-	start dhcp-service
+    stop dhcp-service
+    start dhcp-service
 
 service dhcpcd /system/bin/dhcpcd -B wlan0
     disabled

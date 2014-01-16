@@ -38,6 +38,7 @@ selectbox(
     "Italian",            "Benvenuto!",                                    0,
     "Spanish",            "Bienvenido!",                                   0,
     "German",             "Welkom!",                                       0,
+    "Philipine",          "Maligayang Pagdating!",                         0,
     "Hungarian",          "Üdvözöllek!",                                   0
 );
 

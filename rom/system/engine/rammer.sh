@@ -1,5 +1,5 @@
 #!/system/bin/sh
-### FeraDroid Engine v15 | By FeraVolt. 2013###
+### FeraDroid Engine v16 | By FeraVolt. 2013###
 
 while true;
 do
@@ -12,14 +12,14 @@ ramcached=$(($ramkbytescached/1024))
 ramreportedfree=$(($ramfree + $ramcached))
 ramm=$(($ram + $ramfree))
 
-old='300'
+old='360'
 hmm='512'
-nne='768'
+nne='760'
 
 if [[ "$ramm" -le "$old" ]]
 then
 echo "Device with $ramm MB RAM"
-critical='8'
+critical='7'
 low='12'
 better='18'
 good='27'
