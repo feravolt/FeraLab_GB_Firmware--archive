@@ -1,0 +1,143 @@
+﻿### FeraLab ###
+
+text_ok=OK
+text_next=Dalej >
+text_back=< Wstecz
+text_yes=Tak
+text_no=Nie
+text_about=O...
+text_calibrating=Narzędzie kalibracji
+text_quit=Zamknij instalator
+text_quit_msg=Czy na pewno chcesz zamknąć instalator?
+
+common.for=dla
+
+langtest.title=Witaj
+langtest.multiline=Witaj w instalatorze ***FeraLab*** ROM .\
+Teraz możesz dostosować ROM.\
+\
+Miłego flashowania i powodzenia!\
+\
+Dziękujemy za wybranie <b>***FeraLab***</b>
+
+welcome.title=Witaj
+welcome.text1=Zamierzasz zainstalować
+welcome.text2=Przeczytaj dokładnie opisy opcji instalatora!
+welcome.version=WERSJA
+welcome.codename=TWÓRCA
+welcome.updated=ANDROID
+welcome.next=Naciśnij dalej aby kontynuować instalację...
+
+terms.title=Licencja
+terms.desc=GPLv2 OpenSource License.
+terms.check=Zgadzam się z tymi warunkami.
+terms.confirm=Zaznacz swoją zgodę lub opuść instalator.
+
+changelog.title=Lista zmian
+changelog.desc=***FeraLab*** ROM zmiany:
+
+fde.title=Lista zmian
+fde.desc=FeraDroidEngine zmiany
+
+sys.title=Informacje o systemie
+sys.titlee=Informacje o twoim telefonie:
+sys.free=Wolne miejsce
+sys.system=Partycja systemowa
+sys.data=Partycja danych
+sys.sd=Karta SD
+sys.sdext=SD-EXT 
+
+hz.ready=Gotowy do instalacji
+hz.readyy=Instalator jest gotowy do rozpoczęcia procesu instalacji
+hz.aha=Jeśli chcesz sprawdzić lub zmienić wybrane opcje, wciśnij <b>Wstecz</b>. Wciśnij "Menu > Zakończ" aby zakończyć działanie instalatora.
+hz.next=Dalej >
+hz.now=Zainstaluj teraz
+
+inst.title=Instalowanie...
+inst.is=jest instalowany.
+inst.wait=Proszę czekać, instalator instaluje 
+inst.min=To może zająć kilka minut
+inst.fin=Instalator ukończył instalowanie 
+inst.next=Naciśnij dalej aby kontynuować
+
+finish.fin=Zakończono
+reboot.title=Zakończono!
+reboot.titlee=Instalacja zakończona powodzeniem.
+reboot.box=Zrestartuj teraz swoje urządzenie...
+
+cbox.ch=Wybierz dodatkowe aplikacje
+cbox.ea=Dodatkowe aplikacje
+cbox.aa=Program dostosowujący ustawienia grafiki w grach.
+cbox.bb=Chińskie IME. Wybierz jeśli chcesz wprowadzać tekst w języku chińskim.
+cbox.cc=Uniwersalny cleaner dla Androida, usuwa niepotrzebne pliki tymczasowe.
+cbox.dd=Zestaw aplikacji trybu okienkowego.
+cbox.ee=Program do notatek z wigdetem.
+cbox.ff=Oficjalna aplikacja Google Mail.
+cbox.gg=Aplikacja obsługująca chmurę Google.
+cbox.hh=Aplikacja społecznościowa Google Hangouts.
+cbox.ii=Oficjalna aplikacja Google Maps.
+cbox.jj=Aplikacja skanująca kody kreskowe.
+cbox.kk=Aplikacja pozwalająca na zmianę częstostliwości CPU i zarządcy I/O.
+cbox.ll=Szybka i prosta przeglądarka ze wspraciem kompresji danych.
+cbox.mm=Aplikacja do robienia zdjęć panoramicznych.
+cbox.nn=Program do ustawień prywatności Pdroid. Firewall dla Adroida.
+cbox.oo=Podobny do UI Paranoid. Niezbędny jeśli masz niedziałające przyciski fizyczne.
+cbox.pp=Oficjalnysklep i emulator PlayStation Mobile.
+cbox.qq=Zestaw narzędzi SIM.
+cbox.ss=Zmodyfikowana aplikacja YouTube.
+
+lite.a=Odchudzanie ROMu
+lite.b=Zaznaczając, usuniesz z ROMu następujące aplikacje:\
+\
+BatteryUsageWidget\
+GoogleLyricsPlugin\
+LearningClient\
+PicoTts\
+Powersavemode\
+QuickSearchBox\
+SemcDlna\
+SemcEmail\
+SemcMetadataCleanup\
+Smartcontacts\
+TtsService\
+UserDictionaryProvider\
+WikipediaPlugin\
+widgetfavouritepeople\
+MediaWidget
+lite.c=Czy chcesz odchudzić swój ROM?
+lite.d=Tak.
+
+opt.a=Dodatkowe ustawienia
+opt.b=Zaznacz zmiany które chcesz wprowadzić - jeśli nie zaznaczysz opcji, zastosowane zostaną ustawienia domyślne.
+opt.c=Opcje
+opt.d=Zaznaczając tę opcję wyłączysz odblokowywanie ekranu przez naciśnięcie przycisku HOME.
+opt.z=Zaznaczając to całkowicie wyłączysz diody LED między klawiszami pod ekranem.
+opt.xxxx=Viper Sound Engine z zaawansowanymi ustawieniami przetwarzania dźwięku.
+opt.xyyx=Ustaw domyślny zegar CPU nac 768Mhz. Wydłuża czas pracy na baterii kosztem ogólnej wydajności. Ustawienie to można zmienić używając aplikacji takich jak SetCPU, No-frills.
+opt.xyxy=Wyłącz kompresję pamięci zRam.
+opt.xyxyz=Zainstaluj czarną klawiaturę (Sony).
+
+rom.title=Dane
+rom.titlee=Wybierz czy chcesz usunąć dane z poprzedniego ROMu (dane na karcie SD nie zostaną zmienione). Uwaga! Czysta instalacja jest zalecana.
+rom.d=Usuń moje dane (100% szybki i stabilny ROM). Wybierz tę opcję jeśli w telefonie jest zainstalowany rom w wersji niższej niż 34 lub inny niż FeraVolt.
+rom.s=Zachowaj moje dane - rozumiem że mogą wystąpić błędy.
+
+omg.title=ROM
+omg.titlee=Wybierz tryb instalacji ROMu. Wybierz opcję konfiguracji tylko jeśli zainstalowałeś już dokładnie TĘ WERSJĘ ROMu.
+omg.d=Zainstaluj ROM normalnie.
+omg.s=Zainstalowałem już ten ROM i chcę go ponownie skonfigurować.
+
+game.title=Tryb Gier
+game.titlee=Wybierz jeśli chcesz aktywować tryb gier. Informacje o działaniu tego trybu znajdują się na stronie.
+game.a=Nie używaj Trybu Gier i zachowaj oryginalne ustawienia.
+game.b=Użyj Trybu Gier. Zmień device ID i usuń filtrowanie klatek.
+
+theme.title=Skórka
+theme.titlee=Wybierz domyślną skórkę systemu.
+theme.aa=Zachowaj oryginalną.
+
+uxp.title=Blokada ekranu
+uxp.titlee=Wybierz domyślną blokadę ekranu.
+uxp.a=Blokada z JB z szybkim dostępem do aparatu.
+uxp.b=Standardowa blokada UXP.
+

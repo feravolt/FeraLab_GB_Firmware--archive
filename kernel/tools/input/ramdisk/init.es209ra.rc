@@ -1,6 +1,3 @@
-on init
-    exec /sbin/mr
-
 on early-boot
     exec /system/bin/chargemon
     exec /sbin/bootrec

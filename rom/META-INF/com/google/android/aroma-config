@@ -39,7 +39,9 @@ selectbox(
     "Spanish",            "Bienvenido!",                                   0,
     "German",             "Welkom!",                                       0,
     "Philipine",          "Maligayang Pagdating!",                         0,
-    "Hungarian",          "Üdvözöllek!",                                   0
+    "Hungarian",          "Üdvözöllek!",                                   0,
+    "Polish",             "Witaj!",                                        0,
+    "Arabic",             "Hello!",                                        0
 );
 
 if prop("lang.prop","selected.0")=="1" then
@@ -76,6 +78,14 @@ endif;
 
 if prop("lang.prop","selected.0")=="9" then
   loadlang("langs/hun.lang");
+endif;
+
+if prop("lang.prop","selected.0")=="10" then
+  loadlang("langs/pol.lang");
+endif;
+
+if prop("lang.prop","selected.0")=="11" then
+  loadlang("langs/ar.lang");
 endif;
 
 viewbox(
