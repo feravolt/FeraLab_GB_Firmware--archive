@@ -1,0 +1,143 @@
+### FeraLab ###
+
+text_ok=OK
+text_next=Volgende >
+text_back=< Terug
+text_yes=Ja
+text_no=Nee
+text_about=Over
+text_calibrating=Calibratiegereedschap 
+text_quit=Stop de installatie
+text_quit_msg=Weet u zeker dat u de installatie wilt stoppen?
+
+common.for=for
+
+langtest.title=Welkom
+langtest.multiline=Hallo en welkom bij het ***FeraLab*** ROM installatieprogramma.\
+U kunt de ROM installatie nu aanpassen.\
+\
+Veel geluk met het flashen van de ROM!\
+\
+Bedankt dat u <b>***FeraLab***</b> heeft gekozen.
+
+welcome.title=Welkom
+welcome.text1=U staat op het punt om de ROM te installeren.
+welcome.text2=Lees a.u.b. zorgvuldig de beschrijvingen van de installatieopties!
+welcome.version=VERSIE
+welcome.codename=ONTWIKKELAAR
+welcome.updated=ANDROID
+welcome.next=Druk op volgende om de installatieprocedure voort te zetten...
+
+terms.title=Licentie
+terms.desc=GPLv2 OpenSource Licentie.
+terms.check=Ik stem in met de algemene voorwaarden.
+terms.confirm=Accepteer a.u.b de overeenkomst of breek de installatie af.
+
+changelog.title=Wijzigingenlogboek
+changelog.desc=***FeraLab*** ROM Wijzigingenlogboek
+
+fde.title=Wijzigingenlogboek
+fde.desc=FeraDroidEngine Wijzigingenlogboek
+
+sys.title=Systeeminformatie
+sys.titlee=Systeeminformatie van uw apparaat
+sys.free=Vrije ruimte beschikbaar
+sys.system=Systeemgrootte
+sys.data=Datagrootte
+sys.sd=SD-Kaartgrootte
+sys.sdext=Externe SD-kaartgrootte
+
+hz.ready=Ready to Install
+hz.readyy=De wizard is klaar om de installatie te beginnen
+hz.aha=Als u uw installatie-instellingen wilt herzien of wijzigen, druk op <b>Back</b>. Druk op Menu toets -> Stop de installatie om de wizard te beëindigen
+hz.next=Volgende >
+hz.now=Installeer nu
+
+inst.title=Bezig met installeren...
+inst.is=worden geïnstalleerd.
+inst.wait=Wacht a.u.b. terwijl de wizard bezig is met installeren
+inst.min=Dit kan enkele minuten duren
+inst.fin=De wizard is geslaagd met de installatie
+inst.next=Druk op volgende om verder te gaan
+
+finish.fin=Voltooid
+reboot.title=Voltooid!
+reboot.titlee=Installatie is geslaagd.
+reboot.box=Herstart uw apparaat nu...
+
+cbox.ch=Kies Extra Apps
+cbox.ea=Extra Applicaties
+cbox.aa=Game Graphics Customizer.
+cbox.bb=Chinese IME. Kies dit alsu de Chinese taalinvoer wilt gebruiken.
+cbox.cc=Universele schoonmaaakapplicatie voor Android. Maakt cache en  taken schoon.
+cbox.dd=Set of apps with floating window support.
+cbox.ee=Simple notes met widget.
+cbox.ff=Officiële Google Mail applicatie.
+cbox.gg=Google cloud storage service.
+cbox.hh=Google Hangouts sociale media applicatie.
+cbox.ii=Officiële Google Maps applicatie.
+cbox.jj=Barcode Scanner applicatie.
+cbox.kk=Applicatie om de CPU frequentie en de I/O scheduler te wijzigen.
+cbox.ll=Snelle en simpele browser met ondersteuning voor datacompressie.
+cbox.mm=Applicatie om panoramafoto's mee te maken.
+cbox.nn=Pdroid Privacy applicatie. Android firewall.
+cbox.oo=Gelijkwaardig aan Paranoid Pie Control. Verplichte keuze als u enige defecte HW knoppen heeft.
+cbox.pp=Officiële PlayStation Mobile Store & Emulator.
+cbox.qq=Standart Sim Toolkit.
+cbox.ss=Gemodificeerde YouTube applicatie.
+
+lite.a=Verlichter
+lite.b=Als u deze optie selecteert, dan zullen de volgende systeemapplicaties worden verwijderd:\
+\
+BatteryUsageWidget\
+GoogleLyricsPlugin\
+LearningClient\
+PicoTts\
+Powersavemode\
+QuickSearchBox\
+SemcDlna\
+SemcEmail\
+SemcMetadataCleanup\
+Smartcontacts\
+TtsService\
+UserDictionaryProvider\
+WikipediaPlugin\
+widgetfavouritepeople\
+MediaWidget
+lite.c=Wilt u uw ROM verlichten?
+lite.d=Ja..Doe het.
+
+opt.a=Extra Configuratie
+opt.b=Selecteer de opties die u wenst te hebben inbegrepen. Als u niet selecteert - zal worden gebruikt als standaard optie.
+opt.c=Opties
+opt.d=Als u dit selecteert, dan zal het niet mogelijk zijn om het vergrendelscherm te ontgrendelen met de HOME knop.
+opt.z=Als u dit selecteert, dan zult u de HW LED's van de onderste toetsen compleet uitschakelen+.
+opt.xxxx=Viper Sound Engine met geavanceerde geluidsverwerkingsfuncties.
+opt.xyyx=Stel de maximale standaard CPU frequency in op 768Mhz. Dit zal je batterijduur zeer verhogen ten koste van de totale prestaties. Deze optie kunt u later wijzigen door CPU frequentieconfig.-apps te gebruiken(zoals No-Frills CPU, etc..).
+opt.xyxy=zRam geheugencompressie uitschakelen.
+opt.xyxyz=Install black-themed keyboard (Sony keyboard).
+
+rom.title=Data
+rom.titlee=Kies deze optie als u de data van de vorige installatie wilt behouden (Uw data op de SD-kaart blijft onaangetast). Waarschuwing! Schone installatie is TEN ZEERSTE aangeraden!
+rom.d=Wis mijn data voor een 100% snelle en stabiele ROM installatie. Verplichte keuze als u hiervoor een non-FeraLab ROM of een FeraLab ROM versie onder v34 heeft gebruikt.
+rom.s=Behoud mijn data. Ik stem in met problemen, die zich kunnen voordoen.
+
+omg.title=ROM
+omg.titlee=Installeer ROM. Kies alleen niet herinstalleren, indien u alreeds DEZE ROM-versie heeft geïnstalleerd.
+omg.d=Installeer ROM zoals gewoonlijk.
+omg.s=Ik heb alreeds deze ROM-versie geïnstalleerd en wil deze slechts configureren.
+
+game.title=Game Mode
+game.titlee=Kies deze optie als u de Gaming mode in de ROM wilt inschakelen. Kijk op de website voor meer info over hoe het werkt.
+game.a=Schakel Game Mode uit en gebruik de standaard instellingen.
+game.b=Schakel Game Mode in. Wijzig apparaat-ID en schakel frame filtering uit.
+
+theme.title=Thema
+theme.titlee=Kies standaard systeemthema.
+theme.aa=Behoud het originele thema.
+
+uxp.title=Vergrendelscherm
+uxp.titlee=Selecteer standaard vergrendelscherm voor de ROM.
+uxp.a=JB-stijl vergrendelscherm met directe cameratoegang.
+uxp.b=Standaard UXP vergrendelscherm.
+

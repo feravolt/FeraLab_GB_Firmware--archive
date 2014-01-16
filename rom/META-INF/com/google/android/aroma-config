@@ -34,7 +34,10 @@ selectbox(
     "English",            "Hello!",                                        1,      #-- selected.0 = 1
     "Russian",            "Здравствуйте!",                                 0,
     "Czech",              "Vítejte!",                                      0,
-    "French",             "Bienvenue!",                                    0
+    "French",             "Bienvenue!",                                    0,
+    "Italian",            "Benvenuto!",                                    0,
+    "Spanish",            "Bienvenido!",                                   0,
+    "German",             "Welkom!",                                       0
 );
 
 if prop("lang.prop","selected.0")=="1" then
@@ -51,6 +54,18 @@ endif;
 
 if prop("lang.prop","selected.0")=="4" then
   loadlang("langs/fr.lang");
+endif;
+
+if prop("lang.prop","selected.0")=="5" then
+  loadlang("langs/it.lang");
+endif;
+
+if prop("lang.prop","selected.0")=="6" then
+  loadlang("langs/esp.lang");
+endif;
+
+if prop("lang.prop","selected.0")=="7" then
+  loadlang("langs/deu.lang");
 endif;
 
 viewbox(

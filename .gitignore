@@ -13,6 +13,7 @@
 *.app
 *.order
 *.ftf
+*.properties
 Kconfig~
 Makefile~
 .config

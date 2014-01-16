@@ -1,0 +1,142 @@
+### FeraLab ###
+
+text_ok=OK
+text_next=Avanti >
+text_back=< Indietro
+text_yes=Sì
+text_no=No
+text_about=Informazioni
+text_calibrating=Tool di calibrazione
+text_quit=Esci dall'installazione
+text_quit_msg=Sicuro di voler uscire dall'installazione?
+
+common.for=for
+
+langtest.title=Benvenuto
+langtest.multiline=Ciao e benvenuto all'installazione della ***FeraLab*** ROM.\
+Puoi ora personalizzare la ROM.\
+\
+Buon flashing e buona fortuna!\
+\
+Grazie per aver scelto <b>***FeraLab***</b>
+
+welcome.title=Benvenuto
+welcome.text1=Stai per installare
+welcome.text2=Leggere attentamente le descrizioni delle opzioni dell'installer!
+welcome.version=VERSIONE
+welcome.codename=DEVELOPER
+welcome.updated=ANDROID
+welcome.next=Premi Avanti per continuare l'installazione...
+
+terms.title=License
+terms.desc=GPLv2 OpenSource License.
+terms.check=Sono d'accordo con questi termini e condizioni.
+terms.confirm=Spuntare l'agreement o uscire.
+
+changelog.title=Changelog
+changelog.desc=***FeraLab*** ROM changelog
+
+fde.title=Changelog
+fde.desc=FeraDroidEngine changelog
+
+sys.title=Informazioni di sistema
+sys.titlee=Informazioni di sistema del tuo Device
+sys.free=Spazio libero
+sys.system=Capacità sistema
+sys.data=Capacità dati
+sys.sd=Capacità SDCard
+sys.sdext=Capacità SD-EXT
+
+hz.ready=Pronto all'installazionehz.readyy=L'installazione automatica è pronta a iniziare
+hz.aha=Se vuoi rivedere o cambiare qualsiasi impostazione di installazione, premi <b>Indietro</b>. Premere il tasto home -> Esci dall'installazione automatica
+hz.next=Avanti >
+hz.now=Installa ora
+
+inst.title=Installando...
+inst.is=Sta per essere installato.
+inst.wait=Attendere mentre l'installazione automatica procede
+inst.min=Può richiedere molti minuti
+inst.fin=L'installazione automatica è terminata correttamente
+inst.next=Premere Avanti per continuare
+
+finish.fin=Finito
+reboot.title=Finito!
+reboot.titlee=Installato correttamente.
+reboot.box=Riavvia il dispositivo...
+
+cbox.ch=Istalla App opzionali
+cbox.ea=App opzionali
+cbox.aa=Personalizza grafica dei giochi.
+cbox.bb=Chinese IME. Seleziona se usi come input la lingua cinese.
+cbox.cc=Cleaner universale per android. Effettua la pulizia di cache e app.
+cbox.dd=Set di applicazioni con supporto alla visualizzazione flottante.
+cbox.ee=Note con widget.
+cbox.ff=Applicazione ufficiale Google Mail.
+cbox.gg=Servizio di archiviazione cloud di Google.
+cbox.hh=Applicazione social Google Hangouts.
+cbox.ii=Applicazione ufficiale Google Maps.
+cbox.jj=Applicazione scanner barcode.
+cbox.kk=Applicazione per modificare la frequenza della CPU e lo scheduler I/O.
+cbox.ll=Semplice e veloce browser con supporto alla compressione dei dati.
+cbox.mm=Applicazione per fare foto paronamiche.
+cbox.nn=Applicazione Pdroid Privacy. Firewall per Android.
+cbox.oo=Simile al controllo a torta Paranoid. Scelta obbligata se hai qualche tasto hardware non funzionante.
+cbox.pp=Negozio e emulatore ufficiale PlayStation Mobile.
+cbox.qq=Sim Toolkit.
+cbox.ss=Applicazione YouTube modificata.
+
+lite.a=Enlighter
+lite.b=Slezionando questa opzione, le seguenti applicazioni saranno cancellate:\
+\
+BatteryUsageWidget\
+GoogleLyricsPlugin\
+LearningClient\
+PicoTts\
+Powersavemode\
+QuickSearchBox\
+SemcDlna\
+SemcEmail\
+SemcMetadataCleanup\
+Smartcontacts\
+TtsService\
+UserDictionaryProvider\
+WikipediaPlugin\
+widgetfavouritepeople\
+MediaWidget
+lite.c=Vuoi snellire la ROM?
+lite.d=Sì..Fallo.
+
+opt.a=Configurazione opzionale
+opt.b=Selezionando questa opzione vuoi che sia inclusa. Se non lo fai - sarà usata la configurazione di default.
+opt.c=Opzioni
+opt.d=Selezionando questo non potrai sbloccare la Schermata di blocco con il tasto Home.
+opt.z=Selezionando questo disabiliti i LED dietro i tasti inferiori.
+opt.xxxx=Viper Sound Engine con caratteristiche di processamento audio avanzato.
+opt.xyyx=Imposta la frequenza massima della CPU a 768Mhz. Questo risparmia notevolmente il consumo della batteria a costo delle performance generali. Può essere modificata successivamente tramite applicazioni che controllano la frequenza della CPU (tipo No-Fril CPU, etc..).
+opt.xyxy=Disabilita la compressione della memoria zRam.
+opt.xyxyz=Installa la tastiera con il tema nero (tastiera Sony).
+
+rom.title=Dati
+rom.titlee=Scegliere se vuoi mantenere i dati della ROM precedente (i dati della SDcard non saranno toccati). Attenzione! Una installazione pulita è RACCOMANDATA!
+rom.d=Pulisci i miei dati per una installazione della ROM veloce e stabile. Da scegliere se non stai usando una ROM Feralab o una ROM Feralab precedente alla versione v34.
+rom.s=Mantieni i miei dati. Sono consapevole che possono verificarsi problemi.
+
+omg.title=ROM
+omg.titlee=Installa ROM. Scegli Non reinstallare solo se hai già installato QUESTA versione della ROM.
+omg.d=Installa la ROM come sempre.
+omg.s=Ho già installato questa versione della ROM e voglio solo configurarla.
+
+game.title=Game Mode
+game.titlee=Scegliere se vuoi abilitare la Gaming mode nella ROM. Guarda sul sito web per maggiori informazioni e per scoprire come funziona.
+game.a=Disabilita la Game Mode e usa le impostazioni di default.
+game.b=Abilita la Game mode. Cambia l'ID del device e disabilita il frame filtering.
+
+theme.title=Tema
+theme.titlee=Scegli il tema di default del sistema.
+theme.aa=Mantieni quello originale.
+
+uxp.title=Schermata di blocco
+uxp.titlee=Seleziona la schermata di blocco di default per la ROM.
+uxp.a=Schermata di blocco modificata tipo JB con accesso istantaneo alla camera.
+uxp.b=Schermata di blocco standard UXP.
+
