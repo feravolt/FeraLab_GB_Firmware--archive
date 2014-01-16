@@ -55,39 +55,6 @@ static void write_client_reg_table(struct reg_data *table, uint32 size)
 		write_client_reg(table[i].reg_addr, table[i].reg_val);
 }
 
-static struct reg_data exit_sleep_1_tmd_panel_old_dric[] = {
-	{0x6E4F, 0x0005},
-	{0xF280, 0x0055},
-	{0xF281, 0x00AA},
-	{0xF282, 0x0066},
-	{0xF38E, 0x0020},
-	{0x0180, 0x0000},
-	{0x0380, 0x0000},
-	{0x0480, 0x0001},
-	{0x0580, 0x002C},
-	{0x0680, 0x0023},
-	{0x2080, 0x0004},
-	{0x2280, 0x0009},
-	{0x2480, 0x0048},
-	{0x2580, 0x0038},
-	{0x2780, 0x0070},
-	{0x2A80, 0x0000},
-	{0x2B80, 0x0037},
-	{0x2C80, 0x0055},
-	{0x2D80, 0x0000},
-	{0xD080, 0x0008},
-	{0xD180, 0x0015},
-	{0xD280, 0x0005},
-	{0xD380, 0x0000},
-	{0xD480, 0x0062},
-	{0xD580, 0x0001},
-	{0xD680, 0x005B},
-	{0xD780, 0x0001},
-	{0xD880, 0x00DE},
-	{0xD980, 0x000E},
-	{0xDB80, 0x0000},
-};
-
 static struct reg_data exit_sleep_1_tmd_panel_new_dric[] = {
 	{0x6E4F, 0x0005},
 	{0xF280, 0x0055},
@@ -119,23 +86,6 @@ static struct reg_data exit_sleep_1_tmd_panel_new_dric[] = {
 	{0xD880, 0x00DE},
 	{0xD980, 0x000E},
 	{0xDB80, 0x0000},
-};
-
-static struct reg_data exit_sleep_1_sharp_panel[] = {
-	{0x0180, 0x0002},
-	{0x2080, 0x0043},
-	{0x2C80, 0x0000},
-	{0xD080, 0x000F},
-	{0xD680, 0x0055},
-};
-
-static struct reg_data exit_sleep_2_tmd_panel_old_dric[] = {
-	{0x3500, 0x0000},
-	{0x4400, 0x0000},
-	{0x4401, 0x0000},
-	{0x3600, 0x0001},
-	{0xDA80, 0x0040},
-	{0x2100, 0x0000},
 };
 
 static struct reg_data exit_sleep_2_tmd_panel_new_dric[] = {
@@ -255,18 +205,6 @@ static struct reg_data exit_sleep_2_tmd_panel_new_dric[] = {
 	{0x2100, 0x0000},
 };
 
-static struct reg_data exit_sleep_2_sharp_panel[] = {
-	{0x3500, 0x0002},
-	{0x3600, 0x0000},
-	{0x3601, 0x0001},
-	{0x3A00, 0x0077},
-	{0xDD80, 0x0005},
-};
-
-static struct reg_data set_disply_on_tmd_panel_old_dric[] = {
-	{0x2C80, 0x0022},
-};
-
 static struct reg_data set_disply_on_tmd_panel_new_dric[] = {
 	{0x2C80, 0x0022},
 	{0x2080, 0x0040},
@@ -322,20 +260,7 @@ static void nt35580_lcd_set_client_id(void)
 {
 	int ret = 0;
 	ret = read_client_reg(0x1080);
-
-	if (0x58 == ret) {
-		client_id = CLIENT_ID_TMD_PANEL_NEW_DRIC;
-	} else if (0x55 == ret) {
-		ret = read_client_reg(0x1280);
-		if (0x00 == ret)
-			client_id = CLIENT_ID_TMD_PANEL_OLD_DRIC;
-		else if (0x01 == ret)
-			client_id = CLIENT_ID_SHARP_PANEL;
-		else
-			client_id = CLIENT_ID_INVALID;
-	} else {
-		client_id = CLIENT_ID_INVALID;
-	}
+	client_id = CLIENT_ID_TMD_PANEL_NEW_DRIC;
 }
 
 static void nt35580_lcd_exit_sleep(void)
@@ -347,17 +272,9 @@ static void nt35580_lcd_exit_sleep(void)
 		nt35580_lcd_set_client_id();
 
 	switch (client_id) {
-	case CLIENT_ID_TMD_PANEL_OLD_DRIC:
-		write_client_reg_table(exit_sleep_1_tmd_panel_old_dric,
-			ARRAY_SIZE(exit_sleep_1_tmd_panel_old_dric));
-		break;
 	case CLIENT_ID_TMD_PANEL_NEW_DRIC:
 		write_client_reg_table(exit_sleep_1_tmd_panel_new_dric,
 			ARRAY_SIZE(exit_sleep_1_tmd_panel_new_dric));
-		break;
-	case CLIENT_ID_SHARP_PANEL:
-		write_client_reg_table(exit_sleep_1_sharp_panel,
-			ARRAY_SIZE(exit_sleep_1_sharp_panel));
 		break;
 	default:
 		break;
@@ -365,17 +282,9 @@ static void nt35580_lcd_exit_sleep(void)
 
 	msleep(9);
 	switch (client_id) {
-	case CLIENT_ID_TMD_PANEL_OLD_DRIC:
-		write_client_reg_table(exit_sleep_2_tmd_panel_old_dric,
-			ARRAY_SIZE(exit_sleep_2_tmd_panel_old_dric));
-		break;
 	case CLIENT_ID_TMD_PANEL_NEW_DRIC:
 		write_client_reg_table(exit_sleep_2_tmd_panel_new_dric,
 			ARRAY_SIZE(exit_sleep_2_tmd_panel_new_dric));
-		break;
-	case CLIENT_ID_SHARP_PANEL:
-		write_client_reg_table(exit_sleep_2_sharp_panel,
-			ARRAY_SIZE(exit_sleep_2_sharp_panel));
 		break;
 	default:
 		break;
@@ -388,15 +297,9 @@ static void nt35580_lcd_set_disply_on(struct work_struct *ignored)
 	msleep(18);
 
 	switch (client_id) {
-	case CLIENT_ID_TMD_PANEL_OLD_DRIC:
-		write_client_reg_table(set_disply_on_tmd_panel_old_dric,
-			ARRAY_SIZE(set_disply_on_tmd_panel_old_dric));
-		break;
 	case CLIENT_ID_TMD_PANEL_NEW_DRIC:
 		write_client_reg_table(set_disply_on_tmd_panel_new_dric,
 			ARRAY_SIZE(set_disply_on_tmd_panel_new_dric));
-		break;
-	case CLIENT_ID_SHARP_PANEL:
 		break;
 	default:
 		break;

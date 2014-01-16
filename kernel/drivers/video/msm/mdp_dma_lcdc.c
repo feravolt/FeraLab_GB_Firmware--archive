@@ -182,15 +182,10 @@ int mdp_lcdc_on(struct platform_device *pdev)
 		    DMA_DSTC1B_6BITS | DMA_DSTC2R_6BITS;
 		break;
 
-	case 16:
+	default:
 		dma2_cfg_reg |= DMA_DSTC0G_6BITS |
 		    DMA_DSTC1B_5BITS | DMA_DSTC2R_5BITS;
 		break;
-
-	default:
-		printk(KERN_ERR "mdp lcdc can't support format %d bpp!\n",
-		       mfd->panel_info.bpp);
-		return -ENODEV;
 	}
 
 	/* DMA register config */
