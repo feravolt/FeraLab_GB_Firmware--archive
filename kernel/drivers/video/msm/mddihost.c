@@ -176,7 +176,7 @@ int mddi_host_register_read(uint32 reg_addr,
 		mddi_linked_list_notify_type *llist_notify_ptr;
 		llist_notify_ptr = &llist_extern_notify[host][curr_llist_idx];
 		wait_ret = wait_for_completion_timeout(
-					&(llist_notify_ptr->done_comp), HZ/5);
+					&(llist_notify_ptr->done_comp), 5 * HZ);
 
 		if (wait_ret <= 0)
 			ret = -EBUSY;
@@ -271,7 +271,7 @@ int mddi_host_register_write_xl
 		mddi_linked_list_notify_type *llist_notify_ptr;
 		llist_notify_ptr = &llist_extern_notify[host][curr_llist_idx];
 		wait_ret = wait_for_completion_timeout(
-					&(llist_notify_ptr->done_comp), HZ/5);
+					&(llist_notify_ptr->done_comp), 5 * HZ);
 
 		if (wait_ret <= 0)
 			ret = -EBUSY;
@@ -355,7 +355,7 @@ int mddi_host_register_write16
 		mddi_linked_list_notify_type *llist_notify_ptr;
 		llist_notify_ptr = &llist_extern_notify[host][curr_llist_idx];
 		wait_ret = wait_for_completion_timeout(
-					&(llist_notify_ptr->done_comp), HZ/5);
+					&(llist_notify_ptr->done_comp), 5 * HZ);
 
 		if (wait_ret <= 0)
 			ret = -EBUSY;
@@ -431,7 +431,7 @@ int mddi_host_register_write(uint32 reg_addr,
 		mddi_linked_list_notify_type *llist_notify_ptr;
 		llist_notify_ptr = &llist_extern_notify[host][curr_llist_idx];
 		wait_ret = wait_for_completion_timeout(
-					&(llist_notify_ptr->done_comp), HZ/5);
+					&(llist_notify_ptr->done_comp), 5 * HZ);
 
 		if (wait_ret <= 0)
 			ret = -EBUSY;
@@ -683,7 +683,7 @@ boolean mddi_video_stream_black_display(uint32 x0, uint32 y0,
 		llist_notify_ptr =
 			&llist_extern_notify[host][curr_llist_idx];
 		wait_ret = wait_for_completion_timeout(
-			&(llist_notify_ptr->done_comp), HZ/5);
+			&(llist_notify_ptr->done_comp), 5 * HZ);
 
 		dma_free_coherent(NULL,
 			pixelbytes_per_row * rows_per_block,

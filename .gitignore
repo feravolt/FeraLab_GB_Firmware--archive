@@ -12,6 +12,7 @@
 *.out
 *.app
 *.order
+*.ftf
 Kconfig~
 Makefile~
 .config
