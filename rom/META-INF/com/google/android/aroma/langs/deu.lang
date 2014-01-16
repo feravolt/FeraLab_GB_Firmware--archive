@@ -1,4 +1,4 @@
-### FeraLab ###
+﻿### FeraLab ###
 
 text_ok=OK
 text_next=Volgende >
@@ -10,7 +10,7 @@ text_calibrating=Calibratiegereedschap
 text_quit=Stop de installatie
 text_quit_msg=Weet u zeker dat u de installatie wilt stoppen?
 
-common.for=for
+common.for=voor
 
 langtest.title=Welkom
 langtest.multiline=Hallo en welkom bij het ***FeraLab*** ROM installatieprogramma.\
