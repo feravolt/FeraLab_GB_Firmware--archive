@@ -6,10 +6,70 @@ Kernel version is v16.1, but updated ramdisk from 18.2 kernel, so it will work f
 
 
 = v18.2 =
-> 
-> 
-> 
-> 
->
->
-> misc..
+>> Updated binder from CAF & fixed memory leak.
+>> Updated SIO i/o scheduler & tuned for mobile environment (set as default).
+>> Tuned cleancach and DM ioctl.
+>> A LOT of network optimizations:
+Full android capability. netfilters, core & etc updates and fixes from CAF & many more..
+>> Optimized ARM page-tables.
+>> Updated LINARO cross-compiler toolchain & optimized for ARMv7.
+>> Mount partitions as -noatime by default.
+>> Updated CPU VDD and freq. table. Solid-stable.
+>> MDP copybit fix.
+>> Fixed wakelock issue in deepsleep.
+>> Tuned deadline & CFQ i/o schedulers for mobile environment.
+>> SWAP, zRam updates & optimizations.
+>> VM page-writeback tunings.
+>> OOM pid access allowed for Android user-space.
+>> Updated & optimized SHA1 algoritm.
+>> Logger driver ported from 3.0 kernel.
+>> Fixed random entropy early depleation.
+>> Ported & enabled updated memory compaction.
+>> Added timed-out KeyReset support.
+>> LowMemoryKiller driver updated & optimized (fundge-swap supported).
+>> Misc squashed kernel updates from CAF.
+>> Updated kernel headers.
+>> Updated kernel codec's headers.
+>> Added and enabled driver Sync and SW_Sync framework.
+>> Added ARM idle call notifiers. 
+>> Keeping kernel threads alive.
+>> Fixed Bluetooth calls.
+>> Modified battery driver - more battery info.
+>> Reduced memory fragmentation by introducing extra_free_kbytes (set 1024kb.).
+>> Display driver cleanup and fixes.
+>> Updated DRM to v1.1
+>> Fixed KGSL DRM ioctl.
+>> Ported updated genlock framework.
+>> Tuned & fixed SmartAssH3 CPU governor.
+>> RCU fixes from CAF.
+>> Preemtion bugfixes.
+>> ARMv7 sleep optimizations.
+>> Updated MSM framebuffer.
+>> Updated & tuned YAFFS2 from 2011 Xperias.
+>> 32bit-per-pixel support.
+>> Bootlogo 32bpp support.
+>> Frandom entropy generator updated. Optimized rng core.
+>> Enabled cgroups for user-id. 
+>> VM dirty ratios tunings.
+>> GPU memory hack. Extended to 4MB (default - 2MB).
+>> Updated android timed-gpio from CAF.
+>> CPU/Kernel power saving improvements from CAF.
+>> Undervolt Wlan module (from 2.9V to 2.3V).
+>> Camera memory hack. Extended to 2MB (default - 1MB).
+>> Improved memory allocation.
+>> Ported ClearPage framework.
+>> Disabled file-sync in FS.
+>> Ported & updated MSM ION memory manager.
+>> Ported, updated & tuned Kernel Same-page Merging (KSM).
+>> Accelerometer device recalibration.
+>> Switched to compat linux video framwork.
+>> HID devices compability.
+>> Updated cryptographic routines.
+>> Remapped internal partition:
+RAM-286Mb, BOOT-78Mb, SYSTEM-300Mb, DATA-548Mb, CACHE-80Mb, LOG-4Mb.
+>> KGSL improvements.
+>> Lib's updates.
+>> Ramdisk clean-up.
+>> Ramdisk partically merged with AOSP Kit-kat.
+>> misc..
+
