@@ -1,4 +1,6 @@
 ***FeraLab***
 =============
 
+= v34 =
+> Initial Release of NEW rom.
 

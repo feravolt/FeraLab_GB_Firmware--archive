@@ -1,12 +1,13 @@
 <b><#selectbg_g>FeraDroidEngine v16.02</#></b>
 FDE - v16.02:
-   (Warning! FeraKernel v17+ requied)
+   (Warning! FeraKernel v18+ requied)
    - Optimized all tweaks
-   - Updated to support v17+ kernel
+   - Updated to support v18+ kernel
    - GPU rendering
    - Dalvik VM optimization
    - Zipalligned all apk's
    - DNS fix
+   - Fixed most tweaks
    - misc..
 
 

@@ -10,7 +10,8 @@ text_quit_msg=هل أنت متأكد من أنك تريد الخروج من عم
 
 common.for=من أجل
 
-langtest.title=مرحباlangtest.multiline=مرحبا بكم في عملية تنصيب  ***FeraLab*** ROM \
+langtest.title=مرحبا
+langtest.multiline=مرحبا بكم في عملية تنصيب  ***FeraLab*** ROM \
 بامكانك التعديل على الـ Rom الان.\
 \
 حظا موفقا في عملية التنصيب\
@@ -20,41 +21,41 @@ langtest.title=مرحباlangtest.multiline=مرحبا بكم في عملية ت
 welcome.title=مرحبا
 welcome.text1=انت على وشك التنصيب
 welcome.text2= رجاء قم بقراءة  تفاصيل خيارات التنصيب بحذر!
-welcome.version=VERSION
-welcome.codename=DEVELOPER
-welcome.updated=ANDROID
+welcome.version=النسخة
+welcome.codename=المطور 
+welcome.updated=اندرويد
 welcome.next=اضغط التالي لاكمال عملية التنصيب...
 
-terms.title=License
+terms.title=الرخصة
 terms.desc=GPLv2 OpenSource License.
 terms.check=انا موافق على هذه الشروط و الأحكام.
 terms.confirm=رجاء قم باختيار الموافقة أو الخروج.
 
-changelog.title=Changelog
+changelog.title=قائمة التعديل 
 changelog.desc=***FeraLab*** ROM changelog
 
-fde.title=Changelog
-fde.desc=FeraDroidEngine changelog
+fde.title=قائمة التعديل 
+fde.desc=FeraDroidEngine قائمة تعديل 
 
-sys.title=System Information
-sys.titlee=Your Device System Information
-sys.free=Free Space
-sys.system=System Size
-sys.data=Data Size
-sys.sd=SDCard Size
-sys.sdext=SD-EXT Size
+sys.title=معلومات النظام
+sys.titlee=معلومات نظام جهازك
+sys.free=المساحة الحرة
+sys.system=مساحة النظام
+sys.data=مساحة الملفات
+sys.sd=مساحة الذاكرة الخارجية
+sys.sdext=SD-EXT مساخة
 
 hz.ready=جاهز للتنصيب
-hz.readyy=معالج التنصيب جاهز للبدء بعملية التنصيب hz.aha=اذا كنت ترغب في مراجعة او تغير أحد خيارات التنصيب فضلا قم بضغط الخلف . -> Quit Installation to exit the wizard
-hz.next=Next >
-hz.now=Install Now
+hz.readyy=معالج التنصيب جاهز للبدء بعملية التنصيب hz.aha=اذا كنت ترغب في مراجعة او تغير أحد خيارات التنصيب فضلا قم بضغط الخلف . -> الخروج من عملية التنصيب و معالج التنصيب 
+hz.next=التالي  >
+hz.now=قم بالتنصيب اللآن 
 
 inst.title=يتم التنصيب...
 inst.is=يتم التنصيب.
 inst.wait=رجاء اتنظر رثيما يقوم معالج التنصيب بالانتهاء من تنصيب  s
 inst.min= قد يستغرق هذا الامر بضع دقائق
 inst.fin=لقد تمت عمليه التنصيب بنجاح 
-inst.next=اضغط التالي للمتابعة finish.fin=Finish
+inst.next=اضغط التالي للمتابعة finish.fin=الانتهاء 
 reboot.title=انتهى ! اعد الاقلاع  .titlee=تم التنصيب بنجاح.
 reboot.box=قم باعادة اقلاع جهازك الان...
 
@@ -69,16 +70,16 @@ cbox.gg=Google cloud storage servise.
 cbox.hh=Google Hangouts social application.
 cbox.ii=Official Google Maps application.
 cbox.jj=Barcode scanner application.
-cbox.kk=Application for changing CPU frequency and I/O scheduler.
-cbox.ll=Fast and simple browser with data compression support.
-cbox.mm=Application for making panorama pictures.
-cbox.nn=Pdroid Privacy application. Android firewall.
+cbox.kk=برنامج لتعديل تردد المعالج و  I/O .
+cbox.ll=متصفح سريع داعم لضغط البيانات .
+cbox.mm=تطبيق التصوير البانورامي .
+cbox.nn=Pdroid Privacy application. الجدار الناري لاندرويد.
 cbox.oo=Similar to Paranoid pie control.ضروري في حال كانت ازرار الجهاز معطوبة .
-cbox.pp=Official PlayStation Mobile store & emulator.
+cbox.pp=Official PlayStation Mobile محاكي و متجر .
 cbox.qq=Standart Sim Toolkit.
-cbox.ss=Modified YouTube application.
+cbox.ss=تطبيق يوتيوب معدل .
 
-lite.a=Enlighter
+lite.a=الملمع 
 lite.b=باختيارك هذا الخيار سيتم حذف التطبيقات التالية:\
 \
 BatteryUsageWidget\
@@ -99,17 +100,17 @@ MediaWidget
 lite.c=هل تود الماع هذه الروم?
 lite.d=نعم ... قم بها.
 
-opt.a=Extra Configuration
+opt.a=خيارات اضافية 
 opt.b=اختر الخيارات التي تود ضمها . في حال عدم اختيارك سوف يتم العمل بالخيارات الافتراضية.
-opt.c=Options
+opt.c=خيارات
 opt.d=اذا قمت بالاختيار سوف لن يكون بامكانك فتح قفل الشاشة عبر المفتاح الأوسط.
 opt.z=باختيارك هذا سوف يتم تعطيل ضوء الليد على المفاتيح السفلية كليا.
-opt.xxxx=Viper Sound Engine with advanced audio processing features.
+opt.xxxx=Viper Sound Engine خصائص متقدمة لمعالجة الصوتيات.
 opt.xyyx=Set default maximum CPU frequency to 768Mhz.سوف يحفظ البطارية بشكل كبير على حساب الأداء . يمكن تعديله لاحقا في خيارات تردد المعالج. apps (like No-Fril CPU, etc..).
-opt.xyxy=Disable zRam memory compression.
-opt.xyxyz=Install black-themed keyboard (Sony keyboard).
+opt.xyxy=تعطيل  zRam memory ضغط .
+opt.xyxyz=تنصيب لوحة مفاتيح ذات سمة سوداء  (Sony keyboard).
 
-rom.title=Data
+rom.title=ملفات
 rom.titlee=باختيارك هذا سوف تتمكن من ابقاء ملفاتك من الروم السابقة (لن يتم المساس بالذاكرة الخارجية). تحذير ! التنصيب بعد المسح الكلي مستحسن للغاية 
 rom.d=امسح بياناتي من اجل ثبات و سرعة الروم 100% . يجب عليك اختياره في حال لم تكت تستخدم فيرا لاب روم قبلا او كنت تستخدم نسخة اقدم من 34.
 rom.s=ابقي على بياناتي . انا موافق على امكانية  حدوث بعض الاخطاء .
@@ -119,16 +120,16 @@ omg.titlee=نصب الروم . قم باختيار عدم اعادة التنص�
 omg.d=قم بتنصيب الروم كالمعتاد .
 omg.s= لقد قمت بتنصيب هذها الاصدار من الروم سابقا وأود بتعديلها فقط .
 
-game.title=Game Mode
+game.title=وضع الالعاب 
 game.titlee=اختر ان كنت تود تفعيل وضعية الألعاب في الروم . عد للموقع حول معلومات اضافية عن كيفية عملها .
 game.a=قم بتعطيل وضعية الألعاب واستخدم الخيارات الافتراضية .
 game.b=فعل وضعية الالعاب . Change device ID and disable frame filtering.
 
-theme.title=Theme
+theme.title=السمة 
 theme.titlee=اختر السمة الأساسية للنظام .
 theme.aa= ابق على الاصلية .
 
-uxp.title=Lockscreen
+uxp.title=قفل الشاشة 
 uxp.titlee=اختر شاشة القفل الافتراضية للروم .
 uxp.a=شاشة قفل جيلي بين مع الوصول الفوري للكاميرا .
 uxp.b=الافتراضية  UXP شاشة قفل .
