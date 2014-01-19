@@ -456,6 +456,7 @@ static struct reg_data set_disply_on_tmd_panel_new_dric[] = {
 #define NV_RPC_VERS		0x00040001
 #define NV_CMD_REMOTE_PROC	9
 #define NV_READ			0
+#define NV_OEMHW_LCD_VSYNC_I    60007
 #define MIN_NV	13389
 #define MAX_NV	18181
 #define DEF_NV	16766
@@ -473,6 +474,10 @@ struct rpc_reply_nv_cmd {
 	uint32_t result;
 	uint32_t more_data;
 	uint32_t desc;
+};
+
+struct nv_oemhw_lcd_vsync {
+        uint32_t vsync_usec;
 };
 
 static void nt35580_lcd_power_on(struct platform_device *pdev)
@@ -545,7 +550,7 @@ static void nt35580_lcd_exit_sleep(void)
 		break;
 	}
 
-	msleep(10);
+	msleep(9);
 	switch (client_id) {
 	case CLIENT_ID_TMD_PANEL_OLD_DRIC:
 		write_client_reg_table(exit_sleep_2_tmd_panel_old_dric,
