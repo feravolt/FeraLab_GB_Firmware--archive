@@ -86,6 +86,8 @@ endif;
 
 if prop("lang.prop","selected.0")=="11" then
   loadlang("langs/ar.lang");
+  fontresload( "0", "ttf/DroidSansFallback.ttf;ttf/DroidSansArabic.ttf", "12" );
+  fontresload( "1", "ttf/DroidSansFallback.ttf;ttf/DroidSansArabic.ttf", "18" );
 endif;
 
 viewbox(

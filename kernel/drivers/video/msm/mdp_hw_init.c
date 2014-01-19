@@ -1,80 +1,11 @@
-/* Copyright (c) 2008-2009, Code Aurora Forum. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of Code Aurora Forum nor
- *       the names of its contributors may be used to endorse or promote
- *       products derived from this software without specific prior written
- *       permission.
- *
- * Alternatively, provided that this notice is retained in full, this software
- * may be relicensed by the recipient under the terms of the GNU General Public
- * License version 2 ("GPL") and only version 2, in which case the provisions of
- * the GPL apply INSTEAD OF those given above.  If the recipient relicenses the
- * software under the GPL, then the identification text in the MODULE_LICENSE
- * macro must be changed to reflect "GPLv2" instead of "Dual BSD/GPL".  Once a
- * recipient changes the license terms to the GPL, subsequent recipients shall
- * not relicense under alternate licensing terms, including the BSD or dual
- * BSD/GPL terms.  In addition, the following license statement immediately
- * below and between the words START and END shall also then apply when this
- * software is relicensed under the GPL:
- *
- * START
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License version 2 and only version 2 as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * END
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- *
- */
-
+/* FeraLab */
 #include "mdp.h"
 
-/* mdp primary csc limit vector */
 uint32 mdp_plv[] = { 0x10, 0xeb, 0x10, 0xf0 };
 
-/* Color Coefficient matrix for YUV -> RGB */
 struct mdp_ccs mdp_ccs_yuv2rgb = {
 	MDP_CCS_YUV2RGB,
 	{
-#if defined(CONFIG_FB_MSM_MDDI_TMD_NT35580)
-		0x200,
-		0x000,
-		0x2cd,
-		0x200,
-		0xff50,
-		0xfe93,
-		0x200,
-		0x386,
-		0x000,
-#else
 		0x254,
 		0x000,
 		0x331,
@@ -84,26 +15,14 @@ struct mdp_ccs mdp_ccs_yuv2rgb = {
 		0x254,
 		0x409,
 		0x000,
-#endif
 	},
 	{
-#ifdef CONFIG_FB_MSM_MDP31
-#if defined(CONFIG_FB_MSM_MDDI_TMD_NT35580)
-		0x000,
-#else
 		0x1f0,
-#endif
 		0x180,
 		0x180
-#else
-		0x10,
-		0x80,
-		0x80
-#endif
 	}
 };
 
-/* Color Coefficient matrix for RGB -> YUV */
 struct mdp_ccs mdp_ccs_rgb2yuv = {
 	MDP_CCS_RGB2YUV,
 	{
@@ -117,13 +36,11 @@ struct mdp_ccs mdp_ccs_rgb2yuv = {
 		0xff45,
 		0xffdc,
 	},
-#ifdef CONFIG_FB_MSM_MDP31
 	{
 		0x10,
 		0x80,
 		0x80
 	}
-#endif
 };
 
 static void mdp_load_lut_param(void)
@@ -647,30 +564,17 @@ static void mdp_load_lut_param(void)
 void mdp_hw_init(void)
 {
 	int i;
-
-	/* MDP cmd block enable */
 	mdp_pipe_ctrl(MDP_CMD_BLOCK, MDP_BLOCK_POWER_ON, FALSE);
-
-	/* debug interface write access */
 	outpdw(MDP_BASE + 0x60, 1);
-
 	outp32(MDP_INTR_ENABLE, MDP_ANY_INTR_MASK);
 	outp32(MDP_EBI2_PORTMAP_MODE, 0x3);
 	outpdw(MDP_CMD_DEBUG_ACCESS_BASE + 0x01f8, 0x0);
 	outpdw(MDP_CMD_DEBUG_ACCESS_BASE + 0x01fc, 0x0);
 	outpdw(MDP_BASE + 0x60, 0x1);
 	mdp_load_lut_param();
-
-	/*
-	 * clear up unused fg/main registers
-	 */
-	/* comp.plane 2&3 ystride */
 	MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x0120, 0x0);
-	/* unpacked pattern */
 	MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x012c, 0x0);
-	/* unpacked pattern */
 	MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x0130, 0x0);
-	/* unpacked pattern */
 	MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x0134, 0x0);
 	MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x0158, 0x0);
 	MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x15c, 0x0);
@@ -678,99 +582,67 @@ void mdp_hw_init(void)
 	MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x0170, 0x0);
 	MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x0174, 0x0);
 	MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x017c, 0x0);
-
-	/* comp.plane 2 */
 	MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x0114, 0x0);
-	/* comp.plane 3 */
 	MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x0118, 0x0);
-
-	/* clear up unused bg registers */
 	MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x01c8, 0);
 	MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x01d0, 0);
 	MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x01dc, 0);
 	MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x01e0, 0);
 	MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x01e4, 0);
-
-#ifndef CONFIG_FB_MSM_MDP22
 	MDP_OUTP(MDP_BASE + 0xE0000, 0);
 	MDP_OUTP(MDP_BASE + 0x100, 0xffffffff);
 	MDP_OUTP(MDP_BASE + 0x90070, 0);
 	MDP_OUTP(MDP_BASE + 0x94010, 1);
 	MDP_OUTP(MDP_BASE + 0x9401c, 2);
-#endif
-
-	/*
-	 * limit vector
-	 * pre gets applied before color matrix conversion
-	 * post is after ccs
-	 */
 	writel(mdp_plv[0], MDP_CSC_PRE_LV1n(0));
 	writel(mdp_plv[1], MDP_CSC_PRE_LV1n(1));
 	writel(mdp_plv[2], MDP_CSC_PRE_LV1n(2));
 	writel(mdp_plv[3], MDP_CSC_PRE_LV1n(3));
-
-#ifdef CONFIG_FB_MSM_MDP31
 	writel(mdp_plv[2], MDP_CSC_PRE_LV1n(4));
 	writel(mdp_plv[3], MDP_CSC_PRE_LV1n(5));
-
 	writel(0, MDP_CSC_POST_LV1n(0));
 	writel(0xff, MDP_CSC_POST_LV1n(1));
 	writel(0, MDP_CSC_POST_LV1n(2));
 	writel(0xff, MDP_CSC_POST_LV1n(3));
 	writel(0, MDP_CSC_POST_LV1n(4));
 	writel(0xff, MDP_CSC_POST_LV1n(5));
-
 	writel(0, MDP_CSC_PRE_LV2n(0));
 	writel(0xff, MDP_CSC_PRE_LV2n(1));
 	writel(0, MDP_CSC_PRE_LV2n(2));
 	writel(0xff, MDP_CSC_PRE_LV2n(3));
 	writel(0, MDP_CSC_PRE_LV2n(4));
 	writel(0xff, MDP_CSC_PRE_LV2n(5));
-
 	writel(mdp_plv[0], MDP_CSC_POST_LV2n(0));
 	writel(mdp_plv[1], MDP_CSC_POST_LV2n(1));
 	writel(mdp_plv[2], MDP_CSC_POST_LV2n(2));
 	writel(mdp_plv[3], MDP_CSC_POST_LV2n(3));
 	writel(mdp_plv[2], MDP_CSC_POST_LV2n(4));
 	writel(mdp_plv[3], MDP_CSC_POST_LV2n(5));
-#endif
 
-	/* primary forward matrix */
 	for (i = 0; i < MDP_CCS_SIZE; i++)
 		writel(mdp_ccs_rgb2yuv.ccs[i], MDP_CSC_PFMVn(i));
 
-#ifdef CONFIG_FB_MSM_MDP31
 	for (i = 0; i < MDP_BV_SIZE; i++)
 		writel(mdp_ccs_rgb2yuv.bv[i], MDP_CSC_POST_BV2n(i));
 
 	writel(0, MDP_CSC_PRE_BV2n(0));
 	writel(0, MDP_CSC_PRE_BV2n(1));
 	writel(0, MDP_CSC_PRE_BV2n(2));
-#endif
-	/* primary reverse matrix */
+
 	for (i = 0; i < MDP_CCS_SIZE; i++)
 		writel(mdp_ccs_yuv2rgb.ccs[i], MDP_CSC_PRMVn(i));
 
 	for (i = 0; i < MDP_BV_SIZE; i++)
 		writel(mdp_ccs_yuv2rgb.bv[i], MDP_CSC_PRE_BV1n(i));
 
-#ifdef CONFIG_FB_MSM_MDP31
 	writel(0, MDP_CSC_POST_BV1n(0));
 	writel(0, MDP_CSC_POST_BV1n(1));
 	writel(0, MDP_CSC_POST_BV1n(2));
-
 	outpdw(MDP_BASE + 0x30010, 0x03e0);
 	outpdw(MDP_BASE + 0x30014, 0x0360);
 	outpdw(MDP_BASE + 0x30018, 0x0120);
 	outpdw(MDP_BASE + 0x3001c, 0x0140);
-#endif
 	mdp_init_scale_table();
-
-#ifndef CONFIG_FB_MSM_MDP31
-	MDP_OUTP(MDP_CMD_DEBUG_ACCESS_BASE + 0x0104,
-		 ((16 << 6) << 16) | (16) << 6);
-#endif
-
-	/* MDP cmd block disable */
 	mdp_pipe_ctrl(MDP_CMD_BLOCK, MDP_BLOCK_POWER_OFF, FALSE);
 }
+
