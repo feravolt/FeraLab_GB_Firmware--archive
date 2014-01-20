@@ -9,7 +9,6 @@
 #include <mach/board.h>
 #include <mach/msm_iomap.h>
 #include "acpuclock.h"
-#include "avs.h"
 #include "clock.h"
 
 #define SHOT_SWITCH 4
@@ -120,7 +119,6 @@ static struct clkctl_acpu_speed *acpu_freq_tbl = acpu_freq_tbl_1190;
 
 #ifdef CONFIG_CPU_FREQ_MSM
 static struct cpufreq_frequency_table freq_table[20];
-
 static void __init cpufreq_table_init(void)
 {
 	unsigned int i;
@@ -168,30 +166,24 @@ static void scpll_set_freq(uint32_t lval, unsigned freq_switch)
 	if (lval < 10)
 		lval = 10;
 
-	while (readl(SCPLL_STATUS_ADDR) & 0x3)
-		;
-
+	while (readl(SCPLL_STATUS_ADDR) & 0x3);
 	regval = readl(SCPLL_FSM_CTL_EXT_ADDR);
 	regval &= ~(0x3f << 3);
 	regval |= (lval << 3);
+
 	if (freq_switch == SIMPLE_SLEW)
 		regval |= (0x1 << 9);
 
 	regval &= ~(0x3 << 0);
 	regval |= (freq_switch << 0);
 	writel(regval, SCPLL_FSM_CTL_EXT_ADDR);
-
 	dmb();
-
 	regval = readl(SCPLL_CTL_ADDR);
 	regval |= 0x7;
 	writel(regval, SCPLL_CTL_ADDR);
-
 	dmb();
-
-	while (readl(SCPLL_STATUS_ADDR) & 0x1)
-		;
-	udelay(100);
+	while (readl(SCPLL_STATUS_ADDR) & 0x1);
+	udelay(90);
 }
 
 static void scpll_apps_enable(bool state)
@@ -203,20 +195,17 @@ static void scpll_apps_enable(bool state)
 	else
 		dprintk("Disabling PLL 3\n");
 
-	while (readl(SCPLL_STATUS_ADDR) & 0x1)
-		;
+	while (readl(SCPLL_STATUS_ADDR) & 0x1);
 	regval = readl(SCPLL_CTL_ADDR);
 	regval &= ~(0x7);
 	regval |= (0x2);
 	writel(regval, SCPLL_CTL_ADDR);
-
 	dmb();
-
 	if (state) {
 		regval = readl(SCPLL_CTL_ADDR);
 		regval |= (0x7);
 		writel(regval, SCPLL_CTL_ADDR);
-		udelay(200);
+		udelay(180);
 	} else {
 		regval = readl(SCPLL_CTL_ADDR);
 		regval &= ~(0x7);
@@ -242,9 +231,7 @@ static void scpll_init(void)
 	writel(0x00400002, SCPLL_CTL_ADDR);
 	writel(0x00600004, SCPLL_CTL_ADDR);
 	dmb();
-	while (readl(SCPLL_STATUS_ADDR) & 0x2)
-		;
-
+	while (readl(SCPLL_STATUS_ADDR) & 0x2);
 	scpll_apps_enable(1);
 	regval = readl(SCPLL_FSM_CTL_EXT_ADDR);
 	regval &= ~(0x3f << 3);
@@ -255,9 +242,8 @@ static void scpll_init(void)
 	regval = readl(SCPLL_CTL_ADDR);
 	regval |= (0x7);
 	writel(regval, SCPLL_CTL_ADDR);
-	while (readl(SCPLL_STATUS_ADDR) & 0x1)
-		;
-	udelay(800);
+	while (readl(SCPLL_STATUS_ADDR) & 0x1);
+	udelay(720);
 	regval = readl(SCPLL_FSM_CTL_EXT_ADDR);
 	regval &= ~(0x3f << 3);
 	regval |= (L_VAL_768MHZ << 3);
@@ -267,9 +253,8 @@ static void scpll_init(void)
 	regval = readl(SCPLL_CTL_ADDR);
 	regval |= (0x7);
 	writel(regval, SCPLL_CTL_ADDR);
-	while (readl(SCPLL_STATUS_ADDR) & 0x1)
-		;
-	udelay(100);
+	while (readl(SCPLL_STATUS_ADDR) & 0x1);
+	udelay(90);
 	scpll_apps_enable(0);
 }
 
@@ -306,7 +291,6 @@ static void config_pll(struct clkctl_acpu_speed *s)
 		}
 		dmb();
 	}
-
 	regval = readl(SPSS_CLK_SEL_ADDR);
 	regval &= ~(0x3 << 1);
 	regval |= (s->sc_core_src_sel_mask << 1);
@@ -362,9 +346,6 @@ int acpuclk_set_rate(unsigned long rate, enum setrate_reason reason)
 		config_pll(PLL0_S);
 	}
 
-	dprintk("Switching from ACPU rate %u KHz -> %u KHz\n",
-		strt_s->acpuclk_khz, tgt_s->acpuclk_khz);
-
 	if (strt_s->pll != ACPU_PLL_3 && tgt_s->pll != ACPU_PLL_3) {
 		config_pll(tgt_s);
 	} else if (strt_s->pll != ACPU_PLL_3 && tgt_s->pll == ACPU_PLL_3) {
@@ -394,18 +375,13 @@ int acpuclk_set_rate(unsigned long rate, enum setrate_reason reason)
 	if (reason == SETRATE_PC)
 		goto out;
 
-#ifdef CONFIG_MSM_CPU_AVS
-	res = avs_adjust_freq(freq_index, 0);
-	if (res)
-		pr_warning("Unable to drop ACPU vdd (%d)\n", res);
-#endif
 	if (tgt_s->vdd < strt_s->vdd) {
 		res = acpuclk_set_vdd_level(tgt_s->vdd);
 		if (res)
 			pr_warning("Unable to drop ACPU vdd (%d)\n", res);
 	}
-
 	dprintk("ACPU speed change complete\n");
+
 out:
 	if (reason == SETRATE_CPUFREQ)
 		mutex_unlock(&drv_state.lock);
@@ -560,23 +536,6 @@ static void __init lpj_init(void)
 	}
 }
 
-#ifdef CONFIG_MSM_CPU_AVS
-static int __init acpu_avs_init(int (*set_vdd) (int), int khz)
-{
-	int i;
-	int freq_count = 0;
-	int freq_index = -1;
-
-	for (i = 0; acpu_freq_tbl[i].acpuclk_khz; i++) {
-		freq_count++;
-		if (acpu_freq_tbl[i].acpuclk_khz == khz)
-			freq_index = i;
-	}
-
-	return avs_init(set_vdd, freq_count, freq_index);
-}
-#endif
-
 void __init msm_acpu_clock_init(struct msm_acpu_clock_platform_data *clkdata)
 {
 	mutex_init(&drv_state.lock);
@@ -591,21 +550,13 @@ void __init msm_acpu_clock_init(struct msm_acpu_clock_platform_data *clkdata)
 
 	if (drv_state.current_speed->acpuclk_khz < PLL0_S->acpuclk_khz)
 		acpuclk_set_rate(PLL0_S->acpuclk_khz, SETRATE_CPUFREQ);
-
 #ifdef CONFIG_CPU_FREQ_MSM
 	cpufreq_table_init();
 	cpufreq_frequency_table_get_attr(freq_table, smp_processor_id());
 #endif
-#ifdef CONFIG_MSM_CPU_AVS
-	if (!acpu_avs_init(drv_state.acpu_set_vdd,
-		drv_state.current_speed->acpuclk_khz)) {
-		drv_state.acpu_set_vdd = NULL;
-	}
-#endif
 }
 
 #ifdef CONFIG_CPU_FREQ_VDD_LEVELS
-
 ssize_t acpuclk_get_vdd_levels_str(char *buf)
 {
 	int i, len = 0;
@@ -634,12 +585,10 @@ void acpuclk_set_vdd(unsigned int khz, int vdd)
 		else if (acpu_freq_tbl[i].acpuclk_khz == khz)
 			new_vdd = min(max((unsigned int)vdd, SEMC_ACPU_MIN_UV_MV), SEMC_ACPU_MAX_UV_MV);
 		else continue;
-
 		acpu_freq_tbl[i].vdd = new_vdd;
 
 	}
 	mutex_unlock(&drv_state.lock);
 }
-
 #endif
 
