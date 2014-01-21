@@ -1,9 +1,5 @@
 ; FeraLab
 
 textureTiling=1
-MSAASmoothing=High
-MSAABufferAllocation=always
-forceMSAAMode=1
-MSAAMode=1
 triJuice=3
 
