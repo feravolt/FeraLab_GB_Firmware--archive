@@ -1,7 +1,7 @@
 #!/system/xbin/sh
 
 echo "FeraDroid Engine"
-echo "version 16.02"
+echo "version 17.03"
 echo "By FeraVolt."
 
 if [ -e /system/usr/vendor/prop/firstboot ];
@@ -37,13 +37,10 @@ rm -Rf /mnt/sdcard/found000
 rm -f /mnt/sdcard/fix_permissions.log
 sqlite3 /data/data/com.android.providers.settings/databases/settings.db "INSERT INTO secure (name, value) VALUES ('wifi_country_code', 'JP');"
 sysctl -p
-renice -18 `pidof com.android.phone`
-renice -18 `pgrep com.sonyericsson.home`
 nozram
 fix
 sh /system/engine/rammer.sh
 echo "FeraDroid Engine >> Ready"
-
 fi
 sysro
 

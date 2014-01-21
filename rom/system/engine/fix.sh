@@ -1,8 +1,7 @@
 #!/system/bin/sh
-### FeraDroid Engine v16 | By FeraVolt. 2013
+### FeraDroid Engine v17 | By FeraVolt. 2013
 
 sysrw
-
 zipalign="yes"
 clear
 sleep 1
@@ -34,7 +33,6 @@ if [ "$zipalign" ];
  then echo " Start Wheel Alignment ( \"ZepAlign\" ): $BEGAN" 
 fi
 sync
-
 cat /d*/system/packages.xml | grep -E "^<package.*serId" | while read pkgline; do
 	if [ ! -f "/data/fixaligntemp" ]; then ALIGNED=0; FAILED=0; ALREADY=0; SKIPPED=0; fi
 	PKGNAME=`echo $pkgline | sed 's%.* name="\(.*\)".*%\1%' | cut -d '"' -f1`
@@ -158,7 +156,7 @@ if [ "$zipalign" ]; then
 	SKIPPED=`awk '{print $4}' /data/fixaligntemp`
 	sleep 1
 	rm /data/fixaligntemp
-	echo " Done \"ZepAligning\" ALL data and system APKs..."
+	echo " Done ZipAligning ALL data and system APKs..."
 	echo ""
 	sleep 1
  	echo " $TOTAL Apps were processed!"

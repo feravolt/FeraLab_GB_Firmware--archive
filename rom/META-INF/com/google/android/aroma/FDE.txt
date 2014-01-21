@@ -1,3 +1,15 @@
+<b><#selectbg_g>FeraDroidEngine v17.03</#></b>
+FDE - v17.03:
+   (Warning! FeraKernel v18+ requied)
+   - Optimized all tweaks
+   - Set zRam to 24Mb
+   - PID priority tweak
+   - Rammer tweak updates
+   - GPS tunings
+   - Zipalligned all apk's
+   - misc
+
+
 <b><#selectbg_g>FeraDroidEngine v16.02</#></b>
 FDE - v16.02:
    (Warning! FeraKernel v18+ requied)

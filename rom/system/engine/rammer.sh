@@ -1,9 +1,8 @@
 #!/system/bin/sh
-### FeraDroid Engine v16 | By FeraVolt. 2013###
+### FeraDroid Engine v17 | By FeraVolt. 2013###
 
 while true;
 do
-
 ram=$((`free | awk '{ print $3 }' | sed -n 2p`/1024))
 ramkbytescached=`cat /proc/meminfo | grep Cached | awk '{print $2}' | sed -n 1p`
 ramkbytesfree=`free | awk '{ print $4 }' | sed -n 2p`
@@ -11,10 +10,9 @@ ramfree=$(($ramkbytesfree/1024))
 ramcached=$(($ramkbytescached/1024))
 ramreportedfree=$(($ramfree + $ramcached))
 ramm=$(($ram + $ramfree))
-
 old='360'
 hmm='512'
-nne='760'
+nne='720'
 
 if [[ "$ramm" -le "$old" ]]
 then
@@ -116,6 +114,6 @@ sleep 1
 	echo "Reported Free:                $ramreportedfree MB"
 	echo "Real Free:                    $ramfree MB"
 	echo " "
-	sleep 50
+	sleep 45
 done
 
