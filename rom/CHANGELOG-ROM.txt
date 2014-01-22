@@ -1,6 +1,17 @@
 ***FeraLab***
 =============
 
+= v35 =
+> Fixed typo error in Home launcher
+> Tuned Home launcher to be speedy
+> Updated FDE to v17.03
+> Updated Viper4Android sound engine
+> Updated themes
+> Tile rendering support
+> Settings menu rearranged
+> misc..
+
+
 = v34 =
 > Initial Release of NEW rom.
 
