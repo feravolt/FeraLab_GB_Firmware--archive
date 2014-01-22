@@ -7,7 +7,7 @@ calibrate("0.9695","16","0.9900","0");
 theme("touchwiz");
 
 ini_set("rom_name",             "***FeraLab***");
-ini_set("rom_version",          "v34");
+ini_set("rom_version",          "v35");
 ini_set("rom_author",           "FeraVolt");
 ini_set("rom_device",           "Xperia X10");
 ini_set("rom_api",              "2.3.9");
@@ -41,7 +41,8 @@ selectbox(
     "Philipine",          "Maligayang Pagdating!",                         0,
     "Hungarian",          "Üdvözöllek!",                                   0,
     "Polish",             "Witaj!",                                        0,
-    "Arabic",             "Hello!",                                        0
+    "Arabic",             "Hello!",                                        0,
+    "Portuguese",         "Bem-vindo!",                                    0
 );
 
 if prop("lang.prop","selected.0")=="1" then
@@ -88,6 +89,10 @@ if prop("lang.prop","selected.0")=="11" then
   loadlang("langs/ar.lang");
   fontresload( "0", "ttf/DroidSansFallback.ttf;ttf/DroidSansArabic.ttf", "12" );
   fontresload( "1", "ttf/DroidSansFallback.ttf;ttf/DroidSansArabic.ttf", "18" );
+endif;
+
+if prop("lang.prop","selected.0")=="12" then
+  loadlang("langs/pt.lang");
 endif;
 
 viewbox(
@@ -251,7 +256,7 @@ checkbox(
 	  "<~lite.b>",
       "@personalize",
       "lite.prop",
-	  "<~lite.c>",            "",                                                              2,
+	  "<~lite.c>",            "",                      2,
 	    "<~lite.d>",          "",                        								   0
 );
 
@@ -296,3 +301,4 @@ then
 endif;
 
 ### All Rights Fucked. 2013 ###
+
