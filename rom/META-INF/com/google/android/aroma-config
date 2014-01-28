@@ -7,7 +7,7 @@ calibrate("0.9695","16","0.9900","0");
 theme("touchwiz");
 
 ini_set("rom_name",             "***FeraLab***");
-ini_set("rom_version",          "v35");
+ini_set("rom_version",          "v36");
 ini_set("rom_author",           "FeraVolt");
 ini_set("rom_device",           "Xperia X10");
 ini_set("rom_api",              "2.3.9");
@@ -37,7 +37,7 @@ selectbox(
     "French",             "Bienvenue!",                                    0,
     "Italian",            "Benvenuto!",                                    0,
     "Spanish",            "Bienvenido!",                                   0,
-    "German",             "Welkom!",                                       0,
+    "Dutch",              "Welkom!",                                       0,
     "Philipine",          "Maligayang Pagdating!",                         0,
     "Hungarian",          "Üdvözöllek!",                                   0,
     "Polish",             "Witaj!",                                        0,
@@ -211,18 +211,30 @@ selectbox(
     "Game Mode ON",                   "<~game.b>",                                 0       #-- selected.0 = 2
 );
 
+selectbox(
+    "<~zram.title>",
+    "<~zram.titlee>:",
+    "@default",
+    "zram.prop",
+    "24MB zRam",                     "<~zram.a>",                                 1,      #-- selected.0 = 1
+    "96MB zRam",                     "<~zram.b>",                                 0,       #-- selected.0 = 2
+    "Disable zRam",                  "<~zram.c>",                                 0       #-- selected.0 = 2
+);
+
 checkbox(
       "<~opt.a>",
 	  "<~opt.b>",
       "@personalize",
       "opt.prop",
 	  "<~opt.c>",            "",                                     2,
-	    "No-Home-Unlock",     "<~opt.d>",0,
-	    "No-HW-LED",          "<~opt.z>",0,
-	    "Viper4Android",      "<~opt.xxxx>",0,
-	    "Save My Battery",    "<~opt.xyyx>",0,
-	    "Disable zRam",       "<~opt.xyxy>",0,
-	    "Black Keyboard",     "<~opt.xyxyz>",0
+	    "No-Home-Unlock",        "<~opt.d>",0,
+	    "No-HW-LED",             "<~opt.z>",0,
+	    "Viper4Android",         "<~opt.xxxx>",0,
+	    "Save My Battery",       "<~opt.xyyx>",0,
+	    "Black Keyboard",        "<~opt.xyxyz>",0,
+	    "NXT-GB home launcher",  "<~opt.xyxy>",0,
+	    "NXT-GB music widget",   "<~opt.xyxyzz>",0,
+	    "NXT-GB lockscreen",     "<~opt.xyxyzzl>",0
 );
 
 checkbox(
@@ -246,7 +258,6 @@ checkbox(
 	"Panorama",                "<~cbox.mm>",0,
 	"Pdroid",                  "<~cbox.nn>",0,
 	"Pie Control",             "<~cbox.oo>",0,
-	"PlayStation",             "<~cbox.pp>",0,
 	"Sim Toolkit",             "<~cbox.qq>",0,
 	"YouTube",                 "<~cbox.ss>",0
 );

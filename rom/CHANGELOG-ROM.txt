@@ -1,6 +1,14 @@
 ***FeraLab***
 =============
 
+= v36 =
+> AROMA updates
+> zRam levels for choice
+> Launcher & music widget for choice
+> Fixed CleanMaster problem
+> Removed PlayStation from AROMA
+> misc..
+
 = v35 =
 > Fixed typo error in Home launcher
 > Tuned Home launcher to be speedy

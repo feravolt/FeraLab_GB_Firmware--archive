@@ -590,17 +590,11 @@ endif;
 if
     file_getprop("/tmp/aroma/extraapps.prop","item.1.16") == "1"
 then
-  ui_print(">>  Installing Playstation Mobile");
-  package_extract_dir("feralab/apps/ps", "/data/app");
-endif;
-if
-    file_getprop("/tmp/aroma/extraapps.prop","item.1.17") == "1"
-then
   ui_print(">>  Installing Sim Toolkit");
   package_extract_dir("feralab/apps/stk", "/system/app");
 endif;
 if
-    file_getprop("/tmp/aroma/extraapps.prop","item.1.18") == "1"
+    file_getprop("/tmp/aroma/extraapps.prop","item.1.17") == "1"
 then
   ui_print(">>  Installing YouTube");
   package_extract_dir("feralab/apps/antutu", "/data/app");
@@ -642,28 +636,46 @@ endif;
 if
   file_getprop("/tmp/aroma/opt.prop","item.1.5") == "1"
 then
-  ui_print(">>  Disabling zRam memory compression");
-  package_extract_dir("feralab/opt/zram", "/system/engine");
+  ui_print(">>  Installing black-themed keyboard");
+  package_extract_dir("feralab/opt/kb", "/system/app");
 endif;
 if
   file_getprop("/tmp/aroma/opt.prop","item.1.6") == "1"
 then
-  ui_print(">>  Installing black-themed keyboadr");
-  package_extract_dir("feralab/opt/kb", "/system/app");
+  ui_print(">>  Installing NXT-GB home launcher");
+  package_extract_dir("feralab/opt/oldhome", "/system/app");
 endif;
 if
-  file_getprop("/tmp/aroma/uxp.prop","selected.0") == "1"
+  file_getprop("/tmp/aroma/opt.prop","item.1.7") == "1"
 then
-  ui_print(">>  Installing modified lockscreen");
-  package_extract_dir("feralab/opt/uxp/md", "/system/app");
+  ui_print(">>  Installing NXT-GB music widget");
+  package_extract_dir("feralab/opt/nxt", "/system/app");
 endif;
 if
-  file_getprop("/tmp/aroma/uxp.prop","selected.0") == "2"
+  file_getprop("/tmp/aroma/opt.prop","item.1.8") == "1"
 then
-  ui_print(">>  Installing original lockscreen");
-  package_extract_dir("feralab/opt/uxp/or", "/system/app");
+  ui_print(">>  Installing NXT-GB lockscreen");
+  package_extract_dir("feralab/opt/uxt", "/system/app");
 endif;
 set_progress(0.89);
+if
+  file_getprop("/tmp/aroma/zram.prop","selected.0") == "1"
+then
+  ui_print(">>  Using 24MB for zRam");
+  package_extract_dir("feralab/opt/zram/24", "/system/engine");
+endif;
+if
+  file_getprop("/tmp/aroma/zram.prop","selected.0") == "2"
+then
+  ui_print(">>  Using 96MB for zRam");
+  package_extract_dir("feralab/opt/zram/96", "/system/engine");
+endif;
+if
+  file_getprop("/tmp/aroma/zram.prop","selected.0") == "3"
+then
+  ui_print(">>  Disabling zRam");
+  package_extract_dir("feralab/opt/zram/off", "/system/engine");
+endif;
 if
   file_getprop("/tmp/aroma/game.prop","selected.0") == "1"
 then

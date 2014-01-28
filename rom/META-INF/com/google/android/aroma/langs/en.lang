@@ -82,7 +82,6 @@ cbox.ll=Fast and simple browser with data compression support.
 cbox.mm=Application for making panorama pictures.
 cbox.nn=Pdroid Privacy application. Android firewall.
 cbox.oo=Similar to Paranoid pie control. Must-choose if you have any broken HW buttons.
-cbox.pp=Official PlayStation Mobile store & emulator.
 cbox.qq=Standart Sim Toolkit.
 cbox.ss=Modified YouTube application.
 
@@ -114,8 +113,10 @@ opt.d=By checking this you won't be able to unlock LockScreen by HOME button.
 opt.z=By checking this you will completely disable HW LED's on bottom keys.
 opt.xxxx=Viper Sound Engine with advanced audio processing features.
 opt.xyyx=Set default maximum CPU frequency to 768Mhz. This will greatly save your battery in cost of overall performance. Option can be overrided later using CPU frequency config. apps (like No-Fril CPU, etc..).
-opt.xyxy=Disable zRam memory compression.
 opt.xyxyz=Install black-themed keyboard (Sony keyboard).
+opt.xyxy=Install NXT-GB styled home launcher (old-style).
+opt.xyxyzz=Install NXT-GB styled music widget.
+opt.xyxyzzl=Install NXT-GB styled lockscreen.
 
 rom.title=Data
 rom.titlee=Choose if you want to keep your data from previous ROM (SDcard data won't be touched). Warning! Clean installation is VERY recommended!
@@ -136,8 +137,9 @@ theme.title=Theme
 theme.titlee=Choose default system theme.
 theme.aa=Keep original one.
 
-uxp.title=Lockscreen
-uxp.titlee=Select default lockscreen for ROM.
-uxp.a=JB-styled lockscreen with instant camera access.
-uxp.b=Stock UXP lockscreen.
+zram.title=zRam
+zram.titlee=zRam is SWAP in RAM. It creates a swap-block in RAM & compresses data on-the-fly, using Google Snappy compression algorithm, which is known for it's speed. Simply it virtually expands your RAM. If you don't know what to choose just skip.
+zram.a=Usually a good choice. Enough good for multitasking and speed.
+zram.b=Aimed on providing better multitasking experience.
+zram.c=Disabling zram may slightly increase performance in cost of free RAM & multitasking.
 
