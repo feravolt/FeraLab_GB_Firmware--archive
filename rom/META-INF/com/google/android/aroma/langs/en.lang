@@ -117,6 +117,7 @@ opt.xyxyz=Install black-themed keyboard (Sony keyboard).
 opt.xyxy=Install NXT-GB styled home launcher (old-style).
 opt.xyxyzz=Install NXT-GB styled music widget.
 opt.xyxyzzl=Install NXT-GB styled lockscreen.
+opt.xyxyzzll=Choose this if you meet random reboots of your device. Disabling undervolting will cause more battery thirsty behaviour, but more stable.
 
 rom.title=Data
 rom.titlee=Choose if you want to keep your data from previous ROM (SDcard data won't be touched). Warning! Clean installation is VERY recommended!

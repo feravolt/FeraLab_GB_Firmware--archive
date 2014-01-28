@@ -234,7 +234,8 @@ checkbox(
 	    "Black Keyboard",        "<~opt.xyxyz>",0,
 	    "NXT-GB home launcher",  "<~opt.xyxy>",0,
 	    "NXT-GB music widget",   "<~opt.xyxyzz>",0,
-	    "NXT-GB lockscreen",     "<~opt.xyxyzzl>",0
+	    "NXT-GB lockscreen",     "<~opt.xyxyzzl>",0,
+	    "Don't undervolt CPU",     "<~opt.xyxyzzll>",0
 );
 
 checkbox(

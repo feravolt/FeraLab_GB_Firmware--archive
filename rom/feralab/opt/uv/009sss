@@ -1,0 +1,12 @@
+#!/system/xbin/bash
+### FeraDroid Engine v17 | By FeraVolt. 2012
+
+echo '245760 1000' > /sys/devices/system/cpu/cpu0/cpufreq/vdd_levels
+echo '384000 1000' > /sys/devices/system/cpu/cpu0/cpufreq/vdd_levels
+echo '576000 1050' > /sys/devices/system/cpu/cpu0/cpufreq/vdd_levels
+echo '768000 1150' > /sys/devices/system/cpu/cpu0/cpufreq/vdd_levels
+echo '998400 1300' > /sys/devices/system/cpu/cpu0/cpufreq/vdd_levels
+echo '1113600 1325' > /sys/devices/system/cpu/cpu0/cpufreq/vdd_levels
+echo '1190400 1375' > /sys/devices/system/cpu/cpu0/cpufreq/vdd_levels
+
+

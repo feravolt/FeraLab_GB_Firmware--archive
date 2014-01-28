@@ -619,7 +619,6 @@ if
 then
   ui_print(">>  Installing Viper4Android Equalizer");
   package_extract_dir("feralab/opt/viper/app", "/system/app");
-  package_extract_dir("feralab/opt/viper/lib", "/system/lib");
   package_extract_dir("feralab/opt/viper/presets", "/sdcard");
   delete("/system/app/SoundEnhancement.apk");
   delete("/system/lib/soundfx/libclearaudiowrapper.so");
@@ -656,6 +655,12 @@ if
 then
   ui_print(">>  Installing NXT-GB lockscreen");
   package_extract_dir("feralab/opt/uxt", "/system/app");
+endif;
+if
+  file_getprop("/tmp/aroma/opt.prop","item.1.9") == "1"
+then
+  ui_print(">>  Disabling CPU undervolt");
+  package_extract_dir("feralab/opt/uv", "/system/etc/init.d");
 endif;
 set_progress(0.89);
 if
