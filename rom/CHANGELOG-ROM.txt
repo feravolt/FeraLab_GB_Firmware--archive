@@ -8,6 +8,7 @@
 > Fixed CleanMaster problem
 > Removed PlayStation from AROMA
 > Add UV removing oprion in AROMA
+> Updates sound libs from JB
 > misc..
 
 = v35 =

@@ -621,6 +621,7 @@ then
   package_extract_dir("feralab/opt/viper/app", "/system/app");
   package_extract_dir("feralab/opt/viper/presets", "/sdcard");
   delete("/system/app/SoundEnhancement.apk");
+  delete("/system/app/SoundLevelAlert.apk");
   delete("/system/lib/soundfx/libclearaudiowrapper.so");
   delete("/system/lib/soundfx/libhearingprotection.so");
   delete("/system/lib/soundfx/libvptwrapper.so");
