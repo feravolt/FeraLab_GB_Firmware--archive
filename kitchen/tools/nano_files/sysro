@@ -1,2 +1,0 @@
-busybox mount -o ro,remount /system
-

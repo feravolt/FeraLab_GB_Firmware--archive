@@ -1,1 +1,0 @@
-ZipAlign - Android SDK R21.0.1
