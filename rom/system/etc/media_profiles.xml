@@ -63,11 +63,11 @@
 <MediaSettings>
     <CamcorderProfiles>
         <EncoderProfile quality="high" fileFormat="mp4" duration="60">
-            <Video codec="m4v"
+            <Video codec="h264"
                    bitRate="8000000"
                    width="1280"
                    height="720"
-                   frameRate="24" />
+                   frameRate="30" />
 
             <Audio codec="aac"
                    bitRate="128000"
@@ -100,9 +100,9 @@
     <EncoderOutputFileFormat name="3gp" />
 
     <VideoEncoderCap name="h264" enabled="true"
-        minBitRate="96000" maxBitRate="3000000"
-        minFrameWidth="320" maxFrameWidth="800"
-        minFrameHeight="240" maxFrameHeight="480"
+        minBitRate="96000" maxBitRate="8000000"
+        minFrameWidth="320" maxFrameWidth="1280"
+        minFrameHeight="240" maxFrameHeight="720"
         minFrameRate="15" maxFrameRate="30" />
 
     <VideoEncoderCap name="h263" enabled="true"

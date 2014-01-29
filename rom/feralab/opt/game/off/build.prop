@@ -128,7 +128,6 @@ ro.camera.sound.forced=0
 ro.media.enc.jpeg.quality=100
 ro.media.enc.hprof.vid.bps=8000000
 ro.semc.automount.disabled=true
-ro.semc.sound_effects_enabled=true
 ro.semc.xloud.supported=true
 ro.service.swiqi2.supported=true
 persist.audio.fluence.mode=endfire
@@ -146,7 +145,7 @@ ro.drm.active.3=marlin,1
 
 # Dalvik VM
 dalvik.vm.checkjni=false
-dalvik.vm.dexopt-flags=m=y,v=n,o=v,u=y
+dalvik.vm.dexopt-flags=m=y,v=n,o=v
 dalvik.vm.execution-mode=int:jit
 dalvik.vm.lockprof.threshold=500
 dalvik.vm.heapstartsize=5m

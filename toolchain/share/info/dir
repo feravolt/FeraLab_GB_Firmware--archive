@@ -15,7 +15,9 @@ File: dir,	Node: Top	This is the top of the INFO tree
 * Menu:
 
 GNU Libraries
+* libgomp: (libgomp).           GNU OpenMP runtime library
 * libitm: (libitm).             GNU Transactional Memory Library
+* libquadmath: (libquadmath).   GCC Quad-Precision Math Library
 
 Individual utilities
 * addr2line: (binutils)addr2line.               Convert addresses to file and 

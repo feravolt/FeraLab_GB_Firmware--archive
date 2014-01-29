@@ -53,7 +53,7 @@ if [ x$1 != x ] ; then
   prefix=$1
   shift
 else
-  prefix=/media/hdd_linux/crosstool-ng/builds/arm-cortex_a8-linux-gnueabi
+  prefix=/media/hdd_linux/linaro/builds/arm-cortex_a8-linux-gnueabi
 fi
 
 # Allow for alternate isysroot in which to find headers

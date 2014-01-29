@@ -2,10 +2,10 @@
 
 # NON-CONFIGURABLE STUFF!
 export LC_ALL=C
-version="hg+default-2b7744ca8ad8"
+version="linaro-1.13.1+bzr2644"
 bits="32"
-sed="${SED:-/bin/sed}"
-grep="${GREP:-/bin/grep}"
+sed="/bin/sed"
+grep="/bin/grep"
 
 my_name="$( basename "${0}" )"
 prefix="${0%-ldd}"
@@ -39,7 +39,7 @@ show_version() {
     # Fake a real ldd, just in case some dumb script would check
     cat <<_EOF_
 ldd (crosstool-NG) ${version}
-Copyright (C) 2010 "Yann E. MORIN" <yann.morin.1998@free.fr>
+Copyright (C) 2010 "Yann E. MORIN" <yann.morin.1998@anciens.enib.fr>
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 Licensed under the GPLv2, see the file LICENSES in the top-directory of the
@@ -268,11 +268,11 @@ do_process_file() {
     for n in "${search_rpath[@]}" "${needed_search_path[@]}"; do
         do_trace ": - '%s'\n" "${n}"
     done
-    do_trace ": end search path\n"
+    do_trace ": end search path"
 
-    for n in $( "${readelf}" -d "${file}"                                               \
-                |"${grep}" -E '\(NEEDED\)'                                              \
-                |"${sed}" -r -e 's/^.*Shared library:[[:space:]]+\[([^]]+)\].*/\1/;'    \
+    for n in $( "${readelf}" -d "${file}"                                           \
+                |"${grep}" -E '\(NEEDED\)'                                          \
+                |"${sed}" -r -e 's/^.*Shared library:[[:space:]]+\[(.*)\]$/\1/;'    \
               ); do
         found=0
         for m in "${needed_list[@]}"; do

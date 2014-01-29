@@ -194,15 +194,6 @@ selectbox(
 );
 
 selectbox(
-    "<~uxp.title>",
-    "<~uxp.titlee>:",
-    "@default",
-    "uxp.prop",
-    "Modified",                    "<~uxp.a>",                                 1,      #-- selected.0 = 1
-    "Original",                    "<~uxp.b>",                                 0       #-- selected.0 = 2
-);
-
-selectbox(
     "<~game.title>",
     "<~game.titlee>:",
     "@default",
