@@ -1,20 +1,20 @@
-### FeraLab ###
+###FeraVolt
 
 text_ok=OK
 text_next=Avanti >
 text_back=< Indietro
-text_yes=Sì
+text_yes=Si
 text_no=No
-text_about=Informazioni
-text_calibrating=Tool di calibrazione
-text_quit=Esci dall'installazione
-text_quit_msg=Sicuro di voler uscire dall'installazione?
+text_about=Riguardo a
+text_calibrating=Strumenti di calibrazione
+text_quit=Termina Istallazione
+text_quit_msg=Sei sicuro di voler terminare l'istallazione?
 
 common.for=for
 
 langtest.title=Benvenuto
-langtest.multiline=Ciao e benvenuto all'installazione della ***FeraLab*** ROM.\
-Puoi ora personalizzare la ROM.\
+langtest.multiline=Ciao, benvenuto all'istallazione della ROM  ***FeraLab***\
+Puoi personalizzare la ROM adesso.\
 \
 Buon flashing e buona fortuna!\
 \
@@ -22,16 +22,16 @@ Grazie per aver scelto <b>***FeraLab***</b>
 
 welcome.title=Benvenuto
 welcome.text1=Stai per installare
-welcome.text2=Leggere attentamente le descrizioni delle opzioni dell'installer!
+welcome.text2=Leggi attentamente le opzioni di istallazione!
 welcome.version=VERSIONE
 welcome.codename=DEVELOPER
 welcome.updated=ANDROID
-welcome.next=Premi Avanti per continuare l'installazione...
+welcome.next=Digita Avanti per continuare l'istallazione...
 
-terms.title=License
-terms.desc=GPLv2 OpenSource License.
-terms.check=Sono d'accordo con questi termini e condizioni.
-terms.confirm=Spuntare l'agreement o uscire.
+terms.title=Licensa
+terms.desc=GPLv2 Licensa OpenSource.
+terms.check=Sono d'accordo con questi Termini e Condizioni.
+terms.confirm=Accetta le condizioni o esci.
 
 changelog.title=Changelog
 changelog.desc=***FeraLab*** ROM changelog
@@ -40,52 +40,53 @@ fde.title=Changelog
 fde.desc=FeraDroidEngine changelog
 
 sys.title=Informazioni di sistema
-sys.titlee=Informazioni di sistema del tuo Device
+sys.titlee=Informazioni di sistema del tuo telefono.
 sys.free=Spazio libero
-sys.system=Capacità sistema
-sys.data=Capacità dati
-sys.sd=Capacità SDCard
-sys.sdext=Capacità SD-EXT
+sys.system=Spazio System
+sys.data=Spazio Data 
+sys.sd=Spazio SDCard 
+sys.sdext=Spazio SD-EXT 
 
-hz.ready=Pronto all'installazionehz.readyy=L'installazione automatica è pronta a iniziare
-hz.aha=Se vuoi rivedere o cambiare qualsiasi impostazione di installazione, premi <b>Indietro</b>. Premere il tasto home -> Esci dall'installazione automatica
+hz.ready=Pronto per l'istallazione
+hz.readyy=La procedura guidata è pronta per iniziare l'installazione
+hz.aha=se si desidera rivedere o modificare qualsiasi impostazione di installazione, digita <b>Indietro</b>. Digita Tasto Menu -> Esci installazione per uscire dalla procedura guidata
 hz.next=Avanti >
-hz.now=Installa ora
+hz.now=Installa adesso
 
-inst.title=Installando...
-inst.is=Sta per essere installato.
-inst.wait=Attendere mentre l'installazione automatica procede
-inst.min=Può richiedere molti minuti
-inst.fin=L'installazione automatica è terminata correttamente
-inst.next=Premere Avanti per continuare
+inst.title=Installazione...
+inst.is=vengono installati.
+inst.wait=Attendi mentre la procedura guidata installa 
+inst.min=Questo potrebbe richiedere alcuni minuti
+inst.fin=La procedura guidata di installazione ha installato con successo
+inst.next=Digita Avanti per continuare
 
 finish.fin=Finito
 reboot.title=Finito!
-reboot.titlee=Installato correttamente.
-reboot.box=Riavvia il dispositivo...
+reboot.titlee=Installazione avvenuta con successo.
+reboot.box=Riavvia il tuo telefono adesso...
 
-cbox.ch=Istalla App opzionali
-cbox.ea=App opzionali
-cbox.aa=Personalizza grafica dei giochi.
-cbox.bb=Chinese IME. Seleziona se usi come input la lingua cinese.
-cbox.cc=Cleaner universale per android. Effettua la pulizia di cache e app.
-cbox.dd=Set di applicazioni con supporto alla visualizzazione flottante.
-cbox.ee=Note con widget.
-cbox.ff=Applicazione ufficiale Google Mail.
-cbox.gg=Servizio di archiviazione cloud di Google.
-cbox.hh=Applicazione social Google Hangouts.
-cbox.ii=Applicazione ufficiale Google Maps.
-cbox.jj=Applicazione scanner barcode.
-cbox.kk=Applicazione per modificare la frequenza della CPU e lo scheduler I/O.
-cbox.ll=Semplice e veloce browser con supporto alla compressione dei dati.
-cbox.mm=Applicazione per fare foto paronamiche.
-cbox.nn=Applicazione Pdroid Privacy. Firewall per Android.
-cbox.oo=Simile al controllo a torta Paranoid. Scelta obbligata se hai qualche tasto hardware non funzionante.
-cbox.qq=Sim Toolkit.
-cbox.ss=Applicazione YouTube modificata.
+cbox.ch=Scegli Extra Apps
+cbox.ea=Extra Apps
+cbox.aa=Game Graphics Customizer.
+cbox.bb=Chinese IME. Select this if you will use Chinese language input.
+cbox.cc=Universal cleaner application for android. Cleans cache and tasks.
+cbox.dd=Set of apps with floating window support.
+cbox.ee=Simple notes with widget.
+cbox.ff=Official Google mail application.
+cbox.gg=Google cloud storage servise.
+cbox.hh=Google Hangouts social application.
+cbox.ii=Official Google Maps application.
+cbox.jj=Barcode scanner application.
+cbox.kk=Application for changing CPU frequency and I/O scheduler.
+cbox.ll=Fast and simple browser with data compression support.
+cbox.mm=Application for making panorama pictures.
+cbox.nn=Pdroid Privacy application. Android firewall.
+cbox.oo=Similar to Paranoid pie control. Must-choose if you have any broken HW buttons.
+cbox.qq=Standart Sim Toolkit.
+cbox.ss=Modified YouTube application.
 
-lite.a=Enlighter
-lite.b=Slezionando questa opzione, le seguenti applicazioni saranno cancellate:\
+lite.a=Alleggerisci 
+lite.b=Selezionando questa applicazione, le seguenti applicazioni di sistema verranno eliminate:\
 \
 BatteryUsageWidget\
 GoogleLyricsPlugin\
@@ -102,40 +103,44 @@ UserDictionaryProvider\
 WikipediaPlugin\
 widgetfavouritepeople\
 MediaWidget
-lite.c=Vuoi snellire la ROM?
-lite.d=Sì..Fallo.
+lite.c=Want to Enlight your ROM?
+lite.d=Yes..Do it.
 
-opt.a=Configurazione opzionale
-opt.b=Selezionando questa opzione vuoi che sia inclusa. Se non lo fai - sarà usata la configurazione di default.
+opt.a=Configurazioni Extra 
+opt.b=Selezionare le opzioni che si desidera includere. Se non si seleziona - saranno utilizzati le opzioni predefinite.
 opt.c=Opzioni
-opt.d=Selezionando questo non potrai sbloccare la Schermata di blocco con il tasto Home.
-opt.z=Selezionando questo disabiliti i LED dietro i tasti inferiori.
-opt.xxxx=Viper Sound Engine con caratteristiche di processamento audio avanzato.
-opt.xyyx=Imposta la frequenza massima della CPU a 768Mhz. Questo risparmia notevolmente il consumo della batteria a costo delle performance generali. Può essere modificata successivamente tramite applicazioni che controllano la frequenza della CPU (tipo No-Fril CPU, etc..).
-opt.xyxy=Disabilita la compressione della memoria zRam.
-opt.xyxyz=Installa la tastiera con il tema nero (tastiera Sony).
+opt.d=Selezionando questa non sarà in grado di sbloccare LockScreen dal tasto HOME.
+opt.z=Selezionando questa sarà completamente disabilitato HW LED sui tasti in basso.
+opt.xxxx=Viper Sound Engine con funzioni di elaborazione audio avanzate.
+opt.xyyx=Imposta la frequenza massima della CPU a 768Mhz. Ciò risparmierà  notevolmente la batteria a costo della performance complessiva. Opzione può essere cambiata in seguito utilizzando CPU frequency config. apps (like No-Fril CPU, etc..).
+opt.xyxyz=Installa tema nero per la tastiera (Sony keyboard).
+opt.xyxy=Installa NXT-GB styled home launcher (old-style).
+opt.xyxyzz=Installa NXT-GB styled music widget.
+opt.xyxyzzl=Installa NXT-GB styled lockscreen.
+opt.xyxyzzll=Scegliere questa opzione se si incontrano riavvii casuali del dispositivo. Disabilitando l'undervolting causerà un maggior spreco di energia, ma sarà più stabile.
 
-rom.title=Dati
-rom.titlee=Scegliere se vuoi mantenere i dati della ROM precedente (i dati della SDcard non saranno toccati). Attenzione! Una installazione pulita è RACCOMANDATA!
-rom.d=Pulisci i miei dati per una installazione della ROM veloce e stabile. Da scegliere se non stai usando una ROM Feralab o una ROM Feralab precedente alla versione v34.
-rom.s=Mantieni i miei dati. Sono consapevole che possono verificarsi problemi.
+rom.title=Data
+rom.titlee=Scegliere se si desidera mantenere i dati della precedente ROM (SDcard non verrà toccata). Attenzione! Installazione pulita è MOLTO consigliata!
+rom.d=Pulire i miei dati per l'installazione 100%  veloce e stabile. Dà scegliere se non stai utilizzando una ROM FeraLab o una versione precedente alla v34.
+rom.s=Mantieni i mie dati. Sono d'accordo che si possono verificare alcuni problemi.
 
 omg.title=ROM
-omg.titlee=Installa ROM. Scegli Non reinstallare solo se hai già installato QUESTA versione della ROM.
-omg.d=Installa la ROM come sempre.
-omg.s=Ho già installato questa versione della ROM e voglio solo configurarla.
+omg.titlee=Installazione ROM. Scegli di non re-installare la ROM solo se hai già installato questa versione.
+omg.d=Installa la ROM normalmente.
+omg.s=Ho già installato questa versione di ROM e vogliono solo configurarla.
 
 game.title=Game Mode
-game.titlee=Scegliere se vuoi abilitare la Gaming mode nella ROM. Guarda sul sito web per maggiori informazioni e per scoprire come funziona.
-game.a=Disabilita la Game Mode e usa le impostazioni di default.
-game.b=Abilita la Game mode. Cambia l'ID del device e disabilita il frame filtering.
+game.titlee=Scegli se vuoi attivare Gaming mode in ROM. Vedi sito per maggiori informazioni su come funziona.
+game.a=Disabilita Game Mode e usa le impostazioni originali.
+game.b=Abilita Game Mode. Cambia l'ID del telefono and disable frame filtering.
 
 theme.title=Tema
-theme.titlee=Scegli il tema di default del sistema.
+theme.titlee=Scegli il tema originale.
 theme.aa=Mantieni quello originale.
 
-uxp.title=Schermata di blocco
-uxp.titlee=Seleziona la schermata di blocco di default per la ROM.
-uxp.a=Schermata di blocco modificata tipo JB con accesso istantaneo alla camera.
-uxp.b=Schermata di blocco standard UXP.
+zram.title=zRam
+zram.titlee=zRam is SWAP in RAM. Si crea uno swap-blocco in RAM e comprime i dati on-the-fly, utilizzando l'algoritmo di compressione Snappy di Google, che è noto per la sua velocità. Semplicemente si espande virtualmente la RAM. Se non sapete cosa sia passa avanti.
+zram.a=Di solito una buona scelta. Abbastanza buono per il multitasking e la velocità.
+zram.b=Destinata a fornire una migliore esperienza multitasking.
+zram.c=Disattivare zram può leggermente aumentare le prestazioni in termini di costi di RAM libera e multitasking.
 

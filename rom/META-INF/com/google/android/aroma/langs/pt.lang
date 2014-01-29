@@ -1,4 +1,4 @@
-### FeraLab ###
+###FeraVolt
 
 text_ok=OK
 text_next=Avançar >
@@ -20,13 +20,13 @@ Tenha uma boa instalação e boa sorte!\
 \
 Obrigado por escolher <b>***FeraLab***</b>
 
-welcome.title=Bem-vindo
-welcome.text1=Você está prestes a instalar
-welcome.text2=Por Favor, leia com atenção as descrições as opções do instalador!
-welcome.version=VERSÃO
-welcome.codename=DESENVOLVEDOR
+welcome.title=Welcome
+welcome.text1=You are about to Install
+welcome.text2=Please carefully read installer option's descriptions!
+welcome.version=VERSION
+welcome.codename=DEVELOPER
 welcome.updated=ANDROID
-welcome.next=Pressione Avançar para continuar a instalação...
+welcome.next=Press Next to Continue the Installation...
 
 terms.title=Licença
 terms.desc=GPLv2 OpenSource License.
@@ -85,6 +85,7 @@ cbox.oo=Similar ao Paranoid pie control. Deve escolher caso tenha algum botão H
 cbox.qq=Sim Toolkit Padrão.
 cbox.ss=Aplicativo YouTube Modificado.
 
+
 lite.a=Enlighter
 lite.b=Ao selecionar esta opção, os seguintes aplicativos do sistema serão apagados:\
 \
@@ -103,8 +104,8 @@ UserDictionaryProvider\
 WikipediaPlugin\
 widgetfavouritepeople\
 MediaWidget
-lite.c=Você gostaria de Enlight sua ROM?
-lite.d=Sim ...Faça isso.
+lite.c=Want to Enlight your ROM?
+lite.d=Yes..Do it.
 
 opt.a=Configuração Extra
 opt.b=Selecione as opções que voc~e gostaria de incluir. Se você não selecionar - será usada a opção padrão.
@@ -113,8 +114,11 @@ opt.d=Ao marcar isso, você não será capaz de desbloquear o celular pelo botã
 opt.z=Ao marcar isso, você vai desativar completamente os HW LEDs nas teclas inferiores.
 opt.xxxx=Viper Sound Engine com recursos avançados de processamento de áudio.
 opt.xyyx=Defina a frequência máxima padrão da CPU em 768MHz. Isto vai poupar muito sua bateria ao custo do desempenho total. Opção pode ser substituida mais tarde usando o um aplicativo de configuração de frequência da CPU (tipo No-Fril CPU, etc..).
-opt.xyxy=Desabilitar a compactação de memória Zram.
 opt.xyxyz=Instalar teclado com tema escuro (Sony keyboard).
+opt.xyxy=Instalar launcher estilo NXT-GB (estilo antigo).
+opt.xyxyzz=Instalar widget de musica estilo NXT-GB.
+opt.xyxyzzl=Instalar tela de bloqueio estilo NXT-GB.
+opt.xyxyzzll=Escolha esta opção se você tem reinicializações aleatórias no seu dispositivo. Desativando undervolting vai causar um comportamento mais sedento por bateria, porém mais estável.
 
 rom.title=Dados
 rom.titlee=Escolha se você quer manter seus dados a partir da ROM anterior (Dados no SDcard não serão tocados). Aviso! A Instalação limpa é altamente recomendada
@@ -135,8 +139,9 @@ theme.title=Tema
 theme.titlee=Escolha o tema padrão do sistema.
 theme.aa=Mantenha o original.
 
-uxp.title=Tela de Bloqueio
-uxp.titlee=Selecione a tela de bloqueio padrão para a ROM.
-uxp.a=Tela de bloqueio estilo JB com acesso à câmera instanânea.
-uxp.b=Tela de Bloqueio Stock UXP.
+zram.title=zRam
+zram.titlee=zRam faz uma troca na memória RAM. Ele cria uma troca de bloco em RAM e comprime os dados on-the-fly, usando o algoritimo Google de compressão Snappy, que é conhecido por sua velocidade. Simplesmente ele expande sua memória RAM. Se você não sabe o que escolher apenas pule esta etapa.
+zram.a=Normalmente, uma boa escolha. Bom o suficiente para multitarefa e velocidade.
+zram.b=Destinado a proporcionar uma melhor experiência multitarefa.
+zram.c=Desativando zRam pode aumentar ligeiramente o desempenho ao do custo de RAM livre e multitarefa.
 
