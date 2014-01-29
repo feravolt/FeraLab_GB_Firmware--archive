@@ -3,12 +3,19 @@
 
 = v36 =
 > AROMA updates
-> zRam levels for choice
+> zRam updates + levels for choice
 > Launcher & music widget for choice
 > Fixed CleanMaster problem
 > Removed PlayStation from AROMA
-> Add UV removing oprion in AROMA
+> Add UV removing option in AROMA
 > Updates sound libs from JB
+> H264 Codec for Video recording (optimized)
+> Home launcher speed optimization
+> SMS character conversion dialog available
+> SMS UTF8 support
+> JB UI animations
+> KitKat Fonts
+> Updated & optimized all apps
 > misc..
 
 

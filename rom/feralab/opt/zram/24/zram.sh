@@ -4,5 +4,5 @@ export PATH=/sbin
 
 rzscontrol /dev/block/ramzswap0 -i -d 24576
 busybox swapon /dev/block/ramzswap0
-echo 18 > /proc/sys/vm/swappiness
+echo 36 > /proc/sys/vm/swappiness
 

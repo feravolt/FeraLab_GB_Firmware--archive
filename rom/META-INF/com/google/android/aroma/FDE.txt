@@ -2,7 +2,7 @@
 FDE - v17.03:
    (Warning! FeraKernel v18+ requied)
    - Optimized all tweaks
-   - Set zRam to 24Mb
+   - zRam updates
    - PID priority tweak
    - Rammer tweak updates
    - GPS tunings

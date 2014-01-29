@@ -1,4 +1,4 @@
-### FeraLab ###
+###FeraVolt
 
 text_ok=OK
 text_next=Další >
@@ -113,8 +113,11 @@ opt.d=Zaškrtnutím této položky nebude možné odemknout zámek obrazovky tla
 opt.z=Zaškrtnutím této položky úplně zakážete diody na spodních klávesách.
 opt.xxxx=Viper Sound Engine s rozšířeným zpracováním zvuku.
 opt.xyyx=Nastavit výchozí maximální frekvenci na 768Mhz. Tím se výrazně ušetří baterie na úkor výkonu. Frekvence CPU může být později upravena pomocí aplikací No-Fril CPU apod.
-opt.xyxy=Zakázat kompresi paměti zRam.
 opt.xyxyz=Nainstalovat černou klávesnici (klávesnice Sony).
+opt.xyxy=Nainstalovat NXT-GB launcher (starý styl).
+opt.xyxyzz=Nainstalovat NXT-GB hudební widget.
+opt.xyxyzzl=Nainstalovat NXT-GB zámek obrazovky.
+opt.xyxyzzll=Vyberte tuto možnost, pokud máte potíže s náhodnými restarty. Vypnutí podpětí více využívá baterii, ale je stabilnější.
 
 rom.title=Data
 rom.titlee=Vyberte si jestli chcete zachovat vaše data z předchozí ROM (SD karta bude nedotčena). Varování! Čistá instalace je VELMI doporučena!
@@ -135,8 +138,9 @@ theme.title=Schémata
 theme.titlee=Vyber výchozí systémové schéma.
 theme.aa=Nechat originální.
 
-uxp.title=Zámek obrazovky
-uxp.titlee=Vyber výchozí zámek obrazovky ROM.
-uxp.a=Zámek ve JB s okamžitým přístupem k fotoaparátu.
-uxp.b=Výchozí zámek obrazovky.
+zram.title=zRam
+zram.titlee=Vytváří odkládací bloky paměti RAM a komprimuje data za běhu pomocí kompresního algoritmu Google Snappy, který je známý svou rychlost. V praxi tato funkce rozšiřuje paměť RAM. Pokud nevíte co vybrat, prostě tento krok přeskočte.
+zram.a=Obvykle dobrá volba. Výborné pro multitasking a rychlost.
+zram.b=Zaměřeno na lepší multitasking.
+zram.c=Zakázání zRAM může mírně zlepšit výkon v nenáročným aplikací na paměť a multitasking.
 

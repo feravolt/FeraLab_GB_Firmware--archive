@@ -70,7 +70,7 @@ ro.opengles.version=131072
 
 # FeraLab
 ro.feralab.rom=1
-ro.feralab.rom.version=35
+ro.feralab.rom.version=36
 ro.feralab.rom.android.version=2.3.9
 ro.feralab.device=es209ra
 ro.feralab.engine=17
