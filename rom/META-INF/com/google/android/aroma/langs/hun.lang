@@ -113,8 +113,11 @@ opt.d=Ha bejelöli ezt, akkor nem lesz képes a HOME gombbal felébreszteni a k�
 opt.z=Ha bejelöli ezt, akkor teljesen letiltja a hardveres ledeket a gomboknál.
 opt.xxxx=Viper Sound Engine kiterjeszett hangfeldolgozással.
 opt.xyyx=Set default maximum CPU frequency to 768Mhz. This will greatly save your battery in cost of overall performance. Option can be overrided later using CPU frequency config. apps (like No-Fril CPU, etc..).
-opt.xyxy=zRam memória-tömörítés letiltása.
 opt.xyxyz=Fekete témájú billentyűzet (Sony billentyűzet).
+opt.xyxy=A régi stílusú NXT-GB home launcher telepítése.
+opt.xyxyzz=A régi stílusú NXT-GB zene widget telepítése.
+opt.xyxyzzl=A régi stílusú NXT-GB képernyőzár telepítése.
+opt.xyxyzzll=Válassza ezt, ha a készüléke véletlenszerűen újraindul használat közben. Az "undervolting" letiltásá után gyorsabban merülhet a készülék, de sokkal stabilabb lesz.
 
 rom.title=Data partició
 rom.titlee=Válassza ezt, ha nem akarja tartani az adatokat az előző ROM-ból(SDcard nem lesz törölve vagy módosítva). Figyelem! A teljesen friss telepítés ERŐSEN AJÁNLOTT!
@@ -135,8 +138,9 @@ theme.title=Téma
 theme.titlee=Válasszon alapértelmezett témát.
 theme.aa=Tartsa meg az eredetit.
 
-uxp.title=Képernyőzár
-uxp.titlee=Válasszon alapértelmezett képernyőzárat a ROM-hoz.
-uxp.a=JB-stílusú képernyőzár gyors kamera hozzáféréssel.
-uxp.b=Gyári UXP képernyőzár.
+zram.title=zRam
+zram.titlee=zRam egy SWAP a RAM-ban. Létrehoz egy csere-blokkont a RAM-ban és menet közben tömöríti az adatokat. A Google Snappy tömörítési algoritmust használja, ami a sebességéről ismert. Egyszerűen virtuálisan növeli a RAM méretét. Ha nem tudod mire való, válaszd a kihagyást.
+zram.a=Általában jó választás. Jó multitszking és sebesség.
+zram.b=Célja a jobb multitaszking élmény.
+zram.c=A zRam letiltása kis mértékben növeli a teljesítményt a szabad RAM rovására.
 
