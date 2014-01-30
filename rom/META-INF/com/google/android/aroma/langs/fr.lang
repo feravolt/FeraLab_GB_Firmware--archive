@@ -16,9 +16,9 @@ langtest.title=Bienvenue
 langtest.multiline=Bonjour et bienvenue dans l'installation de la ROM ***FeraLab***.\
 Vous pouvez personnaliser la ROM maintenant.\
 \
-Joyeuse installation et bonne chance!\
+Happy Flashing and Good Luck!\
 \
-Merci d'avoir choisi <b>***FeraLab***</b>
+Thanks for Choosing <b>***FeraLab***</b>
 
 welcome.title=Bienvenue
 welcome.text1=Vous êtes sur le point d'installer
@@ -28,8 +28,8 @@ welcome.codename=DEVELOPER
 welcome.updated=ANDROID
 welcome.next=Appuyer sur Suivant pour commencer l'installation...
 
-terms.title=License
-terms.desc=GPLv2 OpenSource License.
+terms.title=Licence
+terms.desc=Licence GPLv2 OpenSource.
 terms.check=Je suis d'accord avec les termes et conditions.
 terms.confirm=Merci de valider les conditions ou quitter l'installation.
 
@@ -51,7 +51,7 @@ hz.ready=Prêt pour l'installation ...
 hz.readyy=L'assistant est prêt à commencer l'installation
 hz.aha=Si vous souhaitez consulter ou modifier vos paramètres d'installation, appuyez sur <b> Retour </ b>. Appuyez sur la touche Menu -> Quitter l'installation pour quitter l'assistant
 hz.next=Suivant >
-hz.now=Installer maintenant Now
+hz.now=Installer maintenant
 
 inst.title=Installation en cours...
 inst.is=va être installé.
@@ -61,23 +61,23 @@ inst.fin=L'assistant a terminé l'installation avec succès
 inst.next=Appuyer sur Suivant pour continuer
 
 finish.fin=Terminé
-reboot.titleTerminé!
+reboot.title=Terminé!
 reboot.titlee=Installé avec succès.
 reboot.box=Redemarrer votre appareil maintenant...
 
 cbox.ch=Choisir les applications supplémentaires
 cbox.ea=Applications supplémentaires
 cbox.aa=Personnalisation graphique pour les jeux.
-cbox.bb=Chinese IME. Selectionner ceci si vous utilisez la langue chinoise.
+cbox.bb=Chinese IME. Sélectionner ceci si vous utilisez la langue chinoise.
 cbox.cc=Application pour le nettoyage du cache et des taches.
-cbox.dd=Applications utilisant les fenetres flottantes.
+cbox.dd=Applications utilisant les fenêtres flottantes.
 cbox.ee=Simple notes avec widget.
 cbox.ff=Application Google mail officielle.
-cbox.gg=Google cloud storage servise.
+cbox.gg=Servie Google de stockage dans le cloud.
 cbox.hh=Application Google Hangouts.
 cbox.ii=Application Google Maps officielle.
 cbox.jj=Application pour scanner des code barres.
-cbox.kk=Application pour changer les frequences CPU and I/O scheduler.
+cbox.kk=Application pour changer les fréquences CPU and I/O scheduler.
 cbox.ll=Navigateur simple et rapide avec prise en charge de la compression de données.
 cbox.mm=Application pour des photos en mode panorama.
 cbox.nn=Application Pdroid. Pare feu Android.
@@ -104,39 +104,43 @@ WikipediaPlugin\
 widgetfavouritepeople\
 MediaWidget
 lite.c=Voulez vous alleger la ROM?
-lite.d=Oui..Faites-le.
+lite.d=Oui.C'est parti...
 
-opt.a=Configuration supplementaire
+opt.a=Configuration supplémentaire
 opt.b=Sélectionnez les options que vous souhaitez inclure. Si vous ne sélectionnez pas, le choix par défaut sera utilisé.
 opt.c=Options
-opt.d=En selectionnant ceci, vous ne serez plus capable de deverrouiller le LockScreen avec le bouton HOME.
-opt.z=En selectionnant ceci, vous desactiverez les LEDS des touches physiques.
+opt.d=En sélectionnant ceci, vous ne serez plus capable de déverrouiller le LockScreen avec le bouton HOME.
+opt.z=En sélectionnant ceci, vous désactiverez les LEDS des touches physiques.
 opt.xxxx=Moteur Viper avec des fonctions avancées de traitement sonore.
-opt.xyyx=Définir par défaut la fréquence maximale du processeur à 768Mhz. Cela contribuera grandement à economiser votre batterie mais pour des performances moindres. L'option peut etre modifiée par la suite en utilisant des applications permettant de modifier les fréquences du processeur (comme No-Fril CPU, etc..).
-opt.xyxy=Desactiver la compression mémoire zRam.
+opt.xyyx=Définir par défaut la fréquence maximale du processeur à 768Mhz. Cela contribuera grandement à économiser votre batterie mais pour des performances moindres. L'option peut etre modifiée par la suite en utilisant des applications permettant de modifier les fréquences du processeur (comme No-Fril CPU, etc..).
 opt.xyxyz=Installer le clavier thème "noir" (clavier Sony).
+opt.xyxy=Installer le launcher style NXT-GB (ancien style).
+opt.xyxyzz=Installer le widget Musique style NXT-GB.
+opt.xyxyzzl=Installer le lockscreen style NXT-GB.
+opt.xyxyzzll=Choisir si vous rencontrez des redémarrages intempestifs de votre appareil. Désactiver le sous voltage consommera plus de batterie mais sera plus stable.
 
 rom.title=Données
-rom.titlee=Choisir si vous souhaitez conserver les données de la ROM précedente. (Les données sur le carte SD ne seront pas touchées). Attention, une installation complète est recommandée!
+rom.titlee=Choisir si vous souhaitez conserver les données de la ROM précédente. (Les données sur le carte SD ne seront pas touchées). Attention, une installation complète est recommandée!
 rom.d=Effacer mes données pour une installation de la ROM 100% fiable. Vous devez choisir ceci si vous n'utilisiez pas une ROM Feralab ou une ROM Feralab antérieure à v34.
 rom.s=Conserver mes données. Je comprends que cela peut amener des problèmes.
 
 omg.title=ROM
-omg.titlee=Installer la ROM. Choisir Ne pas reinstaller uniquement si vous avez deja installé CETTE version.
+omg.titlee=Installer la ROM. Choisir Ne pas réinstaller uniquement si vous avez déjà installé CETTE version.
 omg.d=Installer la ROM comme d'habitude.
 omg.s=J'ai deja installé cette version et je veux juste la configurer.
 
 game.title=Game Mode
-game.titlee=Choisir si vous voulez activer le Gaming mode de la ROM. Voir le site internet pour plus de details.
-game.a=Desactiver le Game Mode et utiliser les reglages par defaut.
-game.b=Activer le Game Mode. Change l'identifiant de l'appareil et desactive device ID and desactive le frame filtering.
+game.titlee=Choisir si vous voulez activer le Gaming mode de la ROM. Voir le site internet pour plus de détails.
+game.a=Désactiver le Game Mode et utiliser les réglages par défaut.
+game.b=Activer le Game Mode. Change l'identifiant de l'appareil et désactive le frame filtering.
 
-theme.title=Theme
+theme.title=Thème
 theme.titlee=Choisir le thème système.
 theme.aa=Conserver le thème original.
 
-uxp.title=Lockscreen
-uxp.titlee=Selectionner le lockscreen par defaut pour la ROM.
-uxp.a=Lockscreen style JB avec accès rapide à l'appareil photo.
-uxp.b=Stock UXP lockscreen.
+zram.title=zRam
+zram.titlee=zRam est le SWAP dans la RAM. Cela crée un bloc swap dans la mémoire RAM et compresse les données à la volée, en utilisant l'algorithme de compression Google Snappy, qui est connu pour sa vitesse. Il étend de manière virtuelle votre mémoire RAM. Si vous ne savez pas quoi choisir, passer au menu suivant.
+zram.a=Habituellement, un bon choix. Assez bon pour le multitâche et la vitesse.
+zram.b=Visant à fournir une meilleure expérience multitâche.
+zram.c=Désactiver Zram peut augmenter légèrement les performances au profit de la mémoire RAM disponible et du multitâche.
 

@@ -2,7 +2,7 @@
 =============
 
 LOCKED BOOTLOADERS
-Kernel version is v16.1, but updated ramdisk from 18.2 kernel, so it will work fine with new ROM.
+FeraKernel v18.4 is built-in ROM package.
 
 = v18.4 =
 >> Ramdisk fixes
@@ -43,7 +43,7 @@ Full android capability. netfilters, core & etc updates and fixes from CAF & man
 >> LowMemoryKiller driver updated & optimized (fundge-swap supported).
 >> Misc squashed kernel updates from CAF.
 >> Updated kernel headers.
->> Updated kernel codec's headers.
+>> Updated kernel codecs headers.
 >> Added and enabled driver Sync and SW_Sync framework.
 >> Added ARM idle call notifiers. 
 >> Keeping kernel threads alive.

@@ -16,7 +16,7 @@
 > JB UI animations
 > KitKat Fonts
 > KitKat Ringtones
-> Fixed Offline Charging
+> Partically fixed offline charging
 > Misc media tweaks
 > Updated & optimized all apps
 > Framework fixes
