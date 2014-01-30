@@ -52,7 +52,7 @@ struct clkctl_acpu_speed {
 };
 
 #ifdef CONFIG_X10_UNDERVOLT
-struct clkctl_acpu_speed acpu_freq_tbl_1190[] = {
+struct clkctl_acpu_speed acpu_freq_tbl_1228[] = {
 	{ 0, 19200, ACPU_PLL_TCXO, 0, 0, 0, 0, 14000, 0, 0, 975 },
 	{ 0, 192000, ACPU_PLL_1, 1, 5, 0, 0, 14000, 2, 0, 975 },
 	{ 1, 245760, ACPU_PLL_0, 4, 0, 0, 0, 29000, 0, 0, 975 },
@@ -78,10 +78,11 @@ struct clkctl_acpu_speed acpu_freq_tbl_1190[] = {
 	{ 1, 1113600, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1D, 1325 },
 	{ 0, 1152000, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1E, 1325 },
 	{ 1, 1190400, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1F, 1350 },
+	{ 1, 1228800, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x20, 1375 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 };
 #else
-struct clkctl_acpu_speed acpu_freq_tbl_1190[] = {
+struct clkctl_acpu_speed acpu_freq_tbl_1228[] = {
 	{ 0, 19200, ACPU_PLL_TCXO, 0, 0, 0, 0, 14000, 0, 0, 1000 },
 	{ 0, 192000, ACPU_PLL_1, 1, 5, 0, 0, 14000, 2, 0, 1000 },
 	{ 1, 245760, ACPU_PLL_0, 4, 0, 0, 0, 29000, 0, 0, 1000 },
@@ -107,11 +108,12 @@ struct clkctl_acpu_speed acpu_freq_tbl_1190[] = {
 	{ 1, 1113600, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1D, 1325 },
 	{ 0, 1152000, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1E, 1325 },
 	{ 1, 1190400, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1F, 1350 },
+        { 1, 1228800, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x20, 1375 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 };
 #endif
 
-static struct clkctl_acpu_speed *acpu_freq_tbl = acpu_freq_tbl_1190;
+static struct clkctl_acpu_speed *acpu_freq_tbl = acpu_freq_tbl_1228;
 #define AXI_S	(&acpu_freq_tbl[1])
 #define PLL0_S	(&acpu_freq_tbl[2])
 #define POWER_COLLAPSE_KHZ (AXI_S->acpuclk_khz)
@@ -493,7 +495,7 @@ static void __init acpu_freq_tbl_fixup(void)
 	switch (tcsr_spare2 & 0xF0) {
 	case 0x30:
 	case 0x00:
-		max_acpu_khz = 1190400;
+		max_acpu_khz = 1228800;
 		break;
 	default:
 		pr_warning("Invalid efuse data (%x) on Max ACPU freq!\n",

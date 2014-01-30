@@ -48,3 +48,5 @@ modprobe frandom
 modprobe erandom
 dd if=/dev/urandom of=$random_seed count=1 bs=256
 
+/system/bin/chargemon
+

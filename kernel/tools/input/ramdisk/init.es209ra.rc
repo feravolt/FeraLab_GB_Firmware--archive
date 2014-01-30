@@ -1,5 +1,4 @@
 on early-boot
-    exec /system/bin/chargemon
     exec /sbin/bootrec
 
 service wpa_supplicant /system/bin/wpa_supplicant -Dar6000 -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf
@@ -102,6 +101,16 @@ on boot
     chmod 0666 /dev/msm_amr_in
     chmod 0666 /dev/genlock
     chmod 0777 /dev/graphics/fb0
+    chmod 0777 /dev/oncrpc
+    chmod 0777 /dev/oncrpc/*
+    chmod 0660 /dev/oncrpc/30000000*
+    chmod 0660 /dev/oncrpc/30000003*
+    chmod 0660 /dev/oncrpc/3000000e*
+    chmod 0660 /dev/oncrpc/30000012*
+    chmod 0660 /dev/oncrpc/30000016*
+    chmod 0660 /dev/oncrpc/30000019*
+    chmod 0660 /dev/oncrpc/3000003c*
+    chmod 0660 /dev/oncrpc/3000006b*
     chmod 0777 /cache
     chmod 0777 /engine
     chown root system /sys/kernel/mm/ksm/pages_to_scan

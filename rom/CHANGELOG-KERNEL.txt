@@ -7,6 +7,8 @@ Kernel version is v16.1, but updated ramdisk from 18.2 kernel, so it will work f
 = v18.4 =
 >> Ramdisk fixes
 >> Linaro toolchain updated to latest version
+>> Higher CPU overclock
+>> RIL permissions fix
 >> misc..
 
 

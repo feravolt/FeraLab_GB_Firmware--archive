@@ -15,7 +15,11 @@
 > SMS UTF8 support
 > JB UI animations
 > KitKat Fonts
+> KitKat Ringtones
+> Fixed Offline Charging
+> Misc media tweaks
 > Updated & optimized all apps
+> Framework fixes
 > misc..
 
 
