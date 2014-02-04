@@ -23,9 +23,14 @@ loglevel 3
     symlink /system/etc /etc
     symlink /sys/kernel/debug /d
     symlink /system/usr/vendor /vendor
+    mkdir /tmp
+    mount /tmp /tmp tmpfs
     mkdir /mnt 0775 root system
     mkdir /mnt/sdcard 0000 system system
     symlink /mnt/sdcard /sdcard
+    mkdir /acct
+    mount cgroup none /acct cpuacct
+    mkdir /acct/uid
     mkdir /system
     mkdir /engine
     mkdir /data 0771 system system
@@ -156,7 +161,7 @@ on boot
     setprop ro.HEAVY_WEIGHT_APP_ADJ 3
     setprop ro.SECONDARY_SERVER_ADJ 4
     setprop ro.BACKUP_APP_ADJ 5
-    setprop ro.HOME_APP_ADJ 6
+    setprop ro.HOME_APP_ADJ 1
     setprop ro.HIDDEN_APP_MIN_ADJ 7
     setprop ro.EMPTY_APP_ADJ 15
     setprop ro.FOREGROUND_APP_MEM 2048
@@ -165,18 +170,18 @@ on boot
     setprop ro.HEAVY_WEIGHT_APP_MEM 4096
     setprop ro.SECONDARY_SERVER_MEM 6144
     setprop ro.BACKUP_APP_MEM 6144
-    setprop ro.HOME_APP_MEM 6144
+    setprop ro.HOME_APP_MEM 4096
     setprop ro.HIDDEN_APP_MEM 7168
     setprop ro.EMPTY_APP_MEM 14336
-    write /sys/module/lowmemorykiller/parameters/adj 0,20,50,100,250,500
+    write /sys/module/lowmemorykiller/parameters/adj 0,1,2,4,7,15
     write /proc/sys/vm/overcommit_memory 1
     write /proc/sys/vm/min_free_order_shift 4
     write /sys/module/lowmemorykiller/parameters/minfree 2048,3072,4096,6144,7168,14336
     write /proc/1/oom_adj -16
     write /sys/module/wakelock/parameters/debug_mask 7
     write /proc/sys/vm/dirty_expire_centisecs 200
-    write /proc/sys/vm/dirty_ratio  4
-    write /proc/sys/vm/dirty_background_ratio  2
+    write /proc/sys/vm/dirty_ratio 10
+    write /proc/sys/vm/dirty_background_ratio 5
     chmod 0660 /sys/class/rfkill/rfkill0/state
     chown root system /sys/module/lowmemorykiller/parameters/adj
     chmod 0664 /sys/module/lowmemorykiller/parameters/adj
@@ -227,8 +232,8 @@ on boot
     setprop net.tcp.buffersize.default 4096,87380,110208,4096,16384,110208
     setprop net.tcp.buffersize.wifi    524288,1048576,2097152,262144,524288,1048576
     setprop net.tcp.buffersize.umts    4094,87380,110208,4096,16384,110208
-    setprop net.tcp.buffersize.hsdpa   4094,87380,704512,4096,16384,110208
-    setprop net.tcp.buffersize.hspa    4094,87380,704512,4096,16384,110208
+    setprop net.tcp.buffersize.hsdpa   5840,87380,165467,4096,16384,110208
+    setprop net.tcp.buffersize.hspa    5840,87380,165467,4096,16384,110208
     setprop net.tcp.buffersize.hsupa   4094,87380,704512,4096,16384,110208
     setprop net.tcp.buffersize.edge    4093,26280,35040,4096,16384,35040
     setprop net.tcp.buffersize.gprs    4092,8760,11680,4096,8760,11680

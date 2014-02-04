@@ -1,4 +1,4 @@
 #!/sbin/sh
-### FeraDroid Engine v17 | By FeraVolt. 2013
+### FeraDroid Engine v17 | By FeraVolt. 2014
 
 mount -o ro,remount -t yaffs2 /dev/block/mtdblock2 /system

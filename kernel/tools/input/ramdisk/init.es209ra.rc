@@ -121,6 +121,16 @@ on boot
     chmod 0664 /sys/kernel/mm/ksm/run
     write /sys/kernel/mm/ksm/sleep_millisecs 1500
     write /sys/kernel/mm/ksm/pages_to_scan 256
+    setprop net.http.idle_cache.size  40
+    setprop net.http.threads  10
+    setprop net.webkit.cache.size  12582912
+    setprop net.nw.cache.prioadvstep  86400000
+    setprop net.nw.cache.weightadvstep  3600000
+    setprop net.nw.cache.orderby  weight
+    setprop net.http.idle_cache.shutdown  true
+    setprop net.webkit.cache.mindeadsize  4194304
+    setprop net.webkit.cache.maxdeadsize  4194304
+    write /proc/sys/kernel/sysrq 0
 
 on property:init.svc.bluetoothd=running
     write /sys/devices/virtual/bluetooth/hci0/link_supervision_timeout 6400

@@ -36,12 +36,10 @@ selectbox(
     "Czech",              "Vítejte!",                                      0,
     "French",             "Bienvenue!",                                    0,
     "Italian",            "Benvenuto!",                                    0,
-    "Spanish",            "Bienvenido!",                                   0,
     "Dutch",              "Welkom!",                                       0,
     "Philipine",          "Maligayang Pagdating!",                         0,
     "Hungarian",          "Üdvözöllek!",                                   0,
     "Polish",             "Witaj!",                                        0,
-    "Arabic",             "Hello!",                                        0,
     "Portuguese",         "Bem-vindo!",                                    0
 );
 
@@ -66,32 +64,22 @@ if prop("lang.prop","selected.0")=="5" then
 endif;
 
 if prop("lang.prop","selected.0")=="6" then
-  loadlang("langs/esp.lang");
-endif;
-
-if prop("lang.prop","selected.0")=="7" then
   loadlang("langs/deu.lang");
 endif;
 
-if prop("lang.prop","selected.0")=="8" then
+if prop("lang.prop","selected.0")=="7" then
   loadlang("langs/phil.lang");
 endif;
 
-if prop("lang.prop","selected.0")=="9" then
+if prop("lang.prop","selected.0")=="8" then
   loadlang("langs/hun.lang");
 endif;
 
-if prop("lang.prop","selected.0")=="10" then
+if prop("lang.prop","selected.0")=="9" then
   loadlang("langs/pol.lang");
 endif;
 
-if prop("lang.prop","selected.0")=="11" then
-  loadlang("langs/ar.lang");
-  fontresload( "0", "ttf/DroidSansFallback.ttf;ttf/DroidSansArabic.ttf", "12" );
-  fontresload( "1", "ttf/DroidSansFallback.ttf;ttf/DroidSansArabic.ttf", "18" );
-endif;
-
-if prop("lang.prop","selected.0")=="12" then
+if prop("lang.prop","selected.0")=="10" then
   loadlang("langs/pt.lang");
 endif;
 
