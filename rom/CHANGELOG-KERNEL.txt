@@ -4,6 +4,17 @@
 LOCKED BOOTLOADERS
 FeraKernel v18.4 is built-in ROM package.
 
+
+= v18.5 =
+>> Ramdisk fixes
+>> Tuned default browser behaviour
+>> Network speed optimization
+>> LMK parameters tuned
+>> Tuned VM dirty ratio parameters
+>> Updated built-in binaries
+>> misc..
+
+
 = v18.4 =
 >> Ramdisk fixes
 >> Linaro toolchain updated to latest version
