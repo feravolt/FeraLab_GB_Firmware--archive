@@ -26,7 +26,7 @@
 #define BATTERY_CB_TYPE_PROC		1
 #define BATTERY_CB_ID_LOW_VOL		2
 
-#define BATT_RPC_TIMEOUT	10000	/* 10 sec */
+#define BATT_RPC_TIMEOUT	18000	/* 10 sec */
 
 #define INVALID_BATT_HANDLE	-1
 

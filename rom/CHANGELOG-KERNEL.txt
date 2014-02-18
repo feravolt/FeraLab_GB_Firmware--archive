@@ -2,7 +2,11 @@
 =============
 
 LOCKED BOOTLOADERS
-FeraKernel v18.4 is built-in ROM package.
+FeraKernel v19 is built-in ROM package.
+
+= v19 =
+>> Fixed low battery shuttown
+>> misc..
 
 
 = v18.5 =

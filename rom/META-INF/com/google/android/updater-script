@@ -614,51 +614,33 @@ then
   delete("/system/etc/init.d/003ccc");
   package_extract_dir("feralab/opt/hwled", "/system/etc/init.d");
 endif;
-if
-  file_getprop("/tmp/aroma/opt.prop","item.1.3") == "1"
-then
-  ui_print(">>  Installing Viper4Android Equalizer");
-  package_extract_dir("feralab/opt/viper/app", "/system/app");
-  package_extract_dir("feralab/opt/viper/presets", "/sdcard");
-  delete("/system/app/SoundEnhancement.apk");
-  delete("/system/app/SoundLevelAlert.apk");
-  delete("/system/lib/soundfx/libclearaudiowrapper.so");
-  delete("/system/lib/soundfx/libhearingprotection.so");
-  delete("/system/lib/soundfx/libvptwrapper.so");
-endif;
 set_progress(0.88);
 if
-  file_getprop("/tmp/aroma/opt.prop","item.1.4") == "1"
+  file_getprop("/tmp/aroma/opt.prop","item.1.3") == "1"
 then
   ui_print(">>  Enabling PowerSave mode");
   package_extract_dir("feralab/opt/bb", "/system/etc");
 endif;
 if
-  file_getprop("/tmp/aroma/opt.prop","item.1.5") == "1"
+  file_getprop("/tmp/aroma/opt.prop","item.1.4") == "1"
 then
   ui_print(">>  Installing black-themed keyboard");
   package_extract_dir("feralab/opt/kb", "/system/app");
 endif;
 if
-  file_getprop("/tmp/aroma/opt.prop","item.1.6") == "1"
-then
-  ui_print(">>  Installing NXT-GB home launcher");
-  package_extract_dir("feralab/opt/oldhome", "/system/app");
-endif;
-if
-  file_getprop("/tmp/aroma/opt.prop","item.1.7") == "1"
+  file_getprop("/tmp/aroma/opt.prop","item.1.5") == "1"
 then
   ui_print(">>  Installing NXT-GB music widget");
   package_extract_dir("feralab/opt/nxt", "/system/app");
 endif;
 if
-  file_getprop("/tmp/aroma/opt.prop","item.1.8") == "1"
+  file_getprop("/tmp/aroma/opt.prop","item.1.6") == "1"
 then
   ui_print(">>  Installing NXT-GB lockscreen");
   package_extract_dir("feralab/opt/uxt", "/system/app");
 endif;
 if
-  file_getprop("/tmp/aroma/opt.prop","item.1.9") == "1"
+  file_getprop("/tmp/aroma/opt.prop","item.1.7") == "1"
 then
   ui_print(">>  Disabling CPU undervolt");
   package_extract_dir("feralab/opt/uv", "/system/etc/init.d");

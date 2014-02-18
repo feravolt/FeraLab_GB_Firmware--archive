@@ -7,14 +7,13 @@ calibrate("0.9695","16","0.9900","0");
 theme("touchwiz");
 
 ini_set("rom_name",             "***FeraLab***");
-ini_set("rom_version",          "v36");
+ini_set("rom_version",          "v37");
 ini_set("rom_author",           "FeraVolt");
 ini_set("rom_device",           "Xperia X10");
 ini_set("rom_api",              "2.3.9");
 
 anisplash(
     1,
-
     "splash/a1", 100,
     "splash/a2", 60,
     "splash/a3", 60,
@@ -208,13 +207,11 @@ checkbox(
 	  "<~opt.c>",            "",                                     2,
 	    "No-Home-Unlock",        "<~opt.d>",0,
 	    "No-HW-LED",             "<~opt.z>",0,
-	    "Viper4Android",         "<~opt.xxxx>",0,
 	    "Save My Battery",       "<~opt.xyyx>",0,
 	    "Black Keyboard",        "<~opt.xyxyz>",0,
-	    "NXT-GB home launcher",  "<~opt.xyxy>",0,
 	    "NXT-GB music widget",   "<~opt.xyxyzz>",0,
 	    "NXT-GB lockscreen",     "<~opt.xyxyzzl>",0,
-	    "Don't undervolt CPU",     "<~opt.xyxyzzll>",0
+	    "Don't undervolt CPU",   "<~opt.xyxyzzll>",0
 );
 
 checkbox(

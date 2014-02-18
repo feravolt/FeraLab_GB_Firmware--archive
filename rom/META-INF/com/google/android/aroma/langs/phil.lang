@@ -111,7 +111,6 @@ opt.b=Piliin ang nais mong isama. Kung hindi pipiliin - gagamitin ang default op
 opt.c=Options
 opt.d=Sa pagpili nito, hindi mo maaaring i-unlock ang LockScreen sa pagpindot ng Home Button.
 opt.z=Sa pagpili nito, tatanggalin ang HW Led sa Bottom Keys.
-opt.xxxx=Viper Sound Engine na mayroong advanced audio processing features.
 opt.xyyx=I-set ang default maximum CPU frequency sa 768Mhz. Ito ay epektibo sa pagtagal ng batery power kapalit ng overall performance. Ang option ay pwedeng i-override gamit ang CPU frequency config. apps (katuload ng No-Fril CPU, etc..).
 opt.xyxy=Disable zRam memory compression.
 opt.xyxyz=I-install ang black-theme keyboard (Sony keyboard).

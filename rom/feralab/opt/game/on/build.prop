@@ -1,7 +1,7 @@
 ### FeraLab ###
 
 # Build info
-ro.build.date=31.01.2014
+ro.build.date=21.02.2014
 ro.build.date.utc=0
 ro.build.user=FeraVolt
 ro.build.host=FeraLab
@@ -13,7 +13,7 @@ ro.build.version.release=2.3.9
 ro.build.type=user
 ro.build.description=X10i-user 2.3.9 3.0.1.G.0.75 tB_P test-keys
 ro.build.id=6.0.B.0.743
-ro.build.display.id=6.0.B.0.743  |  v36 (G)
+ro.build.display.id=6.0.B.0.743  |  v37 (G)
 ro.build.tags=release-keys
 ro.build.fingerprint=SEMC/X10i_1232-9897/X10i:2.3.3/3.0.1.G.0.75/tB_P:user/release-keys
 
@@ -70,7 +70,7 @@ ro.opengles.version=131072
 
 # FeraLab
 ro.feralab.rom=1
-ro.feralab.rom.version=36
+ro.feralab.rom.version=37
 ro.feralab.rom.android.version=2.3.9
 ro.feralab.device=es209ra
 ro.feralab.engine=17
@@ -108,7 +108,7 @@ persist.ro.ril.sms_sync_sending=1
 pm.sleep_mode=1
 
 # Wireless
-ro.wifi.channels=
+ro.wifi.channels=14
 ro.board.platform=qsd8k
 wifi.interface=wlan0
 ro.semc.wifi.hostapd=1

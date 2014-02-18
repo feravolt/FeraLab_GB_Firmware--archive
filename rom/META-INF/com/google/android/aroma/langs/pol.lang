@@ -112,11 +112,9 @@ opt.b=Wybierz opcje które mają być użyte. Jeśli nie wybierzesz, będą one 
 opt.c=Opcje
 opt.d=Wybierając tę opcję nie będziesz mógł odblokować ekranu głównego przyciskiem HOME.
 opt.z=Jeśli wybierzesz tę opcję diody między przyciskami głównym zostaną wyłączone.
-opt.xxxx=Aplikacja Viper Sound Engine posiada zaawansowane ustawienia konfiguracji dźwięku.
 opt.xyyx=Ustawia maksymalne taktowanie CPU na 768Mhz. Ta opcja jest dobra by zachować baterię kosztem wydajności. Możesz później to zrobić używając aplikacji do kontroli procesora CPU (np. No-Fril CPU).
 opt.xyxyz=Zainstaluj czarną klawiaturę Sony.
-opt.xyxy=Zainstaluj styl NXT-GB ekranu głównego (stary styl).
-opt.xyxyzz=Zainstaluj muzyczny styl  NXT-GB ekranu głównego.
+opt.xyxyzz=Zainstaluj muzyczny styl NXT-GB ekranu głównego.
 opt.xyxyzzl=Zainstaluj styl NXT-GB ekranu głównego.
 opt.xyxyzzll=Wybierz tę opcję jeśli zdarza się, że Twoje urządzenie czasem się samo resetuje. Wyłączenie spowoduje większe zużycie pamięci, ale urządzenie będzie bardziej stabilne.
 

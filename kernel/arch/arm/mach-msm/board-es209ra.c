@@ -1414,7 +1414,7 @@ static struct msm_otg_platform_data msm_otg_pdata = {
 static struct msm_hsusb_gadget_platform_data msm_gadget_pdata;
 
 static struct lbs_platform_data lbs_data = {
-	.threshold_vol = 3400,
+	.threshold_vol = 3500,
 };
 
 static struct platform_device lbs_device = {
