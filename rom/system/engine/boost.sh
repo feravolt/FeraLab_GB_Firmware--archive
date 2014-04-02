@@ -1,5 +1,5 @@
 #!/system/xbin/sh
-### FeraDroid Engine v17 | By FeraVolt. 2013
+### FeraDroid Engine v18 | By FeraVolt. 2014 ###
 
 ramused=$((`free | awk '{ print $3 }' | sed -n 2p`/1024))
 ramkbytesfree=`free | awk '{ print $4 }' | sed -n 2p`
@@ -15,9 +15,10 @@ echo "Clearing page-caches..."
 busybox sync;
 sleep 1
 echo 3 > /proc/sys/vm/drop_caches
-sleep 1;
+sleep 2;
+echo 2 > /proc/sys/vm/drop_caches
 busybox sync;
-sleep 1
+sleep 2
 echo 3 > /proc/sys/vm/drop_caches
 busybox sync;
 sleep 1

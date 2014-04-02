@@ -1,29 +1,30 @@
-#!/system/xbin/sh
-
 echo "FeraDroid Engine"
-echo "version 17.03"
+echo "version 18.0"
 echo "By FeraVolt."
 
 if [ -e /system/usr/vendor/prop/firstboot ];
 then
-   sysrw
+   /system/xbin/sysrw
    sh /system/engine/fix.sh
    sh /system/engine/installbusybox.sh
-   sysrw
+   sleep 54
+   sleep 45
+   rm -f /data/local/bootanimation.zip
+   /system/xbin/boost
+   sleep 45
+   sleep 45
+   /system/xbin/sysrw
    rm -f /system/usr/vendor/prop/firstboot
    rm -f /system/usr/vendor/prop/notferalab
-   boost
-   sleep 63
    rm -f /system/engine/installbusybox.sh
+   rm -f /data/local/bootanimation.zip
    exit
 else
 
-sysrw
+/system/xbin/sysrw
 /system/xbin/run-parts /system/engine/tweaks
 chmod 644 /system/build.prop
 chmod -R 777 /system/etc/sysctl.conf
-chmod 777 /system/etc/sysctl.conf
-chmod 000 /data/tombstones
 rm -f /data/cache/*.apk
 rm -f /data/cache/*.tmp
 rm -f /data/dalvik-cache/*.apk
@@ -35,12 +36,13 @@ rm -Rf /mnt/sdcard/LOST.DIR
 rm -Rf /mnt/sdcard/found000/*
 rm -Rf /mnt/sdcard/found000
 rm -f /mnt/sdcard/fix_permissions.log
+chmod 000 /data/tombstones
 sqlite3 /data/data/com.android.providers.settings/databases/settings.db "INSERT INTO secure (name, value) VALUES ('wifi_country_code', 'JP');"
 sysctl -p
-zram
-fix
+/system/xbin/zram
+/system/xbin/fix
 sh /system/engine/rammer.sh
 echo "FeraDroid Engine >> Ready"
 fi
-sysro
+/system/xbin/sysro
 

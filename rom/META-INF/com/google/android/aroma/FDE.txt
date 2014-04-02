@@ -1,13 +1,32 @@
-<b><#selectbg_g>FeraDroidEngine v17.03</#></b>
-FDE - v17.03:
+<b><#selectbg_g>FeraDroidEngine v18.0</#></b>
+FDE - v18.0:
+   (Warning! FeraKernel v20+ requied)
+   - Updated readahead parameters
+   - Bootanimation trick
+   - Smarter first-boot
+   - Ultimate LMK optimization
+   - Dalvik VM tweaked
+   - GPU rendering tweaked
+   - Network optimizations
+   - Rammer script logic updated
+   - I/O parameters tuned
+   - PATH environment rework
+   - Busybox updated to v1.22
+   - Misc bugfixes...
+
+
+<b><#selectbg_g>FeraDroidEngine v17.10</#></b>
+FDE - v17.10:
    (Warning! FeraKernel v18+ requied)
    - Optimized all tweaks
    - zRam updates
    - PID priority tweak
    - Rammer tweak updates
    - GPS tunings
-   - Zipalligned all apk's
    - Updated Adreno200 configs
+   - RAM optimizations
+   - Dalvik VM optimizations
+   - LMK ultimate tweaks
    - misc..
 
 

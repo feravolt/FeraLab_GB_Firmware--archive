@@ -1,5 +1,4 @@
 ; FeraLab
 
-textureTiling=1
 triJuice=3
 

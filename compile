@@ -27,7 +27,7 @@ make
 cd
 cp /home/feravolt/ferra/vendor/host/.output/QUALCOMM_ARM_NATIVEMMC-SDIO/image/ar6000.ko /home/feravolt/ferra/0UTPUT/wifi.ko
 echo ' '
-echo '>> Cleaning modules...'
+echo '>> Stripping modules...'
 cd ferra/0UTPUT
 /home/feravolt/ferra/toolchain/bin/arm-gnueabi-strip --strip-unneeded wifi.ko
 cd
@@ -62,4 +62,3 @@ echo ' '
 echo '>> FeraKernel ready.'
 echo ' '
 echo ' '
-

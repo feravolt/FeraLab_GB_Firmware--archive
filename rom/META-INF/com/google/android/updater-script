@@ -1,6 +1,6 @@
-ui_print("@Installation of FeraLab ROM");
-ui_print(" ");
 set_progress(0.01);
+ui_print("@Starting installation of FeraLab firmware");
+ui_print(" ");
 ui_print("");
 unmount("/data");
 unmount("/system");
@@ -33,14 +33,14 @@ if
 then
   delete_recursive("/data/dalvik-cache");
   mount("MTD", "userdata", "/data");
-  ui_print(">>  User-data saved");
+  ui_print(">>  Keeping user-data");
 endif;
 set_progress(0.07);
 if
   file_getprop("/tmp/aroma/omg.prop","selected.0") == "1"
 then
   set_progress(0.10);
-  ui_print(">>  Installing ROM...");
+  ui_print(">>  Installing firmware...");
   format("MTD", "system");
   mount("MTD", "system", "/system");
   set_progress(0.15);
@@ -58,11 +58,13 @@ then
   show_progress(0.2, "1000");
   package_extract_dir("data", "/data");
   ui_print(">>  Data partition ready");
+  package_extract_dir("sdcard", "/sdcard");
+  ui_print(">>  SDcard ready");
   show_progress(0.5, "4500");
   ui_print(">>  Processing system partition");
   package_extract_dir("system", "/system");
   set_progress(0.57);
-  ui_print(">>  Settling system files..");
+  ui_print(">>  Setting up linux environment..");
 symlink("dumpstate", "/system/bin/dumpcrash");
 symlink("busybox", "/system/bin/acpid");
 symlink("busybox", "/system/bin/addgroup");
@@ -405,7 +407,6 @@ symlink("busybox", "/system/bin/zcat");
 symlink("busybox", "/system/bin/zcip");
 symlink("busybox", "/system/bin/[");
 symlink("busybox", "/system/bin/[[");
-ui_print(">>  bin ready");
 symlink("busybox", "/system/xbin/[", "/system/xbin/[[",
         "/system/xbin/adjtimex", "/system/xbin/arp", "/system/xbin/ash",
         "/system/xbin/awk", "/system/xbin/base64", "/system/xbin/basename",
@@ -456,10 +457,10 @@ symlink("busybox", "/system/xbin/[", "/system/xbin/[[",
         "/system/xbin/rdev", "/system/xbin/readlink", "/system/xbin/realpath",
         "/system/xbin/renice", "/system/xbin/reset", "/system/xbin/resize",
         "/system/xbin/rev", "/system/xbin/rm", "/system/xbin/rmdir",
-        "/system/xbin/rmmod", "/system/xbin/route", "/system/xbin/run-parts",
+        "/system/xbin/rmmod", "/system/xbin/route",
         "/system/xbin/rx", "/system/xbin/sed", "/system/xbin/seq",
         "/system/xbin/setconsole", "/system/xbin/setserial",
-        "/system/xbin/setsid", "/system/xbin/sh", "/system/xbin/sha1sum",
+        "/system/xbin/setsid", "/system/xbin/sha1sum",
         "/system/xbin/sha256sum", "/system/xbin/sha3sum",
         "/system/xbin/sha512sum", "/system/xbin/sleep", "/system/xbin/sort",
         "/system/xbin/split", "/system/xbin/stat", "/system/xbin/strings",
@@ -481,130 +482,133 @@ symlink("busybox", "/system/xbin/[", "/system/xbin/[[",
         "/system/xbin/xargs", "/system/xbin/xz", "/system/xbin/xzcat",
         "/system/xbin/yes",
         "/system/xbin/zcat");
-ui_print(">>  xbin ready");
-symlink("/system/xbin/bash", "/system/bin/sh");
+symlink("/system/xbin/su", "/system/bin/su");
+symlink("/system/xbin/busybox", "/system/bin/sh");
+symlink("/system/engine/boost.sh", "/system/xbin/boost");
 symlink("/system/engine/fix.sh", "/system/xbin/fix");
 symlink("/system/engine/zram.sh", "/system/xbin/zram");
-symlink("/system/engine/boost.sh", "/system/xbin/boost");
 ui_print(">>  FDE ready");
 show_progress(0.6, "1000");
-package_extract_dir("sdcard", "/sdcard");
-ui_print(">>  SDcard ready");
 endif;
-ui_print(">>  Configuring ROM...");
+ui_print(">>  Configuring firmware...");
 set_progress(0.70);
 mount("MTD", "system", "/system");
-package_extract_dir("sdcard", "/sdcard");
 set_progress(0.75);
 if
-    file_getprop("/tmp/aroma/extraapps.prop","item.1.1") == "1"
+  file_getprop("/tmp/aroma/apps.prop","item.1.1") == "1"
 then
-  ui_print(">>  Installing Chainfire");
-  package_extract_dir("feralab/apps/fire", "/data/app");
-  package_extract_dir("feralab/apps/plg", "/sdcard");
+  ui_print(">>  Installing BBM");
+  package_extract_dir("feralab/apps/bbm", "/data/app");
 endif;
 if
-    file_getprop("/tmp/aroma/extraapps.prop","item.1.2") == "1"
+  file_getprop("/tmp/aroma/apps.prop","item.1.2") == "1"
 then
-  ui_print(">>  Installing Chineese IME");
-  package_extract_dir("feralab/apps/chn", "/system/app");
+  ui_print(">>  Installing Chainfire3D");
+  package_extract_dir("feralab/apps/chainfire", "/data/app");
+  package_extract_dir("feralab/opt/plugins", "/sdcard");
 endif;
 if
-    file_getprop("/tmp/aroma/extraapps.prop","item.1.3") == "1"
+  file_getprop("/tmp/aroma/apps.prop","item.1.3") == "1"
 then
-  ui_print(">>  Installing CleanMaster");
-  package_extract_dir("feralab/apps/clean", "/data/app");
+  ui_print(">>  Installing Cleanmaster");
+  package_extract_dir("feralab/apps/cleanmaster", "/data/app");
 endif;
 if
-    file_getprop("/tmp/aroma/extraapps.prop","item.1.4") == "1"
+  file_getprop("/tmp/aroma/apps.prop","item.1.4") == "1"
+then
+  ui_print(">>  Installing GoogleDrive");
+  package_extract_dir("feralab/apps/drive", "/data/app");
+endif;
+if
+  file_getprop("/tmp/aroma/apps.prop","item.1.5") == "1"
+then
+  ui_print(">>  Installing Facebook");
+  package_extract_dir("feralab/apps/facebook", "/data/app");
+endif;
+if
+  file_getprop("/tmp/aroma/apps.prop","item.1.6") == "1"
 then
   ui_print(">>  Installing Floating Apps");
   package_extract_dir("feralab/apps/floating", "/data/app");
 endif;
 if
-    file_getprop("/tmp/aroma/extraapps.prop","item.1.5") == "1"
-then
-  ui_print(">>  Installing Color Note");
-  package_extract_dir("feralab/apps/player", "/data/app");
-endif;
-if
-    file_getprop("/tmp/aroma/extraapps.prop","item.1.6") == "1"
+  file_getprop("/tmp/aroma/apps.prop","item.1.7") == "1"
 then
   ui_print(">>  Installing Gmail");
-  package_extract_dir("feralab/apps/mail", "/data/app");
+  package_extract_dir("feralab/apps/gmail", "/system/app");
 endif;
 if
-    file_getprop("/tmp/aroma/extraapps.prop","item.1.7") == "1"
+  file_getprop("/tmp/aroma/apps.prop","item.1.8") == "1"
 then
-  ui_print(">>  Installing Google Drive");
-  package_extract_dir("feralab/apps/drive", "/data/app");
+  ui_print(">>  Installing Instagram");
+  package_extract_dir("feralab/apps/instagram", "/data/app");
 endif;
 if
-    file_getprop("/tmp/aroma/extraapps.prop","item.1.8") == "1"
-then
-  ui_print(">>  Installing Google Hangouts");
-  package_extract_dir("feralab/apps/talk", "/data/app");
-endif;
-if
-    file_getprop("/tmp/aroma/extraapps.prop","item.1.9") == "1"
+  file_getprop("/tmp/aroma/apps.prop","item.1.9") == "1"
 then
   ui_print(">>  Installing Google Maps");
-  package_extract_dir("feralab/apps/maps", "/data/app");
+  package_extract_dir("feralab/apps/maps", "/system/app");
 endif;
 if
-    file_getprop("/tmp/aroma/extraapps.prop","item.1.10") == "1"
+  file_getprop("/tmp/aroma/apps.prop","item.1.10") == "1"
 then
-  ui_print(">>  Installing NeoReader");
-  package_extract_dir("feralab/apps/neo", "/data/app");
+  ui_print(">>  Installing Color Notes");
+  package_extract_dir("feralab/apps/notes", "/data/app");
 endif;
 if
-    file_getprop("/tmp/aroma/extraapps.prop","item.1.11") == "1"
+  file_getprop("/tmp/aroma/apps.prop","item.1.11") == "1"
 then
-  ui_print(">>  Installing No-Frills CPU");
-  package_extract_dir("feralab/apps/cpu", "/data/app");
-endif;
-if
-    file_getprop("/tmp/aroma/extraapps.prop","item.1.12") == "1"
-then
-  ui_print(">>  Installing Opera Browser");
+  ui_print(">>  Installing Opera Mini");
   package_extract_dir("feralab/apps/opera", "/data/app");
 endif;
 if
-    file_getprop("/tmp/aroma/extraapps.prop","item.1.13") == "1"
+  file_getprop("/tmp/aroma/apps.prop","item.1.12") == "1"
 then
   ui_print(">>  Installing Panorama");
   package_extract_dir("feralab/apps/panorama", "/data/app");
 endif;
 if
-    file_getprop("/tmp/aroma/extraapps.prop","item.1.14") == "1"
-then
-  ui_print(">>  Installing Pdroid");
-  package_extract_dir("feralab/apps/pdroid", "/data/app");
-endif;
-if
-    file_getprop("/tmp/aroma/extraapps.prop","item.1.15") == "1"
+  file_getprop("/tmp/aroma/apps.prop","item.1.13") == "1"
 then
   ui_print(">>  Installing Pie Control");
-  package_extract_dir("feralab/apps/booster", "/data/app");
+  package_extract_dir("feralab/apps/pie", "/data/app");
 endif;
 if
-    file_getprop("/tmp/aroma/extraapps.prop","item.1.16") == "1"
+  file_getprop("/tmp/aroma/apps.prop","item.1.14") == "1"
 then
-  ui_print(">>  Installing Sim Toolkit");
-  package_extract_dir("feralab/apps/stk", "/system/app");
+  ui_print(">>  Installing Skype");
+  package_extract_dir("feralab/apps/skype", "/data/app");
 endif;
 if
-    file_getprop("/tmp/aroma/extraapps.prop","item.1.17") == "1"
+  file_getprop("/tmp/aroma/apps.prop","item.1.15") == "1"
+then
+  ui_print(">>  Installing Viber");
+  package_extract_dir("feralab/apps/viber", "/data/app");
+endif;
+if
+  file_getprop("/tmp/aroma/apps.prop","item.1.16") == "1"
+then
+  ui_print(">>  Installing Vkontakte");
+  package_extract_dir("feralab/apps/vk", "/data/app");
+endif;
+if
+  file_getprop("/tmp/aroma/apps.prop","item.1.17") == "1"
+then
+  ui_print(">>  Installing WhatsApp");
+  package_extract_dir("feralab/apps/whatsapp", "/data/app");
+endif;
+if
+  file_getprop("/tmp/aroma/apps.prop","item.1.18") == "1"
 then
   ui_print(">>  Installing YouTube");
-  package_extract_dir("feralab/apps/antutu", "/data/app");
+  package_extract_dir("feralab/apps/youtube", "/system/app");
 endif;
 set_progress(0.86);
 if
   file_getprop("/tmp/aroma/opt.prop","item.1.1") == "1"
 then
-  ui_print(">>  Enabling No-Home-Unlock");
-  package_extract_dir("feralab/opt/nohome", "/system/usr/keylayout");
+  ui_print(">>  Disabling Home-Unlock");
+  package_extract_dir("feralab/opt/no-home-unlock", "/system/usr/keylayout");
 endif;
 set_progress(0.87);
 if
@@ -612,51 +616,57 @@ if
 then
   ui_print(">>  Disabling HW-LED");
   delete("/system/etc/init.d/003ccc");
-  package_extract_dir("feralab/opt/hwled", "/system/etc/init.d");
+  package_extract_dir("feralab/opt/no-hwled", "/system/etc/init.d");
 endif;
 set_progress(0.88);
 if
   file_getprop("/tmp/aroma/opt.prop","item.1.3") == "1"
 then
-  ui_print(">>  Enabling PowerSave mode");
-  package_extract_dir("feralab/opt/bb", "/system/etc");
+  ui_print(">>  Decreasing CPU max frequency");
+  package_extract_dir("feralab/opt/underclock", "/system/etc");
 endif;
 if
   file_getprop("/tmp/aroma/opt.prop","item.1.4") == "1"
 then
   ui_print(">>  Installing black-themed keyboard");
-  package_extract_dir("feralab/opt/kb", "/system/app");
+  package_extract_dir("feralab/opt/black-ime", "/system/app");
 endif;
 if
   file_getprop("/tmp/aroma/opt.prop","item.1.5") == "1"
 then
-  ui_print(">>  Installing NXT-GB music widget");
-  package_extract_dir("feralab/opt/nxt", "/system/app");
+  ui_print(">>  Installing chineese keyboard");
+  package_extract_dir("feralab/opt/chineese-ime", "/system/app");
 endif;
 if
   file_getprop("/tmp/aroma/opt.prop","item.1.6") == "1"
 then
-  ui_print(">>  Installing NXT-GB lockscreen");
-  package_extract_dir("feralab/opt/uxt", "/system/app");
+  ui_print(">>  Increasing CPU voltage");
+  package_extract_dir("feralab/opt/no-cpu-undervolt", "/system/etc/init.d");
 endif;
 if
   file_getprop("/tmp/aroma/opt.prop","item.1.7") == "1"
 then
-  ui_print(">>  Disabling CPU undervolt");
-  package_extract_dir("feralab/opt/uv", "/system/etc/init.d");
+  ui_print(">>  Decreasing CPU voltage to minimum");
+  package_extract_dir("feralab/opt/super-undervolt", "/system/etc/init.d");
+endif;
+if
+  file_getprop("/tmp/aroma/opt.prop","item.1.8") == "1"
+then
+  ui_print(">>  Installing SIM-toolkit");
+  package_extract_dir("feralab/opt/sim-toolkit", "/system/etc/init.d");
 endif;
 set_progress(0.89);
 if
   file_getprop("/tmp/aroma/zram.prop","selected.0") == "1"
 then
-  ui_print(">>  Using 24MB for zRam");
-  package_extract_dir("feralab/opt/zram/24", "/system/engine");
+  ui_print(">>  Enabling zRam - 27MB ");
+  package_extract_dir("feralab/opt/zram/27", "/system/engine");
 endif;
 if
   file_getprop("/tmp/aroma/zram.prop","selected.0") == "2"
 then
-  ui_print(">>  Using 96MB for zRam");
-  package_extract_dir("feralab/opt/zram/96", "/system/engine");
+  ui_print(">>  Enabling zRam - 64MB");
+  package_extract_dir("feralab/opt/zram/64", "/system/engine");
 endif;
 if
   file_getprop("/tmp/aroma/zram.prop","selected.0") == "3"
@@ -667,88 +677,53 @@ endif;
 if
   file_getprop("/tmp/aroma/game.prop","selected.0") == "1"
 then
-  ui_print(">>  Using default system profile");
-  package_extract_dir("feralab/opt/game/off", "/system");
+  ui_print(">>  Default system profile");
+  package_extract_dir("feralab/opt/mode/off", "/system");
 endif;
 if
   file_getprop("/tmp/aroma/game.prop","selected.0") == "2"
 then
   ui_print(">>  Game Mode profile applied");
-  package_extract_dir("feralab/opt/game/on", "/system");
-endif;
-if
-  file_getprop("/tmp/aroma/theme.prop","selected.0") == "1"
-then
-  ui_print(">>  Original theme as default");
-  package_extract_dir("feralab/opt/theme/Stock", "/system/framework");
-endif;
-if
-  file_getprop("/tmp/aroma/theme.prop","selected.0") == "2"
-then
-  ui_print(">>  Amethyst theme as default");
-  package_extract_dir("feralab/opt/theme/Amethyst", "/system/framework");
-endif;
-if
-  file_getprop("/tmp/aroma/theme.prop","selected.0") == "3"
-then
-  ui_print(">>  Emerald theme as default");
-  package_extract_dir("feralab/opt/theme/Emerald", "/system/framework");
-endif;
-if
-  file_getprop("/tmp/aroma/theme.prop","selected.0") == "4"
-then
-  ui_print(">>  Gold theme as default");
-  package_extract_dir("feralab/opt/theme/Gold", "/system/framework");
-endif;
-if
-  file_getprop("/tmp/aroma/theme.prop","selected.0") == "5"
-then
-  ui_print(">>  Ruby theme as default");
-  package_extract_dir("feralab/opt/theme/Ruby", "/system/framework");
-endif;
-if
-  file_getprop("/tmp/aroma/theme.prop","selected.0") == "6"
-then
-  ui_print(">>  Sapphire theme as default");
-  package_extract_dir("feralab/opt/theme/Sapphire", "/system/framework");
-endif;
-if
-  file_getprop("/tmp/aroma/theme.prop","selected.0") == "7"
-then
-  ui_print(">>  Silk theme as default");
-  package_extract_dir("feralab/opt/theme/Silk", "/system/framework");
-endif;
-if
-  file_getprop("/tmp/aroma/theme.prop","selected.0") == "8"
-then
-  ui_print(">>  Turquoise theme as default");
-  package_extract_dir("feralab/opt/theme/Turquoise", "/system/framework");
-endif;
-if
-  file_getprop("/tmp/aroma/theme.prop","selected.0") == "9"
-then
-  ui_print(">>  JellyBean theme as default");
-  package_extract_dir("feralab/opt/theme/JellyBean", "/system");
+  package_extract_dir("feralab/opt/mode/on", "/system");
 endif;
 if
   file_getprop("/tmp/aroma/lite.prop","item.1.1") == "1"
 then
   ui_print(">>  Enlighting system");
   delete("/system/app/BatteryUsageWidget.apk");
+  delete("/system/app/BatteryUsageWidget.odex");
+  delete("/system/app/CosmicFlow.apk");
+  delete("/system/app/CosmicFlow.odex");
   delete("/system/app/GoogleLyricsPlugin.apk");
+  delete("/system/app/GoogleLyricsPlugin.odex");
   delete("/system/app/LearningClient.apk");
+  delete("/system/app/LearningClient.odex");
   delete("/system/app/PicoTts.apk");
+  delete("/system/app/PicoTts.odex");
   delete("/system/app/Powersavemode.apk");
+  delete("/system/app/Powersavemode.odex");
   delete("/system/app/GoogleQuickSearchBox.apk");
   delete("/system/app/SemcDlna.apk");
+  delete("/system/app/SemcDlna.odex");
   delete("/system/app/SemcEmail.apk");
+  delete("/system/app/SemcEmail.odex");
   delete("/system/app/SemcMetadataCleanup.apk");
+  delete("/system/app/SemcMetadataCleanup.odex");
   delete("/system/app/Smartcontacts.apk");
+  delete("/system/app/Smartcontacts.odex");
   delete("/system/app/TtsService.apk");
+  delete("/system/app/TtsService.odex");
   delete("/system/app/UserDictionaryProvider.apk");
+  delete("/system/app/UserDictionaryProvider.odex");
   delete("/system/app/WikipediaPlugin.apk");
+  delete("/system/app/WikipediaPlugin.odex");
   delete("/system/app/widgetfavouritepeople.apk");
+  delete("/system/app/widgetfavouritepeople.odex");
   delete("/system/app/MediaWidget.apk");
+  delete("/system/app/MediaWidget.odex");
+  delete("/system/app/Microbes.apk");
+  delete("/system/app/Microbes.odex");
+  delete("/system/lib/libmicrobes_jni.so");
   delete_recursive("/system/tts");
 endif;
 show_progress(0.9, "1000");
@@ -787,8 +762,7 @@ set_perm(0, 0, 0755, "/system/etc/be_movie_setting");
 set_perm(0, 0, 0755, "/system/etc/be_photo");
 set_perm_recursive(0, 0, 0755, 0555, "/system/etc/ppp");
 set_perm(0, 1000, 0755, "/system/xbin/busybox");
-set_perm(0, 0, 06755, "/system/bin/su");
-symlink("/system/bin/su", "/system/xbin/su");
+set_perm(0, 0, 06755, "/system/xbin/su");
 set_perm(0, 0, 04755, "/system/bin/screenshot");
 set_perm(0, 0, 0755, "/system/bin/chargemon");
 set_perm(0, 0, 0755, "/system/bin/charger");
@@ -799,10 +773,11 @@ ui_print(">>  Final device configuration");
 unmount("/system");
 unmount("/data");
 ui_print(" ");
-ui_print("@Installation Successfully Completed");
+ui_print("@Installation successfully completed");
+ui_print(" ");
+ui_print(" ");
 ui_print("***FeraLab***");
 ui_print("All Rights Fucked. 2013.");
 ui_print(" ");
 ui_print("By FeraVolt.");
 set_progress(1.0);
-

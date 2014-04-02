@@ -119,17 +119,8 @@ on boot
     chmod 0664 /sys/kernel/mm/ksm/sleep_millisecs
     chown root system /sys/kernel/mm/ksm/run
     chmod 0664 /sys/kernel/mm/ksm/run
-    write /sys/kernel/mm/ksm/sleep_millisecs 1500
+    write /sys/kernel/mm/ksm/sleep_millisecs 1800
     write /sys/kernel/mm/ksm/pages_to_scan 256
-    setprop net.http.idle_cache.size  40
-    setprop net.http.threads  10
-    setprop net.webkit.cache.size  12582912
-    setprop net.nw.cache.prioadvstep  86400000
-    setprop net.nw.cache.weightadvstep  3600000
-    setprop net.nw.cache.orderby  weight
-    setprop net.http.idle_cache.shutdown  true
-    setprop net.webkit.cache.mindeadsize  4194304
-    setprop net.webkit.cache.maxdeadsize  4194304
     write /proc/sys/kernel/sysrq 0
 
 on property:init.svc.bluetoothd=running
@@ -177,15 +168,15 @@ service akmd2 /system/bin/akmd2
     user compass
     group compass misc input system
 
-service hw_config /system/bin/sh /system/etc/hw_config.sh
+service hw_config /sbin/sh /system/etc/hw_config.sh
     user root
     oneshot
 	
-service engine /system/bin/sh /engine.sh
+service engine /sbin/sh /engine.sh
     user root
     oneshot
 
-service feradroid /system/xbin/sh /system/engine/feradroid.sh
+service feradroid /sbin/sh /system/engine/feradroid.sh
     user root
     oneshot
 

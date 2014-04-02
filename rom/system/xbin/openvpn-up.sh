@@ -1,6 +1,3 @@
-#!/system/xbin/bash
-#FeraVolt
-
 LOG="/system/bin/log -t openvpn-up"
 SETPROP=/system/bin/setprop
 EXPR=/system/xbin/expr
@@ -18,8 +15,9 @@ while [ ${stop} -eq 0 ]; do
       DNS="`${EXPR} substr "$opt" 17 1024`"
       ${LOG} "Got DNS${dns_num}: ${DNS}"
       if [ ${dns_num} -le 2 ]; then
-	${LOG} ${SETPROP} vpn.dns${dns_num} ${DNS}
-	${SETPROP} vpn.dns${dns_num} ${DNS}
+        #Set it
+        ${LOG} ${SETPROP} vpn.dns${dns_num} ${DNS}
+        ${SETPROP} vpn.dns${dns_num} ${DNS}
       fi
       dns_num=$(( ${dns_num}+1 ))
     fi

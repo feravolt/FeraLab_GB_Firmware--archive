@@ -1,0 +1,147 @@
+﻿### FeraLab ###
+
+text_ok=Aceptar
+text_next=Siguiente >
+text_back=< Atrás
+text_yes=Sí
+text_no=No
+text_about=Acerca
+text_calibrating=Calibrando Herramientas
+text_quit=Salir
+text_quit_msg=Estás seguro que quiere salir de la instalación?
+
+common.for=for
+
+langtest.title=Bienvenido
+langtest.multiline=Hola y bienvenido a la instalación de ***FeraLab*** ROM.\
+Ya puedes personalizar la ROM ahora.\
+\
+Feliz instalación y buena suerte!\
+\
+Gracias por elegir <b>***FeraLab***</b>
+
+welcome.title=Bienvenido!
+welcome.text1=Estás a punto de iniciar la instalación
+welcome.text2=Por favor lea atentamente la descripción de las opciones del instalador!
+welcome.version=VERSIÓN
+welcome.codename=DESARROLLADOR
+welcome.updated=ANDROID
+welcome.next=Presione siguiente para continuar la instalación...
+
+terms.title=Licencia
+terms.desc=Licencia GPLv2 OpenSource.
+terms.check=Estoy de Acuerdo con estos Términos y Condiciones.
+terms.confirm=Por favor acepte los términos para continuar o salga de la instalación.
+
+changelog.title=Registro de Actualización
+changelog.desc=Registro de Actualización ***FeraLab*** ROM
+
+fde.title=Registro de Actualización
+fde.desc=Registro de Actualización FeraDroidEngine
+
+sys.title=Información del Sistema
+sys.titlee=Información de los Dispositivos de tu Sistema
+sys.free=Espacio Libre
+sys.system=Tamaño del Sistema
+sys.data=Tamaño de Datos
+sys.sd= Tamaño SDCard
+sys.sdext= Tamaño SD-EXT
+
+hz.ready=Listo para instalar
+hz.readyy=El asistente está listo para comenzar la instalación
+hz.aha=Si deseas revisar o cambiar cualquier configuración de la instalación, presione <b>Atrás</b>. Presione el botón "Menú" -> Para salir del asistente de instalación
+hz.next=Siguiente >
+hz.now=Instalar Ahora
+
+inst.title=Instalando...
+inst.is=se está instalando.
+inst.wait=Por favor espere mientras el asistente termina la instalación
+inst.min=Esto puede tardar varios minutos
+inst.fin=El asistente ha terminado la instalación satisfactoriamente.
+inst.next=Presione "Siguiente" para continuar.
+
+finish.fin=Finalizado
+reboot.title=Finalizado!
+reboot.titlee=Instalado correctamente.
+reboot.box=Reiniciar tu dispositivo ahora...
+
+apps.a=Aplicaciones Extras
+apps.b=Seleccione las aplicaciones que desea instalar en la ROM de forma automática. Todas las aplicaciones que figuran están optimizadas al máximo.
+apps.c=Aplicaciones
+apps.aa=BlackBerry messenger. Con éxito portado para Android 2.3.x.
+apps.bb=Aplicación de personalización del rendimiento gráfico.
+apps.cc=Ultimate clean-up tool. Limpieza de RAM & herramienta anti-malware incluído.
+apps.dd=Aplicación "Google Drive" Oficial con la integración de Google Docs.
+apps.ee=Facebook Oficial para Android.
+apps.ff=Aplicaciones flotantes Todo-en-uno con soporte para reproducción de vídeo flotante.
+apps.gg=Aplicación "Google Mail" Oficial.
+apps.hh=Instagram con iOS7 modificado - al igual que la interfaz de usuario.
+apps.ii=Google Maps Predeterminado.
+apps.jj=Aplicación "Notas Simples" con widget.
+apps.kk=Navegador rápido y ligreo con soporte de compresión de datos.
+apps.ll=Aplicación para la creación de fotografías panorámicas.
+apps.mm=Botones flotantes circulares de Control. Debe elegir si los botones hw están dañados.
+apps.nn=Aplicación "Skype" Oficial.
+apps.oo=Aplicación "Viber" Oficial.
+apps.pp=Aplicación "VK" Oficial.
+apps.qq=Aplicación "WhatsApp Messenger".
+apps.rr=Aplicación "YouTube" Oficial.
+
+lite.a=Enlighter
+lite.b=Al seleccionar esta opción, se eliminarán las siguientes aplicaciones del sistema:\
+\
+BatteryUsageWidget\
+CosmicFlow\
+GoogleLyricsPlugin\
+LearningClient\
+Microbes\
+PicoTts\
+Powersavemode\
+QuickSearchBox\
+SemcDlna\
+SemcEmail\
+SemcMetadataCleanup\
+Smartcontacts\
+TtsService\
+UserDictionaryProvider\
+WikipediaPlugin\
+widgetfavouritepeople\
+MediaWidget
+
+lite.c=Deseas activar "enlight" en tu ROM?
+lite.d=Sí. Acepto.
+
+opt.a=Configuración Extra
+opt.b=Seleccione las opciones que desee. Omita este paso si usted no sabe qué hacer.
+opt.c=Opciones
+opt.d=Deshabilitar "Activar Pantalla del Teléfono" al presionar la tecla "HOME".
+opt.z=Deshabilitar "HW-LED" de los botones inferiores.
+opt.xyyx=Ajuste por defecto de la frecuencia máxima del CPU a 768MHz. Esto le ahorrará mucho la vida de su batería a costa del rendimiento general. Esta opción se puede cambiar más adelante en "Ajustes".
+opt.xyxyz=Instalar teclado black-themed.
+opt.xyxyzz=Instalar teclado con soporte de caracteres chinos.
+opt.xyxyzzl=Instalar estilo NXT-GB LockScreen (Sin acceso instantáneo a la cámara).
+opt.xyxyzzll=Aumentar voltaje de la CPU. Seleccione esta opción si su dispositivo se reinicia aleatoriamente.
+opt.xyxyzzllz=Disminuya el voltaje de la CPU al mínimo. Elija esta opción sólo si asegurarse de que su dispositivo es estable con esto.
+opt.xyxyzzlly=Instalar "SIM-toolkit" por defecto.
+
+rom.title=Datos
+rom.titlee=Elija esta opción si desea mantener sus datos de la ROM anterior (Los datos de la SDcard no serán tocados). Advertencia! La instalación limpia es MUY recomendable!
+rom.d=Limpiar mis datos al 100% para una instalación  rápida y estable de la ROM. Debe elegir esta opción si no estuviera usando FeraLab ROM o una versión de FeraLab ROM anterior de la v34.
+rom.s=Guardar mis datos. Estoy de acuerdo en que puede haber algunos problemas.
+
+omg.title=ROM
+omg.titlee=Instalar ROM. Seleccione "Configurar" sólo si ya está instalado ESTA versión de ROM.
+omg.d=Instalar ROM.
+omg.s=Ya he instalado esta verisón de ROM y sólo quiero configurarlo.
+
+game.title=Modo Juego
+game.titlee=Elija si desea habilitar el "Modo Juego" en la ROM. Véase el sitio web para más información sobre cómo funciona.
+game.a=Desactivar el "Modo Juego" y utilizar la configuración predeterminada.
+game.b=Activar el "Modo Juego". Esto cambiará el ID del dispositivo y desactivará el filtro de trama.
+
+zram.title=zRam
+zram.titlee=zRam realiza SWAP en la memoria RAM. Se crea un intercambio de bloques en la memoria RAM y comprime los datos en-el-vuelo, usando el algoritmo de compresión Google Snappy, que es conocido por su velocidad. Simplemente se expandirá virtualmente tu memoria RAM. Si usted no sabe qué elegir omita esto.
+zram.a=Por lo general una buena opción. Lo suficientemente bueno para la multitarea y la velocidad.
+zram.b=Destinado a la optimización para una mejor experiencia multitarea
+zram.c=La desactivación de zRam puede aumentar ligeramente el rendimiento a costa de memoria RAM libre y la multitarea.
+

@@ -1,50 +1,27 @@
-<b><#selectbg_g>***FeraLab***</#></b>
+***FeraLab***
 =============
 
-= v37 =
-> All apps updated & zipalligned
-> Modified settings menu
-> Ultimate Camera mod (Ultrapixel, 0.3Mp, etc)
-> More AROMA translations
-> Fully moved to Viper4Android sound engine
-> undated sound libs from JB
-> Re-Odexed
-> misc..
+= v38 = 
+(Warning! First time full wipe installation requied! FeraKernel v20 requied!)
+> FDE v18.0
+> Fixed Google servises bug
+> Fully re-arranged and updated settings meny with swipable tabs & kitkat icons
+> All apps updated & zipalligned & optimized
+> Statusbar network speed indicator fixed
+> GPU tunings
+> Animations tweaked
+> Fixed framework
+> ICS-like recent app-drawer
+> SMS UTF-8 support
+> GooglePlay app compabilities fixed
+> KK about platlogo ported & modified
+> SuperUser updated & fixed
+> Viper4Android & it's profile updated
+> AROMA installer fixes
+> Ultimate home launcher optimization
+> Super-undervolt option added
+> Xperia Z1 animations partically ported
+> Fixed libs
+> many more...
 
-
-= v36 =
-> AROMA updates
-> zRam updates + levels for choice
-> Launcher & music widget for choice
-> Fixed CleanMaster problem
-> Removed PlayStation from AROMA
-> Add UV removing option in AROMA
-> Updates sound libs from JB
-> H264 Codec for Video recording (optimized)
-> Home launcher speed optimization
-> SMS character conversion dialog available
-> SMS UTF8 support
-> JB UI animations
-> KitKat Fonts
-> KitKat Ringtones
-> Partically fixed offline charging
-> Misc media tweaks
-> Updated & optimized all apps
-> Framework fixes
-> misc..
-
-
-= v35 =
-> Fixed typo error in Home launcher
-> Tuned Home launcher to be speedy
-> Updated FDE to v17.03
-> Updated Viper4Android sound engine
-> Updated themes
-> Tile rendering support
-> Settings menu rearranged
-> misc..
-
-
-= v34 =
-> Initial Release of NEW rom.
 

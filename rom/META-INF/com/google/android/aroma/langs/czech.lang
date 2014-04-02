@@ -1,0 +1,147 @@
+﻿### FeraLab ###
+
+text_ok=OK
+text_next=Další >
+text_back=< Zpět
+text_yes=Ano
+text_no=Ne
+text_about=O ROMce
+text_calibrating=Kalibrace
+text_quit=Ukončit instalaci
+text_quit_msg=Jste si jistí ukončením instalátoru?
+
+common.for=pro
+
+langtest.title=Vítejte
+langtest.multiline=Vítejte v instalaci ***FeraLab*** ROM.\
+Nyní si můžete ROM upravit.\
+\
+Hodně štěstí!\
+\
+Děkuji za výběr <b>***FeraLab***</b>
+
+welcome.title=Vítejte
+welcome.text1=Chystáte se nainstalovat
+welcome.text2=Prosím, přečtěte si pozorně instalační manuál!
+welcome.version=VERZE
+welcome.codename=VÝVOJÁŘ
+welcome.updated=ANDROID
+welcome.next=Stiskni další pro pokračování instalace...
+
+terms.title=Licence
+terms.desc=GPLv2 OpenSource License.
+terms.check=Souhlasím s podmínkami.
+terms.confirm=Prosím zaškrtněte souhlas nebo ukončete instalaci.
+
+changelog.title=Seznam změn
+changelog.desc=Seznam změn v ***FeraLab*** ROM
+
+fde.title=Seznam změn
+fde.desc=Seznam změn v FeraDroidEngine
+
+sys.title=Systémové informace
+sys.titlee=Systémové informace o telefonu
+sys.free=Volné místo
+sys.system=Velikost oddílu Systém
+sys.data=Velikost oddílu Data
+sys.sd=Velikost SD karty
+sys.sdext=Velikost oddílu SD-EXT
+
+hz.ready=Připraven k instalaci
+hz.readyy=Průvodce je připraven začít instalaci
+hz.aha=Chcete-li změnit nastavení instalace stiskněte <b>Zpět</b>. Stiskni klávesu Menu -> Konec instalace
+hz.next=Další >
+hz.now=Instalovat nyní
+
+inst.title=Instaluji...
+inst.is=instalováno.
+inst.wait=Prosím vyčkejte na dokončení instalačního průvodce
+inst.min=Toto může chvíli trvat
+inst.fin=Průvodce úspěšně dokončil instalaci
+inst.next=Stiskněte další pro pokračování
+
+finish.fin=Hotovo
+reboot.title=Konec!
+reboot.titlee=Úspěšně nainstalováno.
+reboot.box=Nyní restartujte telefon...
+
+apps.a=Výběr dalších aplikací
+apps.b=Vyberte si požadované aplikace, které mají být automaticky nainstalovány do ROM. Všechny zobrazené aplikace jsou optimalizované.
+apps.c=Aplikace
+apps.aa=BlackBerry messenger. Kompletně přeportován na android 2.3.x.
+apps.bb=Aplikace pro vlastní nastavení grafického výkonu.
+apps.cc=Pokročilá čistící aplikace. Včetně čištění paměti a malwaru.
+apps.dd=Oficiální aplikace Google Drive s integrací Google Docs.
+apps.ee=Oficiální Facebook aplikace.
+apps.ff=Sada aplikací s podporou videa v plovoucím okně.
+apps.gg=Oficiální aplikace Google mail.
+apps.hh=Instagramm s modifikovaným vzhledem iOS7.
+apps.ii=Oficiální aplikace Google Mapy.
+apps.jj=Jednoduché poznámky s widgetem.
+apps.kk=Rychlý a jednoduchý prohlížeč s podporou komprese dat.
+apps.ll=Aplikace pro vytváření panoramatických obrázků.
+apps.mm=Ovládací tlačítka Floating pie. Musíte mít pokud máte rozbitá nějaká HW tlačítka.
+apps.nn=Oficiální Skype aplikace.
+apps.oo=Oficiální Viber aplikace.
+apps.pp=Oficiální VK aplikace.
+apps.qq=Oficiální WhatsApp aplikace.
+apps.rr=Oficiální YouTube aplikace.
+
+lite.a=Zeštíhlení
+lite.b=Výběrem této volby dojde ke smazaní následujících systémových aplikací:\
+\
+BatteryUsageWidget\
+CosmicFlow\
+GoogleLyricsPlugin\
+LearningClient\
+Microbes\
+PicoTts\
+Powersavemode\
+QuickSearchBox\
+SemcDlna\
+SemcEmail\
+SemcMetadataCleanup\
+Smartcontacts\
+TtsService\
+UserDictionaryProvider\
+WikipediaPlugin\
+widgetfavouritepeople\
+MediaWidget
+
+lite.c=Chcete zeštíhlit Vaší ROM?
+lite.d=Ano..Udělej to.
+
+opt.a=Zvláštní nastavení
+opt.b=Vyberte si požadované nastavení. Přeskočte tento krok pokud nevíte co děláte.
+opt.c=Nastavení
+opt.d=Zaškrtnutím této položky nebude možné odemknout zámek obrazovky tlačítkem HOME.
+opt.z=Zaškrtnutím této položky úplně zakážete diody na spodních klávesách.
+opt.xyyx=Nastavit výchozí maximální frekvenci na 768Mhz. Tím se výrazně ušetří baterie na úkor výkonu. Frekvence CPU může být později upravena pomocí aplikací No-Fril CPU apod.
+opt.xyxyz=Nainstalovat černou klávesnici.
+opt.xyxyzz=Nainstalovat klávesnici s podporou čínštiny.
+opt.xyxyzzl=Nainstalovat NXT-GB launcher (bez přímého přístupu k fotoaparátu).
+opt.xyxyzzll=Zvýšit napětí CPU. Vyberte tuto možnost, pokud máte potíže s náhodnými restarty.
+opt.xyxyzzllz=Snížení napětí procesoru na minimum. Vyberte tuto možnost pouze v případě, Ujistěte se, že vaše zařízení je stabilní s tím.
+opt.xyxyzzlly=Instalace výchozího Sim Toolkit.
+
+rom.title=Data
+rom.titlee=Vyberte si jestli chcete zachovat vaše data z předchozí ROM (SD karta bude nedotčena). Varování! Čistá instalace je VELMI doporučena!
+rom.d=Smaž má data tak aby ROM byla rychlá a stabilní na 100%. Musí vybrat vždy když používáte jinou než FeraLab ROM nebo verzi FeraLab ROM starší než v34.
+rom.s=Zachovat má data. Jsem si vědom, že se můžou objevit nějaké problémy.
+
+omg.title=ROM
+omg.titlee=Instalace ROM.
+omg.d=Instalace ROM jako obvykle.
+omg.s=Již jsem nainstaloval tuto verzi ROM a chci ji jen nakonfigurovat.
+
+game.title=Herní mód
+game.titlee=Vyberte si, jestli chcete povolit Herní mód v ROM. Podívejte se na web pro více informací o tom, jak to funguje.
+game.a=Zakázat Herní mód a použít výchozí nastavení.
+game.b=Povolit herní mód. Změnit ID zařízení a zakázat frame filtering.
+
+zram.title=zRam
+zram.titlee=Vytváří odkládací bloky paměti RAM a komprimuje data za běhu pomocí kompresního algoritmu Google Snappy, který je známý svou rychlost. V praxi tato funkce rozšiřuje paměť RAM. Pokud nevíte co vybrat, prostě tento krok přeskočte.
+zram.a=Obvykle dobrá volba. Výborné pro multitasking a rychlost.
+zram.b=Zaměřeno na lepší multitasking.
+zram.c=Zakázání zRAM může mírně zlepšit výkon v nenáročných aplikací na paměť a multitasking.
+

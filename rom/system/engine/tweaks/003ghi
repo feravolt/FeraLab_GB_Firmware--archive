@@ -1,5 +1,5 @@
 #!/system/xbin/sh
-### FeraDroid Engine v17 | By FeraVolt. 2013
+### FeraDroid Engine v18 | By FeraVolt. 2014 ###
 
 for n in 1 2
 do
@@ -23,7 +23,7 @@ do
   fi;
   while [ $CHECK_COUNT -lt $NUMBER_OF_CHECKS ];
   do
-    if [ $PROCESS_1 -eq "0" ]; then PNAME="com.android.phone"; NICELEVEL=-20; if [ `pidof $PNAME` ]; then renice $NICELEVEL `pidof $PNAME`; PROCESS_1=1; P_CHECK=`expr $P_CHECK + 1`; fi; fi;
+    if [ $PROCESS_1 -eq "0" ]; then PNAME="com.android.phone"; NICELEVEL=-18; if [ `pidof $PNAME` ]; then renice $NICELEVEL `pidof $PNAME`; PROCESS_1=1; P_CHECK=`expr $P_CHECK + 1`; fi; fi;
     if [ $PROCESS_2 -eq "0" ]; then PNAME="com.sonyericsson.lockscreen.uxpnxt"; NICELEVEL=-18; if [ `pidof $PNAME` ]; then renice $NICELEVEL `pidof $PNAME`; PROCESS_2=1; P_CHECK=`expr $P_CHECK + 1`; fi; fi;
     if [ $PROCESS_3 -eq "0" ]; then PNAME="com.android.settings"; NICELEVEL=-18; if [ `pidof $PNAME` ]; then renice $NICELEVEL `pidof $PNAME`; PROCESS_3=1; P_CHECK=`expr $P_CHECK + 1`; fi; fi;
     if [ $PROCESS_4 -eq "0" ]; then PNAME="com.sonyericsson.home"; NICELEVEL=-18; if [ `pidof $PNAME` ]; then renice $NICELEVEL `pidof $PNAME`; PROCESS_4=1; P_CHECK=`expr $P_CHECK + 1`; fi; fi;

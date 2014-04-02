@@ -1,5 +1,5 @@
 #!/system/bin/sh
-### FeraDroid Engine v17 | By FeraVolt. 2013
+### FeraDroid Engine v18 | By FeraVolt. 2014 ###
 
 sysrw
 zipalign="yes"

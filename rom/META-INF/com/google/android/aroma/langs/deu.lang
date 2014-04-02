@@ -1,143 +1,147 @@
 ﻿### FeraLab ###
 
-text_ok=Ok
-text_next=Volgende >
-text_back=< Vorige
-text_yes=Ja
-text_no=Nee
-text_about=Over
-text_calibrating=Calibreren...
-text_quit=Beeindig installatie
-text_quit_msg=Nee hè. Wilt u echt stoppen?
+text_ok = OK
+text_next = Weiter>
+text_back = <zurück
+text_yes = Ja
+text_no = Nein
+text_about = Über
+text_calibrating = Kalibrierungswerkzeug
+text_quit = Installation beenden
+text_quit_msg = Sind Sie sicher, dass Sie das Installationsprogramm beenden möchten ?
 
-common.for=voor
+common.for = für
 
-langtest.title=Welkom
-langtest.multiline=Welkom bij de installatie van ***FeraLab*** ROM.\
-U kunt nu de opties kiezen en instellingen maken.\
+langtest.title = Willkommen
+langtest.multiline = Hallo und Herzlich Willkommen bei der FeraLab ROM -Installation. \
+Sie können nun die ROM anpassen. \
 \
-Happy Flashing en succes!\
-\Bedankt dat u <b>***FeraLab***</b>
-heeft gekozen!
-welcome.title=Welkom
-welcome.text1=De installatie wordt nu gestart.
-welcome.text2=Neem de opties zorgvuldig door.
-welcome.version=VERSIE
-welcome.codename=ONTWIKKELAAR
-welcome.updated=ANDROID
-welcome.next=Druk op Volgende om te vervolgen...
-
-terms.title=Licentie
-terms.desc=GPLv2 OpenSource License.
-terms.check=Ik ga akkoord met de voorwaarden.
-terms.confirm=Ga akkoord of beeindig de installatie.
-
-changelog.title=Wijzigingen
-changelog.desc=***FeraLab*** ROM wijzigingen
-
-fde.title=Wijzigingen
-fde.desc=FeraDroidEngine wijzigingen
-
-sys.title=Systeem Informatie
-sys.titlee=Informatie over uw systeem
-sys.free=Beschikbare ruimte
-sys.system=Systeem omvang
-sys.data=Data omvang
-sys.sd=Omvang van de SD kaart
-sys.sdext=Omvang van SD-EXT
-
-hz.ready=Installatie kan nu starten
-hz.readyy=De installatie kan nu worden gestart.
-hz.aha=Als u de gemaakte keuzes of instelling nogmaals wilt doornemen kies dan <b>Back</b>. Kies Menu -> Beeindigen en afsluiten van de installtie
-hz.next=Volgende >
-hz.now=Start het installeren
-
-inst.title=Installeren...
-inst.is=worden geinstalleerd.
-inst.wait=Even geduld. Installatie vindt nu plaats.
-inst.min=Duurt hooguit een paar minuutjes
-inst.fin=Installatie is gelukt!
-inst.next=Druk op Volgende om door te gaan
-
-finish.fin=Einde
-reboot.title=Einde!
-reboot.titlee=Installatie is succesvol afgerond.
-reboot.box=Herstart dit prachtige apparaat...
-
-cbox.ch=Kies aanvulende apps
-cbox.ea=Extra applicaties
-cbox.aa=Game Graphics Customizer.
-cbox.bb=Chinese IME. Kies dit voor Chinees tekstinvoer.
-cbox.cc=Universele app voor het opschonen van systeemonderdelen, zoals cache-geheugen en (systeem)taken.
-cbox.dd=Aantal apps met floating window support.
-cbox.ee=De app Simple notes met widget.
-cbox.ff=Officiele Google mail app.
-cbox.gg=Google cloud storage service.
-cbox.hh=Google Hangouts social app.
-cbox.ii=Officiele Google Maps app.
-cbox.jj=Barcode scanner app.
-cbox.kk=App voor instellen CPU frequentie and I/O scheduler.
-cbox.ll=Snelle en eenvoudige browser met data compressie.
-cbox.mm=App waarmme panorama fotoos kunnen worden gemaakt.
-cbox.nn=Pdroid Privacy app. Android vuurmuur (firewall).
-cbox.oo=Lijkt op de app Paranoid pie control. Noodzakelijk als de hardware knoppen stuk zijn.
-cbox.qq=Standaard Sim Toolkit.
-cbox.ss=Aangepaste YouTube app.
-
-lite.a=Enlighter
-lite.b=Hiermee worden de volgende systeem applicaties verwijderd:\
+Viel Glück beim Flashen ! \
 \
-BatteryUsageWidget\
-GoogleLyricsPlugin\
-LearningClient\
-PicoTts\
-Powersavemode\
-QuickSearchBox\
-SemcDlna\
-SemcEmail\
-SemcMetadataCleanup\
-Smartcontacts\
-TtsService\
-UserDictionaryProvider\
-WikipediaPlugin\
-widgetfavouritepeople\
-MediaWidget
-lite.c=Wil je het systeem hiervan ontdoen?
-lite.d=Tuurlijk! Doe maar.
+Dank für das Wählen meiner ROM <b>***FeraLab***</b>
 
-opt.a=Extra Instellingen
-opt.b=Selecteer de optie voor het systeem. Als er niet wordt geselecteerd dan zal - worden gebruikt.
-opt.c=Opties
-opt.d=Hiermee zal het systeem in slaapstand niet reageren op de HOME knop.
-opt.z=Hiermee zullen de lampjes van de knoppen onder het scherm niet werken.
-opt.xyyx=Stel de frequentie van CPU in op maximaal 768Mhz. Dit bespaart batterij, maar gaat ook ten koste van prestaties. Deze instelling kan later altijd worden aangepast. Gebruik hiervoor een app zoals No-Fril CPU of soortgelijk.
-opt.xyxyz=Installeer het zwarte toetsenbord van Sony.
-opt.xyxyzz=Installeer de muziek widget in NXT-GB style .
-opt.xyxyzzl=Installeer het vergrendelscherm in NXT-GB style.
-opt.xyxyzzll=Selecteer deze optie als het apparaat regelmatig onverwacht herstart. Hiermee wordt zogenaamde Undervolt niet toegepast. Dit geeft stabiliteit, maar leidt niet tot batterijbesparing.
+welcome.title = Herzlich Willkommen !
+welcome.text1 = Sie sie bereit zu installieren
+welcome.text2 = Bitte lesen Sie sorgfältig die Installation und Options Beschreibungen !
+welcome.version = VERSION
+welcome.codename = DEVELOPER
+welcome.updated ANDROID =
+welcome.next = Drücken Sie auf Weiter , um die Installation fortsetzen ...
 
-rom.title=Data
-rom.titlee=Selecteer deze optie als de je data van voorgaande systeem wilt behouden (Dit staat los van de gegevens op SD kaart). Let op! Een schone installatie is aanbevolen!
-rom.d=Schoon het systeem van alle voorgaande data. Dit verzekert een snel en stabiel systeem. Als het voorgaande systeem niet van FeraLab was of het was een FeraLab ouder dan v34, dan is deze optie verplicht.
-rom.s=Behoud mijn gegevens. Ik begrijp dat dit problemen kan opleveren.
+terms.title = Lizenz
+terms.desc = Opensource Lizenz GPLv2 .
+terms.check = Ich stimme diesen Geschäftsbedingungen zu .
+terms.confirm = Bitte prüfen Sie die Vereinbarungen oder Ausgang.
 
-omg.title=ROM
-omg.titlee=Installeer systeem. Kies Geen herinstallatie als deze versie versie van het systeem reeds geinstalleerd is.
-omg.d=Installeer zoals gebruikelijk.
-omg.s=Het systeem is al geinstalleerd, en ik wil slechts instellingen bijwerken.
+changelog.title = Changelog
+changelog.desc = FeraLab ROM Changelog
 
-game.title=Game Mode
-game.titlee=Selecteer deze optie als het systeem in Gaming mode moet werken. Op de website staa uitleg over deze optie.
-game.a=Game Mode uitschakelen en standaard instellingen maken.
-game.b=Game Mode inschakelen; Device ID wordt aangepast en frame filtering wordt uitgeschakeld.
+fde.title = Changelog
+fde.desc = FeraDroidEngine Changelog
 
-theme.title=Thema
-theme.titlee=Selecteer het standaard thema voor het systeem.
-theme.aa=Behoud het originele thema.
+sys.title = System Informationen
+sys.titlee = Iher Gerätesysteminformationen
+sys.free = Free Space
+sys.system = Systemgröße
+sys.data = Datengröße
+sys.sd = SDCard Größe
+sys.sdext = SD -EXT Größe
 
-zram.title=zRam
-zram.titlee=zRam is SWAP in RAM geheugen. Het creeert een swap-block in het geheugen en zorgt (m.b.v. Google Snappy compressie algoritme) voor real-time compressie van gegevens. Het Google Snappy compressie algoritme staat bekend om de snelheid. Het effect is dat het beschikbare geheugen groter lijkt te zijn geworden. Bij twijfel kan deze instelling worden overgeslagen.
-zram.a=Doorgaans een prima keuze. Dit is voldoende voor multitasking en prestaties.
-zram.b=Bedoeld voor betere multitask ervaring.
-zram.c=Uitschakelen van zRam verbetert de prestaties, maar gaat ten koste van beschikbaar geheugen en multitaks mogelijkheden.
+hz.ready = Bereit zur Installation
+hz.readyy = Der Assistent ist bereit, mit der Installation beginnen
+hz.aha = Bitte überprüfen oder ändern Sie die Installationseinstellungen , drücken <b> Zurück </ b> wollen . Drücken Sie die Menü-Taste -> Beenden Sie Installation, um den Assistenten zu beenden
+hz.next = Weiter>
+hz.now = Jetzt installieren
+
+inst.title = Installieren ...
+inst.is = werden installiert .
+inst.wait = Bitte warten Sie , während der Installations-Assistent installiert
+inst.min = Dies kann einige Minuten dauern
+inst.fin = Der Installations-Assistent hat erfolgreich installiert.
+inst.next = Drücken Sie auf Weiter
+
+finish.fin = Fertig
+reboot.title = Fertig !
+reboot.titlee = erfolgreich installiert .
+reboot.box = Das Gerät wird jetzt neu gestartet ...
+
+apps.a = Extra- Apps
+apps.b = Wählen Sie die gewünschten Anwendungen, die Sie automatisch in die ROM installieren möchten. Alle aufgeführten Apps werden schließlich optimiert.
+apps.c = Anwendungen
+apps.aa = Blackberry Messenger . Erfolgreich zu Android 2.3.x portiert
+apps.bb = Grafik-Performance individuell gestaltet Anwendung .
+apps.cc = Ultimative clean-up -Tool. RAM Clean-up- & Anti-Malware- Tool enthalten .
+apps.dd = Official Google Drive-App mit Google Docs integration .
+apps.ee = Offizielles Facebook für Android.
+apps.ff = All -in-one schwimm Apps mit schwimmenden Video-Wiedergabe -Unterstützung.
+apps.gg = offizielle Google Mail-Anwendung .
+apps.hh = Instagramm mit modifizierten iOS7 -like UI .
+apps.ii = Default Google Maps.
+apps.jj = Einfache Notizen App mit Widget .
+apps.kk = Schnelle und Licht -Browser mit Datenkomprimierung Unterstützung.
+apps.ll = Anwendung für die Erstellung von Panorama-Bildern .
+apps.mm = Floating- pie Tasten Kontrolle. Muss wählen, ob Sie hw- Tasten gebrochen.
+apps.nn = Offizielle Skype-Anwendung .
+apps.oo = Amts Viber -Anwendung.
+apps.pp = Amts VK -Anwendung.
+apps.qq = Amts WhatsApp Messenger .
+apps.rr = Offizieller YouTube -Anwendung.
+
+lite.a = Enlighter
+lite.b = Wenn Sie diese Option wählen , werden folgende System-Anwendungen gelöscht: \
+\
+BatteryUsageWidget \
+CosmicFlow \
+GoogleLyricsPlugin \
+LearningClient \
+Mikroben \
+PicoTts \
+Powersavemode \
+QuickSearchBox \
+SemcDlna \
+SemcEmail \
+SemcMetadataCleanup \
+Smartcontacts \
+TtsService \
+UserDictionaryProvider \
+WikipediaPlugin \
+widgetfavouritepeople \
+Mediawidget
+
+lite.c = Möchten Sie Ihre ROM erleuchten ?
+lite.d = Ja . Tun Sie dies .
+
+opt.a = Extra- Konfiguration
+opt.b = Wählen Sie die gewünschten Optionen . Überspringen Sie diesen Schritt, wenn Sie nicht wissen, was zu tun ist .
+opt.c = Optionen
+opt.d = Deaktivieren Telefon Aufwecken durch Drücken von der HOME - Taste.
+opt.z = Deaktivieren die HW - LED am unteren Tastenfeld .
+opt.xyyx = Set standardmäßige maximale CPU-Frequenz auf 768Mhz . Dies wird Ihre Lebensdauer der Batterie in den Kosten der Gesamtleistung erheblich sparen . Option kann später in den Einstellungen overrided eingestellt werden.
+opt.xyxyz = Installation der schwarzen -Themen- Tastatur.
+opt.xyxyzz = Installation der Tastatur mit chinesischer Zeichenunterstützung.
+opt.xyxyzzl = Installation NXT -GB- Stil Lockscreen (keine Sofortbildkamera -Zugriff).
+opt.xyxyzzll = Erhöhung der CPU-Spannung . Wählen Sie diese Option nicht, wenn Sie zufällige Neustarts des Geräts haben.
+opt.xyxyzzllz = Verringern der CPU-Spannung auf Minimum. Wählen Sie dies nur, wenn Sie sicher, dass Ihr Gerät mit diesem stabil.
+opt.xyxyzzlly = Installation standardmäßige SIM - Toolkit .
+
+rom.title = Daten
+rom.titlee = Wählen Sie , wenn Sie Ihre Daten aus früheren ROM erhalten ( SD-Karte Daten werden nicht berührt werden ) wollen . Achtung! Saubere Installation ist sehr zu empfehlen!
+rom.d = meine Daten sauber für 100% schnelle und stabile ROM -Installation. Müssen Sie wählen, ob Sie wurden mit Hilfe nicht- ROM FeraLab vor oder FeraLab ROM-Version unter v34 .
+rom.s = ich behalte meine Daten. Ich bin damit einverstanden , dass dadurch einige Probleme auftreten können.
+
+omg.title = ROM
+omg.titlee = ROM installieren . Wählen Sie "Configure" nur, wenn Sie bereits diese Version von ROM installiert haben.
+omg.d = ROM installieren .
+omg.s = Ich habe schon diese Version von ROM installiert und nur um es zu konfigurieren möchten.
+
+game.title = Spiel -Modus
+game.titlee = Wählen Sie , wenn Sie Spiele-Modus in ROM aktivieren möchten. Siehe Website für weitere Informationen darüber, wie es funktioniert.
+game.a = Deaktivieren Spielmodus und verwenden Sie die Standardeinstellungen.
+game.b = Aktivieren Spielmodus . Ändern Sie Geräte-ID und Rahmen -Filterung deaktivieren.
+
+zram.title = ZRAM
+zram.titlee = ZRAM ist SWAP im RAM. Es schafft eine Swap - Block im RAM und komprimiert die Daten on-the -fly, mit Google Snappy Kompressionsalgorithmus , der für seine Geschwindigkeit bekannt ist. Einfach praktisch erweitert Ihren RAM . Wenn Sie nicht wissen, was Sie wählen einfach überspringen .
+zram.a = in der Regel eine gute Wahl. Genug gut für Multitasking und Geschwindigkeit.
+zram.b = Richtet sich auf ein besseres Multitasking- Erlebnis.
+zram.c = Deaktivieren zram , das kann etwas Leistung auf Kosten von freien RAM um Multitasking zu erhöhen. 
 

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<settings version="1">
-    <groups type="default-ux-settings">
-        <group>
-            <setting key="email-signature">S</setting>
-        </group>
-    </groups>
-</settings>

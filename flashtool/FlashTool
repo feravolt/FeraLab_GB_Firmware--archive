@@ -8,9 +8,6 @@ cd $BASEDIR
 
 if test "$OS" = "Linux"
 then
-    chmod 755 ./x10flasher_lib/adb.linux
-    chmod 755 ./x10flasher_lib/fastboot.linux
-    chmod 755 ./x10flasher_lib/unyaffs.linux
     chmod 755 ./x10flasher_lib/bin2elf
     chmod 755 ./x10flasher_lib/bin2sin
     if [ "$(whoami)" != "root" ]
@@ -50,10 +47,6 @@ then
     fi
     if test -e ${JAVA_HOME}/bin/java
     then
-         export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib32
-         export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib64:$LD_LIBRARY_PATH
-         ln -sf libusbx-1.0.so.0.1.0 ./x10flasher_lib/linux/lib32/libusbx-1.0.so
-         ln -sf libusbx-1.0.so.0.1.0 ./x10flasher_lib/linux/lib64/libusbx-1.0.so
          ISJAVA6=$($JAVA_HOME/bin/java -version 2>&1|grep version|grep 1.6|wc -l)
          ISJAVA7=$($JAVA_HOME/bin/java -version 2>&1|grep version|grep 1.7|wc -l)
          ISJAVA64=$($JAVA_HOME/bin/java -version 2>&1|grep 64-Bit|wc -l)
@@ -61,9 +54,37 @@ then
 	 then
          	if test $ISJAVA64 -gt 0
          	then
-    	     	ln -sf swt64.jar ./x10flasher_lib/swtlin/swt.jar
+         		export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib64
+			UDEV=$(ldd x10flasher_lib/linux/lib64/udev/libusbx-1.0.so.0.1.0 |grep found|wc -l)
+			if test $UDEV -gt 0
+			then
+         			ln -sf udev1/libusbx-1.0.so.0.1.0 ./x10flasher_lib/linux/lib64/libusbx-1.0.so
+			else
+         			ln -sf udev/libusbx-1.0.so.0.1.0 ./x10flasher_lib/linux/lib64/libusbx-1.0.so
+			fi
+    	     		ln -sf swt64.jar ./x10flasher_lib/swtlin/swt.jar
+    			chmod 755 ./x10flasher_lib/adb.linux.x64
+ 			ln -sf adb.linux.x64 ./x10flasher_lib/adb.linux
+    			chmod 755 ./x10flasher_lib/fastboot.linux.x64
+ 			ln -sf fastboot.linux.x64 ./x10flasher_lib/fastboot.linux
+    			chmod 755 ./x10flasher_lib/unyaffs.linux.x64
+ 			ln -sf unyaffs.linux.x64 ./x10flasher_lib/unyaffs.linux
          	else
-             	ln -sf swt32.jar ./x10flasher_lib/swtlin/swt.jar
+         		export LD_LIBRARY_PATH=./x10flasher_lib/linux/lib32
+			UDEV=$(ldd x10flasher_lib/linux/lib32/udev/libusbx-1.0.so.0.1.0 |grep found|wc -l)
+			if test $UDEV -gt 0
+			then
+         			ln -sf udev1/libusbx-1.0.so.0.1.0 ./x10flasher_lib/linux/lib32/libusbx-1.0.so
+			else
+         			ln -sf udev/libusbx-1.0.so.0.1.0 ./x10flasher_lib/linux/lib32/libusbx-1.0.so
+			fi
+             		ln -sf swt32.jar ./x10flasher_lib/swtlin/swt.jar
+    			chmod 755 ./x10flasher_lib/adb.linux.x86
+ 			ln -sf adb.linux.x86 ./x10flasher_lib/adb.linux
+    			chmod 755 ./x10flasher_lib/fastboot.linux.x86
+ 			ln -sf fastboot.linux.x86 ./x10flasher_lib/fastboot.linux
+    			chmod 755 ./x10flasher_lib/unyaffs.linux.x86
+ 			ln -sf unyaffs.linux.x86 ./x10flasher_lib/unyaffs.linux
          	fi
          	$JAVA_HOME/bin/java -Xms128m -Xmx512m -Duser.country=US -Duser.language=en -jar x10flasher.jar
 	 else

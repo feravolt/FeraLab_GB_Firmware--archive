@@ -20,7 +20,7 @@ Happy Flashing and Good Luck!\
 \
 Thanks for Choosing <b>***FeraLab***</b>
 
-welcome.title=Welcome
+welcome.title=Welcome!
 welcome.text1=You are about to Install
 welcome.text2=Please carefully read installer option's descriptions!
 welcome.version=VERSION
@@ -54,8 +54,8 @@ hz.next=Next >
 hz.now=Install Now
 
 inst.title=Installing...
-inst.is=are being installed.
-inst.wait=Please wait while installation wizard installs
+inst.is= ROM is being installed.
+inst.wait=Please wait untill installation prcess is finished
 inst.min=This may take several minutes
 inst.fin=The installation wizard has successfully installed
 inst.next=Press Next to continue
@@ -65,32 +65,36 @@ reboot.title=Finish!
 reboot.titlee=Installed successfully.
 reboot.box=Reboot your device now...
 
-cbox.ch=Choose Extra Apps
-cbox.ea=Extra Applications
-cbox.aa=Game Graphics Customizer.
-cbox.bb=Chinese IME. Select this if you will use Chinese language input.
-cbox.cc=Universal cleaner application for android. Cleans cache and tasks.
-cbox.dd=Set of apps with floating window support.
-cbox.ee=Simple notes with widget.
-cbox.ff=Official Google mail application.
-cbox.gg=Google cloud storage servise.
-cbox.hh=Google Hangouts social application.
-cbox.ii=Official Google Maps application.
-cbox.jj=Barcode scanner application.
-cbox.kk=Application for changing CPU frequency and I/O scheduler.
-cbox.ll=Fast and simple browser with data compression support.
-cbox.mm=Application for making panorama pictures.
-cbox.nn=Pdroid Privacy application. Android firewall.
-cbox.oo=Similar to Paranoid pie control. Must-choose if you have any broken HW buttons.
-cbox.qq=Standart Sim Toolkit.
-cbox.ss=Modified YouTube application.
+apps.a=Extra Apps
+apps.b=Choose desired applications you want to install in ROM automatically. All listed apps are ultimately optimized.
+apps.c=Applications
+apps.aa=BlackBerry messenger. Sucessfully ported to android 2.3.x.
+apps.bb=Graphics performance customization application.
+apps.cc=Ultimate clean-up tool. RAM clean-up & anti-malware tool included.
+apps.dd=Official Google Drive app with Google Docs integation.
+apps.ee=Official Facebook for Android.
+apps.ff=All-in-one floating apps with floating video playback support.
+apps.gg=Official Google mail application.
+apps.hh=Instagramm with modified iOS7-like UI.
+apps.ii=Default Google Maps.
+apps.jj=Simple notes app with widget.
+apps.kk=Fast and light browser with data compression support.
+apps.ll=Application for creating panorama pictures.
+apps.mm=Floating pie buttons control. Must choose if you have broken hw-keys.
+apps.nn=Official Skype application.
+apps.oo=Official Viber application.
+apps.pp=Official VK application.
+apps.qq=Official WhatsApp messenger.
+apps.rr=Official YouTube application.
 
 lite.a=Enlighter
 lite.b=By selecting this option, following system applications will be deleted:\
 \
 BatteryUsageWidget\
+CosmicFlow\
 GoogleLyricsPlugin\
 LearningClient\
+Microbes\
 PicoTts\
 Powersavemode\
 QuickSearchBox\
@@ -103,19 +107,22 @@ UserDictionaryProvider\
 WikipediaPlugin\
 widgetfavouritepeople\
 MediaWidget
-lite.c=Want to Enlight your ROM?
-lite.d=Yes..Do it.
+
+lite.c=Want to enlight your ROM?
+lite.d=Yes. Do it.
 
 opt.a=Extra Configuration
-opt.b=Select the options you wish to be included. If you don't select - will be used by default option.
+opt.b=Select desired options. Skip this step if you don't know what to do.
 opt.c=Options
-opt.d=By checking this you won't be able to unlock LockScreen by HOME button.
-opt.z=By checking this you will completely disable HW LED's on bottom keys.
-opt.xyyx=Set default maximum CPU frequency to 768Mhz. This will greatly save your battery in cost of overall performance. Option can be overrided later using CPU frequency config. apps (like No-Fril CPU, etc..).
-opt.xyxyz=Install black-themed keyboard (Sony keyboard).
-opt.xyxyzz=Install NXT-GB styled music widget.
-opt.xyxyzzl=Install NXT-GB styled lockscreen.
-opt.xyxyzzll=Choose this if you meet random reboots of your device. Disabling undervolting will cause more battery thirsty behaviour, but more stable.
+opt.d=Disable phone wake-up by pressing HOME-key.
+opt.z=Disable HW-LED on bottom keypad.
+opt.xyyx=Set default maximum CPU frequency to 768Mhz. This will greatly save your battery life in cost of overall performance. Option can be overrided later in settings.
+opt.xyxyz=Install black-themed keyboard.
+opt.xyxyzz=Install keyboard with chineese characters support.
+opt.xyxyzzl=Install NXT-GB styled lockscreen (no instant camera access).
+opt.xyxyzzll=Increase CPU voltage. Choose this if you meet random reboots of your device.
+opt.xyxyzzllz=Decrease CPU voltage to minimum. Choose this only if sure that your device is stable with this.
+opt.xyxyzzlly=Install default SIM-toolkit.
 
 rom.title=Data
 rom.titlee=Choose if you want to keep your data from previous ROM (SDcard data won't be touched). Warning! Clean installation is VERY recommended!
@@ -123,18 +130,14 @@ rom.d=Clean my data for 100% fast and stable ROM installation. Must choose if yo
 rom.s=Keep my data. I agree that some problems may occur.
 
 omg.title=ROM
-omg.titlee=Install ROM. Choose Don't re-install only if you have already installed THIS version of ROM.
-omg.d=Install ROM as usual.
-omg.s=I already have installed this version of ROM and just want to configure it.
+omg.titlee=Install ROM. Choose "Configure" only if you have already installed THIS version of ROM.
+omg.d=Install ROM.
+omg.s=I have already installed this version of ROM and just want to configure it.
 
 game.title=Game Mode
 game.titlee=Choose if you want to enable Gaming mode in ROM. See website for more info on how it works.
 game.a=Disable Game Mode and use default settings.
 game.b=Enable Game Mode. Change device ID and disable frame filtering.
-
-theme.title=Theme
-theme.titlee=Choose default system theme.
-theme.aa=Keep original one.
 
 zram.title=zRam
 zram.titlee=zRam is SWAP in RAM. It creates a swap-block in RAM & compresses data on-the-fly, using Google Snappy compression algorithm, which is known for it's speed. Simply it virtually expands your RAM. If you don't know what to choose just skip.

@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.32.18.5
-# Sat Feb 15 19:45:42 2014
+# Linux kernel version: 2.6.32.20
+# Sun Mar 30 09:36:04 2014
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -78,7 +78,7 @@ CONFIG_NAMESPACES=y
 CONFIG_BLK_DEV_INITRD=y
 CONFIG_INITRAMFS_SOURCE=""
 CONFIG_RD_GZIP=y
-CONFIG_RD_BZIP2=y
+# CONFIG_RD_BZIP2 is not set
 CONFIG_RD_LZMA=y
 CONFIG_CC_OPTIMIZE_FOR_SIZE=y
 CONFIG_SYSCTL=y
@@ -341,7 +341,7 @@ CONFIG_ALIGNMENT_TRAP=y
 #
 CONFIG_ZBOOT_ROM_TEXT=0x0
 CONFIG_ZBOOT_ROM_BSS=0x0
-CONFIG_CMDLINE="androidboot.hardware=es209ra vmalloc=286M g_android.product_id=0x312E console=ttyMSM0 mtdparts=msm_nand:12m@78m(boot),300m(system),548m(userdata),80m(cache),4m(appslog)"
+CONFIG_CMDLINE="androidboot.hardware=es209ra vmalloc=286M g_android.product_id=0x312E console=ttyMSM0"
 # CONFIG_XIP_KERNEL is not set
 CONFIG_KEXEC=y
 # CONFIG_CRASH_DUMP is not set
@@ -2054,7 +2054,6 @@ CONFIG_ZLIB_DEFLATE=y
 CONFIG_LZO_COMPRESS=y
 CONFIG_LZO_DECOMPRESS=y
 CONFIG_DECOMPRESS_GZIP=y
-CONFIG_DECOMPRESS_BZIP2=y
 CONFIG_DECOMPRESS_LZMA=y
 CONFIG_GENERIC_ALLOCATOR=y
 CONFIG_TEXTSEARCH=y

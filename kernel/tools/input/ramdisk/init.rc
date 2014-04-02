@@ -170,16 +170,19 @@ on boot
     setprop ro.HEAVY_WEIGHT_APP_MEM 4096
     setprop ro.SECONDARY_SERVER_MEM 6144
     setprop ro.BACKUP_APP_MEM 6144
-    setprop ro.HOME_APP_MEM 4096
-    setprop ro.HIDDEN_APP_MEM 7168
-    setprop ro.EMPTY_APP_MEM 14336
+    setprop ro.HOME_APP_MEM 2048
+    setprop ro.HIDDEN_APP_MEM 14336
+    setprop ro.EMPTY_APP_MEM 16384
     write /sys/module/lowmemorykiller/parameters/adj 0,1,2,4,7,15
     write /proc/sys/vm/overcommit_memory 1
     write /proc/sys/vm/min_free_order_shift 4
-    write /sys/module/lowmemorykiller/parameters/minfree 2048,3072,4096,6144,7168,14336
+    write /sys/module/lowmemorykiller/parameters/minfree 2048,3072,4096,6144,14336,16384
+    write /sys/module/lowmemorykiller/parameters/cost 8
+    write /sys/module/lowmemorykiller/parameters/fudgeswap 512
     write /proc/1/oom_adj -16
     write /sys/module/wakelock/parameters/debug_mask 7
-    write /proc/sys/vm/dirty_expire_centisecs 200
+    write /proc/sys/vm/dirty_expire_centisecs 1000
+    write /proc/sys/vm/dirty_writeback_centisecs 500
     write /proc/sys/vm/dirty_ratio 10
     write /proc/sys/vm/dirty_background_ratio 5
     chmod 0660 /sys/class/rfkill/rfkill0/state
@@ -224,17 +227,17 @@ on boot
     chown system system /sys/kernel/ipv4/tcp_rmem_def
     chown system system /sys/kernel/ipv4/tcp_rmem_max
     chown root radio /proc/cmdline
-    write /proc/sys/net/core/rmem_max  2097152
-    write /proc/sys/net/core/wmem_max  2097152
+    write /proc/sys/net/core/rmem_max 2097152
+    write /proc/sys/net/core/wmem_max 2097152
     write /proc/sys/net/ipv6/conf/rmnet0/accept_ra 2
     write /proc/sys/net/ipv6/conf/rmnet1/accept_ra 2
     write /proc/sys/net/ipv6/conf/rmnet2/accept_ra 2
     setprop net.tcp.buffersize.default 4096,87380,110208,4096,16384,110208
-    setprop net.tcp.buffersize.wifi    524288,1048576,2097152,262144,524288,1048576
-    setprop net.tcp.buffersize.umts    4094,87380,110208,4096,16384,110208
-    setprop net.tcp.buffersize.hsdpa   5840,87380,165467,4096,16384,110208
-    setprop net.tcp.buffersize.hspa    5840,87380,165467,4096,16384,110208
-    setprop net.tcp.buffersize.hsupa   4094,87380,704512,4096,16384,110208
+    setprop net.tcp.buffersize.wifi    4095,87380,110208,4096,16384,110208
+    setprop net.tcp.buffersize.umts    4095,87380,110208,4096,16384,110208
+    setprop net.tcp.buffersize.hsdpa   4096,32768,65536,4096,32768,65536
+    setprop net.tcp.buffersize.hspa    4096,32768,65536,4096,32768,65536
+    setprop net.tcp.buffersize.hsupa   4096,32768,65536,4096,32768,65536
     setprop net.tcp.buffersize.edge    4093,26280,35040,4096,16384,35040
     setprop net.tcp.buffersize.gprs    4092,8760,11680,4096,8760,11680
     class_start default

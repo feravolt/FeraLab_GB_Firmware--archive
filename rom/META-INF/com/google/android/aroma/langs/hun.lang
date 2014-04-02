@@ -1,4 +1,4 @@
-### FeraLab ###
+﻿### FeraLab ###
 
 text_ok=OK
 text_next=Közvetkező >
@@ -12,21 +12,21 @@ text_quit_msg=Biztosan meg akarja szakítani a telepítést?
 
 common.for=for
 
-langtest.title=Üdvözöllek!
-langtest.multiline=Helló, üdvözöllek a ***FeraLab*** ROM telepítőjében.\
-Most be tudod állítani a ROM-ot.\
+langtest.title=Üdvözlöm!
+langtest.multiline=Helló, üdvözlöm a ***FeraLab*** ROM telepítőjében.\
+Most be tudja állítani a ROM-ot.\
 \
 Kellemes telepítést és sok szerencsét!\
 \
-Köszönjük, hogy a <b>***FeraLab***</b>-ot választottad.
+Köszönjük, hogy a <b>***FeraLab***</b>-ot választotta.
 
-welcome.title=Üdvözöllek
+welcome.title=Üdvözlöm!
 welcome.text1=Ön arra készül, hogy telepítse a ROM-ot.
-welcome.text2=Légyszíves figyelmesen olvasd el a telepítési leírást!
+welcome.text2=Legyen szíves figyelmesen olvassa el a telepítési leírást!
 welcome.version=VERZIÓ
 welcome.codename=FEJLESZTŐ
 welcome.updated=ANDROID
-welcome.next=Nyomd meg a "Következő" gombot a folytatáshoz...
+welcome.next=Nyomja meg a "Következő" gombot a folytatáshoz...
 
 terms.title=License
 terms.desc=GPLv2 OpenSource License.
@@ -47,50 +47,54 @@ sys.data=Data mérete
 sys.sd=SDCard mérete
 sys.sdext=SD-EXT mérete
 
-hz.ready=Készen áll a telepítésre
-hz.readyy=A varázsló készen áll, hogy elkezdődjön a telepítés
+hz.ready=Készen áll a telepítésre.
+hz.readyy=A varázsló készen áll, hogy elkezdődjön a telepítés.
 hz.aha=Ha meg szeretné nézni vagy változtatni a telepítési beállításokat, nyomja meg a <b>Vissza</b> gombot. Nyomja meg a menü gombot -> Kilépés a telepítésből és a varázslóból.
 hz.next=Következő >
 hz.now=Telepítés most
 
 inst.title=Telepítés...
 inst.is=telepítésre kerültek.
-inst.wait=Kérem várjon ameddig a varázsló végez a telepítéssel
-inst.min=Ez eltarthat pár percig
-inst.fin=The installation wizard has successfully installed
-inst.next=Nyomja meg a Következő gombot a folytatáshoz
+inst.wait=Kérem várjon ameddig a varázsló végez a telepítéssel.
+inst.min=Ez eltarthat pár percig.
+inst.fin=A telepítési varázsló sikeresen befejeződött.
+inst.next=Nyomja meg a Következő gombot a folytatáshoz.
 
 finish.fin=Kész
 reboot.title=Kész!
 reboot.titlee=A telepíétés rendben befejeződött.
 reboot.box=A telefon most újraindul...
 
-cbox.ch=Válasszon extra appokat.
-cbox.ea=Extra applikációk.
-cbox.aa=Játékos grafikai konfiguráció.
-cbox.bb=Kínai IME. Válassza ezt a Kínai nyelvi bevitelhez.
-cbox.cc=Univerzális tisztítóprogram Androidra. Cacha és task tisztító.
-cbox.dd=Állítsa be az appokat "repülő" képernyő támogatásra.
-cbox.ee=Simple notes widgettel.
-cbox.ff=Hivatalos Google mail alkalmazás.
-cbox.gg=Google felhő alapú tárhely.
-cbox.hh=Google Hangouts csevegő.
-cbox.ii=Hivatalos Google Maps aplikáció.
-cbox.jj=Barcode olvasó aplikáció.
-cbox.kk=Aplikáció a CPU frekvencia és az I/O időzítés változtatásához.
-cbox.ll=Gyors és egyszerű böngésző adattömörítéssel.
-cbox.mm=Panoráma képeket készítő aplikáció.
-cbox.nn=Pdroid Privacy aplikáció. Android tűzfal.
-cbox.oo=Hasonló a Paranoid-hoz. Ezt kell választanod, ha nem működnek a hardveres gombok.
-cbox.qq=Normál Sim kártyakezelő.
-cbox.ss=Módosított YouTube aplikáció.
+apps.a=Extra Appok
+apps.b=Válassza ki melyik alkalmazásokat telepítse a ROM automatikusan. Minden alkalmazás teljesen optimalizálva van.
+apps.c=Alkalmazások
+apps.aa=BlackBerry messenger. Teljesen portolva Android 2.3.x. -re.
+apps.bb=Grafikus teljesítményt beállító és testreszabó alkalmazás.
+apps.cc=Ultimate clean-up eszköz. RAM tisztítás & anti-malware eszközök benne vannak.
+apps.dd=Hivatalos Google Drive app Google Docs integrációval.
+apps.ee=Hivatalos Facebook kliens Androidra.
+apps.ff=All-in-one floating apps program floating video playback támogatással.
+apps.gg=Hivatalos Google mail alkalmazás.
+apps.hh=Instagramm módosított iOS7 kinézettel.
+apps.ii=Alapértelmezett Google Maps.
+apps.jj=Simple notes alkalmazás widget-el.
+apps.kk=Gyors és könnyű böngésző adattömörítés támogatással.
+apps.ll=Alkalmazás panoráma képek készítéséhez.
+apps.mm=Floating pie vezérlőgombok. Akkor kell választani, ha a hardveres gombok nem működnek.
+apps.nn=Hivatalos Skype alkalmazás.
+apps.oo=Hivatalos Viber alkalmazás.
+apps.pp=Hivatalos VK alkalmazás.
+apps.qq=Hivatalos WhatsApp messenger.
+apps.rr=Hivatalos YouTube alkalmazás.
 
 lite.a=Könnyített
 lite.b=Ha ezt az opciót választja, a következő applikációk törölve lesznek:\
 \
 BatteryUsageWidget\
+CosmicFlow\
 GoogleLyricsPlugin\
 LearningClient\
+Microbes\
 PicoTts\
 Powersavemode\
 QuickSearchBox\
@@ -103,22 +107,25 @@ UserDictionaryProvider\
 WikipediaPlugin\
 widgetfavouritepeople\
 MediaWidget
+
 lite.c=Könnyített ROM-ot szeretnél?
 lite.d=Igen... Csináld.
 
 opt.a=Extra beállítások
-opt.b=Válassza az opciókat az összetevők kijelöléséhez. Ha nem választ, az alapértelmezettek lesznek telepítve.
+opt.b=Válassza ki a kívánt opciókat. Hagyja ki ezt a lépést, ha nem tudja mi ez.
 opt.c=Opciók
-opt.d=Ha bejelöli ezt, akkor nem lesz képes a HOME gombbal felébreszteni a képernyőt.
-opt.z=Ha bejelöli ezt, akkor teljesen letiltja a hardveres ledeket a gomboknál.
-opt.xyyx=Set default maximum CPU frequency to 768Mhz. This will greatly save your battery in cost of overall performance. Option can be overrided later using CPU frequency config. apps (like No-Fril CPU, etc..).
-opt.xyxyz=Fekete témájú billentyűzet (Sony billentyűzet).
-opt.xyxyzz=A régi stílusú NXT-GB zene widget telepítése.
-opt.xyxyzzl=A régi stílusú NXT-GB képernyőzár telepítése.
-opt.xyxyzzll=Válassza ezt, ha a készüléke véletlenszerűen újraindul használat közben. Az "undervolting" letiltásá után gyorsabban merülhet a készülék, de sokkal stabilabb lesz.
+opt.d=Ne ébredjen fel a telefon, ha a HOME gombot megnyomja.
+opt.z=LED háttérvilágítás letiltása a hardveres gomboknál.
+opt.xyyx=Állítsa a maximális CPU frekvnciát 768Mhz-re. Ez nagyon jól védi az akkumulátort a teljesítmény rovására. Ezt az opciót később a beállításoknál meg tudja változtatni.
+opt.xyxyz=Fekete témájú billentyűzet telepítése.
+opt.xyxyzz=Kínai billentyűzet telepítése.
+opt.xyxyzzl=NXT-GB stílusú lockscreen telepítése (nincs közvetlen kamera elérés).
+opt.xyxyzzll=CPU felszültés növelése. Válassza ezt, ha véletlenszerűen újraindul a telefonja.
+opt.xyxyzzllz=Reduser CPU spenning til minimum. Velg dette hvis du kontrollere at enheten er stabil med dette.
+opt.xyxyzzlly=SIM-toolkit telepítése.
 
 rom.title=Data partició
-rom.titlee=Válassza ezt, ha nem akarja tartani az adatokat az előző ROM-ból(SDcard nem lesz törölve vagy módosítva). Figyelem! A teljesen friss telepítés ERŐSEN AJÁNLOTT!
+rom.titlee=Válassza ezt, ha meg akarja tartani az adatokat az előző ROM-ból(SDcard nem lesz törölve vagy módosítva). Figyelem! A teljesen friss telepítés ERŐSEN AJÁNLOTT!
 rom.d=Tölölje az adatokat a 100%-os hibátlan és gyors telepítéshez. Ezt KELL választania, ha nem FeraLab ROM-ot használ, vagy egy v34-nél régebbi FeraLab ROM-ot.
 rom.s=Tartsa meg az adataimat. Egyetértek, hogy ez helytelen működést is okozhat.
 
@@ -128,17 +135,13 @@ omg.d=ROM szokásos telepítése.
 omg.s=Már telepítve van ez a ROM, csak újra be akarom állítani.
 
 game.title=Játékos mód
-game.titlee=Válasssza ezt ha engedélyezni szeretnél a Játékos módot a ROM-on. Nézd meg a weblapunkat a további információkért és a működési leírásért.
+game.titlee=Válasssza ezt ha engedélyezni szeretné a Játékos módot a ROM-on. Nézze meg a weblapunkat a további információkért és a működési leírásért.
 game.a=Játékos mód kikapcsolása és az alapértelmezések használata.
 game.b=Játékos mód bekapcsolása. Változtassa meg az eszköz ID-ját és tiltsa le a Frame szűrést.
-
-theme.title=Téma
-theme.titlee=Válasszon alapértelmezett témát.
-theme.aa=Tartsa meg az eredetit.
 
 zram.title=zRam
 zram.titlee=zRam egy SWAP a RAM-ban. Létrehoz egy csere-blokkont a RAM-ban és menet közben tömöríti az adatokat. A Google Snappy tömörítési algoritmust használja, ami a sebességéről ismert. Egyszerűen virtuálisan növeli a RAM méretét. Ha nem tudod mire való, válaszd a kihagyást.
 zram.a=Általában jó választás. Jó multitszking és sebesség.
 zram.b=Célja a jobb multitaszking élmény.
-zram.c=A zRam letiltása kis mértékben növeli a teljesítményt a szabad RAM rovására.
+zram.c=A zRam letiltása kis mértékben növeli a teljesítményt a szabad RAM és a multitaszking rovására. 
 
