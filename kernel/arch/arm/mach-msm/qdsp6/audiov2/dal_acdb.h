@@ -29,6 +29,7 @@
 
 #define ACDB_DAL_DEVICE		0x02000069
 #define ACDB_DAL_PORT		"DAL_AM_AUD"
+#define ACDB_DAL_VERSION	0x00010000
 
 #define ACDB_OP_IOCTL		DAL_OP_FIRST_DEVICE_API
 
@@ -79,6 +80,7 @@ struct acdb_result {
 	uint32_t dal_status;
 	uint32_t size;
 
+	uint32_t total_devices;
 	uint32_t unmapped_buf;
 	uint32_t used_bytes;
 	uint32_t result;

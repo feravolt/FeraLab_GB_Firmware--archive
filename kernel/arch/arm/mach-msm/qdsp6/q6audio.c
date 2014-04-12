@@ -1,21 +1,42 @@
+/*
+ * Copyright (C) 2009 Google, Inc.
+ * Copyright (c) 2010, Code Aurora Forum. All rights reserved.
+ * Author: Brian Swetland <swetland@google.com>
+ *
+ * This software is licensed under the terms of the GNU General Public
+ * License version 2, as published by the Free Software Foundation, and
+ * may be copied, distributed, and modified under those terms.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ */
+
 #include <linux/mutex.h>
 #include <linux/sched.h>
 #include <linux/wait.h>
 #include <linux/dma-mapping.h>
 #include <linux/clk.h>
+
 #include <linux/delay.h>
 #include <linux/wakelock.h>
 #include <linux/android_pmem.h>
 #include <linux/firmware.h>
 #include <linux/miscdevice.h>
+
 #include "dal.h"
 #include "dal_audio.h"
 #include "dal_audio_format.h"
 #include "dal_acdb.h"
 #include "dal_adie.h"
 #include <mach/msm_qdsp6_audio.h>
+
 #include <linux/msm_audio_aac.h>
+
 #include <linux/gpio.h>
+
 #include "q6audio_devices.h"
 #include <mach/debug_mm.h>
 
@@ -43,7 +64,7 @@ static struct q6_hw_info q6_audio_hw[Q6_HW_COUNT] = {
 		.max_gain = -100,
 	},
 	[Q6_HW_TTY] = {
-		.min_gain = -1400,
+		.min_gain = 0,
 		.max_gain = 0,
 	},
 	[Q6_HW_BT_SCO] = {
@@ -564,7 +585,7 @@ static int audio_amrnb_open(struct audio_client *ac, uint32_t bufsz,
 	rpc.format.standard.format = ADSP_AUDIO_FORMAT_AMRNB_FS;
 	rpc.format.standard.channels = 1;
 	rpc.format.standard.bits_per_sample = 16;
-	rpc.format.standard.sampling_rate = 8000;
+	rpc.format.standard.sampling_rate = 16000;
 	rpc.format.standard.is_signed = 1;
 	rpc.format.standard.is_interleaved = 0;
 
@@ -1041,11 +1062,16 @@ static int audio_update_acdb(uint32_t adev, uint32_t acdb_id)
 
 static void adie_rx_path_enable(uint32_t acdb_id)
 {
-        adie_enable();
-        adie_set_path(adie, audio_rx_path_id, ADIE_PATH_RX);
-        adie_set_path_freq_plan(adie, ADIE_PATH_RX, 48000);
-        adie_proceed_to_stage(adie, ADIE_PATH_RX, ADIE_STAGE_DIGITAL_READY);
-        adie_proceed_to_stage(adie, ADIE_PATH_RX, ADIE_STAGE_DIGITAL_ANALOG_READY);
+	if (audio_rx_path_id) {
+		adie_enable();
+		adie_set_path(adie, audio_rx_path_id, ADIE_PATH_RX);
+		adie_set_path_freq_plan(adie, ADIE_PATH_RX, 48000);
+
+		adie_proceed_to_stage(adie, ADIE_PATH_RX,
+				ADIE_STAGE_DIGITAL_READY);
+		adie_proceed_to_stage(adie, ADIE_PATH_RX,
+				ADIE_STAGE_DIGITAL_ANALOG_READY);
+	}
 }
 
 static void q6_rx_path_enable(int reconf, uint32_t acdb_id)
@@ -1168,7 +1194,13 @@ static void _audio_tx_clk_enable(void)
 	case Q6_ICODEC_TX:
 		icodec_tx_clk_refcount++;
 		if (icodec_tx_clk_refcount == 1) {
-			clk_set_rate(icodec_tx_clk, tx_clk_freq * 256);
+			if (tx_clk_freq > 16000)
+				icodec_tx_clk_rate = 48000;
+			else if (tx_clk_freq > 8000)
+				icodec_tx_clk_rate = 16000;
+			else
+				icodec_tx_clk_rate = 8000;
+			clk_set_rate(icodec_tx_clk, icodec_tx_clk_rate * 256);
 			clk_enable(icodec_tx_clk);
 		}
 		break;
@@ -1417,9 +1449,14 @@ int q6audio_set_rx_volume(int level)
 
 	mutex_lock(&audio_path_lock);
 	adev = ADSP_AUDIO_DEVICE_ID_VOICE;
-	vol = q6_device_volume(audio_rx_device_id, level);
-	audio_rx_mute(ac_control, adev, 0);
-	audio_rx_volume(ac_control, adev, vol);
+
+	if (level) {
+		vol = q6_device_volume(audio_rx_device_id, level);
+		audio_rx_mute(ac_control, adev, 0);
+		audio_rx_volume(ac_control, adev, vol);
+	} else
+		audio_rx_mute(ac_control, adev, 1);
+
 	rx_vol_level = level;
 	mutex_unlock(&audio_path_lock);
 	return 0;

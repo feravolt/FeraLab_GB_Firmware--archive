@@ -1,6 +1,8 @@
-/* arch/arm/mach-msm/qdsp6/routing.c
+/* arch/arm/mach-msm/qdsp6/audiov2/routing.c
  *
  * Copyright (C) 2009 Google, Inc.
+ * Copyright (c) 2009, Code Aurora Forum. All rights reserved.
+ *
  * Author: Brian Swetland <swetland@google.com>
  *
  * This software is licensed under the terms of the GNU General Public
@@ -18,8 +20,7 @@
 #include <linux/module.h>
 #include <linux/miscdevice.h>
 #include <linux/uaccess.h>
-
-extern int q6audio_set_route(const char *name);
+#include <mach/msm_qdsp6_audiov2.h>
 
 static int q6_open(struct inode *inode, struct file *file)
 {
@@ -50,7 +51,7 @@ static int q6_release(struct inode *inode, struct file *file)
 	return 0;
 }
 
-static struct file_operations q6_fops = {
+static const struct file_operations q6_fops = {
 	.owner		= THIS_MODULE,
 	.open		= q6_open,
 	.write		= q6_write,
@@ -64,7 +65,8 @@ static struct miscdevice q6_misc = {
 };
 
 
-static int __init q6_init(void) {
+static int __init q6_init(void)
+{
 	return misc_register(&q6_misc);
 }
 

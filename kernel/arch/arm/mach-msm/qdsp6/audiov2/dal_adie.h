@@ -30,20 +30,16 @@
 #ifndef _MACH_MSM_QDSP6_ADIE_
 #define _MACH_MSM_QDSP6_ADIE_
 
-#include "dal.h"
+#include "../dal.h"
 
 #define ADIE_DAL_DEVICE		0x02000029
 #define ADIE_DAL_PORT		"DAL_AM_AUD"
+#define ADIE_DAL_VERSION	0x00010000
 
 enum {
-	ADIE_OP_GET_NUM_PATHS = DAL_OP_FIRST_DEVICE_API,
-	ADIE_OP_GET_ALL_PATH_IDS,
-	ADIE_OP_SET_PATH,
-	ADIE_OP_GET_NUM_PATH_FREQUENCY_PLANS,
-	ADIE_OP_GET_PATH_FREQUENCY_PLANS,
-	ADIE_OP_SET_PATH_FREQUENCY_PLAN,
+	ADIE_OP_SET_PATH =  DAL_OP_FIRST_DEVICE_API,
 	ADIE_OP_PROCEED_TO_STAGE,
-	ADIE_OP_MUTE_PATH
+	ADIE_OP_IOCTL
 };
 
 /* Path IDs for normal operation. */
@@ -88,17 +84,6 @@ enum {
 #define ADIE_PATH_SPKR_MONO_HDPH_MONO_RX	0x01073d84
 #define ADIE_PATH_SPKR_MONO_HDPH_STEREO_RX	0x01073d88
 #define ADIE_PATH_SPKR_STEREO_HDPH_STEREO_RX	0x01073d89
-
-
-/** Fluence Profiles **/
-
-/* Broadside/Bowsetalk profile,
- * For Handset and Speaker phone Tx*/
-#define ADIE_CODEC_HANDSET_SPKR_BS_TX          0x0108fafa
-/* EndFire profile,
- * For Handset and Speaker phone Tx*/
-#define ADIE_CODEC_HANDSET_SPKR_EF_TX          0x0108fafb
-
 
 /* stages */
 #define ADIE_STAGE_PATH_OFF			0x0050

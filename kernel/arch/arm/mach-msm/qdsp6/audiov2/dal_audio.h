@@ -1,4 +1,4 @@
-/* Copyright (c) 2009-2010, Code Aurora Forum. All rights reserved.
+/* Copyright (c) 2009, Code Aurora Forum. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,16 +30,18 @@
 #ifndef __DAL_AUDIO_H__
 #define __DAL_AUDIO_H__
 
+#include "../dal.h"
 #include "dal_audio_format.h"
 
 #define AUDIO_DAL_DEVICE 0x02000028
 #define AUDIO_DAL_PORT "DAL_AQ_AUD"
+#define AUDIO_DAL_VERSION	0x00030001
 
 enum {
 	AUDIO_OP_CONTROL = DAL_OP_FIRST_DEVICE_API,
 	AUDIO_OP_DATA,
 	AUDIO_OP_INIT,
-};	
+};
 
 /* ---- common audio structures ---- */
 
@@ -92,32 +94,26 @@ struct adsp_audio_buffer {
 struct adsp_command_hdr {
 	u32 size;		/* sizeof(cmd) - sizeof(u32) */
 
-	u32 dst;
+	u32 dest;
 	u32 src;
-
 	u32 opcode;
 	u32 response_type;
 	u32 seq_number;
 
 	u32 context;		/* opaque to DSP */
 	u32 data;
-
 	u32 padding;
 } __attribute__ ((packed));
 
 
-#define AUDIO_DOMAIN_APP	0
-#define AUDIO_DOMAIN_MODEM	1
-#define AUDIO_DOMAIN_DSP	2
+#define DOMAIN_APP	0
+#define DOMAIN_MODEM	1
+#define DOMAIN_DSP	2
 
-#define AUDIO_SERVICE_AUDIO	0
-#define AUDIO_SERVICE_VIDEO	1 /* really? */
 
-/* adsp audio addresses are (byte order) domain, service, major, minor */
-//#define AUDIO_ADDR(maj,min) ( (((maj) & 0xff) << 16) | (((min) & 0xff) << 24) | (1) )
-
-#define AUDIO_ADDR(maj,min,dom) ( (((min) & 0xff) << 24) | (((maj) & 0xff) << 16) | ((AUDIO_SERVICE_AUDIO) << 8) | (dom) )
-
+/* adsp audio addresses are (byte order) major, minor, domain */
+#define AUDIO_ADDR(dmn, maj, min) (((maj & 0xff) << 16) \
+		| ((min & 0xff) << 24) | (dmn & 0xff))
 
 /* AAC Encoder modes */
 #define ADSP_AUDIO_ENC_AAC_LC_ONLY_MODE		0
@@ -197,22 +193,20 @@ union adsp_audio_codec_config {
 /* Change Notification mode is activated. */
 #define ADSP_AUDIO_OPEN_STREAM_MODE_SR_CM_NOTIFY	0x0002
 
-/* This bit, if set, indicates that the sync clock is enabled */
 #define  ADSP_AUDIO_OPEN_STREAM_MODE_ENABLE_SYNC_CLOCK	0x0004
+
+#define ADSP_AUDIO_MAX_DEVICES 1
 
 struct adsp_open_command {
 	struct adsp_command_hdr hdr;
-
 	u32 device;
-	u32 endpoint; /* address */
-
+	u32 end_point;
 	u32 stream_context;
 	u32 mode;
-
 	u32 buf_max_size;
-
-	union adsp_audio_format format;
+	union adsp_audio_format format_block;
 	union adsp_audio_codec_config config;
+
 } __attribute__ ((packed));
 
 
@@ -269,44 +263,9 @@ struct adsp_device_switch_command {
 #define ADSP_PATH_TX	1
 #define ADSP_PATH_BOTH	2
 
-struct adsp_audio_dtmf_start_command {
-	struct adsp_command_hdr hdr;
-	u32 tone1_hz;
-	u32 tone2_hz;
-	u32 duration_usec;
-	s32 gain_mb;
-} __attribute__ ((packed));
-
 /* These commands will affect a logical device and all its associated */
 /* streams. */
 
-#define ADSP_AUDIO_MAX_EQ_BANDS 12
-
-struct adsp_audio_eq_band {
-	u16     band_idx; /* The band index, 0 .. 11 */
-	u32     filter_type; /* Filter band type */
-	u32     center_freq_hz; /* Filter band center frequency */
-	s32     filter_gain; /* Filter band initial gain (dB) */
-			/* Range is +12 dB to -12 dB with 1dB increments. */
-	s32     q_factor;
-		/* Filter band quality factor expressed as q-8 number, */
-		/* e.g. 3000/(2^8) */
-} __attribute__ ((packed));
-
-struct adsp_audio_eq_stream_config {
-	uint32_t  enable; /* Number of consequtive bands specified */
-	uint32_t  num_bands;
-	struct adsp_audio_eq_band  eq_bands[ADSP_AUDIO_MAX_EQ_BANDS];
-} __attribute__ ((packed));
-
-/* set device equalizer */
-struct adsp_set_dev_equalizer_command {
-	struct adsp_command_hdr hdr;
-	u32    device_id;
-	u32    enable;
-	u32    num_bands;
-	struct adsp_audio_eq_band eq_bands[ADSP_AUDIO_MAX_EQ_BANDS];
-} __attribute__ ((packed));
 
 /* Set device volume. */
 #define ADSP_AUDIO_IOCTL_CMD_SET_DEVICE_VOL		0x0107605c
@@ -480,19 +439,13 @@ struct adsp_set_volume_command {
 	struct adsp_command_hdr hdr;
 	s32 volume;
 } __attribute__ ((packed));
-	
+
 struct adsp_set_mute_command {
 	struct adsp_command_hdr hdr;
 	u32 mute; /* 1 == mute */
 } __attribute__ ((packed));
 
 
-struct adsp_set_equalizer_command {
-	struct adsp_command_hdr hdr;
-	u32    enable;
-	u32    num_bands;
-	struct adsp_audio_eq_band eq_bands[ADSP_AUDIO_MAX_EQ_BANDS];
-} __attribute__ ((packed));
 
 /* ---- audio events ---- */
 
@@ -530,8 +483,8 @@ struct adsp_event_hdr {
 	u32 evt_cookie;
 	u32 evt_length;
 
-	u32 src;		/* "source" audio address */
-	u32 dst;		/* "destination" audio address */
+	u32 dest;
+	u32 src;
 
 	u32 event_id;
 	u32 response_type;
@@ -555,19 +508,18 @@ struct adsp_buffer_event {
 #define ADSP_AUDIO_RX_DEVICE		0x00
 #define ADSP_AUDIO_TX_DEVICE		0x01
 
-/* Default RX or TX device */
 #define ADSP_AUDIO_DEVICE_ID_DEFAULT		0x1081679
 
-/* Source (TX) devices */
+/* Default RX or TX device */
+
 #define ADSP_AUDIO_DEVICE_ID_HANDSET_MIC	0x107ac8d
+#define ADSP_AUDIO_DEVICE_ID_HANDSET_DUAL_MIC		0x108f9c3
 #define ADSP_AUDIO_DEVICE_ID_HEADSET_MIC	0x1081510
 #define ADSP_AUDIO_DEVICE_ID_SPKR_PHONE_MIC	0x1081512
+#define ADSP_AUDIO_DEVICE_ID_SPKR_PHONE_DUAL_MIC	0x108f9c5
 #define ADSP_AUDIO_DEVICE_ID_BT_SCO_MIC		0x1081518
 #define ADSP_AUDIO_DEVICE_ID_TTY_HEADSET_MIC	0x108151b
 #define ADSP_AUDIO_DEVICE_ID_I2S_MIC		0x1089bf3
-
-#define ADSP_AUDIO_DEVICE_ID_SPKR_PHONE_DUAL_MIC	0x108f9c5
-#define ADSP_AUDIO_DEVICE_ID_HANDSET_DUAL_MIC		0x108f9c3
 
 /* Special loopback pseudo device to be paired with an RX device */
 /* with usage ADSP_AUDIO_DEVICE_USAGE_MIXED_PCM_LOOPBACK */
@@ -606,9 +558,5 @@ struct adsp_buffer_event {
 #define ADSP_AUDIO_DEVICE_CONTEXT_MIXED_RECORD		0x10
 #define ADSP_AUDIO_DEVICE_CONTEXT_RECORD		0x20
 #define ADSP_AUDIO_DEVICE_CONTEXT_PCM_LOOPBACK		0x40
-
-/* ADSP audio driver return codes */
-#define ADSP_AUDIO_STATUS_SUCCESS               0
-#define ADSP_AUDIO_STATUS_EUNSUPPORTED          20
 
 #endif

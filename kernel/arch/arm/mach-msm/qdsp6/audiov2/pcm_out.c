@@ -1,6 +1,8 @@
-/* arch/arm/mach-msm/qdsp6/pcm_out.c
+/* arch/arm/mach-msm/qdsp6/audiov2/pcm_out.c
  *
  * Copyright (C) 2009 Google, Inc.
+ * Copyright (c) 2009, Code Aurora Forum. All rights reserved.
+ *
  * Author: Brian Swetland <swetland@google.com>
  *
  * This software is licensed under the terms of the GNU General Public
@@ -24,125 +26,77 @@
 
 #include <linux/msm_audio.h>
 
-#include <mach/msm_qdsp6_audio.h>
-#include <mach/debug_mm.h>
+#include <mach/msm_qdsp6_audiov2.h>
+#include "dal_audio.h"
+#include "dal_audio_format.h"
 
-void audio_client_dump(struct audio_client *ac);
-
-#define BUFSZ (3072)
+#define BUFSZ (8192)
+#define DMASZ (BUFSZ * 2)
 
 struct pcm {
 	struct mutex lock;
 	struct audio_client *ac;
-	uint32_t sample_rate;
-	uint32_t channel_count;
-	size_t buffer_size;
+	struct msm_audio_config cfg;
+
 };
 
 static long pcm_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 {
 	struct pcm *pcm = file->private_data;
+	struct adsp_open_command rpc;
 	int rc = 0;
 
 	if (cmd == AUDIO_GET_STATS) {
 		struct msm_audio_stats stats;
 		memset(&stats, 0, sizeof(stats));
-		if (copy_to_user((void*) arg, &stats, sizeof(stats)))
+		if (copy_to_user((void *) arg, &stats, sizeof(stats)))
 			return -EFAULT;
 		return 0;
 	}
 
 	mutex_lock(&pcm->lock);
 	switch (cmd) {
-	case AUDIO_SET_VOLUME: {
-		int vol;
-		if (copy_from_user(&vol, (void*) arg, sizeof(vol))) {
-			rc = -EFAULT;
-			break;
-		}
-		rc = q6audio_set_stream_volume(pcm->ac, vol);
+	case AUDIO_START:
+		memset(&rpc, 0, sizeof(rpc));
+		rpc.hdr.opcode = ADSP_AUDIO_IOCTL_CMD_OPEN_WRITE;
+		rpc.stream_context = ADSP_AUDIO_DEVICE_CONTEXT_PLAYBACK;
+		rpc.device = ADSP_AUDIO_DEVICE_ID_DEFAULT;
+		rpc.format_block.standard.format = ADSP_AUDIO_FORMAT_PCM;
+		rpc.format_block.standard.channels = pcm->cfg.channel_count;
+		rpc.format_block.standard.bits_per_sample = 16;
+		rpc.format_block.standard.sampling_rate = pcm->cfg.sample_rate;
+		rpc.format_block.standard.is_signed = 1;
+		rpc.format_block.standard.is_interleaved = 1;
+		rpc.buf_max_size = BUFSZ;
+		q6audio_start(pcm->ac, (void *) &rpc, sizeof(rpc));
 		break;
-	}
-	case AUDIO_START: {
-		uint32_t acdb_id;
-		if (arg == 0) {
-			acdb_id = 0;
-		} else if (copy_from_user(&acdb_id, (void*) arg, sizeof(acdb_id))) {
-			pr_info("[%s:%s] copy acdb_id from user failed\n",
-					__MM_FILE__, __func__);
-			rc = -EFAULT;
-			break;
-		}
-		if (pcm->ac) {
-			rc = -EBUSY;
-		} else {
-			pcm->ac = q6audio_open_pcm(pcm->buffer_size,
-						pcm->sample_rate,
-						pcm->channel_count,
-						AUDIO_FLAG_WRITE, acdb_id);
-			if (!pcm->ac)
-				rc = -ENOMEM;
-		}
-		break;
-	}
 	case AUDIO_STOP:
 		break;
 	case AUDIO_FLUSH:
 		break;
-	case AUDIO_SET_CONFIG: {
-		struct msm_audio_config config;
-		if (pcm->ac) {
-			rc = -EBUSY;
-			break;
-		}
-		if (copy_from_user(&config, (void*) arg, sizeof(config))) {
+	case AUDIO_SET_CONFIG:
+		if (copy_from_user(&pcm->cfg, (void *) arg,
+				 sizeof(struct msm_audio_config))) {
 			rc = -EFAULT;
 			break;
 		}
-		if (config.channel_count < 1 || config.channel_count > 2) {
+		if (pcm->cfg.channel_count < 1 || pcm->cfg.channel_count > 2) {
 			rc = -EINVAL;
 			break;
 		}
-		if (config.sample_rate < 8000 || config.sample_rate > 48000) {
-			rc = -EINVAL;
-			break;
-		}
-		if (config.buffer_size < 128 || config.buffer_size > 8192) {
-			rc = -EINVAL;
-			break;
-		}
-		pcm->sample_rate = config.sample_rate;
-		pcm->channel_count = config.channel_count;
-		pcm->buffer_size = config.buffer_size;
+
 		break;
-	}
-	case AUDIO_GET_CONFIG: {
-		struct msm_audio_config config;
-		config.buffer_size = pcm->buffer_size;
-		config.buffer_count = 2;
-		config.sample_rate = pcm->sample_rate;
-		config.channel_count = pcm->channel_count;
-		config.unused[0] = 0;
-		config.unused[1] = 0;
-		config.unused[2] = 0;
-		if (copy_to_user((void*) arg, &config, sizeof(config))) {
+	case AUDIO_GET_CONFIG:
+		if (copy_to_user((void *) arg, &pcm->cfg,
+				 sizeof(struct msm_audio_config))) {
 			rc = -EFAULT;
 		}
 		break;
-	}
-	case AUDIO_SET_EQ: {
-		struct msm_audio_eq_stream_config eq_config;
-		if (copy_from_user(&eq_config, (void *) arg,
-						sizeof(eq_config))) {
-			rc = -EFAULT;
-			break;
-		}
-		rc = q6audio_set_stream_eq_pcm(pcm->ac, (void *) &eq_config);
-		break;
-	}
+
 	default:
 		rc = -EINVAL;
 	}
+
 	mutex_unlock(&pcm->lock);
 	return rc;
 }
@@ -150,18 +104,26 @@ static long pcm_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 static int pcm_open(struct inode *inode, struct file *file)
 {
 	struct pcm *pcm;
-
-	pr_info("[%s:%s] open\n", __MM_FILE__, __func__);
 	pcm = kzalloc(sizeof(struct pcm), GFP_KERNEL);
 
 	if (!pcm)
 		return -ENOMEM;
 
 	mutex_init(&pcm->lock);
-	pcm->channel_count = 2;
-	pcm->sample_rate = 44100;
-	pcm->buffer_size = BUFSZ;
 	file->private_data = pcm;
+	pcm->ac = q6audio_open(AUDIO_FLAG_WRITE, BUFSZ);
+	if (!pcm->ac) {
+		kfree(pcm);
+		return -ENOMEM;
+	}
+	pcm->cfg.channel_count = 2;
+	pcm->cfg.buffer_count = 2;
+	pcm->cfg.buffer_size = BUFSZ;
+	pcm->cfg.unused[0] = 0;
+	pcm->cfg.unused[1] = 0;
+	pcm->cfg.unused[2] = 0;
+	pcm->cfg.sample_rate = 48000;
+
 	return 0;
 }
 
@@ -174,9 +136,6 @@ static ssize_t pcm_write(struct file *file, const char __user *buf,
 	const char __user *start = buf;
 	int xfer;
 
-	if (!pcm->ac)
-		pcm_ioctl(file, AUDIO_START, 0);
-
 	ac = pcm->ac;
 	if (!ac)
 		return -ENODEV;
@@ -185,18 +144,13 @@ static ssize_t pcm_write(struct file *file, const char __user *buf,
 		ab = ac->buf + ac->cpu_buf;
 
 		if (ab->used)
-			if (!wait_event_timeout(ac->wait, (ab->used == 0), 5*HZ)) {
-				audio_client_dump(ac);
-				pr_err("[%s:%s] timeout. dsp dead?\n",
-						__MM_FILE__, __func__);
-				q6audio_dsp_not_responding();
-			}
+			wait_event(ac->wait, (ab->used == 0));
 
 		xfer = count;
 		if (xfer > ab->size)
 			xfer = ab->size;
 
-		if (copy_from_user(ab->data, buf, xfer)) 
+		if (copy_from_user(ab->data, buf, xfer))
 			return -EFAULT;
 
 		buf += xfer;
@@ -217,11 +171,10 @@ static int pcm_release(struct inode *inode, struct file *file)
 	if (pcm->ac)
 		q6audio_close(pcm->ac);
 	kfree(pcm);
-	pr_info("[%s:%s] release\n", __MM_FILE__, __func__);
 	return 0;
 }
 
-static struct file_operations pcm_fops = {
+static const struct file_operations pcm_fops = {
 	.owner		= THIS_MODULE,
 	.open		= pcm_open,
 	.write		= pcm_write,
@@ -235,7 +188,8 @@ struct miscdevice pcm_misc = {
 	.fops	= &pcm_fops,
 };
 
-static int __init pcm_init(void) {
+static int __init pcm_init(void)
+{
 	return misc_register(&pcm_misc);
 }
 

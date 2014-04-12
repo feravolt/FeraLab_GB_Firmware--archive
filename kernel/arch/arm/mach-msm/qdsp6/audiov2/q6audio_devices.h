@@ -1,6 +1,8 @@
-/* arch/arm/mach-msm/qdsp6/q6audio_devices.h
+/* arch/arm/mach-msm/qdsp6/audiov2/q6audio_devices.h
  *
  * Copyright (C) 2009 Google, Inc.
+ * Copyright (c) 2009, Code Aurora Forum. All rights reserved.
+ *
  * Author: Brian Swetland <swetland@google.com>
  *
  * This software is licensed under the terms of the GNU General Public
@@ -61,18 +63,6 @@ struct q6_device_info {
 
 #define CAD_HW_DEVICE_ID_DEFAULT_TX		0x0E
 #define CAD_HW_DEVICE_ID_DEFAULT_RX		0x0F
-
-#define CAD_HW_DEVICE_ID_BTDSP_SCO_MIC                      0x16
-#define CAD_HW_DEVICE_ID_BTDSP_SCO_SPKR                     0x17
-#define CAD_HW_DEVICE_ID_BTC_SCO_MIC                        0x18
-#define CAD_HW_DEVICE_ID_BTC_SCO_SPKR                       0x19
-#define CAD_HW_DEVICE_ID_BTCDSP_SCO_MIC                     0x1A
-#define CAD_HW_DEVICE_ID_BTCDSP_SCO_SPKR                    0x1B
-#define CAD_HW_DEVICE_ID_VREC_SPKR_MIC                      0x1C
-#define CAD_HW_DEVICE_ID_SPKR_PHONE_DUAL_MIC_BROADSIDE      0x2B
-#define CAD_HW_DEVICE_ID_SPKR_PHONE_DUAL_MIC_ENDFIRE        0x2D
-#define CAD_HW_DEVICE_ID_HANDSET_DUAL_MIC_BROADSIDE         0x2C
-#define CAD_HW_DEVICE_ID_HANDSET_DUAL_MIC_ENDFIRE           0x2E
 
 /* Logical Device to indicate A2DP routing */
 #define CAD_HW_DEVICE_ID_BT_A2DP_TX             0x10
@@ -136,7 +126,7 @@ static struct q6_device_info q6_audio_devices[] = {
 		.rate   = 48000,
 		.dir	= Q6_RX,
 		.codec	= Q6_ICODEC_RX,
-		.hw	= Q6_HW_SPEAKER,
+		.hw	= Q6_HW_HEADSET,
 	},
 	{
 		.id	= ADSP_AUDIO_DEVICE_ID_SPKR_PHONE_STEREO,
@@ -158,7 +148,7 @@ static struct q6_device_info q6_audio_devices[] = {
 	},
 	{
 		.id	= ADSP_AUDIO_DEVICE_ID_SPKR_PHONE_MONO_W_STEREO_HEADSET,
-		.cad_id	= CAD_HW_DEVICE_ID_HEADSET_STEREO_PLUS_SPKR_MONO_RX,
+		.cad_id	= CAD_HW_DEVICE_ID_HEADSET_MONO_PLUS_SPKR_STEREO_RX,
 		.path	= ADIE_PATH_SPKR_MONO_HDPH_STEREO_RX,
 		.rate   = 48000,
 		.dir	= Q6_RX,
@@ -167,7 +157,7 @@ static struct q6_device_info q6_audio_devices[] = {
 	},
 	{
 		.id	= ADSP_AUDIO_DEVICE_ID_SPKR_PHONE_STEREO_W_MONO_HEADSET,
-		.cad_id	= CAD_HW_DEVICE_ID_HEADSET_MONO_PLUS_SPKR_STEREO_RX,
+		.cad_id	= CAD_HW_DEVICE_ID_HEADSET_STEREO_PLUS_SPKR_MONO_RX,
 		.path	= ADIE_PATH_SPKR_STEREO_HDPH_MONO_RX,
 		.rate   = 48000,
 		.dir	= Q6_RX,
@@ -175,7 +165,7 @@ static struct q6_device_info q6_audio_devices[] = {
 		.hw	= Q6_HW_SPEAKER,
 	},
 	{
-		.id	= ADSP_AUDIO_DEVICE_ID_SPKR_PHONE_STEREO_W_STEREO_HEADSET,
+		.id = ADSP_AUDIO_DEVICE_ID_SPKR_PHONE_STEREO_W_STEREO_HEADSET,
 		.cad_id	= CAD_HW_DEVICE_ID_HEADSET_STEREO_PLUS_SPKR_STEREO_RX,
 		.path	= ADIE_PATH_SPKR_STEREO_HDPH_STEREO_RX,
 		.rate   = 48000,
@@ -220,51 +210,6 @@ static struct q6_device_info q6_audio_devices[] = {
 		.hw	= Q6_HW_SPEAKER,
 	},
 	{
-		.id	= ADSP_AUDIO_DEVICE_ID_SPKR_PHONE_MIC,
-		.cad_id	= CAD_HW_DEVICE_ID_VREC_SPKR_MIC,
-		.path	= ADIE_PATH_SPEAKER_TX,
-		.rate   = 16000,
-		.dir	= Q6_TX,
-		.codec	= Q6_ICODEC_TX,
-		.hw	= Q6_HW_SPEAKER,
-	},
-	{
-		.id	= ADSP_AUDIO_DEVICE_ID_HANDSET_DUAL_MIC,
-		.cad_id	= CAD_HW_DEVICE_ID_HANDSET_DUAL_MIC_ENDFIRE,
-		.path	= ADIE_CODEC_HANDSET_SPKR_EF_TX,
-		.rate	= 8000,
-		.dir	= Q6_TX,
-		.codec	= Q6_ICODEC_TX,
-		.hw	= Q6_HW_HANDSET,
-	},
-	{
-		.id	= ADSP_AUDIO_DEVICE_ID_HANDSET_DUAL_MIC,
-		.cad_id	= CAD_HW_DEVICE_ID_HANDSET_DUAL_MIC_BROADSIDE,
-		.path	= ADIE_CODEC_HANDSET_SPKR_BS_TX,
-		.rate	= 8000,
-		.dir	= Q6_TX,
-		.codec	= Q6_ICODEC_TX,
-		.hw	= Q6_HW_HANDSET,
-	},
-	{
-		.id	= ADSP_AUDIO_DEVICE_ID_SPKR_PHONE_DUAL_MIC,
-		.cad_id	= CAD_HW_DEVICE_ID_SPKR_PHONE_DUAL_MIC_ENDFIRE,
-		.path	= ADIE_CODEC_HANDSET_SPKR_EF_TX,
-		.rate	= 8000,
-		.dir	= Q6_TX,
-		.codec	= Q6_ICODEC_TX,
-		.hw	= Q6_HW_SPEAKER,
-	},
-	{
-		.id	= ADSP_AUDIO_DEVICE_ID_SPKR_PHONE_DUAL_MIC,
-		.cad_id	= CAD_HW_DEVICE_ID_SPKR_PHONE_DUAL_MIC_BROADSIDE,
-		.path	= ADIE_CODEC_HANDSET_SPKR_BS_TX,
-		.rate	= 8000,
-		.dir	= Q6_TX,
-		.codec	= Q6_ICODEC_TX,
-		.hw	= Q6_HW_SPEAKER,
-	},
-	{
 		.id	= ADSP_AUDIO_DEVICE_ID_TTY_HEADSET_MIC,
 		.cad_id	= CAD_HW_DEVICE_ID_TTY_HEADSET_MIC,
 		.path	= ADIE_PATH_TTY_HEADSET_TX,
@@ -276,8 +221,8 @@ static struct q6_device_info q6_audio_devices[] = {
 	{
 		.id	= ADSP_AUDIO_DEVICE_ID_BT_SCO_SPKR,
 		.cad_id	= CAD_HW_DEVICE_ID_BT_SCO_SPKR,
-		.path	= 0, /* No need to set ADIE path for Bluetooth. */
-		.rate   = 48000,
+		.path	= 0, /* XXX */
+		.rate   = 8000,
 		.dir	= Q6_RX,
 		.codec	= Q6_ECODEC_RX,
 		.hw	= Q6_HW_BT_SCO,
@@ -285,7 +230,7 @@ static struct q6_device_info q6_audio_devices[] = {
 	{
 		.id	= ADSP_AUDIO_DEVICE_ID_BT_A2DP_SPKR,
 		.cad_id	= CAD_HW_DEVICE_ID_BT_A2DP_SPKR,
-		.path	= 0, /* No need to set ADIE path for Bluetooth */
+		.path	= 0, /* XXX */
 		.rate   = 48000,
 		.dir	= Q6_RX,
 		.codec	= Q6_ECODEC_RX,
@@ -294,61 +239,7 @@ static struct q6_device_info q6_audio_devices[] = {
 	{
 		.id	= ADSP_AUDIO_DEVICE_ID_BT_SCO_MIC,
 		.cad_id	= CAD_HW_DEVICE_ID_BT_SCO_MIC,
-		.path	= 0, /* No need to set ADIE path for Bluetooth */
-		.rate   = 8000,
-		.dir	= Q6_TX,
-		.codec	= Q6_ECODEC_TX,
-		.hw	= Q6_HW_BT_SCO,
-	},
-	{
-		.id	= ADSP_AUDIO_DEVICE_ID_BT_SCO_SPKR,
-		.cad_id	= CAD_HW_DEVICE_ID_BTDSP_SCO_SPKR,
-		.path	= 0, /* No need to set ADIE path for Bluetooth */
-		.rate   = 48000,
-		.dir	= Q6_RX,
-		.codec	= Q6_ECODEC_RX,
-		.hw	= Q6_HW_BT_SCO,
-	},
-	{
-		.id	= ADSP_AUDIO_DEVICE_ID_BT_SCO_SPKR,
-		.cad_id	= CAD_HW_DEVICE_ID_BTC_SCO_SPKR,
-		.path	= 0, /* No need to set ADIE path for Bluetooth */
-		.rate   = 48000,
-		.dir	= Q6_RX,
-		.codec	= Q6_ECODEC_RX,
-		.hw	= Q6_HW_BT_SCO,
-	},
-	{
-		.id	= ADSP_AUDIO_DEVICE_ID_BT_SCO_SPKR,
-		.cad_id	= CAD_HW_DEVICE_ID_BTCDSP_SCO_SPKR,
-		.path	= 0, /* No need to set ADIE path for Bluetooth */
-		.rate   = 48000,
-		.dir	= Q6_RX,
-		.codec	= Q6_ECODEC_RX,
-		.hw	= Q6_HW_BT_SCO,
-	},
-	{
-		.id	= ADSP_AUDIO_DEVICE_ID_BT_SCO_MIC,
-		.cad_id	= CAD_HW_DEVICE_ID_BTDSP_SCO_MIC,
-		.path	= 0, /* No need to set ADIE path for Bluetooth */
-		.rate   = 8000,
-		.dir	= Q6_TX,
-		.codec	= Q6_ECODEC_TX,
-		.hw	= Q6_HW_BT_SCO,
-	},
-	{
-		.id	= ADSP_AUDIO_DEVICE_ID_BT_SCO_MIC,
-		.cad_id	= CAD_HW_DEVICE_ID_BTC_SCO_MIC,
-		.path	= 0, /* No need to set ADIE path for Bluetooth */
-		.rate   = 8000,
-		.dir	= Q6_TX,
-		.codec	= Q6_ECODEC_TX,
-		.hw	= Q6_HW_BT_SCO,
-	},
-	{
-		.id	= ADSP_AUDIO_DEVICE_ID_BT_SCO_MIC,
-		.cad_id	= CAD_HW_DEVICE_ID_BTCDSP_SCO_MIC,
-		.path	= 0, /* No need to set ADIE path for Bluetooth */
+		.path	= 0, /* XXX */
 		.rate   = 8000,
 		.dir	= Q6_TX,
 		.codec	= Q6_ECODEC_TX,
@@ -357,7 +248,7 @@ static struct q6_device_info q6_audio_devices[] = {
 	{
 		.id	= ADSP_AUDIO_DEVICE_ID_I2S_SPKR,
 		.cad_id	= CAD_HW_DEVICE_ID_I2S_RX,
-		.path	= 0, /* No need to set ADIE path for I2S. */
+		.path	= 0, /* XXX */
 		.rate   = 48000,
 		.dir	= Q6_RX,
 		.codec	= Q6_SDAC_RX,
@@ -366,7 +257,7 @@ static struct q6_device_info q6_audio_devices[] = {
 	{
 		.id	= ADSP_AUDIO_DEVICE_ID_I2S_MIC,
 		.cad_id	= CAD_HW_DEVICE_ID_I2S_TX,
-		.path	= 0, /* No need to set ADIE path for I2S. */
+		.path	= 0, /* XXX */
 		.rate   = 16000,
 		.dir	= Q6_TX,
 		.codec	= Q6_SDAC_TX,

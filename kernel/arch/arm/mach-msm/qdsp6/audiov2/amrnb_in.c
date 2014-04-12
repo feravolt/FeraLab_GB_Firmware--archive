@@ -22,18 +22,18 @@
 #include <linux/wait.h>
 #include <linux/uaccess.h>
 
-#include <linux/msm_audio.h>
 #include <linux/msm_audio_amrnb.h>
-#include <mach/msm_qdsp6_audio.h>
+#include <mach/msm_qdsp6_audiov2.h>
+#include "dal_audio.h"
 #include "dal_audio_format.h"
 #include <mach/debug_mm.h>
+
 
 struct amrnb {
 	struct mutex lock;
 	struct msm_audio_amrnb_enc_config_v2 cfg;
 	struct msm_audio_stream_config str_cfg;
 	struct audio_client *audio_client;
-	struct msm_voicerec_mode voicerec_mode;
 };
 
 
@@ -41,72 +41,60 @@ static long q6_amrnb_in_ioctl(struct file *file, unsigned int cmd,
 				unsigned long arg)
 {
 	struct amrnb *amrnb = file->private_data;
+	struct adsp_open_command rpc;
 	int rc = 0;
+
+	if (cmd == AUDIO_GET_STATS) {
+		struct msm_audio_stats stats;
+		memset(&stats, 0, sizeof(stats));
+		if (copy_to_user((void *) arg, &stats, sizeof(stats)))
+			return -EFAULT;
+		return 0;
+	}
 
 	mutex_lock(&amrnb->lock);
 	switch (cmd) {
-	case AUDIO_SET_VOLUME:
-		break;
-	case AUDIO_GET_STATS:
-	{
-		struct msm_audio_stats stats;
-		memset(&stats, 0, sizeof(stats));
-		if (copy_to_user((void *) arg, &stats, sizeof(stats))) {
-			mutex_unlock(&amrnb->lock);
-			return -EFAULT;
-		}
-		mutex_unlock(&amrnb->lock);
-		return 0;
-	}
 	case AUDIO_START:
-	{
-		uint32_t acdb_id;
-		if (arg == 0) {
-			acdb_id = 0;
-		} else {
-			if (copy_from_user(&acdb_id, (void *) arg,
-						sizeof(acdb_id))) {
-				rc = -EFAULT;
-				break;
-			}
-		}
 		if (amrnb->audio_client) {
 			rc = -EBUSY;
 			break;
 		} else {
-			amrnb->audio_client = q6audio_open_amrnb(
-					amrnb->str_cfg.buffer_size,
-					amrnb->cfg.band_mode,
-					amrnb->cfg.dtx_enable,
-					amrnb->voicerec_mode.rec_mode,
-					acdb_id);
+			amrnb->audio_client = q6audio_open(AUDIO_FLAG_READ,
+						amrnb->str_cfg.buffer_size);
+
 			if (!amrnb->audio_client) {
 				kfree(amrnb);
 				rc = -ENOMEM;
 				break;
 			}
 		}
+
+		tx_clk_freq = 8000;
+
+		memset(&rpc, 0, sizeof(rpc));
+
+		rpc.format_block.standard.format = ADSP_AUDIO_FORMAT_AMRNB_FS;
+		rpc.format_block.standard.channels = 1;
+		rpc.format_block.standard.bits_per_sample = 16;
+		rpc.format_block.standard.sampling_rate = 8000;
+		rpc.format_block.standard.is_signed = 1;
+		rpc.format_block.standard.is_interleaved = 0;
+
+		rpc.hdr.opcode = ADSP_AUDIO_IOCTL_CMD_OPEN_READ;
+		rpc.device = ADSP_AUDIO_DEVICE_ID_DEFAULT;
+		rpc.stream_context = ADSP_AUDIO_DEVICE_CONTEXT_RECORD;
+		rpc.buf_max_size = amrnb->str_cfg.buffer_size;
+		rpc.config.amr.mode = amrnb->cfg.band_mode;
+		rpc.config.amr.dtx_mode = amrnb->cfg.dtx_enable;
+		rpc.config.amr.enable = 1;
+		q6audio_start(amrnb->audio_client, &rpc, sizeof(rpc));
 		break;
-	}
 	case AUDIO_STOP:
 		break;
 	case AUDIO_FLUSH:
 		break;
-	case AUDIO_SET_INCALL: {
-		if (copy_from_user(&amrnb->voicerec_mode,
-			(void *)arg, sizeof(struct msm_voicerec_mode)))
-			rc = -EFAULT;
-
-		if (amrnb->voicerec_mode.rec_mode != AUDIO_FLAG_READ
-				&& amrnb->voicerec_mode.rec_mode !=
-				AUDIO_FLAG_INCALL_MIXED) {
-			amrnb->voicerec_mode.rec_mode = AUDIO_FLAG_READ;
-			pr_err("[%s:%s] Invalid rec_mode\n", __MM_FILE__,
-					__func__);
-			rc = -EINVAL;
-		}
+	case AUDIO_SET_VOLUME:
 		break;
-	}
 	case AUDIO_GET_STREAM_CONFIG:
 		if (copy_to_user((void *)arg, &amrnb->str_cfg,
 			sizeof(struct msm_audio_stream_config)))
@@ -164,11 +152,9 @@ static int q6_amrnb_in_open(struct inode *inode, struct file *file)
 	amrnb->audio_client = NULL;
 	amrnb->str_cfg.buffer_size = 768;
 	amrnb->str_cfg.buffer_count = 2;
-	amrnb->cfg.band_mode = 7;
-	amrnb->cfg.dtx_enable  = 3;
-	amrnb->cfg.frame_format = ADSP_AUDIO_FORMAT_AMRNB_FS;
-	amrnb->voicerec_mode.rec_mode = AUDIO_FLAG_READ;
-
+	amrnb->cfg.band_mode = ADSP_AUDIO_AMR_MR475;
+	amrnb->cfg.dtx_enable  = ADSP_AUDIO_AMR_DTX_MODE_ON_AUTO;
+	amrnb->cfg.frame_format  = ADSP_AUDIO_FORMAT_AMRNB_FS;
 	return 0;
 }
 
