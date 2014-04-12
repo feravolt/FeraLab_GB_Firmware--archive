@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.32.20
-# Sun Mar 30 09:36:04 2014
+# Linux kernel version: 2.6.32.21
+# Sat Apr 12 22:46:48 2014
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -100,9 +100,8 @@ CONFIG_EPOLL=y
 CONFIG_SIGNALFD=y
 CONFIG_TIMERFD=y
 CONFIG_EVENTFD=y
-CONFIG_SHMEM=y
+# CONFIG_SHMEM is not set
 CONFIG_AIO=y
-CONFIG_ASHMEM=y
 CONFIG_VM_EVENT_COUNTERS=y
 CONFIG_COMPAT_BRK=y
 CONFIG_SLAB=y
