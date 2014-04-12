@@ -5,7 +5,7 @@ calibrate("0.9695","16","0.9900","0");
 theme("miui4");
 
 ini_set("rom_name",             "***FeraLab***");
-ini_set("rom_version",          "v38");
+ini_set("rom_version",          "v38.1");
 ini_set("rom_author",           "FeraVolt");
 ini_set("rom_device",           "Xperia X10");
 ini_set("rom_api",              "2.3.9");
@@ -28,73 +28,16 @@ selectbox(
     "Please select installer language:",
     "@default",
     "lang.prop",
-    "Albanian",           " ",                                 0,
-    "Arabic",             " ",                                 0,
-    "Czech",              " ",                                 0,
-    "Dutch",              " ",                                 0,
     "English",            " ",                                 1,
-    "French",             " ",                                 0,
-    "German",             " ",                                 0,
-    "Hungarian",          " ",                                 0,
-    "Italian",            " ",                                 0,
-    "Polish",             " ",                                 0,
-    "Russian",            " ",                                 0,
-    "Spanish",            " ",                                 0,
-    "Tagalog",            " ",                                 0
+    "Russian",            " ",                                 0
 );
 
 if prop("lang.prop","selected.0")=="1" then
-  loadlang("langs/alb.lang");
-endif;
-
-if prop("lang.prop","selected.0")=="2" then
-fontresload( "0", "ttf/DroidSansArabic.ttf;ttf/DroidSansFallback.ttf;", "12" );
-fontresload( "1", "ttf/DroidSansArabic.ttf;ttf/DroidSansFallback.ttf;", "14" );
-  loadlang("langs/ar.lang");
-endif;
-
-if prop("lang.prop","selected.0")=="3" then
-  loadlang("langs/czech.lang");
-endif;
-
-if prop("lang.prop","selected.0")=="4" then
-  loadlang("langs/nl.lang");
-endif;
-
-if prop("lang.prop","selected.0")=="5" then
   loadlang("langs/en.lang");
 endif;
 
-if prop("lang.prop","selected.0")=="6" then
-  loadlang("langs/fr.lang");
-endif;
-
-if prop("lang.prop","selected.0")=="7" then
-  loadlang("langs/deu.lang");
-endif;
-
-if prop("lang.prop","selected.0")=="8" then
-  loadlang("langs/hun.lang");
-endif;
-
-if prop("lang.prop","selected.0")=="9" then
-  loadlang("langs/it.lang");
-endif;
-
-if prop("lang.prop","selected.0")=="10" then
-  loadlang("langs/pl.lang");
-endif;
-
-if prop("lang.prop","selected.0")=="11" then
+if prop("lang.prop","selected.0")=="2" then
   loadlang("langs/ru.lang");
-endif;
-
-if prop("lang.prop","selected.0")=="12" then
-  loadlang("langs/es.lang");
-endif;
-
-if prop("lang.prop","selected.0")=="13" then
-  loadlang("langs/tagalog.lang");
 endif;
 
 viewbox(
@@ -208,10 +151,11 @@ checkbox(
         "No-HW-LED",            "<~opt.z>",0,
         "CPU Underclock",       "<~opt.xyyx>",0,
         "Black Keyboard",       "<~opt.xyxyz>",0,
-        "Chinese Keyboard",    "<~opt.xyxyzz>",0,
+        "Chinese Keyboard",     "<~opt.xyxyzz>",0,
         "No CPU undervolt",     "<~opt.xyxyzzll>",0,
         "Super CPU undervolt",  "<~opt.xyxyzzllz>",0,
-        "Sim Toolkit",          "<~opt.xyxyzzlly>",0
+        "Sim Toolkit",          "<~opt.xyxyzzlly>",0,
+        "Offline charging for UB",     "<~opt.xyxyzzllyz>",0
 );
 
 checkbox(
@@ -221,11 +165,10 @@ checkbox(
       "apps.prop",
        "<~apps.c>",             " ",                                          2,
         "BBM",                  "<~apps.aa>",0,
-        "Chainfire3D",          "<~apps.bb>",0,
+        "Chrome",               "<~apps.bb>",0,
         "CleanMaster",          "<~apps.cc>",0,
         "GoogleDrive",          "<~apps.dd>",0,
         "Facebook",             "<~apps.ee>",0,
-        "Floating apps",        "<~apps.ff>",0,
         "Gmail",                "<~apps.gg>",0,
         "Instagram",            "<~apps.hh>",0,
         "Google Maps",          "<~apps.ii>",0,
@@ -237,7 +180,9 @@ checkbox(
         "Viber",                "<~apps.oo>",0,
         "Vkontakte",            "<~apps.pp>",0,
         "WhatsApp",             "<~apps.qq>",0,
-        "YouTube",              "<~apps.rr>",0
+        "YouTube",              "<~apps.rr>",0,
+        "JobManager",           "<~apps.ss>",0,
+        "Multitask",            "<~apps.tt>",0
 );
 
 checkbox(

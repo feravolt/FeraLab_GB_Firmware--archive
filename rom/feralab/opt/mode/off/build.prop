@@ -1,8 +1,8 @@
 ### FeraLab ###
 
 # Build info
-ro.build.date=01.04.2014
-ro.build.date.utc=0
+ro.build.date=13.04.2014
+ro.build.date.utc=1308515086
 ro.build.user=FeraVolt
 ro.build.host=FeraLab
 ro.build.product=X10i
@@ -11,9 +11,9 @@ ro.build.version.sdk=10
 ro.build.version.codename=REL
 ro.build.version.release=2.3.9
 ro.build.type=user
-ro.build.description=X10i-user 2.3.7 6.0.B.0.743 tB_P test-keys
+ro.build.description=X10i-user 2.3.7 6.0.B.0.743 tB_P release-keys
 ro.build.id=6.0.B.0.743
-ro.build.display.id=6.0.B.0.743  |  v38
+ro.build.display.id=6.0.B.0.743  |  v38.1
 ro.build.tags=release-keys
 ro.build.fingerprint=SEMC/X10i_1232-9897/X10i:2.3.7/6.0.B.0.743/tB_P:user/release-keys
 
@@ -21,7 +21,7 @@ ro.build.fingerprint=SEMC/X10i_1232-9897/X10i:2.3.7/6.0.B.0.743/tB_P:user/releas
 ro.semc.version.cust=1232-9897
 ro.semc.version.cust_revision=R1C
 ro.semc.product.model=X10i
-ro.semc.content.number=PA1
+ro.semc.content.number=PA3
 ro.semc.version.fs_revision=6.0.B.0.743
 ro.semc.ms_type_id=AAD-3880056-BV
 ro.semc.version.fs=WORLD-1-4-8
@@ -48,6 +48,7 @@ ro.com.google.clientidbase=android-sonyericsson
 ro.config.ringtone=11111.mp3
 ro.config.notification_sound=notification.ogg
 ro.config.alarm_alert=Argon.ogg
+ro.hdmi.enable=false
 ro.product.locale.excluded=ar_EG ar_IL fa_IR iw_IL
 ro.product-res-path=framework/SemcGenericUxpRes.apk
 ro.semc.timescape_keys=Sony_Ericsson_Xperia
@@ -66,6 +67,7 @@ persist.sys.boot.sound.volume=0
 # Qualcomm
 com.qc.hardware=true
 com.qc.hdmi_out=false
+debug.qc.hardware=true
 ro.opengles.version=131072
 
 # FeraLab
@@ -79,12 +81,9 @@ ro.feralab.engine=18
 ro.ril.def.agps.feature=1
 ro.ril.def.agps.mode=2
 ro.ril.disable.power.collapse=0
-ro.ril.enable.amr.wideband=1
-ro.ril.enable.a53=1
-ro.ril.enable.dtm=1
+ro.ril.enable.3g.prefix=1
 ro.ril.gprsclass=10
-ro.ril.hep=1
-ro.ril.hsxpa=1
+ro.ril.hsxpa=2
 ro.ril.hsdpa.category=8
 ro.ril.hsupa.category=6
 ro.ril.oem.ecclist=110,118,119,102,103,104,911
@@ -117,12 +116,8 @@ net.bt.name=Android
 ro.bluetooth.remote.autoconnect=true
 
 # Media
-debug.camera.landscape=true
 media.stagefright.enable-player=true
-media.stagefright.enable-meta=true
 media.stagefright.enable-http=true
-media.stagefright.enable-record=true
-media.a1026.nsForVoicRec=1
 ro.camera.hd_shrink_vf_enabled=1
 ro.camera.sound.forced=0
 ro.media.enc.jpeg.quality=100
@@ -131,10 +126,9 @@ ro.media.enc.hprof.vid.bps=8000000
 ro.semc.automount.disabled=true
 ro.semc.xloud.supported=true
 ro.service.swiqi2.supported=true
-persist.audio.fluence.mode=endfire
-persist.audio.vr.enable=false
 persist.service.swiqi2.enable=1
 persist.service.xloud.enable=1
+persist.usb.storagemode=mtp
 persist.wpa_supplicant.debug=false
 
 # DRM
@@ -149,7 +143,7 @@ dalvik.vm.checkjni=false
 dalvik.vm.dexopt-flags=m=y,v=n,o=v,u=y
 dalvik.vm.execution-mode=int:jit
 dalvik.vm.lockprof.threshold=500
-dalvik.vm.heapstartsize=5m
+dalvik.vm.heapstartsize=7m
 dalvik.vm.heapsize=45m
 dalvik.vm.stack-trace-file=/data/anr/traces.txt
 dalvik.vm.verify-bytecode=false
@@ -158,19 +152,14 @@ ro.kernel.android.checkjni=0
 # Graphics & Display
 debug.composition.type=gpu
 debug.egl.hw=1
-debug.qc.hardware=true
 debug.gr.swapinterval=1
 debug.mdpcomp.logs=0
 debug.overlayui.enable=1
-debug.performance.tuning=1
-debug.sf.enable_hgl=1
 debug.sf.hw=1
+dev.pm.gpu_samplingrate=1
 ro.floatingtouch.available=1
-ro.screen.layout=normal
 ro.sf.lcd_density=240
 persist.sys.composition.type=gpu
-persist.hwc.mdpcomp.enable=false
-persist.sys.ui.hw=true
 video.accelerate.hw=1
 
 # Misc

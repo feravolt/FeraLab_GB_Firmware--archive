@@ -1,7 +1,7 @@
 ***FeraLab***
 =============
 
-= v38 = 
+= v38.1 = 
 (Warning! First time full wipe installation requied! FeraKernel v20 requied!)
 > FDE v18.0
 > Fixed Google servises bug
@@ -22,6 +22,17 @@
 > Super-undervolt option added
 > Xperia Z1 animations partically ported
 > Fixed libs
+> Browser HW acceleration
+> GPS & network location fix
+> Media tweaks fixed
+> Network tweaks fixed
+> New Apps in AROMA (super-optimized)
+> New Adreno video drivers
+> New EGL drivers
+> New GLES drivers
+> New sound drivers
+> Offline charging animation for LB kernel
+> New HD wallpapers
 > many more...
 
 

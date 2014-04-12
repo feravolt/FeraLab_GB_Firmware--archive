@@ -3,12 +3,13 @@
 
 FeraKernel v20 for LOCKED BOOTLOADERS is built-in ROM package and installed automatically with ROM.
 
-= v20 = (Warning! Full wipe installation requied)
+= v20.1 = (Warning! Full wipe installation requied)
 >> Ultimate LowMemoryKiller tuning
 >> Dalvik VM tunings
 >> Network optimization
 >> Updated built-in busybox
 >> Fudgeswap & cost activated (LMK)
+>> Recovery & PATH environment fix
 >> misc..
 
 = v19 = (Warning! Full wipe installation requied)

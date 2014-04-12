@@ -503,9 +503,8 @@ endif;
 if
   file_getprop("/tmp/aroma/apps.prop","item.1.2") == "1"
 then
-  ui_print(">>  Installing Chainfire3D");
-  package_extract_dir("feralab/apps/chainfire", "/data/app");
-  package_extract_dir("feralab/opt/plugins", "/sdcard");
+  ui_print(">>  Installing Chrome");
+  package_extract_dir("feralab/apps/chrome", "/data/app");
 endif;
 if
   file_getprop("/tmp/aroma/apps.prop","item.1.3") == "1"
@@ -528,80 +527,86 @@ endif;
 if
   file_getprop("/tmp/aroma/apps.prop","item.1.6") == "1"
 then
-  ui_print(">>  Installing Floating Apps");
-  package_extract_dir("feralab/apps/floating", "/data/app");
-endif;
-if
-  file_getprop("/tmp/aroma/apps.prop","item.1.7") == "1"
-then
   ui_print(">>  Installing Gmail");
   package_extract_dir("feralab/apps/gmail", "/system/app");
 endif;
 if
-  file_getprop("/tmp/aroma/apps.prop","item.1.8") == "1"
+  file_getprop("/tmp/aroma/apps.prop","item.1.7") == "1"
 then
   ui_print(">>  Installing Instagram");
   package_extract_dir("feralab/apps/instagram", "/data/app");
 endif;
 if
-  file_getprop("/tmp/aroma/apps.prop","item.1.9") == "1"
+  file_getprop("/tmp/aroma/apps.prop","item.1.8") == "1"
 then
   ui_print(">>  Installing Google Maps");
   package_extract_dir("feralab/apps/maps", "/system/app");
 endif;
 if
-  file_getprop("/tmp/aroma/apps.prop","item.1.10") == "1"
+  file_getprop("/tmp/aroma/apps.prop","item.1.9") == "1"
 then
   ui_print(">>  Installing Color Notes");
   package_extract_dir("feralab/apps/notes", "/data/app");
 endif;
 if
-  file_getprop("/tmp/aroma/apps.prop","item.1.11") == "1"
+  file_getprop("/tmp/aroma/apps.prop","item.1.10") == "1"
 then
   ui_print(">>  Installing Opera Mini");
   package_extract_dir("feralab/apps/opera", "/data/app");
 endif;
 if
-  file_getprop("/tmp/aroma/apps.prop","item.1.12") == "1"
+  file_getprop("/tmp/aroma/apps.prop","item.1.11") == "1"
 then
   ui_print(">>  Installing Panorama");
   package_extract_dir("feralab/apps/panorama", "/data/app");
 endif;
 if
-  file_getprop("/tmp/aroma/apps.prop","item.1.13") == "1"
+  file_getprop("/tmp/aroma/apps.prop","item.1.12") == "1"
 then
   ui_print(">>  Installing Pie Control");
   package_extract_dir("feralab/apps/pie", "/data/app");
 endif;
 if
-  file_getprop("/tmp/aroma/apps.prop","item.1.14") == "1"
+  file_getprop("/tmp/aroma/apps.prop","item.1.13") == "1"
 then
   ui_print(">>  Installing Skype");
   package_extract_dir("feralab/apps/skype", "/data/app");
 endif;
 if
-  file_getprop("/tmp/aroma/apps.prop","item.1.15") == "1"
+  file_getprop("/tmp/aroma/apps.prop","item.1.14") == "1"
 then
   ui_print(">>  Installing Viber");
   package_extract_dir("feralab/apps/viber", "/data/app");
 endif;
 if
-  file_getprop("/tmp/aroma/apps.prop","item.1.16") == "1"
+  file_getprop("/tmp/aroma/apps.prop","item.1.15") == "1"
 then
   ui_print(">>  Installing Vkontakte");
   package_extract_dir("feralab/apps/vk", "/data/app");
 endif;
 if
-  file_getprop("/tmp/aroma/apps.prop","item.1.17") == "1"
+  file_getprop("/tmp/aroma/apps.prop","item.1.16") == "1"
 then
   ui_print(">>  Installing WhatsApp");
   package_extract_dir("feralab/apps/whatsapp", "/data/app");
 endif;
 if
-  file_getprop("/tmp/aroma/apps.prop","item.1.18") == "1"
+  file_getprop("/tmp/aroma/apps.prop","item.1.17") == "1"
 then
   ui_print(">>  Installing YouTube");
   package_extract_dir("feralab/apps/youtube", "/system/app");
+endif;
+if
+  file_getprop("/tmp/aroma/apps.prop","item.1.18") == "1"
+then
+  ui_print(">>  Installing JobManager");
+  package_extract_dir("feralab/apps/job", "/system/app");
+endif;
+if
+  file_getprop("/tmp/aroma/apps.prop","item.1.19") == "1"
+then
+  ui_print(">>  Installing Multitask");
+  package_extract_dir("feralab/apps/multitask", "/data/app");
 endif;
 set_progress(0.86);
 if
@@ -653,7 +658,14 @@ if
   file_getprop("/tmp/aroma/opt.prop","item.1.8") == "1"
 then
   ui_print(">>  Installing SIM-toolkit");
-  package_extract_dir("feralab/opt/sim-toolkit", "/system/etc/init.d");
+  package_extract_dir("feralab/opt/sim-toolkit", "/system/app");
+endif;
+if
+  file_getprop("/tmp/aroma/opt.prop","item.1.9") == "1"
+then
+  ui_print(">>  Installing Charger service");
+  package_extract_dir("feralab/opt/charger", "/system/bin");
+  delete_recursive("/system/semc");
 endif;
 set_progress(0.89);
 if
