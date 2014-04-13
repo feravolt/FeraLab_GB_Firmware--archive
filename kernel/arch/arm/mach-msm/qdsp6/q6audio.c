@@ -1189,6 +1189,7 @@ static void _audio_rx_clk_enable(void)
 static void _audio_tx_clk_enable(void)
 {
 	uint32_t device_group = q6_device_to_codec(audio_tx_device_id);
+	uint32_t icodec_tx_clk_rate;
 
 	switch (device_group) {
 	case Q6_ICODEC_TX:
