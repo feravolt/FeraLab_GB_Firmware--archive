@@ -11,21 +11,21 @@
 #include "acpuclock.h"
 #include "clock.h"
 
-#define SHOT_SWITCH 4
-#define HOP_SWITCH 5
-#define SIMPLE_SLEW 6
-#define COMPLEX_SLEW 7
-#define SPSS_CLK_CNTL_ADDR (MSM_CSR_BASE + 0x100)
-#define SPSS_CLK_SEL_ADDR (MSM_CSR_BASE + 0x104)
-#define SCPLL_CTL_ADDR         (MSM_SCPLL_BASE + 0x4)
-#define SCPLL_STATUS_ADDR      (MSM_SCPLL_BASE + 0x18)
-#define SCPLL_FSM_CTL_EXT_ADDR (MSM_SCPLL_BASE + 0x10)
-#define VREF_SEL     1
-#define V_STEP       25
-#define SEMC_ACPU_MIN_UV_MV 850U
-#define SEMC_ACPU_MAX_UV_MV 1400U
-#define dprintk(msg...) \
-	cpufreq_debug_printk(CPUFREQ_DEBUG_DRIVER, "cpufreq-msm", msg)
+#define SHOT_SWITCH		4
+#define HOP_SWITCH		5
+#define SIMPLE_SLEW		6
+#define COMPLEX_SLEW		7
+#define VREF_SEL		1
+#define V_STEP			25
+#define L_VAL_384MHZ		0xA
+#define L_VAL_768MHZ		0x14
+#define SEMC_ACPU_MIN_UV_MV	900U
+#define SEMC_ACPU_MAX_UV_MV	1350U
+#define SPSS_CLK_CNTL_ADDR	(MSM_CSR_BASE + 0x100)
+#define SPSS_CLK_SEL_ADDR	(MSM_CSR_BASE + 0x104)
+#define SCPLL_CTL_ADDR		(MSM_SCPLL_BASE + 0x4)
+#define SCPLL_STATUS_ADDR	(MSM_SCPLL_BASE + 0x18)
+#define SCPLL_FSM_CTL_EXT_ADDR	(MSM_SCPLL_BASE + 0x10)
 
 enum {
 	ACPU_PLL_TCXO	= -1,
@@ -53,32 +53,32 @@ struct clkctl_acpu_speed {
 
 #ifdef CONFIG_X10_UNDERVOLT
 struct clkctl_acpu_speed acpu_freq_tbl_1228[] = {
-	{ 0, 19200, ACPU_PLL_TCXO, 0, 0, 0, 0, 14000, 0, 0, 975 },
-	{ 0, 192000, ACPU_PLL_1, 1, 5, 0, 0, 14000, 2, 0, 975 },
-	{ 1, 245760, ACPU_PLL_0, 4, 0, 0, 0, 29000, 0, 0, 975 },
-	{ 1, 384000, ACPU_PLL_3, 0, 0, 0, 0, 58000, 1, 0xA, 975 },
-	{ 0, 422400, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xB, 975 },
-	{ 0, 460800, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xC, 975 },
+	{ 0, 19200, ACPU_PLL_TCXO, 0, 0, 0, 0, 14000, 0, 0, 925 },
+	{ 0, 192000, ACPU_PLL_1, 1, 5, 0, 0, 14000, 2, 0, 925 },
+	{ 1, 245760, ACPU_PLL_0, 4, 0, 0, 0, 29000, 0, 0, 925 },
+	{ 1, 384000, ACPU_PLL_3, 0, 0, 0, 0, 58000, 1, 0xA, 925 },
+	{ 0, 422400, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xB, 925 },
+	{ 0, 460800, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xC, 925 },
 	{ 0, 499200, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xD, 975 },
 	{ 0, 537600, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xE, 975 },
-	{ 1, 576000, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xF, 1000 },
+	{ 1, 576000, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xF, 975 },
 	{ 0, 614400, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0x10, 1025 },
-	{ 0, 652800, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0x11, 1050 },
-	{ 0, 691200, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0x12, 1075 },
+	{ 0, 652800, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0x11, 1025 },
+	{ 0, 691200, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0x12, 1050 },
 	{ 0, 729600, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x13, 1075 },
-	{ 1, 768000, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x14, 1100 },
-	{ 0, 806400, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x15, 1175 },
+	{ 1, 768000, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x14, 1075 },
+	{ 0, 806400, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x15, 1150 },
 	{ 0, 844800, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x16, 1200 },
-	{ 0, 883200, ACPU_PLL_3, 0, 0, 0, 0, 160000, 1, 0x17, 1225 },
+	{ 0, 883200, ACPU_PLL_3, 0, 0, 0, 0, 160000, 1, 0x17, 1250 },
 	{ 0, 921600, ACPU_PLL_3, 0, 0, 0, 0, 160000, 1, 0x18, 1275 },
 	{ 0, 960000, ACPU_PLL_3, 0, 0, 0, 0, 160000, 1, 0x19, 1275 },
 	{ 1, 998400, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1A, 1275 },
-	{ 0, 1036800, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1B, 1300 },
-	{ 0, 1075200, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1C, 1325 },
-	{ 1, 1113600, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1D, 1325 },
+	{ 0, 1036800, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1B, 1275 },
+	{ 0, 1075200, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1C, 1300 },
+	{ 1, 1113600, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1D, 1300 },
 	{ 0, 1152000, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1E, 1325 },
-	{ 1, 1190400, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1F, 1350 },
-	{ 1, 1228800, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x20, 1375 },
+	{ 1, 1190400, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1F, 1325 },
+	{ 1, 1228800, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x20, 1350 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 };
 #else
@@ -116,8 +116,8 @@ struct clkctl_acpu_speed acpu_freq_tbl_1228[] = {
 static struct clkctl_acpu_speed *acpu_freq_tbl = acpu_freq_tbl_1228;
 #define AXI_S	(&acpu_freq_tbl[1])
 #define PLL0_S	(&acpu_freq_tbl[2])
-#define POWER_COLLAPSE_KHZ (AXI_S->acpuclk_khz)
-#define WAIT_FOR_IRQ_KHZ (PLL0_S->acpuclk_khz)
+#define POWER_COLLAPSE_KHZ 192000
+#define WAIT_FOR_IRQ_KHZ 245760
 
 #ifdef CONFIG_CPU_FREQ_MSM
 static struct cpufreq_frequency_table freq_table[20];
@@ -137,10 +137,8 @@ static void __init cpufreq_table_init(void)
 
 	freq_table[freq_cnt].index = freq_cnt;
 	freq_table[freq_cnt].frequency = CPUFREQ_TABLE_END;
-	pr_info("%d scaling frequencies supported.\n", freq_cnt);
 }
 #endif
-
 struct clock_state {
 	struct clkctl_acpu_speed	*current_speed;
 	struct mutex			lock;
@@ -150,9 +148,7 @@ struct clock_state {
 	unsigned int			max_vdd;
 	int (*acpu_set_vdd) (int mvolts);
 };
-
 static struct clock_state drv_state = { 0 };
-
 unsigned long clk_get_max_axi_khz(void)
 {
 	return 192000;
@@ -162,7 +158,6 @@ EXPORT_SYMBOL(clk_get_max_axi_khz);
 static void scpll_set_freq(uint32_t lval, unsigned freq_switch)
 {
 	uint32_t regval;
-
 	if (lval > 33)
 		lval = 33;
 	if (lval < 10)
@@ -185,18 +180,10 @@ static void scpll_set_freq(uint32_t lval, unsigned freq_switch)
 	writel(regval, SCPLL_CTL_ADDR);
 	dmb();
 	while (readl(SCPLL_STATUS_ADDR) & 0x1);
-	udelay(90);
 }
-
 static void scpll_apps_enable(bool state)
 {
 	uint32_t regval;
-
-	if (state)
-		dprintk("Enabling PLL 3\n");
-	else
-		dprintk("Disabling PLL 3\n");
-
 	while (readl(SCPLL_STATUS_ADDR) & 0x1);
 	regval = readl(SCPLL_CTL_ADDR);
 	regval &= ~(0x7);
@@ -213,21 +200,12 @@ static void scpll_apps_enable(bool state)
 		regval &= ~(0x7);
 		writel(regval, SCPLL_CTL_ADDR);
 	}
-	udelay(drv_state.vdd_switch_time_us);
-
-	if (state)
-		dprintk("PLL 3 Enabled\n");
-	else
-		dprintk("PLL 3 Disabled\n");
+	udelay(45);
 }
 
 static void scpll_init(void)
 {
 	uint32_t regval;
-#define L_VAL_384MHZ	0xA
-#define L_VAL_768MHZ	0x14
-
-	dprintk("Initializing PLL 3\n");
 	writel(0x0, SCPLL_CTL_ADDR);
 	dmb();
 	writel(0x00400002, SCPLL_CTL_ADDR);
@@ -245,7 +223,7 @@ static void scpll_init(void)
 	regval |= (0x7);
 	writel(regval, SCPLL_CTL_ADDR);
 	while (readl(SCPLL_STATUS_ADDR) & 0x1);
-	udelay(720);
+	udelay(450);
 	regval = readl(SCPLL_FSM_CTL_EXT_ADDR);
 	regval &= ~(0x3f << 3);
 	regval |= (L_VAL_768MHZ << 3);
@@ -256,7 +234,6 @@ static void scpll_init(void)
 	regval |= (0x7);
 	writel(regval, SCPLL_CTL_ADDR);
 	while (readl(SCPLL_STATUS_ADDR) & 0x1);
-	udelay(90);
 	scpll_apps_enable(0);
 }
 
@@ -302,7 +279,6 @@ static void config_pll(struct clkctl_acpu_speed *s)
 static int acpuclk_set_vdd_level(int vdd)
 {
 	if (drv_state.acpu_set_vdd) {
-		dprintk("Switching VDD to %d mV\n", vdd);
 		return drv_state.acpu_set_vdd(vdd);
 	} else {
 		return 0;
@@ -368,10 +344,7 @@ int acpuclk_set_rate(unsigned long rate, enum setrate_reason reason)
 		goto out;
 
 	if (strt_s->axiclk_khz != tgt_s->axiclk_khz) {
-		res = ebi1_clk_set_min_rate(CLKVOTE_ACPUCLK,
-			tgt_s->axiclk_khz * 1000);
-		if (res < 0)
-			pr_warning("Setting AXI min rate failed (%d)\n", res);
+		res = ebi1_clk_set_min_rate(CLKVOTE_ACPUCLK, tgt_s->axiclk_khz * 1000);
 	}
 
 	if (reason == SETRATE_PC)
@@ -382,8 +355,6 @@ int acpuclk_set_rate(unsigned long rate, enum setrate_reason reason)
 		if (res)
 			pr_warning("Unable to drop ACPU vdd (%d)\n", res);
 	}
-	dprintk("ACPU speed change complete\n");
-
 out:
 	if (reason == SETRATE_CPUFREQ)
 		mutex_unlock(&drv_state.lock);
@@ -442,10 +413,6 @@ static void __init acpuclk_init(void)
 
 	drv_state.current_speed = speed;
 	res = ebi1_clk_set_min_rate(CLKVOTE_ACPUCLK, speed->axiclk_khz * 1000);
-	if (res < 0)
-		pr_warning("Setting AXI min rate failed (%d)\n", res);
-
-	pr_info("ACPU running at %d KHz\n", speed->acpuclk_khz);
 }
 
 unsigned long acpuclk_get_rate(void)
@@ -514,7 +481,6 @@ static void __init acpu_freq_tbl_fixup(void)
 
 skip_efuse_fixup:
 	iounmap(ct_csr_base);
-	BUG_ON(drv_state.max_vdd == 0);
 	pll0_m_val = readl(PLL0_M_VAL_ADDR) & 0x7FFFF;
 	if (pll0_m_val == 36)
 		PLL0_S->acpuclk_khz = 235930;
