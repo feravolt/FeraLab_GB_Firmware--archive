@@ -1,7 +1,7 @@
 ### FeraLab ###
 
 # Build info
-ro.build.date=13.04.2014
+ro.build.date=20.04.2014
 ro.build.date.utc=1308515086
 ro.build.user=FeraVolt
 ro.build.host=FeraLab

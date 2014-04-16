@@ -34,6 +34,8 @@
 > New DRM plugins
 > Offline charging animation for LB kernel
 > New HD wallpapers
+> Updated Viper4Android & it's preset & convolver
+> SuperUser updated
 > many more...
 
 

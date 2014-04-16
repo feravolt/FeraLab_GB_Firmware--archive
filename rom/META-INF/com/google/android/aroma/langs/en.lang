@@ -128,7 +128,7 @@ opt.xyxyzzllyz=Select this if you have unlocked bootloader to enable offline cha
 
 rom.title=Data
 rom.titlee=Choose if you want to keep your data from previous ROM (SDcard data won't be touched). Warning! Clean installation is VERY recommended!
-rom.d=Clean my data for 100% fast and stable ROM installation. Must choose if you were using non-FeraLab ROM before or FeraLab ROM version below v34.
+rom.d=Clean my data for 100% fast and stable ROM installation. Must choose if you were using non-FeraLab ROM before or FeraLab ROM version below v38.
 rom.s=Keep my data. I agree that some problems may occur.
 
 omg.title=ROM
