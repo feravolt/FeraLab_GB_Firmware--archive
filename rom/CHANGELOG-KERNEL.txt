@@ -1,7 +1,21 @@
 ***FeraLab***
 =============
 
-FeraKernel v20 for LOCKED BOOTLOADERS is built-in ROM package and installed automatically with ROM.
+FeraKernel v21 for LOCKED BOOTLOADERS is built-in ROM package and installed automatically with ROM.
+
+= v21 = (Warning! Full wipe installation requied)
+>> Recovery & PATH environment fix
+>> zRam improvements
+>> LMK updates
+>> 8Mb for GPU VRAM
+>> Improve math-emu
+>> Used tiny SHMEM
+>> Increased min/max read-ahead kb
+>> Increased default swappiness
+>> Fixed audio driver
+>> Increased incall audio quality
+>> Smart undervolt for CPU
+>> CPU driver improvements
 
 = v20.1 = (Warning! Full wipe installation requied)
 >> Ultimate LowMemoryKiller tuning
@@ -9,7 +23,6 @@ FeraKernel v20 for LOCKED BOOTLOADERS is built-in ROM package and installed auto
 >> Network optimization
 >> Updated built-in busybox
 >> Fudgeswap & cost activated (LMK)
->> Recovery & PATH environment fix
 >> misc..
 
 = v19 = (Warning! Full wipe installation requied)

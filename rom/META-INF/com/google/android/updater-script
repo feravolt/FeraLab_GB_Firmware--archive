@@ -651,17 +651,11 @@ endif;
 if
   file_getprop("/tmp/aroma/opt.prop","item.1.7") == "1"
 then
-  ui_print(">>  Decreasing CPU voltage to minimum");
-  package_extract_dir("feralab/opt/super-undervolt", "/system/etc/init.d");
-endif;
-if
-  file_getprop("/tmp/aroma/opt.prop","item.1.8") == "1"
-then
   ui_print(">>  Installing SIM-toolkit");
   package_extract_dir("feralab/opt/sim-toolkit", "/system/app");
 endif;
 if
-  file_getprop("/tmp/aroma/opt.prop","item.1.9") == "1"
+  file_getprop("/tmp/aroma/opt.prop","item.1.8") == "1"
 then
   ui_print(">>  Installing Charger service");
   package_extract_dir("feralab/opt/charger", "/system/bin");

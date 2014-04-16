@@ -152,6 +152,7 @@ ro.kernel.android.checkjni=0
 # Graphics & Display
 debug.composition.type=gpu
 debug.egl.hw=1
+debug.egl.profiler=1
 debug.gr.swapinterval=0
 debug.mdpcomp.logs=0
 debug.overlayui.enable=1

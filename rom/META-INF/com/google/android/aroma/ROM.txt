@@ -31,6 +31,7 @@
 > New EGL drivers
 > New GLES drivers
 > New sound drivers
+> New DRM plugins
 > Offline charging animation for LB kernel
 > New HD wallpapers
 > many more...
