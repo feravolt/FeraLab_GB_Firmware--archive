@@ -180,6 +180,7 @@ static void scpll_set_freq(uint32_t lval, unsigned freq_switch)
 	writel(regval, SCPLL_CTL_ADDR);
 	dmb();
 	while (readl(SCPLL_STATUS_ADDR) & 0x1);
+	udelay(63);
 }
 static void scpll_apps_enable(bool state)
 {
@@ -234,6 +235,7 @@ static void scpll_init(void)
 	regval |= (0x7);
 	writel(regval, SCPLL_CTL_ADDR);
 	while (readl(SCPLL_STATUS_ADDR) & 0x1);
+	udelay(63);
 	scpll_apps_enable(0);
 }
 
