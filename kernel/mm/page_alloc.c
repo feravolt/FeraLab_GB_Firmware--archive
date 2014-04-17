@@ -99,7 +99,7 @@ static char * const zone_names[MAX_NR_ZONES] = {
 	 "Movable",
 };
 
-int min_free_kbytes = 1024;
+int min_free_kbytes = 2048;
 int min_free_order_shift = 1;
 int extra_free_kbytes = 1024;
 

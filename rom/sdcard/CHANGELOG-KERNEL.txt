@@ -16,6 +16,10 @@ FeraKernel v21 for LOCKED BOOTLOADERS is built-in ROM package and installed auto
 >> Increased incall audio quality
 >> Smart undervolt for CPU
 >> CPU driver improvements
+>> Fixed battery driver
+>> Proximility sensor's tuning
+>> Sheduling tunings
+>> More light and silent kernel
 
 = v20.1 = (Warning! Full wipe installation requied)
 >> Ultimate LowMemoryKiller tuning
