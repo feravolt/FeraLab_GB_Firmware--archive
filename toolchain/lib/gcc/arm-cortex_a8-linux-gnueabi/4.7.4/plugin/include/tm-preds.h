@@ -1,5 +1,5 @@
 /* Generated automatically by the program 'build/genpreds'
-   from the machine description file '/media/hdd_linux/linaro/.build/src/gcc-linaro-4.7-2014.01/gcc/config/arm/arm.md'.  */
+   from the machine description file '/media/hdd_linux/linaro/.build/src/gcc-linaro-4.7-2014.04/gcc/config/arm/arm.md'.  */
 
 #ifndef GCC_TM_PREDS_H
 #define GCC_TM_PREDS_H
@@ -22,7 +22,7 @@ extern int indirect_operand (rtx, enum machine_mode);
 extern int ordered_comparison_operator (rtx, enum machine_mode);
 extern int comparison_operator (rtx, enum machine_mode);
 extern int s_register_operand (rtx, enum machine_mode);
-extern int arm_hard_register_operand (rtx, enum machine_mode);
+extern int arm_hard_general_register_operand (rtx, enum machine_mode);
 extern int low_register_operand (rtx, enum machine_mode);
 extern int low_reg_or_int_operand (rtx, enum machine_mode);
 extern int arm_general_register_operand (rtx, enum machine_mode);

@@ -2,7 +2,7 @@
 
 # NON-CONFIGURABLE STUFF!
 export LC_ALL=C
-version="linaro-1.13.1+bzr2644"
+version="linaro-1.13.1+bzr2651"
 bits="32"
 sed="/bin/sed"
 grep="/bin/grep"

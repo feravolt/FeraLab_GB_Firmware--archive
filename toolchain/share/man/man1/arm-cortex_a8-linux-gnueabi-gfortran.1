@@ -124,7 +124,7 @@
 .\" ========================================================================
 .\"
 .IX Title "GFORTRAN 1"
-.TH GFORTRAN 1 "2014-01-07" "gcc-4.7.4" "GNU"
+.TH GFORTRAN 1 "2014-04-02" "gcc-4.7.4" "GNU"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -799,11 +799,12 @@ either your program or the \s-1GNU\s0 Fortran compiler.
 Output the internal parse tree after translating the source program
 into internal representation.  Only really useful for debugging the
 \&\s-1GNU\s0 Fortran compiler itself.
-.IP "\fB\-fdump\-optimized\-tree\fR" 4
-.IX Item "-fdump-optimized-tree"
+.IP "\fB\-fdump\-fortran\-optimized\fR" 4
+.IX Item "-fdump-fortran-optimized"
 Output the parse tree after front-end optimization.  Only really
 useful for debugging the \s-1GNU\s0 Fortran compiler itself.
-.Sp
+.IP "\fB\-fdump\-parse\-tree\fR" 4
+.IX Item "-fdump-parse-tree"
 Output the internal parse tree after translating the source program
 into internal representation.  Only really useful for debugging the
 \&\s-1GNU\s0 Fortran compiler itself.  This option is deprecated; use

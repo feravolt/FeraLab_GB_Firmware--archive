@@ -3,4 +3,5 @@
 struct edid_info {
 	unsigned char dummy[128];
 };
+extern struct edid_info edid_info;
 #endif

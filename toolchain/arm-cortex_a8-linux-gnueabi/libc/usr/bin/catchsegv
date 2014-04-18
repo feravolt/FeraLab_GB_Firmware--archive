@@ -1,5 +1,5 @@
 #! /bin/sh
-# Copyright (C) 1998-2013 Free Software Foundation, Inc.
+# Copyright (C) 1998-2014 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 # Contributed by Ulrich Drepper <drepper@cygnus.com>, 1998.
 
@@ -39,8 +39,8 @@ EOF
       exit 0
       ;;
     --v | --ve | --ver | --vers | --versi | --versio | --version)
-      echo 'catchsegv (crosstool-NG linaro-1.13.1+bzr2644 - Linaro GCC 2014.01 - Cortex-A8) 2.18-2013.10'
-      echo 'Copyright (C) 2013 Free Software Foundation, Inc.
+      echo 'catchsegv (crosstool-NG linaro-1.13.1-4.8-2014.03 - Linaro GCC 2014.02) 2.19-2014.04'
+      echo 'Copyright (C) 2014 Free Software Foundation, Inc.
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 Written by Ulrich Drepper.'
@@ -55,7 +55,7 @@ segv_output=`mktemp ${TMPDIR:-/tmp}/segv_output.XXXXXX` || exit
 
 # Redirect stderr to avoid termination message from shell.
 (exec 3>&2 2>/dev/null
-LD_PRELOAD=${LD_PRELOAD:+${LD_PRELOAD}:}/\$LIB/libSegFault.so \
+LD_PRELOAD=${LD_PRELOAD:+${LD_PRELOAD}:}/lib/arm-linux-gnueabi/libSegFault.so \
 SEGFAULT_USE_ALTSTACK=1 \
 SEGFAULT_OUTPUT_NAME=$segv_output \
 "$prog" ${1+"$@"} 2>&3 3>&-)

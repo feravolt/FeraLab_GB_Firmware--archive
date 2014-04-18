@@ -1287,7 +1287,7 @@
 
 /* Define to the level of your linker's plugin support. */
 #ifndef USED_FOR_TARGET
-#define HAVE_LTO_PLUGIN 2
+#define HAVE_LTO_PLUGIN 0
 #endif
 
 

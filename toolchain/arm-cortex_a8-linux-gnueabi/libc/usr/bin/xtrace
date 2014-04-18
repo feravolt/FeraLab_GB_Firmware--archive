@@ -1,5 +1,5 @@
 #! /bin/bash
-# Copyright (C) 1999-2013 Free Software Foundation, Inc.
+# Copyright (C) 1999-2014 Free Software Foundation, Inc.
 # This file is part of the GNU C Library.
 # Contributed by Ulrich Drepper <drepper@gnu.org>, 1999.
 
@@ -17,7 +17,7 @@
 # License along with the GNU C Library; if not, see
 # <http://www.gnu.org/licenses/>.
 
-pcprofileso='/\$LIB/libpcprofile.so'
+pcprofileso='/lib/arm-linux-gnueabi/libpcprofile.so'
 pcprofiledump='/usr/bin/pcprofiledump'
 TEXTDOMAIN=libc
 
@@ -60,11 +60,11 @@ short options.
 }
 
 do_version() {
-  echo 'xtrace (crosstool-NG linaro-1.13.1+bzr2644 - Linaro GCC 2014.01 - Cortex-A8) 2.18-2013.10'
+  echo 'xtrace (crosstool-NG linaro-1.13.1-4.8-2014.03 - Linaro GCC 2014.02) 2.19-2014.04'
   printf $"Copyright (C) %s Free Software Foundation, Inc.
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-" "2013"
+" "2014"
   printf $"Written by %s.
 " "Ulrich Drepper"
   exit 0

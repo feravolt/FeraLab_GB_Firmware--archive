@@ -143,7 +143,7 @@ __SYSCALL(__NR_pivot_root, sys_pivot_root)
 
 /* fs/nfsctl.c */
 #define __NR_nfsservctl 42
-__SC_COMP(__NR_nfsservctl, sys_nfsservctl, compat_sys_nfsservctl)
+__SYSCALL(__NR_nfsservctl, sys_ni_syscall)
 
 /* fs/open.c */
 #define __NR3264_statfs 43
@@ -218,7 +218,7 @@ __SC_COMP(__NR_pwritev, sys_pwritev, compat_sys_pwritev)
 
 /* fs/sendfile.c */
 #define __NR3264_sendfile 71
-__SYSCALL(__NR3264_sendfile, sys_sendfile64)
+__SC_3264(__NR3264_sendfile, sys_sendfile64, sys_sendfile)
 
 /* fs/select.c */
 #define __NR_pselect6 72

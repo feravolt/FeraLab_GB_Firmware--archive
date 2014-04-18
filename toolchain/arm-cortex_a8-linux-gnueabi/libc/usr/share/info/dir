@@ -91,6 +91,7 @@ GNU C library functions and macros
 * aio_write: (libc)Asynchronous Reads/Writes.
 * aio_write64: (libc)Asynchronous Reads/Writes.
 * alarm: (libc)Setting an Alarm.
+* aligned_alloc: (libc)Aligned Memory Blocks.
 * alloca: (libc)Variable Size Automatic.
 * alphasort: (libc)Scanning Directory Content.
 * alphasort64: (libc)Scanning Directory Content.
@@ -127,6 +128,7 @@ GNU C library functions and macros
 * assert_perror: (libc)Consistency Checking.
 * assert: (libc)Consistency Checking.
 * atan2f: (libc)Inverse Trig Functions.
+* atan2l: (libc)Inverse Trig Functions.
 * atan2: (libc)Inverse Trig Functions.
 * atanf: (libc)Inverse Trig Functions.
 * atanhf: (libc)Hyperbolic Functions.
@@ -134,7 +136,6 @@ GNU C library functions and macros
 * atanh: (libc)Hyperbolic Functions.
 * atanl: (libc)Inverse Trig Functions.
 * atan: (libc)Inverse Trig Functions.
-* atan2l: (libc)Inverse Trig Functions.
 * atexit: (libc)Cleanups on Exit.
 * atof: (libc)Parsing of Floats.
 * atoi: (libc)Parsing of Integers.
@@ -228,11 +229,11 @@ GNU C library functions and macros
 * CLOCAL: (libc)Control Modes.
 * clock: (libc)CPU Time.
 * CLOCKS_PER_SEC: (libc)CPU Time.
+* clog10f: (libc)Exponents and Logarithms.
 * clog10: (libc)Exponents and Logarithms.
 * clogf: (libc)Exponents and Logarithms.
 * clogl: (libc)Exponents and Logarithms.
 * clog: (libc)Exponents and Logarithms.
-* clog10f: (libc)Exponents and Logarithms.
 * clog10l: (libc)Exponents and Logarithms.
 * closedir: (libc)Reading/Closing Directory.
 * closelog: (libc)closelog.
@@ -516,18 +517,18 @@ GNU C library functions and macros
 * exit: (libc)Normal Termination.
 * EXIT_FAILURE: (libc)Exit Status.
 * EXIT_SUCCESS: (libc)Exit Status.
+* exp10f: (libc)Exponents and Logarithms.
+* exp10l: (libc)Exponents and Logarithms.
+* exp10: (libc)Exponents and Logarithms.
+* exp2f: (libc)Exponents and Logarithms.
+* exp2: (libc)Exponents and Logarithms.
 * expf: (libc)Exponents and Logarithms.
 * expl: (libc)Exponents and Logarithms.
 * expm1f: (libc)Exponents and Logarithms.
 * expm1l: (libc)Exponents and Logarithms.
 * expm1: (libc)Exponents and Logarithms.
 * exp: (libc)Exponents and Logarithms.
-* exp10f: (libc)Exponents and Logarithms.
-* exp10l: (libc)Exponents and Logarithms.
-* exp10: (libc)Exponents and Logarithms.
-* exp2f: (libc)Exponents and Logarithms.
 * exp2l: (libc)Exponents and Logarithms.
-* exp2: (libc)Exponents and Logarithms.
 * EXPR_NEST_MAX: (libc)Utility Limits.
 * F_DUPFD: (libc)Duplicating Descriptors.
 * F_GETFD: (libc)Descriptor Flags.
@@ -623,10 +624,10 @@ GNU C library functions and macros
 * fmod: (libc)Remainder Functions.
 * fmtmsg: (libc)Printing Formatted Messages.
 * fnmatch: (libc)Wildcard Matching.
-* fopen64: (libc)Opening Streams.
 * FOPEN_MAX: (libc)Opening Streams.
 * fopencookie: (libc)Streams and Cookies.
 * fopen: (libc)Opening Streams.
+* fopen64: (libc)Opening Streams.
 * forkpty: (libc)Pseudo-Terminal Pairs.
 * fork: (libc)Creating a Process.
 * FP_ILOGB0: (libc)Exponents and Logarithms.
@@ -736,7 +737,6 @@ GNU C library functions and macros
 * getpass: (libc)getpass.
 * getpeername: (libc)Who is Connected.
 * getpgid: (libc)Process Group Functions.
-* getpgrp: (libc)Process Group Functions.
 * getpgrp: (libc)Process Group Functions.
 * getpid: (libc)Process Identification.
 * getppid: (libc)Process Identification.
@@ -958,6 +958,7 @@ GNU C library functions and macros
 * log1pf: (libc)Exponents and Logarithms.
 * log1pl: (libc)Exponents and Logarithms.
 * log1p: (libc)Exponents and Logarithms.
+* log2f: (libc)Exponents and Logarithms.
 * log2: (libc)Exponents and Logarithms.
 * logbf: (libc)Exponents and Logarithms.
 * logbl: (libc)Exponents and Logarithms.
@@ -969,7 +970,6 @@ GNU C library functions and macros
 * logout: (libc)Logging In and Out.
 * logwtmp: (libc)Logging In and Out.
 * log: (libc)Exponents and Logarithms.
-* log2f: (libc)Exponents and Logarithms.
 * log2l: (libc)Exponents and Logarithms.
 * longjmp: (libc)Non-Local Details.
 * lrand48_r: (libc)SVID Random.
@@ -1161,12 +1161,12 @@ GNU C library functions and macros
 * PIPE_BUF: (libc)Limits for Files.
 * popen: (libc)Pipe to a Subprocess.
 * posix_memalign: (libc)Aligned Memory Blocks.
+* pow10f: (libc)Exponents and Logarithms.
+* pow10l: (libc)Exponents and Logarithms.
 * pow10: (libc)Exponents and Logarithms.
 * powf: (libc)Exponents and Logarithms.
 * powl: (libc)Exponents and Logarithms.
 * pow: (libc)Exponents and Logarithms.
-* pow10f: (libc)Exponents and Logarithms.
-* pow10l: (libc)Exponents and Logarithms.
 * pread: (libc)I/O Primitives.
 * pread64: (libc)I/O Primitives.
 * printf_size_info: (libc)Predefined Printf Handlers.
@@ -1174,7 +1174,11 @@ GNU C library functions and macros
 * printf: (libc)Formatted Output Functions.
 * psignal: (libc)Signal Messages.
 * pthread_getattr_default_np: (libc)Default Thread Attributes.
-* pthread_getattr_default_np: (libc)Default Thread Attributes.
+* pthread_getspecific: (libc)Thread-specific Data.
+* pthread_key_create: (libc)Thread-specific Data.
+* pthread_key_delete: (libc)Thread-specific Data.
+* pthread_setattr_default_np: (libc)Default Thread Attributes.
+* pthread_setspecific: (libc)Thread-specific Data.
 * ptsname_r: (libc)Allocation.
 * ptsname: (libc)Allocation.
 * putc_unlocked: (libc)Simple Output.
@@ -1208,10 +1212,10 @@ GNU C library functions and macros
 * rand: (libc)ISO Random.
 * rawmemchr: (libc)Search Functions.
 * RE_DUP_MAX: (libc)General Limits.
-* readdir64_r: (libc)Reading/Closing Directory.
-* readdir64: (libc)Reading/Closing Directory.
 * readdir_r: (libc)Reading/Closing Directory.
 * readdir: (libc)Reading/Closing Directory.
+* readdir64_r: (libc)Reading/Closing Directory.
+* readdir64: (libc)Reading/Closing Directory.
 * readlink: (libc)Symbolic Links.
 * readv: (libc)Scatter-Gather.
 * read: (libc)I/O Primitives.
@@ -1333,6 +1337,8 @@ GNU C library functions and macros
 * setutent: (libc)Manipulating the Database.
 * setutxent: (libc)XPG Functions.
 * setvbuf: (libc)Controlling Buffering.
+* shm_open: (libc)Memory-mapped I/O.
+* shm_unlink: (libc)Memory-mapped I/O.
 * shutdown: (libc)Closing a Socket.
 * SIG_ERR: (libc)Basic Signal Handling.
 * SIGABRT: (libc)Program Error Signals.
@@ -1417,11 +1423,11 @@ GNU C library functions and macros
 * sqrtf: (libc)Exponents and Logarithms.
 * sqrtl: (libc)Exponents and Logarithms.
 * sqrt: (libc)Exponents and Logarithms.
-* srand48_r: (libc)SVID Random.
 * srand48: (libc)SVID Random.
 * srandom_r: (libc)BSD Random.
 * srandom: (libc)BSD Random.
 * srand: (libc)ISO Random.
+* srand48_r: (libc)SVID Random.
 * sscanf: (libc)Formatted Input Functions.
 * ssignal: (libc)Basic Signal Handling.
 * SSIZE_MAX: (libc)General Limits.

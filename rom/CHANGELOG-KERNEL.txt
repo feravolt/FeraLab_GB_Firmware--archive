@@ -9,7 +9,7 @@ FeraKernel v21 for LOCKED BOOTLOADERS is built-in ROM package and installed auto
 >> LMK updates
 >> 8Mb for GPU VRAM
 >> Improve math-emu
->> Used tiny SHMEM
+>> Compiled with latest Linaro toolchain (optimized for Cortex-A8)
 >> Increased min/max read-ahead kb
 >> Increased default swappiness
 >> Fixed audio driver

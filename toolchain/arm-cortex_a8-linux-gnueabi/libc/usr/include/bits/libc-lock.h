@@ -1,5 +1,5 @@
 /* libc-internal interface for mutex locks.  NPTL version.
-   Copyright (C) 1996-2013 Free Software Foundation, Inc.
+   Copyright (C) 1996-2014 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -95,7 +95,7 @@ typedef struct __libc_lock_recursive_opaque__ __libc_lock_recursive_t;
 # define __libc_lock_fini_recursive(NAME) ((void) 0)
 #else
 # define __libc_lock_fini_recursive(NAME) \
-  __libc_maybe_call (__pthread_mutex_destroy, (&(NAME)), 0)
+  __libc_maybe_call (__pthread_mutex_destroy, (&(NAME).mutex), 0)
 #endif
 
 /* Lock the recursive named lock variable.  */
@@ -161,7 +161,7 @@ libc_hidden_proto (__libc_lock_trylock_recursive_fn);
 # endif /* __OPTION_EGLIBC_BIG_MACROS */
 #else
 # define __libc_lock_trylock_recursive(NAME) \
-  __libc_maybe_call (__pthread_mutex_trylock, (&(NAME)), 0)
+  __libc_maybe_call (__pthread_mutex_trylock, (&(NAME).mutex), 0)
 #endif
 
 /* Unlock the recursive named lock variable.  */
@@ -189,7 +189,7 @@ libc_hidden_proto (__libc_lock_unlock_recursive_fn);
 # endif /* __OPTION_EGLIBC_BIG_MACROS */
 #else
 # define __libc_lock_unlock_recursive(NAME) \
-  __libc_maybe_call (__pthread_mutex_unlock, (&(NAME)), 0)
+  __libc_maybe_call (__pthread_mutex_unlock, (&(NAME).mutex), 0)
 #endif
 
 /* Note that for I/O cleanup handling we are using the old-style
