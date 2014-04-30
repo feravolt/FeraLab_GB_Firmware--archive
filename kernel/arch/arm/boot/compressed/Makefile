@@ -1,6 +1,10 @@
+OBJS	=
 plus_sec := $(call as-instr,.arch_extension sec,+sec)
-HEAD	= head.o
-OBJS	= misc.o
+AFLAGS_head.o := -DTEXT_OFFSET=$(TEXT_OFFSET)
+AFLAGS_head.o += -Wa,-march=armv7-a$(plus_sec)
+HEAD = head.o
+AFLAGS_misc.o +=-Wa,-march=armv7-a$(plus_sec)
+MISC = misc.o
 FONTC	= $(srctree)/drivers/video/console/font_acorn_8x8.c
 
 ifeq ($(CONFIG_ARCH_ACORN),y)
@@ -57,7 +61,7 @@ KBUILD_CFLAGS = $(subst -pg, , $(ORIG_CFLAGS))
 endif
 
 ccflags-y := -fpic -fno-builtin
-asflags-y := -Wa,-march=armv7-a$(plus_sec)
+asflags-y := -Wa,-march=armv7-a $(plus_sec)
 
 LDFLAGS_vmlinux := --defsym zreladdr=$(ZRELADDR)
 ifneq ($(INITRD_PHYS),)
@@ -69,9 +73,7 @@ endif
 LDFLAGS_vmlinux += -p --no-undefined -X \
 	$(shell $(CC) $(KBUILD_CFLAGS) --print-libgcc-file-name) -T
 
-CFLAGS_misc.o := -Dstatic=
-
-$(obj)/vmlinux: $(obj)/vmlinux.lds $(obj)/$(HEAD) $(obj)/piggy.o \
+$(obj)/vmlinux: $(obj)/vmlinux.lds $(obj)/$(HEAD) $(obj)/$(MISC) $(obj)/piggy.o \
 	 	$(addprefix $(obj)/, $(OBJS)) FORCE
 	$(call if_changed,ld)
 	@:
@@ -79,6 +81,7 @@ $(obj)/vmlinux: $(obj)/vmlinux.lds $(obj)/$(HEAD) $(obj)/piggy.o \
 $(obj)/piggy.gz: $(obj)/../Image FORCE
 	$(call if_changed,gzip)
 
+AFLAGS_piggy.$(suffix_y).o += -Wa,-march=armv7-a$(plus_sec)
 $(obj)/piggy.o:  $(obj)/piggy.gz FORCE
 
 CFLAGS_font.o := -Dstatic=

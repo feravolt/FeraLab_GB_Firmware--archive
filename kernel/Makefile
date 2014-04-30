@@ -84,6 +84,8 @@ VPATH		:= $(srctree)$(if $(KBUILD_EXTMOD),:$(KBUILD_EXTMOD))
 
 export srctree objtree VPATH TOPDIR
 
++CCACHE := ccache
+
 SUBARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ \
 				  -e s/arm.*/arm/ -e s/sa110/arm/ \
 				  -e s/s390x/s390/ -e s/parisc64/parisc/ \
@@ -92,7 +94,7 @@ SUBARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ \
 
 export KBUILD_BUILDHOST := $(SUBARCH)
 ARCH		?= $(SUBARCH)
-CROSS_COMPILE	?=
+CROSS_COMPILE	?= $(CCACHE)
 UTS_MACHINE 	:= $(ARCH)
 SRCARCH 	:= $(ARCH)
 
@@ -119,8 +121,8 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 	  else if [ -x /bin/bash ]; then echo /bin/bash; \
 	  else echo sh; fi ; fi)
 
-HOSTCC       = gcc
-HOSTCXX      = g++
+HOSTCC       = $(CCACHE) gcc
+HOSTCXX      = $(CCACHE) g++
 HOSTCFLAGS   = -Wall -Wstrict-prototypes -O3 -fomit-frame-pointer
 HOSTCXXFLAGS = -O3
 KBUILD_MODULES :=
@@ -162,7 +164,7 @@ include $(srctree)/scripts/Kbuild.include
 
 AS		= $(CROSS_COMPILE)as
 LD		= $(CROSS_COMPILE)ld
-CC		= $(CROSS_COMPILE)gcc
+CC		= $(CCACHE) $(CROSS_COMPILE)gcc
 CPP		= $(CC) -E
 AR		= $(CROSS_COMPILE)ar
 NM		= $(CROSS_COMPILE)nm
@@ -178,11 +180,11 @@ CHECK		= sparse
 CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
 		  -Wbitwise -Wno-return-void $(CF)
 MODFLAGS	= -DMODULE
-CFLAGS_MODULE   = $(MODFLAGS)
+CFLAGS_MODULE   = $(MODFLAGS) -fno-pic
 AFLAGS_MODULE   = $(MODFLAGS)
 LDFLAGS_MODULE  =
-CFLAGS_KERNEL	= -ftree-vectorize -ffast-math -fsingle-precision-constant
-AFLAGS_KERNEL	= -ftree-vectorize -ffast-math -fsingle-precision-constant
+CFLAGS_KERNEL	= -ftree-vectorize -ffast-math -fsingle-precision-constant -mfpu=neon
+AFLAGS_KERNEL	= -ftree-vectorize -ffast-math -fsingle-precision-constant -mfpu=neon
 
 LINUXINCLUDE    := -Iinclude \
                    $(if $(KBUILD_SRC),-Iinclude2 -I$(srctree)/include) \
@@ -192,7 +194,9 @@ KBUILD_CPPFLAGS := -D__KERNEL__
 
 KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common \
-		   -Wno-unused-but-set-variable -Wno-uninitialized
+		   -Wno-unused-but-set-variable -Wno-uninitialized \
+		   -fno-delete-null-pointer-checks -ftree-vectorize \
+		   -mno-unaligned-access -Wno-sizeof-pointer-memaccess
 
 KBUILD_AFLAGS   := -D__ASSEMBLY__
 KERNELRELEASE = $(shell cat include/config/kernel.release 2> /dev/null)
@@ -312,14 +316,10 @@ endif
 
 all: vmlinux
 
-KBUILD_CFLAGS	+= -O3 -Wno-address
-
+KBUILD_CFLAGS += -O3 -Wno-address
+KBUILD_CFLAGS += $(call cc-disable-warning,maybe-uninitialized) -fno-inline-functions
+KBUILD_CFLAGS += $(call cc-disable-warning,array-bounds)
 include $(srctree)/arch/$(SRCARCH)/Makefile
-
-ifneq (CONFIG_FRAME_WARN,0)
-KBUILD_CFLAGS += $(call cc-option,-Wframe-larger-than=${CONFIG_FRAME_WARN})
-endif
-
 KBUILD_CFLAGS += $(call cc-option, -fno-stack-protector)
 
 ifdef CONFIG_FRAME_POINTER

@@ -218,6 +218,7 @@ cache_on:	mov	r3, #8			@ cache_on function
 		b	call_cache_fn
 
 __armv4_mpu_cache_on:
+		.arch armv4
 		mov	r0, #0x3f		@ 4G, the whole
 		mcr	p15, 0, r0, c6, c7, 0	@ PR7 Area Setting
 		mcr 	p15, 0, r0, c6, c7, 1
@@ -306,6 +307,7 @@ __armv6_mmu_cache_on:
     		b  __armv4_mmu_cache_on
 
 __armv4_mmu_cache_on:
+		.arch armv4
 		mov	r12, lr
 		bl	__setup_mmu
 		mov	r0, #0
@@ -320,6 +322,7 @@ __armv4_mmu_cache_on:
 		mov	pc, r12
 
 __armv7_mmu_cache_on:
+		.arch armv7-a
 		mov	r12, lr
 		mrc	p15, 0, r11, c0, c1, 4	@ read ID_MMFR0
 		tst	r11, #0xf		@ VMSA
@@ -345,6 +348,7 @@ __armv7_mmu_cache_on:
 		mov	pc, r12
 
 __arm6_mmu_cache_on:
+		.arch armv6
 		mov	r12, lr
 		bl	__setup_mmu
 		mov	r0, #0
@@ -627,6 +631,7 @@ cache_clean_flush:
 		mov	r3, #16
 		b	call_cache_fn
 
+		.arch armv4
 __armv4_mpu_cache_flush:
 		mov	r2, #1
 		mov	r3, #0
@@ -646,6 +651,7 @@ __armv4_mpu_cache_flush:
 		
 
 __armv6_mmu_cache_flush:
+		.arch armv6
 		mov	r1, #0
 		mcr	p15, 0, r1, c7, c14, 0	@ clean+invalidate D
 		mcr	p15, 0, r1, c7, c5, 0	@ invalidate I+BTB
@@ -653,6 +659,7 @@ __armv6_mmu_cache_flush:
 		mcr	p15, 0, r1, c7, c10, 4	@ drain WB
 		mov	pc, lr
 
+		.arch armv7-a
 __armv7_mmu_cache_flush:
 		mrc	p15, 0, r10, c0, c1, 5	@ read ID_MMFR1
 		tst	r10, #0xf << 16		@ hierarchical cache (ARMv7)
@@ -709,6 +716,7 @@ iflush:
 		mcr	p15, 0, r10, c7, c5, 4	@ ISB
 		mov	pc, lr
 
+		.arch armv5
 __armv5tej_mmu_cache_flush:
 1:		mrc	p15, 0, r15, c7, c14, 3	@ test,clean,invalidate D cache
 		bne	1b
@@ -716,6 +724,7 @@ __armv5tej_mmu_cache_flush:
 		mcr	p15, 0, r0, c7, c10, 4	@ drain WB
 		mov	pc, lr
 
+		.arch armv4
 __armv4_mmu_cache_flush:
 		mov	r2, #64*1024		@ default: 32K dcache size (*2)
 		mov	r11, #32		@ default: 32 byte line size
@@ -749,6 +758,7 @@ __armv3_mpu_cache_flush:
 		mov	r1, #0
 		mcr	p15, 0, r0, c7, c0, 0	@ invalidate whole cache v3
 		mov	pc, lr
+		.arch armv4
 
 /*
  * Various debugging routines for printing hex characters and
