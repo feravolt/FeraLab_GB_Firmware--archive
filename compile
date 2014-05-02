@@ -48,7 +48,7 @@ cd /home/feravolt/ferra/kernel/tools/ftf
 ./build
 cd
 cd ferra
-mv -t /home/feravolt/ferra/0UTPUT /home/feravolt/ferra/kernel/tools/tft/FeraKernel.ftf
+mv -t /home/feravolt/ferra/0UTPUT /home/feravolt/ferra/kernel/tools/ftf/FeraKernel.ftf
 rm -f /home/feravolt/ferra/kernel/tools/input/zImage
 rm -f /home/feravolt/ferra/kernel/tools/input/ramdisk.cpio.gz
 fi;

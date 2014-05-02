@@ -55,13 +55,13 @@ SEDFLAGS	= s/TEXT_START/$(ZTEXTADDR)/;s/BSS_START/$(ZBSSADDR)/
 targets       := vmlinux vmlinux.lds piggy.gz piggy.o font.o font.c \
 		 head.o misc.o $(OBJS)
 
+EXTRA_CFLAGS := -fpic -fno-builtin
+EXTRA_AFLAGS := -Wa,-march=all
+
 ifeq ($(CONFIG_FUNCTION_TRACER),y)
 ORIG_CFLAGS := $(KBUILD_CFLAGS)
 KBUILD_CFLAGS = $(subst -pg, , $(ORIG_CFLAGS))
 endif
-
-ccflags-y := -fpic -fno-builtin
-asflags-y := -Wa,-march=armv7-a $(plus_sec)
 
 LDFLAGS_vmlinux := --defsym zreladdr=$(ZRELADDR)
 ifneq ($(INITRD_PHYS),)
@@ -85,6 +85,7 @@ AFLAGS_piggy.$(suffix_y).o += -Wa,-march=armv7-a$(plus_sec)
 $(obj)/piggy.o:  $(obj)/piggy.gz FORCE
 
 CFLAGS_font.o := -Dstatic=
+CFLAGS_misc.o := -Dstatic=
 
 $(obj)/font.c: $(FONTC)
 	$(call cmd,shipped)
