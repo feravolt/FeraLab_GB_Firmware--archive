@@ -79,7 +79,6 @@ struct clkctl_acpu_speed acpu_freq_tbl_1228[] = {
 	{ 0, 1152000, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1E, 1325 },
 	{ 1, 1190400, ACPU_PLL_3, 0, 0, 0, 0, 259200, 1, 0x1F, 1350 },
 	{ 1, 1228800, ACPU_PLL_3, 0, 0, 0, 0, 259200, 1, 0x20, 1350 },
-	{ 1, 1267200, ACPU_PLL_3, 0, 0, 0, 0, 259200, 1, 0x21, 1350 }
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 };
 #else
@@ -465,7 +464,7 @@ static void __init acpu_freq_tbl_fixup(void)
 	switch (tcsr_spare2 & 0xF0) {
 	case 0x30:
 	case 0x00:
-		max_acpu_khz = 1267200;
+		max_acpu_khz = 1228800;
 		break;
 	default:
 		goto skip_efuse_fixup;

@@ -85,7 +85,6 @@ AFLAGS_piggy.$(suffix_y).o += -Wa,-march=armv7-a$(plus_sec)
 $(obj)/piggy.o:  $(obj)/piggy.gz FORCE
 
 CFLAGS_font.o := -Dstatic=
-CFLAGS_misc.o := -Dstatic=
 
 $(obj)/font.c: $(FONTC)
 	$(call cmd,shipped)
