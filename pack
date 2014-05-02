@@ -7,7 +7,7 @@ echo ' '
 echo ' '
 echo ' '
 echo '>> Making ROM package...'
-cp -f /home/feravolt/ferra/flashtool/firmwares/* /home/feravolt/ferra/rom/
+cp -f /home/feravolt/ferra/0UTPUT/* /home/feravolt/ferra/rom/
 cd
 cd ferra/rom
 zip -r FeraLab.zip ./* -9

@@ -964,7 +964,7 @@ int ext3_group_extend(struct super_block *sb, struct ext3_super_block *es,
 		      ext3_fsblk_t n_blocks_count)
 {
 	ext3_fsblk_t o_blocks_count;
-	unsigned long o_groups_count;
+	__attribute__((unused)) unsigned long o_groups_count;
 	ext3_grpblk_t last;
 	ext3_grpblk_t add;
 	struct buffer_head * bh;

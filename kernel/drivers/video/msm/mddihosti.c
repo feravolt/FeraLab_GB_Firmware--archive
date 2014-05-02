@@ -328,7 +328,7 @@ static void mddi_host_disable_hclk(void)
 
 static void mddi_vote_to_sleep(mddi_host_type host_idx, boolean sleep)
 {
-	uint16 vote_mask;
+	__attribute__((unused)) uint16 vote_mask;
 
 	if (host_idx == MDDI_HOST_PRIM)
 		vote_mask = 0x01;

@@ -242,7 +242,7 @@ void cpufreq_debug_printk(unsigned int type, const char *prefix,
 		len += vsnprintf(&s[len], (256 - len), fmt, args);
 		va_end(args);
 
-		printk(s);
+		printk("%s", s);
 
 		WARN_ON(len < 5);
 	}

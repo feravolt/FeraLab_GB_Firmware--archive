@@ -417,7 +417,7 @@ static int drm_pick_crtcs(struct drm_device *dev,
 	struct drm_connector *connector;
 	struct drm_connector_helper_funcs *connector_funcs;
 	struct drm_encoder *encoder;
-	struct drm_crtc *best_crtc;
+	__attribute__((unused)) struct drm_crtc *best_crtc;
 	int my_score, best_score, score;
 	struct drm_crtc **crtcs, *crtc;
 

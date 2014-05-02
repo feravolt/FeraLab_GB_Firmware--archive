@@ -429,7 +429,7 @@ static void mt2050_set_antenna(struct dvb_frontend *fe, unsigned char antenna)
 {
 	struct microtune_priv *priv = fe->tuner_priv;
 	unsigned char buf[2];
-	int ret;
+	__attribute__((unused)) int ret;
 
 	buf[0] = 6;
 	buf[1] = antenna ? 0x11 : 0x10;
@@ -573,7 +573,7 @@ static int mt2050_init(struct dvb_frontend *fe)
 {
 	struct microtune_priv *priv = fe->tuner_priv;
 	unsigned char buf[2];
-	int ret;
+	__attribute__((unused)) int ret;
 
 	buf[0]=6;
 	buf[1]=0x10;

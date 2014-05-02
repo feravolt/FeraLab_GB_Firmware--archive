@@ -172,7 +172,7 @@ static int mdp_lut_i;
 static int mdp_lut_hw_update(struct fb_cmap *cmap)
 {
 	int i;
-	u16 *c[3];
+	__attribute__((unused)) u16 *c[3];
 	u16 r, g, b;
 
 	c[0] = cmap->green;

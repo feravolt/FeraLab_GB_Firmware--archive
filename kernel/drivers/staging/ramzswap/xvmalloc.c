@@ -245,7 +245,7 @@ static void remove_block_head(struct xv_pool *pool,
 static void remove_block(struct xv_pool *pool, struct page *page, u32 offset,
 			struct block_header *block, u32 slindex)
 {
-	u32 flindex;
+	__attribute__((unused)) u32 flindex;
 	struct block_header *tmpblock;
 
 	if (pool->freelist[slindex].page == page

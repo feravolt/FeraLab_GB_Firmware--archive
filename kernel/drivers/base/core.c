@@ -1247,7 +1247,7 @@ struct device *__root_device_register(const char *name, struct module *owner)
 	if (!root)
 		return ERR_PTR(err);
 
-	err = dev_set_name(&root->dev, name);
+	err = dev_set_name(&root->dev, "%s", name);
 	if (err) {
 		kfree(root);
 		return ERR_PTR(err);

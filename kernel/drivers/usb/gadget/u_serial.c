@@ -905,7 +905,7 @@ static int gs_write(struct tty_struct *tty, const unsigned char *buf, int count)
 {
 	struct gs_port	*port = tty->driver_data;
 	unsigned long	flags;
-	int		status;
+	__attribute__((unused)) int		status;
 
 	pr_vdebug("gs_write: ttyGS%d (%p) writing %d bytes\n",
 			port->port_num, tty, count);

@@ -210,7 +210,7 @@ static int hci_uart_close(struct hci_dev *hdev)
 static int hci_uart_send_frame(struct sk_buff *skb)
 {
 	struct hci_dev* hdev = (struct hci_dev *) skb->dev;
-	struct tty_struct *tty;
+	__attribute__((unused)) struct tty_struct *tty;
 	struct hci_uart *hu;
 
 	if (!hdev) {

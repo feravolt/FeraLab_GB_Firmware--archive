@@ -6658,7 +6658,8 @@ int msm_onenand_scan(struct mtd_info *mtd, int maxchips)
 int msm_nand_scan(struct mtd_info *mtd, int maxchips)
 {
 	struct msm_nand_chip *chip = mtd->priv;
-	uint32_t flash_id = 0, i = 1, mtd_writesize;
+	uint32_t flash_id = 0, i = 1;
+	__attribute__((unused)) uint32_t mtd_writesize;
 	uint8_t dev_found = 0;
 	uint8_t wide_bus;
 	uint8_t index;

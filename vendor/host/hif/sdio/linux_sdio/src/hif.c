@@ -718,7 +718,7 @@ static void hifDeviceRemoved(struct sdio_func *func)
 {
     A_STATUS status = A_OK;
     HIF_DEVICE *device;
-    int ret;
+    __attribute__((unused)) int ret;
     AR_DEBUG_ASSERT(func != NULL);
 
     AR_DEBUG_PRINTF(ATH_DEBUG_TRACE, ("AR6000: +hifDeviceRemoved\n"));
@@ -846,7 +846,7 @@ static int hifDeviceResume(struct device *dev)
         taskName = "AR6K resume";
     }
     /* create resume thread */
-    pTask = kthread_create(taskFunc, (void *)device, taskName);
+    pTask = kthread_create(taskFunc, (void *)device, "%s", taskName);
     if (IS_ERR(pTask)) {
         AR_DEBUG_PRINTF(ATH_DEBUG_ERROR, ("AR6000: %s(), to create resume task\n", __FUNCTION__));
         return A_ERROR;

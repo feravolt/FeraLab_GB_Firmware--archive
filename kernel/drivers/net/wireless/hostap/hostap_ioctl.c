@@ -1660,7 +1660,7 @@ static int prism2_request_scan(struct net_device *dev)
 	struct hostap_interface *iface;
 	local_info_t *local;
 	struct hfa384x_scan_request scan_req;
-	int ret = 0;
+	__attribute__((unused)) int ret = 0;
 
 	iface = netdev_priv(dev);
 	local = iface->local;
@@ -1949,7 +1949,8 @@ static inline int prism2_translate_scan(local_info_t *local,
 					char *buffer, int buflen)
 {
 	struct hfa384x_hostscan_result *scan;
-	int entry, hostscan;
+	int entry;
+	__attribute__((unused)) int hostscan;
 	char *current_ev = buffer;
 	char *end_buf = buffer + buflen;
 	struct list_head *ptr;
@@ -3269,7 +3270,7 @@ static int prism2_ioctl_siwencodeext(struct net_device *dev,
 
 	ops = lib80211_get_crypto_ops(alg);
 	if (ops == NULL) {
-		request_module(module);
+		request_module("%s", module);
 		ops = lib80211_get_crypto_ops(alg);
 	}
 	if (ops == NULL) {

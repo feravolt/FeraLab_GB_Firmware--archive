@@ -26,7 +26,7 @@
 <!ATTLIST Audio sampleRate CDATA #REQUIRED>
 <!ATTLIST Audio channels (1|2) #REQUIRED>
 <!ELEMENT ImageEncoding EMPTY>
-<!ATTLIST ImageEncoding quality (100|100|100|100|100) #REQUIRED>
+<!ATTLIST ImageEncoding quality (100|90|80|70|60|50) #REQUIRED>
 <!ELEMENT ImageDecoding EMPTY>
 <!ATTLIST ImageDecoding memCap CDATA #REQUIRED>
 <!ELEMENT Camera EMPTY>
@@ -63,70 +63,57 @@
 <MediaSettings>
     <CamcorderProfiles>
         <EncoderProfile quality="high" fileFormat="mp4" duration="60">
-            <Video codec="h264"
-                   bitRate="10000000"
+            <Video codec="m4v"
+                   bitRate="8000000"
                    width="1280"
                    height="720"
                    frameRate="30" />
-
             <Audio codec="aac"
-                   bitRate="64000"
+                   bitRate="192000"
                    sampleRate="16000"
-                   channels="1" />
+                   channels="2" />
         </EncoderProfile>
-
         <EncoderProfile quality="low" fileFormat="mp4" duration="30">
             <Video codec="h264"
                    bitRate="2000000"
                    width="640"
                    height="480"
                    frameRate="24" />
-
             <Audio codec="aac"
                    bitRate="64000"
                    sampleRate="16000"
                    channels="1" />
-
         </EncoderProfile>
-
         <ImageEncoding quality="100" />
-        <ImageEncoding quality="100" />
-        <ImageEncoding quality="100" />
+        <ImageEncoding quality="90" />
+        <ImageEncoding quality="80" />
         <ImageDecoding memCap="20000000" />
-
     </CamcorderProfiles>
-
     <EncoderOutputFileFormat name="mp4" />
     <EncoderOutputFileFormat name="3gp" />
-
     <VideoEncoderCap name="h264" enabled="true"
-        minBitRate="96000" maxBitRate="10000000"
+        minBitRate="96000" maxBitRate="8000000"
         minFrameWidth="320" maxFrameWidth="1280"
         minFrameHeight="240" maxFrameHeight="720"
         minFrameRate="15" maxFrameRate="30" />
-
     <VideoEncoderCap name="h263" enabled="true"
         minBitRate="96000" maxBitRate="3000000"
         minFrameWidth="320" maxFrameWidth="800"
         minFrameHeight="240" maxFrameHeight="480"
         minFrameRate="15" maxFrameRate="30" />
-
     <VideoEncoderCap name="m4v" enabled="true"
-        minBitRate="96000" maxBitRate="10000000"
+        minBitRate="96000" maxBitRate="8000000"
         minFrameWidth="320" maxFrameWidth="1280"
         minFrameHeight="240" maxFrameHeight="720"
-        minFrameRate="15" maxFrameRate="24" />
-
+        minFrameRate="24" maxFrameRate="30" />
     <AudioEncoderCap name="aac" enabled="true"
-        minBitRate="8192" maxBitRate="192000"
-        minSampleRate="8000" maxSampleRate="48000"
-        minChannels="1" maxChannels="1" />
-
+        minBitRate="64000" maxBitRate="192000"
+        minSampleRate="16000" maxSampleRate="48000"
+        minChannels="1" maxChannels="2" />
     <AudioEncoderCap name="amrwb" enabled="true"
         minBitRate="6600" maxBitRate="23050"
-        minSampleRate="16000" maxSampleRate="16000"
+        minSampleRate="8000" maxSampleRate="16000"
         minChannels="1" maxChannels="1" />
-
     <AudioEncoderCap name="amrnb" enabled="true"
         minBitRate="5525" maxBitRate="12200"
         minSampleRate="8000" maxSampleRate="16000"

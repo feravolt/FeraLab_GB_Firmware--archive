@@ -124,7 +124,7 @@ EXPORT_SYMBOL(msm_dmov_enqueue_cmd_ext);
 void msm_dmov_reset(void)
 {
 	int i, ch;
-	unsigned int int_status;
+	__attribute__((unused)) unsigned int int_status;
 
 	/* read and clear ADM interrupt */
 	int_status = readl(DMOV_ISR);

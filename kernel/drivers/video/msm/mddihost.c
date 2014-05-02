@@ -628,7 +628,7 @@ boolean mddi_video_stream_black_display(uint32 x0, uint32 y0,
 
 		while (height > row) {
 			mddi_linked_list_type *curr_llist_ptr;
-			mddi_linked_list_type *curr_llist_dma_ptr;
+			__attribute__((unused)) mddi_linked_list_type *curr_llist_dma_ptr;
 			mddi_video_stream_packet_type *video_pkt_ptr;
 
 			/* always wait for a new available llist item */

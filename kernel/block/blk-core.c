@@ -1674,7 +1674,7 @@ static void blk_account_io_completion(struct request *req, unsigned int bytes)
 	if (blk_fs_request(req)) {
 		const int rw = rq_data_dir(req);
 		struct hd_struct *part;
-		int cpu;
+		__attribute__((unused)) int cpu;
 
 		cpu = part_stat_lock();
 		part = disk_map_sector_rcu(req->rq_disk, req->sector);

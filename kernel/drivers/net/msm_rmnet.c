@@ -466,7 +466,7 @@ static void __init rmnet_setup(struct net_device *dev)
 static int __init rmnet_init(void)
 {
 	int ret;
-	struct device *d;
+	__attribute__((unused)) struct device *d;
 	struct net_device *dev;
 	struct rmnet_private *p;
 	unsigned n;

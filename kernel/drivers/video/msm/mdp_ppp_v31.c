@@ -328,7 +328,8 @@ static void mdp_calc_scaleInitPhase_3p1(uint32 in_w,
 	uint32 phase_step_y = 0;
 	uint32 phase_init_x = 0;
 	uint32 phase_init_y = 0;
-	uint32 yscale_filter_sel, xscale_filter_sel;
+	__attribute__((unused)) uint32 yscale_filter_sel;
+	__attribute__((unused)) uint32 xscale_filter_sel;
 	uint32 scale_unit_sel_x, scale_unit_sel_y;
 
 	uint64 numerator, denominator;

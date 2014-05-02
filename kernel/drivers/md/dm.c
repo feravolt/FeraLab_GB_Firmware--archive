@@ -930,7 +930,7 @@ static int dm_request(struct request_queue *q, struct bio *bio)
 	int r = -EIO;
 	int rw = bio_data_dir(bio);
 	struct mapped_device *md = q->queuedata;
-	int cpu;
+	__attribute__((unused)) int cpu;
 
 	down_read(&md->io_lock);
 

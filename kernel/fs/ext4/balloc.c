@@ -391,7 +391,7 @@ void ext4_add_groupblocks(handle_t *handle, struct super_block *sb,
 	ext4_grpblk_t bit;
 	unsigned int i;
 	struct ext4_group_desc *desc;
-	struct ext4_super_block *es;
+	__attribute__((unused)) struct ext4_super_block *es;
 	struct ext4_sb_info *sbi;
 	int err = 0, ret, blk_free_count;
 	ext4_grpblk_t blocks_freed;
@@ -514,7 +514,7 @@ void ext4_free_blocks(handle_t *handle, struct inode *inode,
 			ext4_fsblk_t block, unsigned long count,
 			int metadata)
 {
-	struct super_block *sb;
+	__attribute__((unused)) struct super_block *sb;
 	unsigned long dquot_freed_blocks;
 
 	/* this isn't the right place to decide whether block is metadata

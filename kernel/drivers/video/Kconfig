@@ -220,5 +220,11 @@ source "drivers/gpu/drm/Kconfig"
 source "drivers/gpu/msm/Kconfig"
 source "drivers/gpu/ion/Kconfig"
 
+config VIDEO_OUTPUT_CONTROL
+	tristate "Lowlevel video output switch controls"
+	help
+	  This framework adds support for low-level control of the video 
+	  output switch.
+
 endmenu
 

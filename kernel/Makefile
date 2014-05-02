@@ -1,7 +1,7 @@
 VERSION = 2
 PATCHLEVEL = 6
 SUBLEVEL = 32
-EXTRAVERSION = .21
+EXTRAVERSION = .22
 NAME = FeraKernel
 MAKEFLAGS += -rR --no-print-directory
 
@@ -79,12 +79,9 @@ TOPDIR		:= $(srctree)
 objtree		:= $(CURDIR)
 src		:= $(srctree)
 obj		:= $(objtree)
-
 VPATH		:= $(srctree)$(if $(KBUILD_EXTMOD),:$(KBUILD_EXTMOD))
-
 export srctree objtree VPATH TOPDIR
-
-+CCACHE := ccache
+CCACHE		:= ccache
 
 SUBARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ \
 				  -e s/arm.*/arm/ -e s/sa110/arm/ \
@@ -123,8 +120,8 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 
 HOSTCC       = $(CCACHE) gcc
 HOSTCXX      = $(CCACHE) g++
-HOSTCFLAGS   = -Wall -Wstrict-prototypes -O3 -fomit-frame-pointer
-HOSTCXXFLAGS = -O3
+HOSTCFLAGS   = -Wall -Wstrict-prototypes -Ofast -fomit-frame-pointer
+HOSTCXXFLAGS = -Ofast
 KBUILD_MODULES :=
 KBUILD_BUILTIN := 1
 
@@ -316,7 +313,7 @@ endif
 
 all: vmlinux
 
-KBUILD_CFLAGS += -O3 -Wno-address
+KBUILD_CFLAGS += -Ofast -Wno-address
 KBUILD_CFLAGS += $(call cc-disable-warning,maybe-uninitialized) -fno-inline-functions
 KBUILD_CFLAGS += $(call cc-disable-warning,array-bounds)
 include $(srctree)/arch/$(SRCARCH)/Makefile

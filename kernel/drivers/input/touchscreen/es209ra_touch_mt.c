@@ -620,7 +620,7 @@ static int check_state(struct es209ra_touch *tp, int exp_state)
 
 static u8 get_latest_firmware_ver(struct es209ra_touch *tp)
 {
-	ssize_t length;
+	__attribute__((unused)) ssize_t length;
 	char fw_buf;
 
 	DBGLOG("%s: start\n", __func__);
@@ -652,7 +652,7 @@ static int update_firmware(struct es209ra_touch *tp)
 				0x00, 0x00, 0x3B, 0xCA, 0x53};
 	u8 WriteFlashBlock[143];
 	u8 WriteFlashBlock_FBNO142_Init, read_buf;
-	ssize_t length;
+	__attribute__((unused)) ssize_t length;
 	int err = 0;
 	int i;
 	int j;

@@ -321,7 +321,7 @@ int msm_rpcrouter_create_server_pdev(struct rr_server *server)
 int msm_rpcrouter_init_devices(void)
 {
 	int rc;
-	int major;
+	__attribute__((unused)) int major;
 
 	/* Create the device nodes */
 	msm_rpcrouter_class = class_create(THIS_MODULE, "oncrpc");

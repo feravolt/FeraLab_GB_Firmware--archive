@@ -823,7 +823,9 @@ static int vc_do_resize(struct tty_struct *tty, struct vc_data *vc,
 				unsigned int cols, unsigned int lines)
 {
 	unsigned long old_origin, new_origin, new_scr_end, rlth, rrem, err = 0;
-	unsigned int old_cols, old_rows, old_row_size, old_screen_size;
+	__attribute__((unused)) unsigned int old_cols;
+	unsigned int old_rows, old_row_size;
+	__attribute__((unused)) unsigned int old_screen_size;
 	unsigned int new_cols, new_rows, new_row_size, new_screen_size;
 	unsigned int end, user;
 	unsigned short *newscreen;
@@ -2111,8 +2113,8 @@ static int do_con_write(struct tty_struct *tty, const unsigned char *buf, int co
 	uint8_t inverse;
 	uint8_t width;
 	u16 himask, charmask;
-	const unsigned char *orig_buf = NULL;
-	int orig_count;
+	__attribute__((unused)) const unsigned char *orig_buf = NULL;
+	__attribute__((unused)) int orig_count;
 
 	if (in_interrupt())
 		return count;

@@ -232,7 +232,7 @@ EXPORT_SYMBOL(gpio_get_value);
 
 void gpio_set_value(unsigned gpio, int on)
 {
-	int ret = -ENOTSUPP;
+	__attribute__((unused)) int ret = -ENOTSUPP;
 	struct gpio_chip *chip;
 	unsigned long irq_flags;
 

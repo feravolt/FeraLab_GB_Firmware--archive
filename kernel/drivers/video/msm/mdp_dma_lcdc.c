@@ -98,7 +98,7 @@ int mdp_lcdc_on(struct platform_device *pdev)
 {
 	int lcdc_width;
 	int lcdc_height;
-	int lcdc_bpp;
+	__attribute__((unused)) int lcdc_bpp;
 	int lcdc_border_clr;
 	int lcdc_underflow_clr;
 	int lcdc_hsync_skew;
@@ -324,7 +324,7 @@ int mdp_lcdc_on(struct platform_device *pdev)
 int mdp_lcdc_off(struct platform_device *pdev)
 {
 	int ret = 0;
-	struct msm_fb_data_type *mfd;
+	__attribute__((unused)) struct msm_fb_data_type *mfd;
 	uint32 timer_base = LCDC_BASE;
 	uint32 block = MDP_DMA2_BLOCK;
 

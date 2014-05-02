@@ -1461,7 +1461,7 @@ static int ar6000_ioctl_giwauth(struct net_device *dev,
 #if defined(WIRELESS_EXT) && WIRELESS_EXT > 20
     AR_SOFTC_T *ar = (AR_SOFTC_T *)netdev_priv(dev);
     A_UINT16 param;
-    A_INT32 ret;
+    __attribute__((unused)) A_INT32 ret;
     struct iw_param *data = dwrq;
 
     if (ar->arWmiReady == FALSE) {

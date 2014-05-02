@@ -493,7 +493,7 @@ core_initcall(consistent_init);
 void dma_cache_maint(const void *start, size_t size, int direction)
 {
 	void (*inner_op)(const void *, const void *);
-	void (*outer_op)(unsigned long, unsigned long);
+	__attribute__((unused)) void (*outer_op)(unsigned long, unsigned long);
 
 	switch (direction) {
 	case DMA_FROM_DEVICE:		/* invalidate only */

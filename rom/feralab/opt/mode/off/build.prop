@@ -1,7 +1,7 @@
 ### FeraLab ###
 
 # Build info
-ro.build.date=20.04.2014
+ro.build.date=23.04.2014
 ro.build.date.utc=1308515086
 ro.build.user=FeraVolt
 ro.build.host=FeraLab
@@ -13,7 +13,7 @@ ro.build.version.release=2.3.9
 ro.build.type=user
 ro.build.description=X10i-user 2.3.7 6.0.B.0.743 tB_P release-keys
 ro.build.id=6.0.B.0.743
-ro.build.display.id=6.0.B.0.743  |  v38.1
+ro.build.display.id=6.0.B.0.743  |  v38.2
 ro.build.tags=release-keys
 ro.build.fingerprint=SEMC/X10i_1232-9897/X10i:2.3.7/6.0.B.0.743/tB_P:user/release-keys
 

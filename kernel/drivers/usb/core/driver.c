@@ -1403,7 +1403,7 @@ void usb_autoresume_work(struct work_struct *work)
  */
 void usb_autosuspend_device(struct usb_device *udev)
 {
-	int	status;
+	__attribute__((unused)) int	status;
 
 	status = usb_autopm_do_device(udev, -1);
 	dev_vdbg(&udev->dev, "%s: cnt %d\n",

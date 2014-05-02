@@ -424,7 +424,7 @@ static int scsi_bus_remove(struct device *dev)
 {
 	struct device_driver *drv = dev->driver;
 	struct scsi_device *sdev = to_scsi_device(dev);
-	int err = 0;
+	__attribute__((unused)) int err = 0;
 
 	/* reset the prep_fn back to the default since the
 	 * driver may have altered it and it's being removed */

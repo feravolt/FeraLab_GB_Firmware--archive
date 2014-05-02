@@ -711,7 +711,8 @@ static int
 sg_common_write(Sg_fd * sfp, Sg_request * srp,
 		unsigned char *cmnd, int timeout, int blocking)
 {
-	int k, data_dir;
+	int k;
+	__attribute__((unused)) int data_dir;
 	Sg_device *sdp = sfp->parentdp;
 	sg_io_hdr_t *hp = &srp->header;
 
@@ -2537,7 +2538,7 @@ static void sg_proc_debug_helper(struct seq_file *s, Sg_device * sdp)
 				else
 					cp = "     ";
 			}
-			seq_printf(s, cp);
+			seq_printf(s, "%s", cp);
 			blen = srp->data.bufflen;
 			usg = srp->data.k_use_sg;
 			seq_printf(s, srp->done ? 

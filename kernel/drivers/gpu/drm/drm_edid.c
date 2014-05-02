@@ -532,7 +532,8 @@ struct drm_display_mode *drm_mode_std(struct drm_device *dev,
 				      int timing_level)
 {
 	struct drm_display_mode *mode;
-	int hsize, vsize;
+	int hsize;
+	__attribute__((unused)) int vsize;
 	int vrefresh_rate;
 	unsigned aspect_ratio = (t->vfreq_aspect & EDID_TIMING_ASPECT_MASK)
 		>> EDID_TIMING_ASPECT_SHIFT;

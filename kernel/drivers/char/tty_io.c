@@ -2849,7 +2849,7 @@ struct device *tty_register_device(struct tty_driver *driver, unsigned index,
 	else
 		tty_line_name(driver, index, name);
 
-	return device_create(tty_class, device, dev, NULL, name);
+	return device_create(tty_class, device, dev, NULL, "%s", name);
 }
 EXPORT_SYMBOL(tty_register_device);
 

@@ -153,7 +153,7 @@ static enum hrtimer_restart msm_serial_clock_off(struct hrtimer *timer) {
 	struct uart_port *port = &msm_port->uart;
 	struct circ_buf *xmit = &port->info->xmit;
 	unsigned long flags;
-	int ret = HRTIMER_NORESTART;
+	__attribute__((unused)) int ret = HRTIMER_NORESTART;
 
 	spin_lock_irqsave(&port->lock, flags);
 

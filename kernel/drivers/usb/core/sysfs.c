@@ -808,7 +808,7 @@ int usb_create_sysfs_intf_files(struct usb_interface *intf)
 {
 	struct usb_device *udev = interface_to_usbdev(intf);
 	struct usb_host_interface *alt = intf->cur_altsetting;
-	int retval;
+	__attribute__((unused)) int retval;
 
 	if (intf->sysfs_files_created || intf->unregistering)
 		return 0;

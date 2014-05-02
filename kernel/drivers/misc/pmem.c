@@ -1443,7 +1443,7 @@ static int pmem_unmap_pfn_range(int id, struct vm_area_struct *vma,
 				struct pmem_data *data, unsigned long offset,
 				unsigned long len)
 {
-	int garbage_pages;
+	__attribute__((unused)) int garbage_pages;
 	DLOG("unmap offset %lx len %lx\n", offset, len);
 
 	BUG_ON(!PMEM_IS_PAGE_ALIGNED(len));

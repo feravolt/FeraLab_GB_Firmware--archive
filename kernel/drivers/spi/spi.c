@@ -539,7 +539,7 @@ static int __unregister(struct device *dev, void *master_dev)
  */
 void spi_unregister_master(struct spi_master *master)
 {
-	int dummy;
+	__attribute__((unused)) int dummy;
 
 	dummy = device_for_each_child(master->dev.parent, &master->dev,
 					__unregister);

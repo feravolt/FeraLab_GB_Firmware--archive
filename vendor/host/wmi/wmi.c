@@ -588,7 +588,8 @@ wmi_dot11_hdr_remove(struct wmi_t *wmip, void *osbuf)
 {
     A_UINT8          *datap;
     struct           ieee80211_frame *pwh,wh;
-    A_UINT8          type,subtype;
+    __attribute__((unused)) A_UINT8          type;
+    A_UINT8	     subtype;
     ATH_LLC_SNAP_HDR *llcHdr;
     ATH_MAC_HDR      macHdr;
     A_UINT32         hdrsize;

@@ -18,7 +18,6 @@ cd
 cd ferra/vendor/host
 make clobber
 cd
-rm -f /home/feravolt/ferra/flashtool/firmwares/FeraKernel.ftf
 cd ferra
 echo '>> FeraKernel ready.'
 echo ' '

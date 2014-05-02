@@ -163,7 +163,7 @@ static int __find_interface(struct device *dev, void *data)
 struct usb_interface *usb_find_interface(struct usb_driver *drv, int minor)
 {
 	struct find_interface_arg argb;
-	int retval;
+	__attribute__((unused)) int retval;
 
 	argb.minor = minor;
 	argb.interface = NULL;

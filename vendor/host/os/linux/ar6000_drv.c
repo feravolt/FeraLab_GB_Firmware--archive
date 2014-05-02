@@ -4666,7 +4666,7 @@ void
 ar6000_cac_event(AR_SOFTC_T *ar, A_UINT8 ac, A_UINT8 cacIndication,
                  A_UINT8 statusCode, A_UINT8 *tspecSuggestion)
 {
-    WMM_TSPEC_IE    *tspecIe;
+    __attribute__((unused)) WMM_TSPEC_IE    *tspecIe;
 
     /*
      * This is the TSPEC IE suggestion from AP.
