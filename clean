@@ -12,6 +12,7 @@ echo ' '
 echo '>> Cleaning kernel directory...'
 cd
 cd ferra/kernel
+make mrproper
 make distclean
 make fera_es209ra_defconfig
 cd

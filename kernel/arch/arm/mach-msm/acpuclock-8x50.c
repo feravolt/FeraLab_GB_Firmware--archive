@@ -20,7 +20,7 @@
 #define L_VAL_384MHZ		0xA
 #define L_VAL_768MHZ		0x14
 #define SEMC_ACPU_MIN_UV_MV	900U
-#define SEMC_ACPU_MAX_UV_MV	1400U
+#define SEMC_ACPU_MAX_UV_MV	1450U
 #define SPSS_CLK_CNTL_ADDR	(MSM_CSR_BASE + 0x100)
 #define SPSS_CLK_SEL_ADDR	(MSM_CSR_BASE + 0x104)
 #define SCPLL_CTL_ADDR		(MSM_SCPLL_BASE + 0x4)
@@ -79,6 +79,7 @@ struct clkctl_acpu_speed acpu_freq_tbl_1228[] = {
 	{ 0, 1152000, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1E, 1325 },
 	{ 1, 1190400, ACPU_PLL_3, 0, 0, 0, 0, 259200, 1, 0x1F, 1350 },
 	{ 1, 1228800, ACPU_PLL_3, 0, 0, 0, 0, 259200, 1, 0x20, 1350 },
+	{ 1, 1267200, ACPU_PLL_3, 0, 0, 0, 0, 259200, 1, 0x21, 1425 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 };
 #else
@@ -464,7 +465,7 @@ static void __init acpu_freq_tbl_fixup(void)
 	switch (tcsr_spare2 & 0xF0) {
 	case 0x30:
 	case 0x00:
-		max_acpu_khz = 1228800;
+		max_acpu_khz = 1267200;
 		break;
 	default:
 		goto skip_efuse_fixup;
