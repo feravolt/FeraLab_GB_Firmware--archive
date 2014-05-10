@@ -1,55 +1,4 @@
-/*
- *   This program is free software; you can redistribute it and/or
- *   modify it under the terms of the GNU General Public License
- *   as published by the Free Software Foundation; either version
- *   2 of the License, or (at your option) any later version.
- *
- *   Robert Olsson <robert.olsson@its.uu.se> Uppsala Universitet
- *     & Swedish University of Agricultural Sciences.
- *
- *   Jens Laas <jens.laas@data.slu.se> Swedish University of
- *     Agricultural Sciences.
- *
- *   Hans Liss <hans.liss@its.uu.se>  Uppsala Universitet
- *
- * This work is based on the LPC-trie which is originally descibed in:
- *
- * An experimental study of compression methods for dynamic tries
- * Stefan Nilsson and Matti Tikkanen. Algorithmica, 33(1):19-33, 2002.
- * http://www.nada.kth.se/~snilsson/public/papers/dyntrie2/
- *
- *
- * IP-address lookup using LC-tries. Stefan Nilsson and Gunnar Karlsson
- * IEEE Journal on Selected Areas in Communications, 17(6):1083-1092, June 1999
- *
- *
- * Code from fib_hash has been reused which includes the following header:
- *
- *
- * INET		An implementation of the TCP/IP protocol suite for the LINUX
- *		operating system.  INET is implemented using the  BSD Socket
- *		interface as the means of communication with the user level.
- *
- *		IPv4 FIB: lookup engine and maintenance routines.
- *
- *
- * Authors:	Alexey Kuznetsov, <kuznet@ms2.inr.ac.ru>
- *
- *		This program is free software; you can redistribute it and/or
- *		modify it under the terms of the GNU General Public License
- *		as published by the Free Software Foundation; either version
- *		2 of the License, or (at your option) any later version.
- *
- * Substantial contributions to this work comes from:
- *
- *		David S. Miller, <davem@davemloft.net>
- *		Stephen Hemminger <shemminger@osdl.org>
- *		Paul E. McKenney <paulmck@us.ibm.com>
- *		Patrick McHardy <kaber@trash.net>
- */
-
 #define VERSION "0.408"
-
 #include <asm/uaccess.h>
 #include <asm/system.h>
 #include <linux/bitops.h>
@@ -79,9 +28,7 @@
 #include <net/sock.h>
 #include <net/ip_fib.h>
 #include "fib_lookup.h"
-
 #define MAX_STAT_DEPTH 32
-
 #define KEYLENGTH (8*sizeof(t_key))
 
 typedef unsigned int t_key;
@@ -178,9 +125,6 @@ static inline struct tnode *node_parent_rcu(struct node *node)
 	return rcu_dereference(ret);
 }
 
-/* Same as rcu_assign_pointer
- * but that macro() assumes that value is a pointer.
- */
 static inline void node_set_parent(struct node *node, struct tnode *ptr)
 {
 	smp_wmb();

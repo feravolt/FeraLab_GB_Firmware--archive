@@ -52,7 +52,7 @@ struct clkctl_acpu_speed {
 };
 
 #ifdef CONFIG_X10_UNDERVOLT
-struct clkctl_acpu_speed acpu_freq_tbl_1228[] = {
+struct clkctl_acpu_speed acpu_freq_tbl_1267[] = {
 	{ 0, 19200, ACPU_PLL_TCXO, 0, 0, 0, 0, 14000, 0, 0, 925 },
 	{ 0, 192000, ACPU_PLL_1, 1, 5, 0, 0, 14000, 2, 0, 925 },
 	{ 1, 245760, ACPU_PLL_0, 4, 0, 0, 0, 29000, 0, 0, 925 },
@@ -83,7 +83,7 @@ struct clkctl_acpu_speed acpu_freq_tbl_1228[] = {
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 };
 #else
-struct clkctl_acpu_speed acpu_freq_tbl_1228[] = {
+struct clkctl_acpu_speed acpu_freq_tbl_1267[] = {
 	{ 0, 19200, ACPU_PLL_TCXO, 0, 0, 0, 0, 14000, 0, 0, 1000 },
 	{ 0, 192000, ACPU_PLL_1, 1, 5, 0, 0, 14000, 2, 0, 1000 },
 	{ 1, 245760, ACPU_PLL_0, 4, 0, 0, 0, 29000, 0, 0, 1000 },
@@ -110,11 +110,12 @@ struct clkctl_acpu_speed acpu_freq_tbl_1228[] = {
 	{ 0, 1152000, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1E, 1325 },
 	{ 1, 1190400, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1F, 1350 },
         { 1, 1228800, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x20, 1375 },
+	{ 1, 1267200, ACPU_PLL_3, 0, 0, 0, 0, 259200, 1, 0x21, 1425 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 };
 #endif
 
-static struct clkctl_acpu_speed *acpu_freq_tbl = acpu_freq_tbl_1228;
+static struct clkctl_acpu_speed *acpu_freq_tbl = acpu_freq_tbl_1267;
 #define AXI_S	(&acpu_freq_tbl[1])
 #define PLL0_S	(&acpu_freq_tbl[2])
 #define POWER_COLLAPSE_KHZ 192000
