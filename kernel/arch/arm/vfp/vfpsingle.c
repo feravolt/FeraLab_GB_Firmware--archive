@@ -764,7 +764,8 @@ static u32 vfp_single_fadd(int sd, int sn, s32 m, u32 fpscr)
 	return vfp_single_normaliseround(sd, &vsd, fpscr, exceptions, "fadd");
 }
 
-static u32 vfp
+static u32 vfp_single_fsub(int sd, int sn, s32 m, u32 fpscr)
+{
 	return vfp_single_fadd(sd, sn, vfp_single_packed_negate(m), fpscr);
 }
 

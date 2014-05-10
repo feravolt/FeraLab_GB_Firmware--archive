@@ -412,10 +412,6 @@ static inline void vfp_pm_init(void) { }
 
 void vfp_sync_hwstate(struct thread_info *thread)
 {
-}
-
-void vfp_sync_hwstate(struct thread_info *thread)
-{
 	unsigned int cpu = get_cpu();
 
 	if (vfp_state_in_hw(cpu, thread)) {
