@@ -1,20 +1,3 @@
-/*
- *  linux/arch/arm/vfp/entry.S
- *
- *  Copyright (C) 2004 ARM Limited.
- *  Written by Deep Blue Solutions Limited.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation.
- *
- * Basic entry code, called from the kernel's undefined instruction trap.
- *  r0  = faulted instruction
- *  r2  = faulted PC+4
- *  r9  = successful return
- *  r10 = thread_info structure
- *  lr  = failure return
- */
 #include <asm/thread_info.h>
 #include <asm/vfpmacros.h>
 #include "../kernel/entry-header.S"
@@ -26,7 +9,7 @@ ENTRY(do_vfp)
 	str	r11, [r10, #TI_PREEMPT]
 #endif
 	enable_irq
-	str  	r2, [sp, #S_PC]    @ update regs->ARM_pc for Thumb 2 case
+	str	r2, [sp, #S_PC]		@ update regs->ARM_pc for Thumb 2 case
  	ldr	r4, .LCvfp
 	ldr	r11, [r10, #TI_CPU]	@ CPU number
 	add	r10, r10, #TI_VFPSTATE	@ r10 = workspace
@@ -43,6 +26,7 @@ ENTRY(vfp_null_entry)
 	mov	pc, lr
 ENDPROC(vfp_null_entry)
 
+	.align	2
 .LCvfp:
 	.word	vfp_vector
 
@@ -62,6 +46,7 @@ ENTRY(vfp_testing_entry)
 	mov	pc, r9			@ we have handled the fault
 ENDPROC(vfp_testing_entry)
 
+	.align	2
 VFP_arch_address:
 	.word	VFP_arch
 
