@@ -1,15 +1,3 @@
-/*
- * Copyright (C) 1995-2003 Russell King
- *               2001-2002 Keith Owens
- *     
- * Generate definitions needed by assembly language modules.
- * This code generates raw asm output which is post-processed to extract
- * and format the required data.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation.
- */
 #include <linux/sched.h>
 #include <linux/mm.h>
 #include <asm/mach/arch.h>
@@ -17,20 +5,9 @@
 #include <asm/memory.h>
 #include <asm/procinfo.h>
 #include <linux/kbuild.h>
-
-/*
- * Make sure that the compiler and target are compatible.
- */
 #if defined(__APCS_26__)
 #error Sorry, your compiler targets APCS-26 but this kernel requires APCS-32
 #endif
-/*
- * GCC 3.0, 3.1: general bad code generation.
- * GCC 3.2.0: incorrect function argument offset calculation.
- * GCC 3.2.x: miscompiles NEW_AUX_ENT in fs/binfmt_elf.c
- *            (http://gcc.gnu.org/PR8896) and incorrect structure
- *	      initialisation in fs/jffs2/erase.c
- */
 #if (__GNUC__ == 3 && __GNUC_MINOR__ < 3)
 #error Your compiler is too buggy; it is known to miscompile kernels.
 #error    Known good compilers: 3.3
@@ -52,6 +29,9 @@ int main(void)
   DEFINE(TI_TP_VALUE,		offsetof(struct thread_info, tp_value));
   DEFINE(TI_FPSTATE,		offsetof(struct thread_info, fpstate));
   DEFINE(TI_VFPSTATE,		offsetof(struct thread_info, vfpstate));
+#ifdef CONFIG_SMP
+  DEFINE(VFP_CPU,		offsetof(union vfp_state, hard.cpu));
+#endif
 #ifdef CONFIG_ARM_THUMBEE
   DEFINE(TI_THUMBEE_STATE,	offsetof(struct thread_info, thumbee_state));
 #endif

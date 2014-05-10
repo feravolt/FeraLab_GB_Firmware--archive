@@ -106,31 +106,15 @@ extern void crunch_task_disable(struct thread_info *);
 extern void crunch_task_copy(struct thread_info *, void *);
 extern void crunch_task_restore(struct thread_info *, void *);
 extern void crunch_task_release(struct thread_info *);
-
 extern void iwmmxt_task_disable(struct thread_info *);
 extern void iwmmxt_task_copy(struct thread_info *, void *);
 extern void iwmmxt_task_restore(struct thread_info *, void *);
 extern void iwmmxt_task_release(struct thread_info *);
 extern void iwmmxt_task_switch(struct thread_info *);
-
-extern void vfp_sync_state(struct thread_info *thread);
-
+extern void vfp_sync_hwstate(struct thread_info *);
+extern void vfp_flush_hwstate(struct thread_info *);
 #endif
-
-/*
- * We use bit 30 of the preempt_count to indicate that kernel
- * preemption is occurring.  See <asm/hardirq.h>.
- */
 #define PREEMPT_ACTIVE	0x40000000
-
-/*
- * thread information flags:
- *  TIF_SYSCALL_TRACE	- syscall trace active
- *  TIF_SIGPENDING	- signal pending
- *  TIF_NEED_RESCHED	- rescheduling necessary
- *  TIF_USEDFPU		- FPU was used by this task this quantum (SMP)
- *  TIF_POLLING_NRFLAG	- true if poll_idle() is polling TIF_NEED_RESCHED
- */
 #define TIF_SIGPENDING		0
 #define TIF_NEED_RESCHED	1
 #define TIF_SYSCALL_TRACE	8
@@ -138,18 +122,12 @@ extern void vfp_sync_state(struct thread_info *thread);
 #define TIF_USING_IWMMXT	17
 #define TIF_MEMDIE		18
 #define TIF_FREEZE		19
-
 #define _TIF_SIGPENDING		(1 << TIF_SIGPENDING)
 #define _TIF_NEED_RESCHED	(1 << TIF_NEED_RESCHED)
 #define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
 #define _TIF_POLLING_NRFLAG	(1 << TIF_POLLING_NRFLAG)
 #define _TIF_USING_IWMMXT	(1 << TIF_USING_IWMMXT)
 #define _TIF_FREEZE		(1 << TIF_FREEZE)
-
-/*
- * Change these and you break ASM code in entry-common.S
- */
 #define _TIF_WORK_MASK		0x000000ff
-
 #endif /* __KERNEL__ */
 #endif /* __ASM_ARM_THREAD_INFO_H */

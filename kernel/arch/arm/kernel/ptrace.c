@@ -663,7 +663,7 @@ static int ptrace_getvfpregs(struct task_struct *tsk, void __user *data)
 	union vfp_state *vfp = &thread->vfpstate;
 	struct user_vfp __user *ufp = data;
 
-	vfp_sync_state(thread);
+	vfp_sync_hwstate(thread);
 
 	/* copy the floating point registers */
 	if (copy_to_user(&ufp->fpregs, &vfp->hard.fpregs,
@@ -686,17 +686,15 @@ static int ptrace_setvfpregs(struct task_struct *tsk, void __user *data)
 	union vfp_state *vfp = &thread->vfpstate;
 	struct user_vfp __user *ufp = data;
 
-	vfp_sync_state(thread);
+	vfp_sync_hwstate(thread);
 
-	/* copy the floating point registers */
 	if (copy_from_user(&vfp->hard.fpregs, &ufp->fpregs,
 			   sizeof(vfp->hard.fpregs)))
 		return -EFAULT;
 
-	/* copy the status and control register */
 	if (get_user(vfp->hard.fpscr, &ufp->fpscr))
 		return -EFAULT;
-
+	vfp_flush_hwstate(thread);
 	return 0;
 }
 #endif
@@ -706,9 +704,6 @@ long arch_ptrace(struct task_struct *child, long request, long addr, long data)
 	int ret;
 
 	switch (request) {
-		/*
-		 * read word at location "addr" in the child process.
-		 */
 		case PTRACE_PEEKTEXT:
 		case PTRACE_PEEKDATA:
 			ret = generic_ptrace_peekdata(child, addr, data);

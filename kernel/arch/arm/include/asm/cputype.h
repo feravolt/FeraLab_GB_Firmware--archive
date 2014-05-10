@@ -1,13 +1,11 @@
 #ifndef __ASM_ARM_CPUTYPE_H
 #define __ASM_ARM_CPUTYPE_H
-
 #include <linux/stringify.h>
-
 #define CPUID_ID	0
 #define CPUID_CACHETYPE	1
 #define CPUID_TCM	2
 #define CPUID_TLBTYPE	3
-
+extern unsigned int processor_id;
 #ifdef CONFIG_CPU_CP15
 #define read_cpuid(reg)							\
 	({								\
@@ -19,7 +17,6 @@
 		__val;							\
 	})
 #else
-extern unsigned int processor_id;
 #define read_cpuid(reg) (processor_id)
 #endif
 

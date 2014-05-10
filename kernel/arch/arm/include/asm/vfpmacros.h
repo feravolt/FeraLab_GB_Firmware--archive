@@ -1,11 +1,6 @@
-/*
- * arch/arm/include/asm/vfpmacros.h
- *
- * Assembler-only file containing VFP macros and register definitions.
- */
+#include <asm/hwcap.h>
 #include "vfp.h"
 
-@ Macros to allow building with old toolkits (with no VFP support)
 	.macro	VFPFMRX, rd, sysreg, cond
 	MRC\cond	p10, 7, \rd, \sysreg, cr0, 0	@ FMRX	\rd, \sysreg
 	.endm
