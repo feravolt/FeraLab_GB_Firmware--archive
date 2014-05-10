@@ -395,13 +395,10 @@ copy_thread(unsigned long clone_flags, unsigned long stack_start,
 
 	if (clone_flags & CLONE_SETTLS)
 		thread->tp_value = regs->ARM_r3;
-
+	thread_notify(THREAD_NOTIFY_COPY, thread);
 	return 0;
 }
 
-/*
- * fill in the fpe structure for a core dump...
- */
 int dump_fpu (struct pt_regs *regs, struct user_fp *fp)
 {
 	struct thread_info *thread = current_thread_info();

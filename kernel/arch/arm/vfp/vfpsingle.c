@@ -1,41 +1,7 @@
-/*
- *  linux/arch/arm/vfp/vfpsingle.c
- *
- * This code is derived in part from John R. Housers softfloat library, which
- * carries the following notice:
- *
- * ===========================================================================
- * This C source file is part of the SoftFloat IEC/IEEE Floating-point
- * Arithmetic Package, Release 2.
- *
- * Written by John R. Hauser.  This work was made possible in part by the
- * International Computer Science Institute, located at Suite 600, 1947 Center
- * Street, Berkeley, California 94704.  Funding was partially provided by the
- * National Science Foundation under grant MIP-9311980.  The original version
- * of this code was written as part of a project to build a fixed-point vector
- * processor in collaboration with the University of California at Berkeley,
- * overseen by Profs. Nelson Morgan and John Wawrzynek.  More information
- * is available through the web page `http://HTTP.CS.Berkeley.EDU/~jhauser/
- * arithmetic/softfloat.html'.
- *
- * THIS SOFTWARE IS DISTRIBUTED AS IS, FOR FREE.  Although reasonable effort
- * has been made to avoid it, THIS SOFTWARE MAY CONTAIN FAULTS THAT WILL AT
- * TIMES RESULT IN INCORRECT BEHAVIOR.  USE OF THIS SOFTWARE IS RESTRICTED TO
- * PERSONS AND ORGANIZATIONS WHO CAN AND WILL TAKE FULL RESPONSIBILITY FOR ANY
- * AND ALL LOSSES, COSTS, OR OTHER PROBLEMS ARISING FROM ITS USE.
- *
- * Derivative works are acceptable, even for commercial purposes, so long as
- * (1) they include prominent notice that the work is derivative, and (2) they
- * include prominent notice akin to these three paragraphs for those parts of
- * this code that are retained.
- * ===========================================================================
- */
 #include <linux/kernel.h>
 #include <linux/bitops.h>
-
 #include <asm/div64.h>
 #include <asm/vfp.h>
-
 #include "vfpinstr.h"
 #include "vfp.h"
 
@@ -74,18 +40,10 @@ u32 vfp_single_normaliseround(int sd, struct vfp_single *vs, u32 fpscr, u32 exce
 {
 	u32 significand, incr, rmode;
 	int exponent, shift, underflow;
-
 	vfp_single_dump("pack: in", vs);
 
-	/*
-	 * Infinities and NaNs are a special case.
-	 */
 	if (vs->exponent == 255 && (vs->significand == 0 || exceptions))
 		goto pack;
-
-	/*
-	 * Special-case zero.
-	 */
 	if (vs->significand == 0) {
 		vs->exponent = 0;
 		goto pack;
@@ -93,12 +51,6 @@ u32 vfp_single_normaliseround(int sd, struct vfp_single *vs, u32 fpscr, u32 exce
 
 	exponent = vs->exponent;
 	significand = vs->significand;
-
-	/*
-	 * Normalise first.  Note that we shift the significand up to
-	 * bit 31, so we have VFP_SINGLE_LOW_BITS + 1 below the least
-	 * significant bit.
-	 */
 	shift = 32 - fls(significand);
 	if (shift < 32 && shift) {
 		exponent -= shift;
@@ -110,10 +62,6 @@ u32 vfp_single_normaliseround(int sd, struct vfp_single *vs, u32 fpscr, u32 exce
 	vs->significand = significand;
 	vfp_single_dump("pack: normalised", vs);
 #endif
-
-	/*
-	 * Tiny number?
-	 */
 	underflow = exponent < 0;
 	if (underflow) {
 		significand = vfp_shiftright32jamming(significand, -exponent);
@@ -126,10 +74,6 @@ u32 vfp_single_normaliseround(int sd, struct vfp_single *vs, u32 fpscr, u32 exce
 		if (!(significand & ((1 << (VFP_SINGLE_LOW_BITS + 1)) - 1)))
 			underflow = 0;
 	}
-
-	/*
-	 * Select rounding increment.
-	 */
 	incr = 0;
 	rmode = fpscr & FPSCR_RMODE_MASK;
 
@@ -143,10 +87,6 @@ u32 vfp_single_normaliseround(int sd, struct vfp_single *vs, u32 fpscr, u32 exce
 		incr = (1 << (VFP_SINGLE_LOW_BITS + 1)) - 1;
 
 	pr_debug("VFP: rounding increment = 0x%08x\n", incr);
-
-	/*
-	 * Is our rounding going to overflow?
-	 */
 	if ((significand + incr) < significand) {
 		exponent += 1;
 		significand = (significand >> 1) | (significand & 1);
@@ -157,22 +97,9 @@ u32 vfp_single_normaliseround(int sd, struct vfp_single *vs, u32 fpscr, u32 exce
 		vfp_single_dump("pack: overflow", vs);
 #endif
 	}
-
-	/*
-	 * If any of the low bits (which will be shifted out of the
-	 * number) are non-zero, the result is inexact.
-	 */
 	if (significand & ((1 << (VFP_SINGLE_LOW_BITS + 1)) - 1))
 		exceptions |= FPSCR_IXC;
-
-	/*
-	 * Do our rounding.
-	 */
 	significand += incr;
-
-	/*
-	 * Infinity?
-	 */
 	if (exponent >= 254) {
 		exceptions |= FPSCR_OFC | FPSCR_IXC;
 		if (incr == 0) {
@@ -206,11 +133,6 @@ u32 vfp_single_normaliseround(int sd, struct vfp_single *vs, u32 fpscr, u32 exce
 
 	return exceptions;
 }
-
-/*
- * Propagate the NaN, setting exceptions if it is signalling.
- * 'n' is always a NaN.  'm' may be a number, NaN or infinity.
- */
 static u32
 vfp_propagate_nan(struct vfp_single *vsd, struct vfp_single *vsn,
 		  struct vfp_single *vsm, u32 fpscr)
@@ -224,38 +146,18 @@ vfp_propagate_nan(struct vfp_single *vsd, struct vfp_single *vsn,
 		tm = vfp_single_type(vsm);
 
 	if (fpscr & FPSCR_DEFAULT_NAN)
-		/*
-		 * Default NaN mode - always returns a quiet NaN
-		 */
 		nan = &vfp_single_default_qnan;
 	else {
-		/*
-		 * Contemporary mode - select the first signalling
-		 * NAN, or if neither are signalling, the first
-		 * quiet NAN.
-		 */
 		if (tn == VFP_SNAN || (tm != VFP_SNAN && tn == VFP_QNAN))
 			nan = vsn;
 		else
 			nan = vsm;
-		/*
-		 * Make the NaN quiet.
-		 */
 		nan->significand |= VFP_SINGLE_SIGNIFICAND_QNAN;
 	}
-
 	*vsd = *nan;
-
-	/*
-	 * If one was a signalling NAN, raise invalid operation.
-	 */
 	return tn == VFP_SNAN || tm == VFP_SNAN ? FPSCR_IOC : VFP_NAN_FLAG;
 }
 
-
-/*
- * Extended operations
- */
 static u32 vfp_single_fabs(int sd, int unused, s32 m, u32 fpscr)
 {
 	vfp_put_float(vfp_single_packed_abs(m), sd);
@@ -337,39 +239,21 @@ static u32 vfp_single_fsqrt(int sd, int unused, s32 m, u32 fpscr)
 		vfp_put_float(vfp_single_pack(vsp), sd);
 		return ret;
 	}
-
-	/*
-	 * sqrt(+/- 0) == +/- 0
-	 */
 	if (tm & VFP_ZERO)
 		goto sqrt_copy;
 
-	/*
-	 * Normalise a denormalised number
-	 */
 	if (tm & VFP_DENORMAL)
 		vfp_single_normalise_denormal(&vsm);
 
-	/*
-	 * sqrt(<0) = invalid
-	 */
 	if (vsm.sign)
 		goto sqrt_invalid;
 
 	vfp_single_dump("sqrt", &vsm);
-
-	/*
-	 * Estimate the square root.
-	 */
 	vsd.sign = 0;
 	vsd.exponent = ((vsm.exponent - 127) >> 1) + 127;
 	vsd.significand = vfp_estimate_sqrt_significand(vsm.exponent, vsm.significand) + 2;
 
 	vfp_single_dump("sqrt estimate", &vsd);
-
-	/*
-	 * And now adjust.
-	 */
 	if ((vsd.significand & VFP_SINGLE_LOW_BITS_MASK) <= 5) {
 		if (vsd.significand < 2) {
 			vsd.significand = 0xffffffff;
@@ -394,12 +278,6 @@ static u32 vfp_single_fsqrt(int sd, int unused, s32 m, u32 fpscr)
 	return vfp_single_normaliseround(sd, &vsd, fpscr, 0, "fsqrt");
 }
 
-/*
- * Equal	:= ZC
- * Less than	:= N
- * Greater than	:= C
- * Unordered	:= CV
- */
 static u32 vfp_compare(int sd, int signal_on_qnan, s32 m, u32 fpscr)
 {
 	s32 d;
@@ -409,50 +287,26 @@ static u32 vfp_compare(int sd, int signal_on_qnan, s32 m, u32 fpscr)
 	if (vfp_single_packed_exponent(m) == 255 && vfp_single_packed_mantissa(m)) {
 		ret |= FPSCR_C | FPSCR_V;
 		if (signal_on_qnan || !(vfp_single_packed_mantissa(m) & (1 << (VFP_SINGLE_MANTISSA_BITS - 1))))
-			/*
-			 * Signalling NaN, or signalling on quiet NaN
-			 */
 			ret |= FPSCR_IOC;
 	}
 
 	if (vfp_single_packed_exponent(d) == 255 && vfp_single_packed_mantissa(d)) {
 		ret |= FPSCR_C | FPSCR_V;
 		if (signal_on_qnan || !(vfp_single_packed_mantissa(d) & (1 << (VFP_SINGLE_MANTISSA_BITS - 1))))
-			/*
-			 * Signalling NaN, or signalling on quiet NaN
-			 */
 			ret |= FPSCR_IOC;
 	}
 
 	if (ret == 0) {
 		if (d == m || vfp_single_packed_abs(d | m) == 0) {
-			/*
-			 * equal
-			 */
 			ret |= FPSCR_Z | FPSCR_C;
 		} else if (vfp_single_packed_sign(d ^ m)) {
-			/*
-			 * different signs
-			 */
 			if (vfp_single_packed_sign(d))
-				/*
-				 * d is negative, so d < m
-				 */
 				ret |= FPSCR_N;
 			else
-				/*
-				 * d is positive, so d > m
-				 */
 				ret |= FPSCR_C;
 		} else if ((vfp_single_packed_sign(d) != 0) ^ (d < m)) {
-			/*
-			 * d < m
-			 */
 			ret |= FPSCR_N;
 		} else if ((vfp_single_packed_sign(d) != 0) ^ (d > m)) {
-			/*
-			 * d > m
-			 */
 			ret |= FPSCR_C;
 		}
 	}
@@ -485,14 +339,8 @@ static u32 vfp_single_fcvtd(int dd, int unused, s32 m, u32 fpscr)
 	struct vfp_double vdd;
 	int tm;
 	u32 exceptions = 0;
-
 	vfp_single_unpack(&vsm, m);
-
 	tm = vfp_single_type(&vsm);
-
-	/*
-	 * If we have a signalling NaN, signal invalid operation.
-	 */
 	if (tm == VFP_SNAN)
 		exceptions = FPSCR_IOC;
 
@@ -502,9 +350,6 @@ static u32 vfp_single_fcvtd(int dd, int unused, s32 m, u32 fpscr)
 	vdd.sign = vsm.sign;
 	vdd.significand = (u64)vsm.significand << 32;
 
-	/*
-	 * If we have an infinity or NaN, the exponent must be 2047.
-	 */
 	if (tm & (VFP_INFINITY|VFP_NAN)) {
 		vdd.exponent = 2047;
 		if (tm == VFP_QNAN)
@@ -553,10 +398,6 @@ static u32 vfp_single_ftoui(int sd, int unused, s32 m, u32 fpscr)
 
 	vfp_single_unpack(&vsm, m);
 	vfp_single_dump("VSM", &vsm);
-
-	/*
-	 * Do we have a denormalised number?
-	 */
 	tm = vfp_single_type(&vsm);
 	if (tm & VFP_DENORMAL)
 		exceptions |= FPSCR_IDC;
@@ -570,10 +411,6 @@ static u32 vfp_single_ftoui(int sd, int unused, s32 m, u32 fpscr)
 	} else if (vsm.exponent >= 127 - 1) {
 		int shift = 127 + 31 - vsm.exponent;
 		u32 rem, incr = 0;
-
-		/*
-		 * 2^0 <= m < 2^32-2^8
-		 */
 		d = (vsm.significand << 1) >> shift;
 		rem = vsm.significand << (33 - shift);
 
@@ -613,9 +450,7 @@ static u32 vfp_single_ftoui(int sd, int unused, s32 m, u32 fpscr)
 	}
 
 	pr_debug("VFP: ftoui: d(s%d)=%08x exceptions=%08x\n", sd, d, exceptions);
-
 	vfp_put_float(d, sd);
-
 	return exceptions;
 }
 
@@ -630,13 +465,9 @@ static u32 vfp_single_ftosi(int sd, int unused, s32 m, u32 fpscr)
 	u32 d, exceptions = 0;
 	int rmode = fpscr & FPSCR_RMODE_MASK;
 	int tm;
-
 	vfp_single_unpack(&vsm, m);
 	vfp_single_dump("VSM", &vsm);
 
-	/*
-	 * Do we have a denormalised number?
-	 */
 	tm = vfp_single_type(&vsm);
 	if (vfp_single_type(&vsm) & VFP_DENORMAL)
 		exceptions |= FPSCR_IDC;
@@ -645,9 +476,6 @@ static u32 vfp_single_ftosi(int sd, int unused, s32 m, u32 fpscr)
 		d = 0;
 		exceptions |= FPSCR_IOC;
 	} else if (vsm.exponent >= 127 + 32) {
-		/*
-		 * m >= 2^31-2^7: invalid
-		 */
 		d = 0x7fffffff;
 		if (vsm.sign)
 			d = ~d;
@@ -655,11 +483,8 @@ static u32 vfp_single_ftosi(int sd, int unused, s32 m, u32 fpscr)
 	} else if (vsm.exponent >= 127 - 1) {
 		int shift = 127 + 31 - vsm.exponent;
 		u32 rem, incr = 0;
-
-		/* 2^0 <= m <= 2^31-2^7 */
 		d = (vsm.significand << 1) >> shift;
 		rem = vsm.significand << (33 - shift);
-
 		if (rmode == FPSCR_ROUND_NEAREST) {
 			incr = 0x80000000;
 			if ((d & 1) == 0)
@@ -721,10 +546,6 @@ static struct op fops_ext[32] = {
 	[FEXT_TO_IDX(FEXT_FTOSIZ)]	= { vfp_single_ftosiz, OP_SCALAR },
 };
 
-
-
-
-
 static u32
 vfp_single_fadd_nonnumber(struct vfp_single *vsd, struct vfp_single *vsn,
 			  struct vfp_single *vsm, u32 fpscr)
@@ -737,30 +558,15 @@ vfp_single_fadd_nonnumber(struct vfp_single *vsd, struct vfp_single *vsn,
 	tm = vfp_single_type(vsm);
 
 	if (tn & tm & VFP_INFINITY) {
-		/*
-		 * Two infinities.  Are they different signs?
-		 */
 		if (vsn->sign ^ vsm->sign) {
-			/*
-			 * different signs -> invalid
-			 */
 			exceptions = FPSCR_IOC;
 			vsp = &vfp_single_default_qnan;
 		} else {
-			/*
-			 * same signs -> valid
-			 */
 			vsp = vsn;
 		}
 	} else if (tn & VFP_INFINITY && tm & VFP_NUMBER) {
-		/*
-		 * One infinity and one number -> infinity
-		 */
 		vsp = vsn;
 	} else {
-		/*
-		 * 'n' is a NaN of some type
-		 */
 		return vfp_propagate_nan(vsd, vsn, vsm, fpscr);
 	}
 	*vsd = *vsp;
@@ -780,40 +586,18 @@ vfp_single_add(struct vfp_single *vsd, struct vfp_single *vsn,
 		vfp_single_dump("VSM", vsm);
 	}
 
-	/*
-	 * Ensure that 'n' is the largest magnitude number.  Note that
-	 * if 'n' and 'm' have equal exponents, we do not swap them.
-	 * This ensures that NaN propagation works correctly.
-	 */
 	if (vsn->exponent < vsm->exponent) {
 		struct vfp_single *t = vsn;
 		vsn = vsm;
 		vsm = t;
 	}
-
-	/*
-	 * Is 'n' an infinity or a NaN?  Note that 'm' may be a number,
-	 * infinity or a NaN here.
-	 */
 	if (vsn->exponent == 255)
 		return vfp_single_fadd_nonnumber(vsd, vsn, vsm, fpscr);
 
-	/*
-	 * We have two proper numbers, where 'vsn' is the larger magnitude.
-	 *
-	 * Copy 'n' to 'd' before doing the arithmetic.
-	 */
 	*vsd = *vsn;
-
-	/*
-	 * Align both numbers.
-	 */
 	exp_diff = vsn->exponent - vsm->exponent;
 	m_sig = vfp_shiftright32jamming(vsm->significand, exp_diff);
 
-	/*
-	 * If the signs are different, we are really subtracting.
-	 */
 	if (vsn->sign ^ vsm->sign) {
 		m_sig = vsn->significand - m_sig;
 		if ((s32)m_sig < 0) {
@@ -836,24 +620,13 @@ vfp_single_multiply(struct vfp_single *vsd, struct vfp_single *vsn, struct vfp_s
 {
 	vfp_single_dump("VSN", vsn);
 	vfp_single_dump("VSM", vsm);
-
-	/*
-	 * Ensure that 'n' is the largest magnitude number.  Note that
-	 * if 'n' and 'm' have equal exponents, we do not swap them.
-	 * This ensures that NaN propagation works correctly.
-	 */
 	if (vsn->exponent < vsm->exponent) {
 		struct vfp_single *t = vsn;
 		vsn = vsm;
 		vsm = t;
 		pr_debug("VFP: swapping M <-> N\n");
 	}
-
 	vsd->sign = vsn->sign ^ vsm->sign;
-
-	/*
-	 * If 'n' is an infinity or NaN, handle it.  'm' may be anything.
-	 */
 	if (vsn->exponent == 255) {
 		if (vsn->significand || (vsm->exponent == 255 && vsm->significand))
 			return vfp_propagate_nan(vsd, vsn, vsm, fpscr);
@@ -866,24 +639,14 @@ vfp_single_multiply(struct vfp_single *vsd, struct vfp_single *vsn, struct vfp_s
 		return 0;
 	}
 
-	/*
-	 * If 'm' is zero, the result is always zero.  In this case,
-	 * 'n' may be zero or a number, but it doesn't matter which.
-	 */
 	if ((vsm->exponent | vsm->significand) == 0) {
 		vsd->exponent = 0;
 		vsd->significand = 0;
 		return 0;
 	}
 
-	/*
-	 * We add 2 to the destination exponent for the same reason as
-	 * the addition case - though this time we have +1 from each
-	 * input operand.
-	 */
 	vsd->exponent = vsn->exponent + vsm->exponent - 127 + 2;
 	vsd->significand = vfp_hi64to32jamming((u64)vsn->significand * vsm->significand);
-
 	vfp_single_dump("VSD", vsd);
 	return 0;
 }
@@ -923,45 +686,24 @@ vfp_single_multiply_accumulate(int sd, int sn, s32 m, u32 fpscr, u32 negate, cha
 	return vfp_single_normaliseround(sd, &vsd, fpscr, exceptions, func);
 }
 
-/*
- * Standard operations
- */
-
-/*
- * sd = sd + (sn * sm)
- */
 static u32 vfp_single_fmac(int sd, int sn, s32 m, u32 fpscr)
 {
 	return vfp_single_multiply_accumulate(sd, sn, m, fpscr, 0, "fmac");
 }
-
-/*
- * sd = sd - (sn * sm)
- */
 static u32 vfp_single_fnmac(int sd, int sn, s32 m, u32 fpscr)
 {
 	return vfp_single_multiply_accumulate(sd, sn, m, fpscr, NEG_MULTIPLY, "fnmac");
 }
-
-/*
- * sd = -sd + (sn * sm)
- */
 static u32 vfp_single_fmsc(int sd, int sn, s32 m, u32 fpscr)
 {
 	return vfp_single_multiply_accumulate(sd, sn, m, fpscr, NEG_SUBTRACT, "fmsc");
 }
 
-/*
- * sd = -sd - (sn * sm)
- */
 static u32 vfp_single_fnmsc(int sd, int sn, s32 m, u32 fpscr)
 {
 	return vfp_single_multiply_accumulate(sd, sn, m, fpscr, NEG_SUBTRACT | NEG_MULTIPLY, "fnmsc");
 }
 
-/*
- * sd = sn * sm
- */
 static u32 vfp_single_fmul(int sd, int sn, s32 m, u32 fpscr)
 {
 	struct vfp_single vsd, vsn, vsm;
@@ -982,9 +724,6 @@ static u32 vfp_single_fmul(int sd, int sn, s32 m, u32 fpscr)
 	return vfp_single_normaliseround(sd, &vsd, fpscr, exceptions, "fmul");
 }
 
-/*
- * sd = -(sn * sm)
- */
 static u32 vfp_single_fnmul(int sd, int sn, s32 m, u32 fpscr)
 {
 	struct vfp_single vsd, vsn, vsm;
@@ -1006,20 +745,12 @@ static u32 vfp_single_fnmul(int sd, int sn, s32 m, u32 fpscr)
 	return vfp_single_normaliseround(sd, &vsd, fpscr, exceptions, "fnmul");
 }
 
-/*
- * sd = sn + sm
- */
 static u32 vfp_single_fadd(int sd, int sn, s32 m, u32 fpscr)
 {
 	struct vfp_single vsd, vsn, vsm;
 	u32 exceptions;
 	s32 n = vfp_get_float(sn);
-
 	pr_debug("VFP: s%u = %08x\n", sn, n);
-
-	/*
-	 * Unpack and normalise denormals.
-	 */
 	vfp_single_unpack(&vsn, n);
 	if (vsn.exponent == 0 && vsn.significand)
 		vfp_single_normalise_denormal(&vsn);
@@ -1033,71 +764,34 @@ static u32 vfp_single_fadd(int sd, int sn, s32 m, u32 fpscr)
 	return vfp_single_normaliseround(sd, &vsd, fpscr, exceptions, "fadd");
 }
 
-/*
- * sd = sn - sm
- */
-static u32 vfp_single_fsub(int sd, int sn, s32 m, u32 fpscr)
-{
-	/*
-	 * Subtraction is addition with one sign inverted.
-	 */
+static u32 vfp
 	return vfp_single_fadd(sd, sn, vfp_single_packed_negate(m), fpscr);
 }
 
-/*
- * sd = sn / sm
- */
 static u32 vfp_single_fdiv(int sd, int sn, s32 m, u32 fpscr)
 {
 	struct vfp_single vsd, vsn, vsm;
 	u32 exceptions = 0;
 	s32 n = vfp_get_float(sn);
 	int tm, tn;
-
 	pr_debug("VFP: s%u = %08x\n", sn, n);
-
 	vfp_single_unpack(&vsn, n);
 	vfp_single_unpack(&vsm, m);
-
 	vsd.sign = vsn.sign ^ vsm.sign;
-
 	tn = vfp_single_type(&vsn);
 	tm = vfp_single_type(&vsm);
 
-	/*
-	 * Is n a NAN?
-	 */
 	if (tn & VFP_NAN)
 		goto vsn_nan;
-
-	/*
-	 * Is m a NAN?
-	 */
 	if (tm & VFP_NAN)
 		goto vsm_nan;
-
-	/*
-	 * If n and m are infinity, the result is invalid
-	 * If n and m are zero, the result is invalid
-	 */
 	if (tm & tn & (VFP_INFINITY|VFP_ZERO))
 		goto invalid;
-
-	/*
-	 * If n is infinity, the result is infinity
-	 */
 	if (tn & VFP_INFINITY)
 		goto infinity;
-
-	/*
-	 * If m is zero, raise div0 exception
-	 */
 	if (tm & VFP_ZERO)
 		goto divzero;
 
-	/*
-	 * If m is infinity, or n is zero, the result is zero
-	 */
 	if (tm & VFP_INFINITY || tn & VFP_ZERO)
 		goto zero;
 
@@ -1106,9 +800,6 @@ static u32 vfp_single_fdiv(int sd, int sn, s32 m, u32 fpscr)
 	if (tm & VFP_DENORMAL)
 		vfp_single_normalise_denormal(&vsm);
 
-	/*
-	 * Ok, we have two numbers, we can perform division.
-	 */
 	vsd.exponent = vsn.exponent - vsm.exponent + 127 - 1;
 	vsm.significand <<= 1;
 	if (vsm.significand <= (2 * vsn.significand)) {
@@ -1178,24 +869,12 @@ u32 vfp_single_cpdo(u32 inst, u32 fpscr)
 	struct op *fop;
 
 	vecstride = 1 + ((fpscr & FPSCR_STRIDE_MASK) == FPSCR_STRIDE_MASK);
-
 	fop = (op == FOP_EXT) ? &fops_ext[FEXT_TO_IDX(inst)] : &fops[FOP_TO_IDX(op)];
 
-	/*
-	 * fcvtsd takes a dN register number as destination, not sN.
-	 * Technically, if bit 0 of dd is set, this is an invalid
-	 * instruction.  However, we ignore this for efficiency.
-	 * It also only operates on scalars.
-	 */
 	if (fop->flags & OP_DD)
 		dest = vfp_get_dd(inst);
 	else
 		dest = vfp_get_sd(inst);
-
-	/*
-	 * If destination bank is zero, vector length is always '1'.
-	 * ARM DDI0100F C5.1.3, C5.3.2.
-	 */
 	if ((fop->flags & OP_SCALAR) || FREG_BANK(dest) == 0)
 		veclen = 0;
 	else
@@ -1225,13 +904,7 @@ u32 vfp_single_cpdo(u32 inst, u32 fpscr)
 		except = fop->fn(dest, sn, m, fpscr);
 		pr_debug("VFP: itr%d: exceptions=%08x\n",
 			 vecitr >> FPSCR_LENGTH_BIT, except);
-
 		exceptions |= except;
-
-		/*
-		 * CHECK: It appears to be undefined whether we stop when
-		 * we encounter an exception.  We continue.
-		 */
 		dest = FREG_BANK(dest) + ((FREG_IDX(dest) + vecstride) & 7);
 		sn = FREG_BANK(sn) + ((FREG_IDX(sn) + vecstride) & 7);
 		if (FREG_BANK(sm) != 0)
@@ -1242,3 +915,4 @@ u32 vfp_single_cpdo(u32 inst, u32 fpscr)
  invalid:
 	return (u32)-1;
 }
+

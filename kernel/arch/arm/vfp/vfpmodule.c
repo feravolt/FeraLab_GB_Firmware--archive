@@ -12,15 +12,8 @@
 void vfp_testing_entry(void);
 void vfp_support_entry(void);
 void vfp_null_entry(void);
-
 void (*vfp_vector)(void) = vfp_null_entry;
 union vfp_state *last_VFP_context[NR_CPUS];
-
-/*
- * Dual-use variable.
- * Used in startup: set to non-zero if VFP checks fail
- * After startup, holds VFP architecture
- */
 unsigned int VFP_arch;
 
 static int vfp_notifier(struct notifier_block *self, unsigned long cmd, void *v)
