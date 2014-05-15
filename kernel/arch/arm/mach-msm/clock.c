@@ -1,19 +1,3 @@
-/* arch/arm/mach-msm/clock.c
- *
- * Copyright (C) 2007 Google, Inc.
- * Copyright (c) 2007-2010, Code Aurora Forum. All rights reserved.
- *
- * This software is licensed under the terms of the GNU General Public
- * License version 2, as published by the Free Software Foundation, and
- * may be copied, distributed, and modified under those terms.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
- * GNU General Public License for more details.
- *
- */
-
 #include <linux/version.h>
 #include <linux/kernel.h>
 #include <linux/init.h>
@@ -26,7 +10,6 @@
 #include <linux/ctype.h>
 #include <linux/pm_qos_params.h>
 #include <mach/clk.h>
-
 #include "clock.h"
 #include "proc_comm.h"
 
