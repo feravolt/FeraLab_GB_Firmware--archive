@@ -1,16 +1,3 @@
-/*
- *  linux/arch/arm/kernel/head-common.S
- *
- *  Copyright (C) 1994-2002 Russell King
- *  Copyright (c) 2003 ARM Limited
- *  All Rights Reserved
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation.
- *
- */
-
 #define ATAG_CORE 0x54410001
 #define ATAG_CORE_SIZE ((2*4 + 3*4) >> 2)
 #define ATAG_CORE_SIZE_EMPTY ((2*4) >> 2)
@@ -29,15 +16,6 @@ __switch_data:
 	.long	cr_alignment			@ r7
 	.long	init_thread_union + THREAD_START_SP @ sp
 
-/*
- * The following fragment of code is executed with the MMU on in MMU mode,
- * and uses absolute addresses; this is not position independent.
- *
- *  r0  = cp#15 control register
- *  r1  = machine ID
- *  r2  = atags pointer
- *  r9  = processor ID
- */
 __mmap_switched:
 	adr	r3, __switch_data + 4
 
@@ -53,9 +31,7 @@ __mmap_switched:
 	strcc	fp, [r6],#4
 	bcc	1b
 
- ARM(	ldmia	r3, {r4, r5, r6, r7, sp})
- THUMB(	ldmia	r3, {r4, r5, r6, r7}	)
- THUMB(	ldr	sp, [r3, #16]		)
+	ldmia	r3, {r4, r5, r6, r7, sp}
 	str	r9, [r4]			@ Save processor ID
 	str	r1, [r5]			@ Save machine type
 	str	r2, [r6]			@ Save atags pointer
@@ -64,15 +40,6 @@ __mmap_switched:
 	b	start_kernel
 ENDPROC(__mmap_switched)
 
-/*
- * Exception handling.  Something went wrong and we can't proceed.  We
- * ought to tell the user, but since we don't have any guarantee that
- * we're even running on the right architecture, we do virtually nothing.
- *
- * If CONFIG_DEBUG_LL is set we try to print out something about the error
- * and hope for the best (useful if bootloader fails to pass a proper
- * machine ID for example).
- */
 __error_p:
 #ifdef CONFIG_DEBUG_LL
 	adr	r0, str_p1
@@ -127,9 +94,6 @@ str_a3:	.asciz	"\nPlease check your kernel config and/or bootloader.\n"
 
 __error:
 #ifdef CONFIG_ARCH_RPC
-/*
- * Turn the screen red on a error - RiscPC only.
- */
 	mov	r0, #0x02000000
 	mov	r3, #0x11
 	orr	r3, r3, r3, lsl #8
@@ -143,20 +107,6 @@ __error:
 	b	1b
 ENDPROC(__error)
 
-
-/*
- * Read processor ID register (CP#15, CR0), and look up in the linker-built
- * supported processor list.  Note that we can't use the absolute addresses
- * for the __proc_info lists since we aren't running with the MMU on
- * (and therefore, we are not in the correct address space).  We have to
- * calculate the offset.
- *
- *	r9 = cpuid
- * Returns:
- *	r3, r4, r6 corrupted
- *	r5 = proc_info pointer in physical address space
- *	r9 = cpuid (preserved)
- */
 __lookup_processor_type:
 	adr	r3, 3f
 	ldmia	r3, {r5 - r7}
@@ -175,9 +125,6 @@ __lookup_processor_type:
 2:	mov	pc, lr
 ENDPROC(__lookup_processor_type)
 
-/*
- * This provides a C-API version of the above function.
- */
 ENTRY(lookup_processor_type)
 	stmfd	sp!, {r4 - r7, r9, lr}
 	mov	r9, r0
@@ -185,11 +132,6 @@ ENTRY(lookup_processor_type)
 	mov	r0, r5
 	ldmfd	sp!, {r4 - r7, r9, pc}
 ENDPROC(lookup_processor_type)
-
-/*
- * Look in <asm/procinfo.h> and arch/arm/kernel/arch.[ch] for
- * more information about the __proc_info and __arch_info structures.
- */
 	.align	2
 3:	.long	__proc_info_begin
 	.long	__proc_info_end
@@ -197,17 +139,6 @@ ENDPROC(lookup_processor_type)
 	.long	__arch_info_begin
 	.long	__arch_info_end
 
-/*
- * Lookup machine architecture in the linker-build list of architectures.
- * Note that we can't use the absolute addresses for the __arch_info
- * lists since we aren't running with the MMU on (and therefore, we are
- * not in the correct address space).  We have to calculate the offset.
- *
- *  r1 = machine architecture number
- * Returns:
- *  r3, r4, r6 corrupted
- *  r5 = mach_info pointer in physical address space
- */
 __lookup_machine_type:
 	adr	r3, 4b
 	ldmia	r3, {r4, r5, r6}
@@ -224,9 +155,6 @@ __lookup_machine_type:
 2:	mov	pc, lr
 ENDPROC(__lookup_machine_type)
 
-/*
- * This provides a C-API version of the above function.
- */
 ENTRY(lookup_machine_type)
 	stmfd	sp!, {r4 - r6, lr}
 	mov	r1, r0
@@ -235,22 +163,9 @@ ENTRY(lookup_machine_type)
 	ldmfd	sp!, {r4 - r6, pc}
 ENDPROC(lookup_machine_type)
 
-/* Determine validity of the r2 atags pointer.  The heuristic requires
- * that the pointer be aligned, in the first 16k of physical RAM and
- * that the ATAG_CORE marker is first and present.  Future revisions
- * of this function may be more lenient with the physical address and
- * may also be able to move the ATAGS block if necessary.
- *
- * r8  = machinfo
- *
- * Returns:
- *  r2 either valid atags pointer, or zero
- *  r5, r6 corrupted
- */
 __vet_atags:
 	tst	r2, #0x3			@ aligned?
 	bne	1f
-
 	ldr	r5, [r2, #0]			@ is first tag ATAG_CORE?
 	cmp	r5, #ATAG_CORE_SIZE
 	cmpne	r5, #ATAG_CORE_SIZE_EMPTY
@@ -259,7 +174,6 @@ __vet_atags:
 	ldr	r6, =ATAG_CORE
 	cmp	r5, r6
 	bne	1f
-
 	mov	pc, lr				@ atag pointer is ok
 
 1:	mov	r2, #0
