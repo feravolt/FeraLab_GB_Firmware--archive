@@ -1058,10 +1058,7 @@ static inline bool should_reclaim_stall(unsigned long nr_taken,
 {
 	int lumpy_stall_priority;
 
-	/* kswapd should not stall on sync IO */
 	if (current_is_kswapd())
-		return false;
-	if (!sc->lumpy_reclaim_mode)
 		return false;
 	if (nr_freed == nr_taken)
 		return false;
