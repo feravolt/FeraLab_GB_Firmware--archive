@@ -8,6 +8,7 @@ persist.sys.usb.config=adb
 ro.opengles.version=131072
 ro.product.device=es209ra
 ro.kernel.version=2.6.32.23-FeraKernel
+ro.gps.agps_provider=customized
 ro.ril.def.agps.feature=1
 ro.ril.def.agps.mode=2
 ro.semc.version.sw=1232-9897

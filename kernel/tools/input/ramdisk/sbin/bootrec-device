@@ -33,5 +33,6 @@ sleep 1
 echo '0' > /sys/class/leds/lv5219lg:rgb1:blue/brightness
 echo '0' > /sys/class/leds/lv5219lg:rgb1:red/brightness
 echo '0' > /sys/class/leds/lv5219lg:rgb1:green/brightness
+
 kill -9 $!
 
