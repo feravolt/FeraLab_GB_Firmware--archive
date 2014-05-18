@@ -1,31 +1,3 @@
-/*
- *  kernel/sched.c
- *
- *  Kernel scheduler and related syscalls
- *
- *  Copyright (C) 1991-2002  Linus Torvalds
- *
- *  1996-12-23  Modified by Dave Grothe to fix bugs in semaphores and
- *		make semaphores SMP safe
- *  1998-11-19	Implemented schedule_timeout() and related stuff
- *		by Andrea Arcangeli
- *  2002-01-04	New ultra-scalable O(1) scheduler by Ingo Molnar:
- *		hybrid priority-list and round-robin design with
- *		an array-switch method of distributing timeslices
- *		and per-CPU runqueues.  Cleanups and useful suggestions
- *		by Davide Libenzi, preemptible kernel bits by Robert Love.
- *  2003-09-03	Interactivity tuning by Con Kolivas.
- *  2004-04-02	Scheduler domains code by Nick Piggin
- *  2007-04-15  Work begun on replacing all interactivity tuning with a
- *              fair scheduling design by Con Kolivas.
- *  2007-05-05  Load balancing (smp-nice) and other improvements
- *              by Peter Williams
- *  2007-05-06  Interactivity improvements to CFS by Mike Galbraith
- *  2007-07-01  Group scheduling enhancements by Srivatsa Vaddagiri
- *  2007-11-29  RT balancing improvements by Steven Rostedt, Gregory Haskins,
- *              Thomas Gleixner, Mike Kravetz
- */
-
 #include <linux/mm.h>
 #include <linux/module.h>
 #include <linux/nmi.h>
@@ -73,49 +45,20 @@
 #include <linux/ctype.h>
 #include <linux/ftrace.h>
 #include <trace/sched.h>
-
 #include <asm/tlb.h>
 #include <asm/irq_regs.h>
-
 #include "sched_cpupri.h"
-
-/*
- * Convert user-nice values [ -20 ... 0 ... 19 ]
- * to static priority [ MAX_RT_PRIO..MAX_PRIO-1 ],
- * and back.
- */
+#include "sched_autogroup.h"
 #define NICE_TO_PRIO(nice)	(MAX_RT_PRIO + (nice) + 20)
 #define PRIO_TO_NICE(prio)	((prio) - MAX_RT_PRIO - 20)
 #define TASK_NICE(p)		PRIO_TO_NICE((p)->static_prio)
-
-/*
- * 'User priority' is the nice value converted to something we
- * can work with better when scaling various scheduler parameters,
- * it's a [ 0 ... 39 ] range.
- */
 #define USER_PRIO(p)		((p)-MAX_RT_PRIO)
 #define TASK_USER_PRIO(p)	USER_PRIO((p)->static_prio)
 #define MAX_USER_PRIO		(USER_PRIO(MAX_PRIO))
-
-/*
- * Helpers for converting nanosecond timing to jiffy resolution
- */
 #define NS_TO_JIFFIES(TIME)	((unsigned long)(TIME) / (NSEC_PER_SEC / HZ))
-
 #define NICE_0_LOAD		SCHED_LOAD_SCALE
 #define NICE_0_SHIFT		SCHED_LOAD_SHIFT
-
-/*
- * These are the 'tuning knobs' of the scheduler:
- *
- * default timeslice is 100 msecs (used only for SCHED_RR tasks).
- * Timeslices get refilled after they expire.
- */
 #define DEF_TIMESLICE		(100 * HZ / 1000)
-
-/*
- * single value that denotes runtime == period, ie unlimited time.
- */
 #define RUNTIME_INF	((u64)~0ULL)
 
 DEFINE_TRACE(sched_wait_task);
@@ -125,22 +68,12 @@ DEFINE_TRACE(sched_switch);
 DEFINE_TRACE(sched_migrate_task);
 
 #ifdef CONFIG_SMP
-
 static void double_rq_lock(struct rq *rq1, struct rq *rq2);
-
-/*
- * Divide a load by a sched group cpu_power : (load / sg->__cpu_power)
- * Since cpu_power is a 'constant', we can use a reciprocal divide.
- */
 static inline u32 sg_div_cpu_power(const struct sched_group *sg, u32 load)
 {
 	return reciprocal_divide(load, sg->reciprocal_cpu_power);
 }
 
-/*
- * Each time a sched group cpu_power is changed,
- * we must compute its reciprocal value
- */
 static inline void sg_inc_cpu_power(struct sched_group *sg, u32 val)
 {
 	sg->__cpu_power += val;
@@ -1655,6 +1588,7 @@ static void cfs_rq_set_shares(struct cfs_rq *cfs_rq, unsigned long shares)
 #include "sched_idletask.c"
 #include "sched_fair.c"
 #include "sched_rt.c"
+#include "sched_autogroup.c"
 #ifdef CONFIG_SCHED_DEBUG
 # include "sched_debug.c"
 #endif
@@ -8552,7 +8486,7 @@ void __init sched_init(void)
 #ifdef CONFIG_GROUP_SCHED
 	list_add(&init_task_group.list, &task_groups);
 	INIT_LIST_HEAD(&init_task_group.children);
-
+	autogroup_init(&init_task);
 #ifdef CONFIG_USER_SCHED
 	INIT_LIST_HEAD(&root_task_group.children);
 	init_task_group.parent = &root_task_group;
@@ -9080,21 +9014,9 @@ void sched_destroy_group(struct task_group *tg)
 	call_rcu(&tg->rcu, free_sched_group_rcu);
 }
 
-/* change task's runqueue when it moves between groups.
- *	The caller of this function should have put the task in its new group
- *	by now. This function just updates tsk->se.cfs_rq and tsk->se.parent to
- *	reflect its new group.
- */
-void sched_move_task(struct task_struct *tsk)
+void __sched_move_task(struct task_struct *tsk, struct rq *rq)
 {
 	int on_rq, running;
-	unsigned long flags;
-	struct rq *rq;
-
-	rq = task_rq_lock(tsk, &flags);
-
-	update_rq_clock(rq);
-
 	running = task_current(rq, tsk);
 	on_rq = tsk->se.on_rq;
 
@@ -9114,7 +9036,15 @@ void sched_move_task(struct task_struct *tsk)
 		tsk->sched_class->set_curr_task(rq);
 	if (on_rq)
 		enqueue_task(rq, tsk, 0);
+}
+ 
+void sched_move_task(struct task_struct *tsk)
+{
+	struct rq *rq;
+	unsigned long flags;
 
+	rq = task_rq_lock(tsk, &flags);
+	__sched_move_task(tsk, rq);
 	task_rq_unlock(rq, &flags);
 }
 #endif /* CONFIG_GROUP_SCHED */

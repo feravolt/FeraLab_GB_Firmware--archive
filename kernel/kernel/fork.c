@@ -881,14 +881,14 @@ static int copy_signal(unsigned long clone_flags, struct task_struct *tsk)
 	task_io_accounting_init(&sig->ioac);
 	sig->sum_sched_runtime = 0;
 	taskstats_tgid_init(sig);
-
 	task_lock(current->group_leader);
 	memcpy(sig->rlim, current->signal->rlim, sizeof sig->rlim);
 	task_unlock(current->group_leader);
-
 	acct_init_pacct(&sig->pacct);
-
 	tty_audit_fork(sig);
+	sched_autogroup_fork(sig);
+	sig->oom_adj = current->signal->oom_adj;
+ 	sig->oom_score_adj = current->signal->oom_score_adj;
 
 	return 0;
 }
