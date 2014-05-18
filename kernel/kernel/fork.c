@@ -887,9 +887,6 @@ static int copy_signal(unsigned long clone_flags, struct task_struct *tsk)
 	acct_init_pacct(&sig->pacct);
 	tty_audit_fork(sig);
 	sched_autogroup_fork(sig);
-	sig->oom_adj = current->signal->oom_adj;
- 	sig->oom_score_adj = current->signal->oom_score_adj;
-
 	return 0;
 }
 
