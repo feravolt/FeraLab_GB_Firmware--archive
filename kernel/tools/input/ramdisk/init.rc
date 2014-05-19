@@ -181,8 +181,8 @@ on boot
     write /sys/module/lowmemorykiller/parameters/fudgeswap 512
     write /proc/1/oom_adj -16
     write /sys/module/wakelock/parameters/debug_mask 7
-    write /proc/sys/vm/dirty_expire_centisecs 1000
-    write /proc/sys/vm/dirty_writeback_centisecs 500
+    write /proc/sys/vm/dirty_expire_centisecs 200
+    write /proc/sys/vm/dirty_writeback_centisecs 5
     write /proc/sys/vm/dirty_ratio 10
     write /proc/sys/vm/dirty_background_ratio 5
     chmod 0660 /sys/class/rfkill/rfkill0/state
