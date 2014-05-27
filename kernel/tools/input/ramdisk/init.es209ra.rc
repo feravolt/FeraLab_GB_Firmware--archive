@@ -119,9 +119,11 @@ on boot
     chmod 0664 /sys/kernel/mm/ksm/sleep_millisecs
     chown root system /sys/kernel/mm/ksm/run
     chmod 0664 /sys/kernel/mm/ksm/run
-    write /sys/kernel/mm/ksm/sleep_millisecs 1800
-    write /sys/kernel/mm/ksm/pages_to_scan 256
+    write /sys/kernel/mm/ksm/pages_to_scan 120
+    write /sys/kernel/mm/ksm/sleep_millisecs 900
+    write /sys/kernel/mm/ksm/run 1
     write /proc/sys/kernel/sysrq 0
+    write /proc/sys/vm/page-cluster 0
 
 on property:init.svc.bluetoothd=running
     write /sys/devices/virtual/bluetooth/hci0/link_supervision_timeout 6400

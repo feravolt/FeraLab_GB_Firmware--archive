@@ -188,11 +188,16 @@ LINUXINCLUDE    := -Iinclude \
                    -include include/linux/autoconf.h
 KBUILD_CPPFLAGS := -D__KERNEL__
 
-KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
-		   -fno-strict-aliasing -fno-common \
-		   -Wno-unused-but-set-variable -Wno-uninitialized \
-		   -fno-delete-null-pointer-checks -ftree-vectorize \
-		   -mno-unaligned-access -Wno-sizeof-pointer-memaccess
+KBUILD_CFLAGS := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
+	-fno-strict-aliasing -fno-common -mno-unaligned-access \
+	-Wno-unused-but-set-variable -Wno-uninitialized \
+	-fno-delete-null-pointer-checks -ftree-vectorize \
+	-fivopts -funsafe-loop-optimizations -fsched-spec-load \
+	-ftree-loop-linear -floop-strip-mine -floop-block \
+	-ftree-loop-distribution -ftree-loop-im -ftree-loop-ivcanon \
+	-floop-parallelize-all -floop-interchange -fgraphite-identity \
+	-Wno-unused-variable -fsingle-precision-constant \
+	-march=armv7-a -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp
 
 KBUILD_AFLAGS   := -D__ASSEMBLY__
 KERNELRELEASE = $(shell cat include/config/kernel.release 2> /dev/null)
@@ -354,7 +359,7 @@ $(warning "WARNING: Appending $$K$(1) ($(K$(1))) from $(origin K$(1)) to kernel 
 ifneq ($(KCPPFLAGS),)
         $(call warn-assign,CPPFLAGS)
         KBUILD_CPPFLAGS += $(KCPPFLAGS)
-endif
+endifo
 ifneq ($(KAFLAGS),)
         $(call warn-assign,AFLAGS)
         KBUILD_AFLAGS += $(KAFLAGS)
