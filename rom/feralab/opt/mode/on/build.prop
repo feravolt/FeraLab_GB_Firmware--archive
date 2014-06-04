@@ -63,6 +63,7 @@ persist.android.strictmode=0
 persist.chargemon.active=1
 persist.service.adb.enable=1
 persist.sys.boot.sound.volume=0
+sys.mem.max_hidden_apps=5
 
 # Qualcomm
 com.qc.hardware=true
