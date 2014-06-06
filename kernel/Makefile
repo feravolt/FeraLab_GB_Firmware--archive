@@ -192,10 +192,9 @@ KBUILD_CFLAGS := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 	-fno-strict-aliasing -fno-common -mno-unaligned-access \
 	-Wno-unused-but-set-variable -Wno-uninitialized \
 	-fno-delete-null-pointer-checks -ftree-vectorize \
-	-fivopts -funsafe-loop-optimizations -fsched-spec-load \
-	-ftree-loop-linear -floop-strip-mine -floop-block \
+	-fivopts -ftree-parallelize-loops=1 -fsched-spec-load \
+	-floop-strip-mine -floop-block -floop-interchange -fgraphite-identity \
 	-ftree-loop-distribution -ftree-loop-im -ftree-loop-ivcanon \
-	-floop-parallelize-all -floop-interchange -fgraphite-identity \
 	-Wno-unused-variable -fsingle-precision-constant \
 	-march=armv7-a -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp
 
@@ -359,7 +358,7 @@ $(warning "WARNING: Appending $$K$(1) ($(K$(1))) from $(origin K$(1)) to kernel 
 ifneq ($(KCPPFLAGS),)
         $(call warn-assign,CPPFLAGS)
         KBUILD_CPPFLAGS += $(KCPPFLAGS)
-endifo
+endif
 ifneq ($(KAFLAGS),)
         $(call warn-assign,AFLAGS)
         KBUILD_AFLAGS += $(KAFLAGS)
@@ -779,7 +778,7 @@ MRPROPER_FILES += .config .config.old include/asm .version .old_version \
 
 clean: rm-dirs  := $(CLEAN_DIRS)
 clean: rm-files := $(CLEAN_FILES)
-clean-dirs      := $(addprefix _clean_,$(srctree) $(vmlinux-alldirs) Documentation)
+clean-dirs      := $(addprefix _clean_,$(srctree) $(vmlinux-alldirs) Documentation samples)
 
 PHONY += $(clean-dirs) clean archclean
 $(clean-dirs):

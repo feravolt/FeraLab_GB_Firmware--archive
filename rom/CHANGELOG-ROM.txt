@@ -1,6 +1,15 @@
 ***FeraLab***
 =============
 
+= v39 = 
+(Warning! FeraKernel v23 requied!)
+> Tuned powersaving
+> RAM usage tweaks
+> zRam improvements
+> Networking optimizations
+> All apps updated & zipalligned & optimized
+
+
 = v38.2 = 
 (Warning! First time full wipe installation requied! FeraKernel v20 requied!)
 > FDE v18.0
