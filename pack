@@ -28,15 +28,12 @@ echo '~         ***FeraLab***          ~'
 echo '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
 echo ' '
 echo '>> Making ROM package...'
-cp -f /home/feravolt/ferra/0UTPUT/* /home/feravolt/ferra/rom/
 cd
 cd ferra/rom
 zip -r FeraLab.zip ./* -9
 sleep 1
 cd
 cd ferra
-rm -R 0UTPUT
-mkdir 0UTPUT
 mv /home/feravolt/ferra/rom/FeraLab.zip /home/feravolt/ferra/0UTPUT/FeraLab.zip
 cd
 echo ' '

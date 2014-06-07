@@ -1,7 +1,30 @@
 ***FeraLab***
 =============
 
-FeraKernel v21 for LOCKED BOOTLOADERS is built-in ROM package and installed automatically with ROM.
+FeraKernel v23 for LOCKED BOOTLOADERS is built-in ROM package and installed automatically with ROM.
+
+= v23 = (Warning! Full wipe installation required)
+>> Mega Linaro Optimizations (part 2)
+>> Enabled magic Sysrq key
+>> Tuned and enabled KMS
+>> Tuned Swap and zRam settings
+>> Better memory managment
+>> CGroups improvement
+>> Tracing and Profiling support
+>> LMK module merged update from 3.4 kernel
+>> Networking fixes
+>> Framebuffer fixes
+>> VM cache handling optimizations
+>> New logo
+>> Ramdisk cleanup
+>> misc...
+
+= v22 = (Warning! Full wipe installation required)
+>> Mega Linaro Optimizations
+>> 1,3Ghz CPU overclock
+>> VFP ported from 3.4 kernel
+>> Much more light kernel
+>> misc...
 
 = v21 = (Warning! Full wipe installation required)
 >> Recovery & PATH environment fix

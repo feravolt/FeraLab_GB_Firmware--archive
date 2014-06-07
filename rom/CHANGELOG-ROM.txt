@@ -7,7 +7,8 @@
 > RAM usage tweaks
 > zRam improvements
 > Networking optimizations
-> All apps updated & zipalligned & optimized
+> All apps updated & zipalligned
+> misc..
 
 
 = v38.2 = 

@@ -1,44 +1,11 @@
 ***FeraLab***
 =============
 
-= v38.2 = 
-(Warning! First time full wipe installation requied! FeraKernel v20 requied!)
-> FDE v18.0
-> Fixed Google servises bug
-> Fully re-arranged and updated settings meny with swipable tabs & kitkat icons
-> All apps updated & zipalligned & optimized
-> Statusbar network speed indicator fixed
-> GPU tunings
-> Animations tweaked
-> Fixed framework
-> ICS-like recent app-drawer
-> SMS UTF-8 support
-> GooglePlay app compabilities fixed
-> KK about platlogo ported & modified
-> SuperUser updated & fixed
-> Viper4Android & it's profile updated
-> AROMA installer fixes
-> Ultimate home launcher optimization
-> Super-undervolt option added
-> Xperia Z1 animations partically ported
-> Fixed libs
-> Browser HW acceleration
-> GPS & network location fix
-> Media tweaks fixed
-> Network tweaks fixed
-> New Apps in AROMA (super-optimized)
-> New Adreno video drivers
-> New EGL drivers
-> New GLES drivers
-> New sound drivers
-> New DRM plugins
-> Offline charging animation for LB kernel
-> New HD wallpapers
-> Updated Viper4Android & it's preset & convolver
-> SuperUser updated
-> Camera: Audio bit-rate increased from 64 to 192 Kbit/s
-> Camera: Video bit-rate increased from 6 to 8 Mbit/s
-> Camera: Bitmap quality raised from 16 to 32-bit
-> UI updates (thx 2 Jesus)
-> many more...
-
+= v39 = 
+(Warning! FeraKernel v23 requied!)
+> Tuned powersaving
+> RAM usage tweaks
+> zRam improvements
+> Networking optimizations
+> All apps updated & zipalligned
+> misc..

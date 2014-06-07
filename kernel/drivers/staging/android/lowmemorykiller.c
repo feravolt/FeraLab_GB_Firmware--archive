@@ -59,7 +59,6 @@ static int lowmem_shrink(int nr_to_scan, gfp_t gfp_mask)
 	int array_size = ARRAY_SIZE(lowmem_adj);
 	int other_free;
 	int other_file;
-	unsigned long nr_to_scan = sc->nr_to_scan;
 	other_free = global_page_state(NR_FREE_PAGES);
 	other_file = global_page_state(NR_INACTIVE_FILE) + global_page_state(NR_ACTIVE_FILE);
 
@@ -102,13 +101,12 @@ static int lowmem_shrink(int nr_to_scan, gfp_t gfp_mask)
 		struct task_struct *p;
 		int oom_adj;
 		task_lock(p);
-		mm = p->mm;
-		if (!mm) {
+		if (!p->mm) {
 			task_unlock(p);
 			continue;
 		}
 
-		oom_adj = p->signal->oom_adj;
+		oom_adj = p->oomkilladj;
 		if (oom_adj < min_adj) {
 			task_unlock(p);
 			continue;
