@@ -5,7 +5,7 @@ calibrate("0.9695","16","0.9900","0");
 theme("miui4");
 
 ini_set("rom_name",             "***FeraLab***");
-ini_set("rom_version",          "v38.2");
+ini_set("rom_version",          "v39");
 ini_set("rom_author",           "FeraVolt");
 ini_set("rom_device",           "Xperia X10");
 ini_set("rom_api",              "2.3.9");

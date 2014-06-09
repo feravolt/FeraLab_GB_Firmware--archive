@@ -32,7 +32,6 @@
 #include <mach/camera.h>
 #include <mach/memory.h>
 #include <mach/msm_spi.h>
-#include <mach/msm_tsif.h>
 #include <linux/max17040.h>
 #include <linux/akm8973.h>
 #include "devices.h"
@@ -439,7 +438,7 @@ static struct android_pmem_platform_data android_pmem_pdata = {
 static struct android_pmem_platform_data android_pmem_adsp_pdata = {
 	.name = "pmem_adsp",
 	.allocator_type = PMEM_ALLOCATORTYPE_BITMAP,
-	.cached = 0,
+	.cached = 1,
 };
 
 static struct android_pmem_platform_data android_pmem_smipool_pdata = {
@@ -1124,27 +1123,6 @@ static struct platform_device es209ra_audio_jack_device = {
     },
 };
 
-#if defined(CONFIG_TSIF) || defined(CONFIG_TSIF_MODULE)
-
-#define TSIF_A_SYNC      GPIO_CFG(106, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA)
-#define TSIF_A_DATA      GPIO_CFG(107, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA)
-#define TSIF_A_EN        GPIO_CFG(108, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA)
-#define TSIF_A_CLK       GPIO_CFG(109, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA)
-
-static const struct msm_gpio tsif_gpios[] = {
-	{ .gpio_cfg = TSIF_A_CLK,  .label =  "tsif_clk", },
-	{ .gpio_cfg = TSIF_A_EN,   .label =  "tsif_en", },
-	{ .gpio_cfg = TSIF_A_DATA, .label =  "tsif_data", },
-	{ .gpio_cfg = TSIF_A_SYNC, .label =  "tsif_sync", },
-};
-
-static struct msm_tsif_platform_data tsif_platform_data = {
-	.num_gpios = ARRAY_SIZE(tsif_gpios),
-	.gpios = tsif_gpios,
-};
-
-#endif
-
 #ifdef CONFIG_QSD_SVS
 #define TPS65023_MAX_DCDC1	1600
 #else
@@ -1451,9 +1429,6 @@ static struct platform_device *devices[] __initdata = {
 	&msm_device_uart_dm2,
 	&msm_device_kgsl,
 	&hs_device,
-#if defined(CONFIG_TSIF) || defined(CONFIG_TSIF_MODULE)
-	&msm_device_tsif,
-#endif
 	&msm_camera_sensor_semc_imx046_camera,
 	&vibrator_device,
 	&es209ra_audio_jack_device,
@@ -1776,10 +1751,6 @@ static void __init es209ra_init(void)
 	msm_device_hsusb_peripheral.dev.platform_data = &msm_hsusb_pdata;
 	msm_device_otg.dev.platform_data = &msm_otg_pdata;
 	msm_device_gadget_peripheral.dev.platform_data = &msm_gadget_pdata;
-
-#if defined(CONFIG_TSIF) || defined(CONFIG_TSIF_MODULE)
-	msm_device_tsif.dev.platform_data = &tsif_platform_data;
-#endif
 	platform_add_devices(devices, ARRAY_SIZE(devices));
 	platform_device_register(&es209ra_reset_keys_device);
 	msm_fb_add_devices();
