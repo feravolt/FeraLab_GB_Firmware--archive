@@ -1,7 +1,7 @@
 VERSION = 2
 PATCHLEVEL = 6
 SUBLEVEL = 32
-EXTRAVERSION = .23
+EXTRAVERSION = .24
 NAME = FeraKernel
 MAKEFLAGS += -rR --no-print-directory
 
@@ -192,10 +192,8 @@ KBUILD_CFLAGS := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 	-fno-strict-aliasing -fno-common -mno-unaligned-access \
 	-Wno-unused-but-set-variable -Wno-uninitialized \
 	-fno-delete-null-pointer-checks -ftree-vectorize \
-	-fivopts -ftree-parallelize-loops=1 -fsched-spec-load \
-	-floop-strip-mine -floop-block -floop-interchange -fgraphite-identity \
-	-ftree-loop-distribution -ftree-loop-im -ftree-loop-ivcanon \
-	-Wno-unused-variable -fsingle-precision-constant \
+	-fivopts -fsched-spec-load -fgraphite-identity \
+	-ftree-loop-distribution -Wno-unused-variable -fsingle-precision-constant \
 	-march=armv7-a -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp
 
 KBUILD_AFLAGS   := -D__ASSEMBLY__
