@@ -57,9 +57,13 @@
 #include "../../../drivers/video/msm/msm_fb_panel.h"
 #include "../../../drivers/video/msm/mddihost.h"
 
+#define AKM8973_GPIO_RESET_PIN	2
+#define AKM8973_GPIO_RESET_ON	0
+#define AKM8973_GPIO_RESET_OFF	1
 #define SMEM_SPINLOCK_I2C	"S:6"
 #define PMIC_VREG_WLAN_LEVEL	2600
 #define PMIC_VREG_GP6_LEVEL	2850
+#define TPS65023_MAX_DCDC1	1600
 #define PMEM_KERNEL_EBI1_SIZE	0x48000
 #define MSM_PMEM_MDP_SIZE	0x1C91000
 #define MSM_PMEM_ADSP_SIZE	0x2196000
@@ -95,7 +99,7 @@ static struct msm_pmic_vibrator_platform_data vibrator_platform_data = {
         .min_voltage = 1200,
         .max_voltage = 1800,
         .off_voltage = 0,
-        .default_voltage = 1600,
+        .default_voltage = 1500,
         .mimimal_on_time = 10,
         .platform_set_vib_voltage = msm7227_platform_set_vib_voltage,
         .platform_init_vib_hw = msm7227_platform_init_vib_hw,
@@ -139,6 +143,7 @@ static char *usb_functions_all[] = {
 	"nmea",
 	"diag",
 };
+
 static struct android_usb_product android_usb_products[] = {
 	{
 		.product_id = 0xE12E,
@@ -446,7 +451,7 @@ static struct android_pmem_platform_data android_pmem_smipool_pdata = {
 	.start = MSM_PMEM_SMIPOOL_BASE,
 	.size = MSM_PMEM_SMIPOOL_SIZE,
 	.allocator_type = PMEM_ALLOCATORTYPE_BITMAP,
-	.cached = 0,
+	.cached = 1,
 };
 
 static struct platform_device android_pmem_device = {
@@ -1123,24 +1128,14 @@ static struct platform_device es209ra_audio_jack_device = {
     },
 };
 
-#ifdef CONFIG_QSD_SVS
-#define TPS65023_MAX_DCDC1	1600
-#else
-#define TPS65023_MAX_DCDC1	CONFIG_QSD_PMIC_DEFAULT_DCDC1
-#endif
 
 static int qsd8x50_tps65023_set_dcdc1(int mVolts)
 {
 	int rc = 0;
-#ifdef CONFIG_QSD_SVS
 	rc = tps65023_set_dcdc1_level(mVolts);
 
 	if (rc == -ENODEV && mVolts <= CONFIG_QSD_PMIC_DEFAULT_DCDC1)
 		rc = 0;
-#else
-	if (mVolts > CONFIG_QSD_PMIC_DEFAULT_DCDC1)
-		rc = -EFAULT;
-#endif
 	return rc;
 }
 
@@ -1155,10 +1150,6 @@ static struct msm_acpu_clock_platform_data qsd8x50_clock_data = {
 static struct max17040_i2c_platform_data max17040_platform_data = {
 	.data = &max17040_dev_data
 };
-
-#define AKM8973_GPIO_RESET_PIN 2
-#define AKM8973_GPIO_RESET_ON 0
-#define AKM8973_GPIO_RESET_OFF 1
 
 static int ak8973_gpio_config(int enable)
 {
@@ -1189,9 +1180,9 @@ ak8973_gpio_fail_0:
 static int ak8973_xres(void)
 {
 	gpio_set_value(AKM8973_GPIO_RESET_PIN, 0);
-	msleep(10);
+	msleep(9);
 	gpio_set_value(AKM8973_GPIO_RESET_PIN, 1);
-	msleep(20);
+	msleep(18);
 	return 0;
 }
 
@@ -1392,7 +1383,7 @@ static struct msm_otg_platform_data msm_otg_pdata = {
 static struct msm_hsusb_gadget_platform_data msm_gadget_pdata;
 
 static struct lbs_platform_data lbs_data = {
-	.threshold_vol = 3500,
+	.threshold_vol = 3400,
 };
 
 static struct platform_device lbs_device = {
@@ -1840,4 +1831,3 @@ MACHINE_START(ES209RA, "ES209RA")
 	.init_machine	= es209ra_init,
 	.timer = &msm_timer,
 MACHINE_END
-

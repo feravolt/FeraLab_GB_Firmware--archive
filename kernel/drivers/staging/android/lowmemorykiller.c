@@ -68,11 +68,11 @@ static int lowmem_shrink(int nr_to_scan, gfp_t gfp_mask)
 	
 	if(si.freeswap > 0){
 
-       if(fudgeswap > si.freeswap)
-         other_file += si.freeswap;
-       else
-         other_file += fudgeswap;
-       }
+        if(fudgeswap > si.freeswap)
+          other_file += si.freeswap;
+        else
+          other_file += fudgeswap;
+        }}
 	
 	if (lowmem_deathpending && time_before_eq(jiffies, lowmem_deathpending_timeout))
 	  return 0;
