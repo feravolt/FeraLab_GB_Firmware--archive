@@ -141,6 +141,7 @@ ro.drm.active.3=marlin,1
 
 # Dalvik VM
 dalvik.vm.checkjni=false
+dalvik.vm.debug.alloc=0
 dalvik.vm.dexopt-flags=m=y,v=n,o=v,u=y
 dalvik.vm.jit.codecachesize=0
 dalvik.vm.execution-mode=int:jit
