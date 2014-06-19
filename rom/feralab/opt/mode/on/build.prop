@@ -1,7 +1,7 @@
 ### FeraLab ###
 
 # Build info
-ro.build.date=06.06.2014
+ro.build.date=18.06.2014
 ro.build.date.utc=1308515086
 ro.build.user=FeraVolt
 ro.build.host=FeraLab
@@ -142,6 +142,7 @@ ro.drm.active.3=marlin,1
 # Dalvik VM
 dalvik.vm.checkjni=false
 dalvik.vm.debug.alloc=0
+dalvik.vm.dexopt-data-only=1
 dalvik.vm.dexopt-flags=m=y,v=n,o=v,u=y
 dalvik.vm.jit.codecachesize=0
 dalvik.vm.execution-mode=int:jit
@@ -154,17 +155,17 @@ ro.config.low_ram=true
 ro.kernel.android.checkjni=0
 
 # Graphics & Display
-debug.composition.type=gpu
+debug.composition.type=mdp
 debug.egl.hw=1
 debug.egl.profiler=1
 debug.gr.swapinterval=0
 debug.mdpcomp.logs=0
 debug.overlayui.enable=1
 debug.sf.hw=1
-dev.pm.gpu_samplingrate=1
+dev.pm.mdp_samplingrate=1
 ro.floatingtouch.available=1
 ro.sf.lcd_density=240
-persist.sys.composition.type=gpu
+persist.sys.composition.type=mdp
 video.accelerate.hw=1
 
 # Misc

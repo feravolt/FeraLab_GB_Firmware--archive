@@ -8,7 +8,7 @@ FeraKernel v23 for LOCKED BOOTLOADERS is built-in ROM package and installed auto
 >> Enabled magic Sysrq key
 >> Tuned and enabled KMS
 >> Tuned Swap and zRam settings
->> Better memory management
+>> Better memory managment
 >> CGroups improvement
 >> Tracing and Profiling support
 >> LMK module merged update from 3.4 kernel
