@@ -1,20 +1,3 @@
-/* Copyright (c) 2002,2007-2010, Code Aurora Forum. All rights reserved.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 and
- * only version 2 as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301, USA.
- *
- */
 #include <linux/types.h>
 #include <linux/mutex.h>
 #include <linux/spinlock.h>
@@ -43,11 +26,8 @@ struct kgsl_pte_debug {
 
 #define GSL_PTE_SIZE	4
 #define GSL_PT_EXTRA_ENTRIES	16
-
-
 #define GSL_PT_PAGE_BITS_MASK	0x00000007
 #define GSL_PT_PAGE_ADDR_MASK	(~(KGSL_PAGESIZE - 1))
-
 #define GSL_MMU_INT_MASK \
 	(MH_INTERRUPT_MASK__AXI_READ_ERROR | \
 	 MH_INTERRUPT_MASK__AXI_WRITE_ERROR)
@@ -81,61 +61,21 @@ static const struct kgsl_mmu_reg mmu_reg[KGSL_DEVICE_MAX] = {
 	}
 };
 
-uint32_t kgsl_pt_entry_get(struct kgsl_pagetable *pt, uint32_t va)
+static inline uint32_t
+kgsl_pt_entry_get(struct kgsl_pagetable *pt, uint32_t va)
 {
 	return (va - pt->va_base) >> KGSL_PAGESIZE_SHIFT;
 }
 
-uint32_t kgsl_pt_map_get(struct kgsl_pagetable *pt, uint32_t pte)
-{
-	uint32_t *baseptr = (uint32_t *)pt->base.hostptr;
-	return baseptr[pte];
-}
-
-void kgsl_pt_map_set(struct kgsl_pagetable *pt, uint32_t pte, uint32_t val)
+static inline void
+kgsl_pt_map_set(struct kgsl_pagetable *pt, uint32_t pte, uint32_t val)
 {
 	uint32_t *baseptr = (uint32_t *)pt->base.hostptr;
 	baseptr[pte] = val;
 }
-#define GSL_PT_MAP_DEBUG(pte)	((struct kgsl_pte_debug *) \
-		&gsl_pt_map_get(pagetable, pte))
 
-void kgsl_pt_map_setbits(struct kgsl_pagetable *pt, uint32_t pte, uint32_t bits)
-{
-	uint32_t *baseptr = (uint32_t *)pt->base.hostptr;
-	baseptr[pte] |= bits;
-}
-
-void kgsl_pt_map_setaddr(struct kgsl_pagetable *pt, uint32_t pte,
-					uint32_t pageaddr)
-{
-	uint32_t *baseptr = (uint32_t *)pt->base.hostptr;
-	uint32_t val = baseptr[pte];
-	val &= ~GSL_PT_PAGE_ADDR_MASK;
-	val |= (pageaddr & GSL_PT_PAGE_ADDR_MASK);
-	baseptr[pte] = val;
-}
-
-void kgsl_pt_map_resetall(struct kgsl_pagetable *pt, uint32_t pte)
-{
-	uint32_t *baseptr = (uint32_t *)pt->base.hostptr;
-	baseptr[pte] &= GSL_PT_PAGE_DIRTY;
-}
-
-void kgsl_pt_map_resetbits(struct kgsl_pagetable *pt, uint32_t pte,
-				uint32_t bits)
-{
-	uint32_t *baseptr = (uint32_t *)pt->base.hostptr;
-	baseptr[pte] &= ~(bits & GSL_PT_PAGE_BITS_MASK);
-}
-
-int kgsl_pt_map_isdirty(struct kgsl_pagetable *pt, uint32_t pte)
-{
-	uint32_t *baseptr = (uint32_t *)pt->base.hostptr;
-	return baseptr[pte] & GSL_PT_PAGE_DIRTY;
-}
-
-uint32_t kgsl_pt_map_getaddr(struct kgsl_pagetable *pt, uint32_t pte)
+static inline uint32_t
+kgsl_pt_map_getaddr(struct kgsl_pagetable *pt, uint32_t pte)
 {
 	uint32_t *baseptr = (uint32_t *)pt->base.hostptr;
 	return baseptr[pte] & GSL_PT_PAGE_ADDR_MASK;

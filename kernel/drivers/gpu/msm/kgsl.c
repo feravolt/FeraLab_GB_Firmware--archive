@@ -1,20 +1,3 @@
-/* Copyright (c) 2008-2010, Code Aurora Forum. All rights reserved.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 and
- * only version 2 as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301, USA.
- *
- */
 #include <linux/platform_device.h>
 #include <linux/fb.h>
 #include <linux/file.h>
@@ -33,25 +16,21 @@
 #include <linux/highmem.h>
 #include <linux/vmalloc.h>
 #include <linux/notifier.h>
-
 #include <linux/delay.h>
 #include <asm/atomic.h>
 #include <mach/internal_power_rail.h>
 #include <linux/regulator/consumer.h>
-
 #include <linux/ashmem.h>
 
 #include "kgsl.h"
 #include "kgsl_yamato.h"
 #include "kgsl_g12.h"
 #include "kgsl_cmdstream.h"
-
 #include "kgsl_log.h"
 #include "kgsl_drm.h"
 
 #define KGSL_MAX_PRESERVED_BUFFERS		10
 #define KGSL_MAX_SIZE_OF_PRESERVED_BUFFER	0x10000
-
 
 static void kgsl_put_phys_file(struct file *file);
 
@@ -544,10 +523,7 @@ static int kgsl_release(struct inode *inodep, struct file *filep)
 
 	device = kgsl_driver.devp[iminor(inodep)];
 	BUG_ON(device == NULL);
-
 	mutex_lock(&kgsl_driver.mutex);
-	KGSL_PRE_HWACCESS();
-
 	dev_priv = (struct kgsl_device_private *) filep->private_data;
 	BUG_ON(dev_priv == NULL);
 	BUG_ON(device != dev_priv->device);
@@ -1854,11 +1830,6 @@ static int __devinit kgsl_platform_probe(struct platform_device *pdev)
 		}
 	}
 
-	/* yamato config */
-	result = kgsl_yamato_config(&kgsl_driver.yamato_config, pdev);
-	if (result != 0)
-		goto done;
-
 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
 					   "kgsl_phys_memory");
 	if (res == NULL) {
@@ -1868,9 +1839,8 @@ static int __devinit kgsl_platform_probe(struct platform_device *pdev)
 
 	kgsl_driver.shmem.physbase = res->start;
 	kgsl_driver.shmem.size = resource_size(res);
-
-	/* init memory apertures */
 	result = kgsl_sharedmem_init(&kgsl_driver.shmem);
+
 	if (result != 0)
 		goto done;
 
@@ -1878,9 +1848,8 @@ static int __devinit kgsl_platform_probe(struct platform_device *pdev)
 
 	INIT_LIST_HEAD(&kgsl_driver.pagetable_list);
 	mutex_init(&kgsl_driver.pt_mutex);
+	result = kgsl_yamato_init(kgsl_get_yamato_generic_device());
 
-	result = kgsl_yamato_init(kgsl_get_yamato_generic_device(),
-				  &kgsl_driver.yamato_config);
 	if (result) {
 		KGSL_DRV_ERR("yamato_init failed %d", result);
 		goto done;
