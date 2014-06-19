@@ -145,7 +145,7 @@ struct kgsl_device {
 	struct kgsl_memregion regspace;
 	struct kgsl_memdesc memstore;
 
-	struct kgsl_mmu 	  mmu;
+	struct kgsl_mmu mmu;
 	struct kgsl_ringbuffer ringbuffer;
 	unsigned int hwaccess_blocked;
 	struct completion hwaccess_gate;

@@ -5,13 +5,11 @@
 #include <linux/notifier.h>
 #include <linux/miscdevice.h>
 #include <linux/plist.h>
-
 #define PM_QOS_RESERVED 0
 #define PM_QOS_CPU_DMA_LATENCY 1
 #define PM_QOS_NETWORK_LATENCY 2
 #define PM_QOS_NETWORK_THROUGHPUT 3
 #define PM_QOS_SYSTEM_BUS_FREQ 4
-
 #define PM_QOS_NUM_CLASSES 5
 #define PM_QOS_DEFAULT_VALUE -1
 
@@ -60,5 +58,4 @@ void pm_qos_remove_requirement(int qos, char *name);
 int pm_qos_requirement(int qos);
 int pm_qos_add_notifier(int qos, struct notifier_block *notifier);
 int pm_qos_remove_notifier(int qos, struct notifier_block *notifier);
-#endif /* __PM_QOS_PARAMS_H__ */
-
+#endif

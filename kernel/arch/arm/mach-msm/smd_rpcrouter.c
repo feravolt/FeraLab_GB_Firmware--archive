@@ -2136,29 +2136,28 @@ void msm_rpcrouter_xprt_notify(struct rpcrouter_xprt *xprt, unsigned event)
 	struct rpcrouter_xprt_info *xprt_info = xprt->priv;
 	union rr_control_msg msg = { 0 };
 
-	/* TODO: need to close the transport upon close event */
 	if (event == RPCROUTER_XPRT_EVENT_OPEN) {
 		msm_rpcrouter_add_xprt(xprt);
 	}
 
 	if (!xprt_info) {
 		smsm_change_state(SMSM_APPS_STATE, 0, SMSM_RPCINIT);
-		msleep(50);
+		msleep(45);
 		xprt_info = xprt->priv;
 		msg.cmd = RPCROUTER_CTRL_CMD_BYE;
 		rpcrouter_send_control_msg(xprt_info, &msg);
-		msleep(50);
+		msleep(45);
 		msg.cmd = RPCROUTER_CTRL_CMD_HELLO;
 		rpcrouter_send_control_msg(xprt_info, &msg);
-		msleep(50);
+		msleep(45);
 		msg.cmd = RPCROUTER_CTRL_CMD_BYE;
 		rpcrouter_send_control_msg(xprt_info, &msg);
-		msleep(50);
+		msleep(45);
 		msg.cmd = RPCROUTER_CTRL_CMD_HELLO;
 		rpcrouter_send_control_msg(xprt_info, &msg);
-		msleep(50);
+		msleep(45);
 		process_control_msg(xprt_info, &msg, sizeof(msg));
-		msleep(100);
+		msleep(90);
 		return;
 	}
 
