@@ -20,7 +20,6 @@
 /dev/msm_vidc_enc    0660 system audio
 /dev/msm_vidc_reg    0660 system audio
 /dev/pmem_gpu*       0666 system graphics
-/dev/pmem_swiqi      0660 system graphics
 /dev/bma250          0640 compass system
 /dev/akm8973_aot     0664 compass system
 /dev/video*          0660 system camera

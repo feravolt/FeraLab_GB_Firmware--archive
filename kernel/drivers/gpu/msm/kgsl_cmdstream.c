@@ -1,21 +1,3 @@
-/* Copyright (c) 2009-2010, Code Aurora Forum. All rights reserved.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 and
- * only version 2 as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301, USA.
- *
- */
-
 #include "kgsl.h"
 #include "kgsl_cmdstream.h"
 #include "kgsl_sharedmem.h"
@@ -46,9 +28,7 @@ kgsl_cmdstream_readtimestamp(struct kgsl_device *device,
 		KGSL_CMDSTREAM_GET_EOP_TIMESTAMP(device,
 						 (unsigned int *)&timestamp);
 	rmb();
-
 	KGSL_CMD_VDBG("return %d\n", timestamp);
-
 	return timestamp;
 }
 
@@ -58,22 +38,17 @@ void kgsl_cmdstream_memqueue_drain(struct kgsl_device *device)
 	uint32_t ts_processed;
 	struct kgsl_ringbuffer *rb = &device->ringbuffer;
 
-	/* get current EOP timestamp */
 	ts_processed = device->ftbl.device_cmdstream_readtimestamp(
 					device,
 					KGSL_TIMESTAMP_RETIRED);
 
 	list_for_each_entry_safe(entry, entry_tmp, &rb->memqueue, free_list) {
-		/*NOTE: this assumes that the free list is sorted by
-		 * timestamp, but I'm not yet sure that it is a valid
-		 * assumption
-		 */
 		if (!timestamp_cmp(ts_processed, entry->free_timestamp))
 			break;
 		KGSL_MEM_DBG("ts_processed %d ts_free %d gpuaddr %x)\n",
 			     ts_processed, entry->free_timestamp,
 			     entry->memdesc.gpuaddr);
-		kgsl_remove_mem_entry(entry, true);
+		kgsl_remove_mem_entry(entry);
 	}
 }
 
@@ -89,6 +64,5 @@ kgsl_cmdstream_freememontimestamp(struct kgsl_device *device,
 
 	list_add_tail(&entry->free_list, &rb->memqueue);
 	entry->free_timestamp = timestamp;
-
 	return 0;
 }

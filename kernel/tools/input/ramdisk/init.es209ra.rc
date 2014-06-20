@@ -63,6 +63,10 @@ on boot
     chown idd idd /data/idd/output
     chmod 0755 /data/idd
     chmod 0755 /data/idd/output
+    mkdir /data/tombstones 0755 system system
+    mkdir /data/semc-checkin 0700 system system
+    mkdir /data/crashsms 0711 system system
+    mkdir /data/crashsms/crashes 0755 system system
     chown system system /sys/bus/platform/devices/msm_sdcc.1/polling
     chown system system /sys/bus/platform/devices/msm_sdcc.2/polling
     chown system system /sys/bus/platform/devices/msm_sdcc.3/polling

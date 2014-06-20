@@ -16,14 +16,6 @@
 #include "kgsl_g12.h"
 #include "kgsl_yamato.h"
 
-struct kgsl_pte_debug {
-	unsigned int read:1;
-	unsigned int write:1;
-	unsigned int dirty:1;
-	unsigned int reserved:9;
-	unsigned int phyaddr:20;
-};
-
 #define GSL_PTE_SIZE	4
 #define GSL_PT_EXTRA_ENTRIES	16
 #define GSL_PT_PAGE_BITS_MASK	0x00000007
@@ -85,22 +77,16 @@ void kgsl_mh_intrcallback(struct kgsl_device *device)
 {
 	unsigned int status = 0;
 	unsigned int reg;
-	struct kgsl_mmu_debug dbg;
-
 	KGSL_MEM_VDBG("enter (device=%p)\n", device);
-
 	kgsl_regread(device, mmu_reg[device->id].interrupt_status, &status);
 
 	if (status & MH_INTERRUPT_MASK__AXI_READ_ERROR) {
 		KGSL_MEM_FATAL("axi read error interrupt\n");
-		kgsl_mmu_debug(&device->mmu, &dbg);
 	} else if (status & MH_INTERRUPT_MASK__AXI_WRITE_ERROR) {
 		KGSL_MEM_FATAL("axi write error interrupt\n");
-		kgsl_mmu_debug(&device->mmu, &dbg);
 	} else if (status & MH_INTERRUPT_MASK__MMU_PAGE_FAULT) {
 		kgsl_regread(device, mmu_reg[device->id].page_fault, &reg);
 		KGSL_MEM_FATAL("mmu page fault interrupt: %08x\n", reg);
-		kgsl_mmu_debug(&device->mmu, &dbg);
 	} else {
 		KGSL_MEM_DBG("bad bits in REG_MH_INTERRUPT_STATUS %08x\n",
 			     status);
@@ -115,37 +101,6 @@ void kgsl_mh_intrcallback(struct kgsl_device *device)
 
 	KGSL_MEM_VDBG("return\n");
 }
-
-#ifdef DEBUG
-void kgsl_mmu_debug(struct kgsl_mmu *mmu, struct kgsl_mmu_debug *regs)
-{
-	unint32_t id = mmu->device->id;
-
-	memset(regs, 0, sizeof(struct kgsl_mmu_debug));
-	kgsl_regread(mmu->device, mmu_reg[id].config, &regs->config);
-	kgsl_regread(mmu->device, mmu_reg[id].mpu_base, &regs->mpu_base);
-	kgsl_regread(mmu->device, mmu_reg[id].mpu_end, &regs->mpu_end);
-	kgsl_regread(mmu->device, mmu_reg[id].va_range, &regs->va_range);
-	kgsl_regread(mmu->device, mmu_reg[id].pt_base, &regs->pt_base);
-	kgsl_regread(mmu->device, mmu_reg[id].page_fault, &regs->page_fault);
-	kgsl_regread(mmu->device, mmu_reg[id].tran_error, &regs->trans_error);
-	kgsl_regread(mmu->device, mmu_reg[id].axi_error, &regs->axi_error);
-	kgsl_regread(mmu->device, mmu_reg[id].interrupt_mask,
-				 &regs->interrupt_mask);
-	kgsl_regread(mmu->device, mmu_reg[id].interrupt_status,
-				&regs->interrupt_status);
-
-
-	KGSL_MEM_DBG("mmu config %08x mpu_base %08x mpu_end %08x\n",
-		     regs->config, regs->mpu_base, regs->mpu_end);
-	KGSL_MEM_DBG("mmu va_range %08x pt_base %08x \n",
-		     regs->va_range, regs->pt_base);
-	KGSL_MEM_DBG("mmu page_fault %08x tran_err %08x\n",
-		     regs->page_fault, regs->trans_error);
-	KGSL_MEM_DBG("mmu int mask %08x int status %08x\n",
-			regs->interrupt_mask, regs->interrupt_status);
-}
-#endif
 
 static struct kgsl_pagetable *kgsl_mmu_createpagetableobject(
 				struct kgsl_mmu *mmu,
@@ -592,11 +547,6 @@ kgsl_mmu_map(struct kgsl_pagetable *pagetable,
 		flushtlb = 1;
 
 	for (pte = ptefirst; pte < ptelast; pte++) {
-#ifdef VERBOSE_DEBUG
-		/* check if PTE exists */
-		uint32_t val = kgsl_pt_map_getaddr(pagetable, pte);
-		BUG_ON(val != 0 && val != GSL_PT_PAGE_DIRTY);
-#endif
 		if ((pte & (GSL_PT_SUPER_PTE-1)) == 0)
 			if (GSL_TLBFLUSH_FILTER_ISDIRTY(pte / GSL_PT_SUPER_PTE))
 				flushtlb = 1;
@@ -676,10 +626,6 @@ kgsl_mmu_unmap(struct kgsl_pagetable *pagetable, unsigned int gpuaddr,
 	superpte = ptefirst - (ptefirst & (GSL_PT_SUPER_PTE-1));
 	GSL_TLBFLUSH_FILTER_SETDIRTY(superpte / GSL_PT_SUPER_PTE);
 	for (pte = ptefirst; pte < ptelast; pte++) {
-#ifdef VERBOSE_DEBUG
-		/* check if PTE exists */
-		BUG_ON(!kgsl_pt_map_getaddr(pagetable, pte));
-#endif
 		kgsl_pt_map_set(pagetable, pte, GSL_PT_PAGE_DIRTY);
 		superpte = pte - (pte & (GSL_PT_SUPER_PTE - 1));
 		if (pte == superpte)
@@ -688,11 +634,8 @@ kgsl_mmu_unmap(struct kgsl_pagetable *pagetable, unsigned int gpuaddr,
 	}
 
 	mb();
-
 	gen_pool_free(pagetable->pool, gpuaddr, range);
-
 	KGSL_MEM_VDBG("return %d\n", 0);
-
 	return 0;
 }
 #endif /*CONFIG_MSM_KGSL_MMU*/
