@@ -13,15 +13,12 @@ loglevel 3
     export PATH /sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin
     export LD_LIBRARY_PATH /vendor/lib:/system/lib
     export ANDROID_BOOTLOGO 1
-    export ANDROID_CACHE /cache
     export ANDROID_ROOT /system
     export ANDROID_ASSETS /system/app
     export ANDROID_DATA /data
-    export DOWNLOAD_CACHE /cache/download
     export EXTERNAL_STORAGE /mnt/sdcard
     export ASEC_MOUNTPOINT /mnt/asec
     export LOOP_MOUNTPOINT /mnt/obb
-    export SD_EXT_DIRECTORY /sd-ext
     export BOOTCLASSPATH /system/framework/core.jar:/system/framework/bouncycastle.jar:/system/framework/ext.jar:/system/framework/framework.jar:/system/framework/android.policy.jar:/system/framework/services.jar:/system/framework/core-junit.jar
 
     symlink /system/etc /etc
@@ -131,7 +128,6 @@ on post-fs
     mkdir /data/property 0700 root root
     mkdir /data/ssh 0750 root shell
     mkdir /data/ssh/empty 0700 root root
-    mkdir /cache/download 0771 system cache
     mkdir /data/dalvik-cache 0771 system system
     chown system system /data/dalvik-cache
     chmod 0771 /data/dalvik-cache
@@ -146,8 +142,6 @@ on post-fs
     chmod 0774 /data/drm
     mkdir /data/mediadrm 0770 mediadrm mediadrm
     mkdir /data/security 0711 system system
-    chown root net_raw /dev/socket
-    chmod 0775 /dev/socket
     chown root system /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
     chmod 0664 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
     chown root system /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
@@ -253,7 +247,7 @@ on boot
     write /proc/sys/net/ipv6/conf/rmnet2/accept_ra 2
     setprop net.tcp.buffersize.default 4096,87380,110208,4096,16384,110208
     setprop net.tcp.buffersize.wifi    4095,87380,110208,4096,16384,110208
-    setprop net.tcp.buffersize.umts    4094,87380,110208,4096,16384,110208
+    setprop net.tcp.buffersize.umts    4095,87380,110208,4096,16384,110208
     setprop net.tcp.buffersize.hsdpa   4096,32768,65536,4096,32768,65536
     setprop net.tcp.buffersize.hspa    4096,32768,65536,4096,32768,65536
     setprop net.tcp.buffersize.hsupa   4096,32768,65536,4096,32768,65536

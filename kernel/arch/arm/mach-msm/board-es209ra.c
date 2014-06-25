@@ -1056,12 +1056,6 @@ static struct resource kgsl_resources[] = {
 		.flags = IORESOURCE_MEM,
        },
        {
-		.name   = "kgsl_phys_memory",
-		.start = MSM_GPU_PHYS_BASE,
-		.end = MSM_GPU_PHYS_BASE + MSM_GPU_PHYS_SIZE - 1,
-		.flags = IORESOURCE_MEM,
-       },
-       {
 		.name = "kgsl_yamato_irq",
 		.start = INT_GRAPHICS,
 		.end = INT_GRAPHICS,
@@ -1080,6 +1074,10 @@ static struct kgsl_platform_data kgsl_pdata = {
 	.imem_clk_name = "imem_clk",
 	.grp3d_clk_name = "grp_clk",
 	.grp2d0_clk_name = NULL,
+	.idle_timeout_3d = HZ/5,
+	.idle_timeout_2d = 0,
+	.pt_va_size = SZ_128M,
+	.pt_max_count = 1,
 };
 
 static struct platform_device msm_device_kgsl = {
@@ -1433,12 +1431,6 @@ static void __init es209ra_init_irq(void)
 	msm_init_sirc();
 }
 
-static void kgsl_phys_memory_init(void)
-{
-	request_mem_region(kgsl_resources[1].start,
-		resource_size(&kgsl_resources[1]), "kgsl");
-}
-
 static void __init es209ra_init_usb(void)
 {
 	hs_clk = clk_get(NULL, "usb_hs_clk");
@@ -1759,7 +1751,6 @@ static void __init es209ra_init(void)
 	spi_register_board_info(msm_spi_board_info,
 				ARRAY_SIZE(msm_spi_board_info));
 	msm_pm_set_platform_data(msm_pm_data);
-	kgsl_phys_memory_init();
 	platform_device_register(&es209ra_keypad_device);
 	msm_mddi_tmd_fwvga_display_device_init();
 }
