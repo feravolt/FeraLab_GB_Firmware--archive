@@ -1406,7 +1406,7 @@ static int create_device(struct ramzswap *rzs, int device_id)
 	set_capacity(rzs->disk, 0);
 
 	blk_queue_physical_block_size(rzs->disk->queue, PAGE_SIZE);
-	blk_queue_logical_block_size(rzs->disk->queue, PAGE_SIZE);
+	blk_queue_logical_block_size(rzs->disk->queue, ZRAM_LOGICAL_BLOCK_SIZE);
 
 	add_disk(rzs->disk);
 
