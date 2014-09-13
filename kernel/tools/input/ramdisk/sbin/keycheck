@@ -7,7 +7,7 @@ echo 614F > /sys/class/android_usb/android0/idProduct
 echo mass_storage,adb > /sys/class/android_usb/android0/functions
 echo 1 > /sys/class/android_usb/android0/enable
 cat /dev/input/event2 > /dev/keycheck&
-echo '50' > /sys/class/timed_output/vibrator/enable
+echo '35' > /sys/class/timed_output/vibrator/enable
 echo '255' > /sys/class/leds/lv5219lg:rgb1:blue/brightness
 echo '255' > /sys/class/leds/lv5219lg:rgb1:red/brightness
 echo '255' > /sys/class/leds/lv5219lg:rgb1:green/brightness
@@ -16,6 +16,7 @@ echo '0' > /sys/class/leds/lv5219lg:rgb1:blue/brightness
 echo '0' > /sys/class/leds/lv5219lg:rgb1:red/brightness
 echo '0' > /sys/class/leds/lv5219lg:rgb1:green/brightness
 sleep 0.5
+echo '35' > /sys/class/timed_output/vibrator/enable
 echo '255' > /sys/class/leds/lv5219lg:rgb1:blue/brightness
 echo '255' > /sys/class/leds/lv5219lg:rgb1:red/brightness
 echo '255' > /sys/class/leds/lv5219lg:rgb1:green/brightness
@@ -24,10 +25,11 @@ echo '0' > /sys/class/leds/lv5219lg:rgb1:blue/brightness
 echo '0' > /sys/class/leds/lv5219lg:rgb1:red/brightness
 echo '0' > /sys/class/leds/lv5219lg:rgb1:green/brightness
 sleep 0.5
+echo '35' > /sys/class/timed_output/vibrator/enable
 echo '255' > /sys/class/leds/lv5219lg:rgb1:blue/brightness
 echo '255' > /sys/class/leds/lv5219lg:rgb1:red/brightness
 echo '255' > /sys/class/leds/lv5219lg:rgb1:green/brightness
-sleep 1
+sleep 0.5
 echo '0' > /sys/class/leds/lv5219lg:rgb1:blue/brightness
 echo '0' > /sys/class/leds/lv5219lg:rgb1:red/brightness
 echo '0' > /sys/class/leds/lv5219lg:rgb1:green/brightness

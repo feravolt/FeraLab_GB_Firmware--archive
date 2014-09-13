@@ -4,7 +4,7 @@
 echo 998400 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
 setprop service.adb.root 1
 
-/sbin/bootrec-device
+/sbin/keycheck
 
 if [ -s /dev/keycheck -o -e /cache/recovery/boot ]
 then
@@ -26,6 +26,10 @@ then
   setprop persist.service.adb.enable 1
   /sbin/recovery&
   /sbin/adbd recovery
+fi
+
+if [ -e /system/bin/charger ]
+  echo "LB Kernel!"
 else
   /system/bin/chargemon
 fi
