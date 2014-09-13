@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.32.25
-# Sat Sep 13 19:46:44 2014
+# Sat Sep 13 21:40:05 2014
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -38,7 +38,7 @@ CONFIG_LOCALVERSION="-FeraKernel"
 CONFIG_SWAP=y
 CONFIG_SYSVIPC=y
 CONFIG_SYSVIPC_SYSCTL=y
-CONFIG_POSIX_MQUEUE=y
+# CONFIG_POSIX_MQUEUE is not set
 # CONFIG_BSD_PROCESS_ACCT is not set
 # CONFIG_TASKSTATS is not set
 # CONFIG_AUDIT is not set
@@ -1532,7 +1532,7 @@ CONFIG_HAPTIC_CLASS=y
 #
 # Haptic drivers
 #
-CONFIG_HAPTIC_ISA1200=y
+# CONFIG_HAPTIC_ISA1200 is not set
 CONFIG_SWITCH=y
 CONFIG_SWITCH_GPIO=y
 CONFIG_RTC_LIB=y
