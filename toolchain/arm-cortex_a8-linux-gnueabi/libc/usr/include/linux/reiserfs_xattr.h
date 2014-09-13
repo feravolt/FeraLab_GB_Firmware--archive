@@ -21,5 +21,4 @@ struct reiserfs_security_handle {
 	size_t length;
 };
 
-
 #endif  /*  _LINUX_REISERFS_XATTR_H  */

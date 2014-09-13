@@ -54,6 +54,7 @@ enum perf_hw_id {
 	PERF_COUNT_HW_BUS_CYCLES		= 6,
 	PERF_COUNT_HW_STALLED_CYCLES_FRONTEND	= 7,
 	PERF_COUNT_HW_STALLED_CYCLES_BACKEND	= 8,
+	PERF_COUNT_HW_REF_CPU_CYCLES		= 9,
 
 	PERF_COUNT_HW_MAX,			/* non-ABI */
 };
@@ -128,9 +129,38 @@ enum perf_event_sample_format {
 	PERF_SAMPLE_PERIOD			= 1U << 8,
 	PERF_SAMPLE_STREAM_ID			= 1U << 9,
 	PERF_SAMPLE_RAW				= 1U << 10,
+	PERF_SAMPLE_BRANCH_STACK		= 1U << 11,
 
-	PERF_SAMPLE_MAX = 1U << 11,		/* non-ABI */
+	PERF_SAMPLE_MAX = 1U << 12,		/* non-ABI */
 };
+
+/*
+ * values to program into branch_sample_type when PERF_SAMPLE_BRANCH is set
+ *
+ * If the user does not pass priv level information via branch_sample_type,
+ * the kernel uses the event's priv level. Branch and event priv levels do
+ * not have to match. Branch priv level is checked for permissions.
+ *
+ * The branch types can be combined, however BRANCH_ANY covers all types
+ * of branches and therefore it supersedes all the other types.
+ */
+enum perf_branch_sample_type {
+	PERF_SAMPLE_BRANCH_USER		= 1U << 0, /* user branches */
+	PERF_SAMPLE_BRANCH_KERNEL	= 1U << 1, /* kernel branches */
+	PERF_SAMPLE_BRANCH_HV		= 1U << 2, /* hypervisor branches */
+
+	PERF_SAMPLE_BRANCH_ANY		= 1U << 3, /* any branch types */
+	PERF_SAMPLE_BRANCH_ANY_CALL	= 1U << 4, /* any call branch */
+	PERF_SAMPLE_BRANCH_ANY_RETURN	= 1U << 5, /* any return branch */
+	PERF_SAMPLE_BRANCH_IND_CALL	= 1U << 6, /* indirect calls */
+
+	PERF_SAMPLE_BRANCH_MAX		= 1U << 7, /* non-ABI */
+};
+
+#define PERF_SAMPLE_BRANCH_PLM_ALL \
+	(PERF_SAMPLE_BRANCH_USER|\
+	 PERF_SAMPLE_BRANCH_KERNEL|\
+	 PERF_SAMPLE_BRANCH_HV)
 
 /*
  * The format of the data returned by read() on a perf event fd,
@@ -162,6 +192,8 @@ enum perf_event_read_format {
 };
 
 #define PERF_ATTR_SIZE_VER0	64	/* sizeof first published struct */
+#define PERF_ATTR_SIZE_VER1	72	/* add: config2 */
+#define PERF_ATTR_SIZE_VER2	80	/* add: branch_sample_type */
 
 /*
  * Hardware event_id to monitor via a performance monitoring event:
@@ -220,7 +252,10 @@ struct perf_event_attr {
 				mmap_data      :  1, /* non-exec mmap data    */
 				sample_id_all  :  1, /* sample_type all events */
 
-				__reserved_1   : 45;
+				exclude_host   :  1, /* don't count in host   */
+				exclude_guest  :  1, /* don't count in guest  */
+
+				__reserved_1   : 43;
 
 	union {
 		__u32		wakeup_events;	  /* wakeup every n events */
@@ -236,6 +271,7 @@ struct perf_event_attr {
 		__u64		bp_len;
 		__u64		config2; /* extension of config1 */
 	};
+	__u64	branch_sample_type; /* enum branch_sample_type */
 };
 
 /*
@@ -263,18 +299,31 @@ struct perf_event_mmap_page {
 	/*
 	 * Bits needed to read the hw events in user-space.
 	 *
-	 *   u32 seq;
-	 *   s64 count;
+	 *   u32 seq, time_mult, time_shift, idx, width;
+	 *   u64 count, enabled, running;
+	 *   u64 cyc, time_offset;
+	 *   s64 pmc = 0;
 	 *
 	 *   do {
 	 *     seq = pc->lock;
-	 *
 	 *     barrier()
-	 *     if (pc->index) {
-	 *       count = pmc_read(pc->index - 1);
-	 *       count += pc->offset;
-	 *     } else
-	 *       goto regular_read;
+	 *
+	 *     enabled = pc->time_enabled;
+	 *     running = pc->time_running;
+	 *
+	 *     if (pc->cap_usr_time && enabled != running) {
+	 *       cyc = rdtsc();
+	 *       time_offset = pc->time_offset;
+	 *       time_mult   = pc->time_mult;
+	 *       time_shift  = pc->time_shift;
+	 *     }
+	 *
+	 *     idx = pc->index;
+	 *     count = pc->offset;
+	 *     if (pc->cap_usr_rdpmc && idx) {
+	 *       width = pc->pmc_width;
+	 *       pmc = rdpmc(idx - 1);
+	 *     }
 	 *
 	 *     barrier();
 	 *   } while (pc->lock != seq);
@@ -287,23 +336,70 @@ struct perf_event_mmap_page {
 	__s64	offset;			/* add to hardware event value */
 	__u64	time_enabled;		/* time event active */
 	__u64	time_running;		/* time event on cpu */
+	union {
+		__u64	capabilities;
+		__u64	cap_usr_time  : 1,
+			cap_usr_rdpmc : 1,
+			cap_____res   : 62;
+	};
+
+	/*
+	 * If cap_usr_rdpmc this field provides the bit-width of the value
+	 * read using the rdpmc() or equivalent instruction. This can be used
+	 * to sign extend the result like:
+	 *
+	 *   pmc <<= 64 - width;
+	 *   pmc >>= 64 - width; // signed shift right
+	 *   count += pmc;
+	 */
+	__u16	pmc_width;
+
+	/*
+	 * If cap_usr_time the below fields can be used to compute the time
+	 * delta since time_enabled (in ns) using rdtsc or similar.
+	 *
+	 *   u64 quot, rem;
+	 *   u64 delta;
+	 *
+	 *   quot = (cyc >> time_shift);
+	 *   rem = cyc & ((1 << time_shift) - 1);
+	 *   delta = time_offset + quot * time_mult +
+	 *              ((rem * time_mult) >> time_shift);
+	 *
+	 * Where time_offset,time_mult,time_shift and cyc are read in the
+	 * seqcount loop described above. This delta can then be added to
+	 * enabled and possible running (if idx), improving the scaling:
+	 *
+	 *   enabled += delta;
+	 *   if (idx)
+	 *     running += delta;
+	 *
+	 *   quot = count / running;
+	 *   rem  = count % running;
+	 *   count = quot * enabled + (rem * enabled) / running;
+	 */
+	__u16	time_shift;
+	__u32	time_mult;
+	__u64	time_offset;
 
 		/*
 		 * Hole for extension of the self monitor capabilities
 		 */
 
-	__u64	__reserved[123];	/* align to 1k */
+	__u64	__reserved[120];	/* align to 1k */
 
 	/*
 	 * Control data for the mmap() data buffer.
 	 *
-	 * User-space reading the @data_head value should issue an rmb(), on
-	 * SMP capable platforms, after reading this value -- see
-	 * perf_event_wakeup().
+	 * User-space reading the @data_head value should issue an smp_rmb(),
+	 * after reading this value.
 	 *
 	 * When the mapping is PROT_WRITE the @data_tail value should be
-	 * written by userspace to reflect the last read data. In this case
-	 * the kernel will not over-write unread data.
+	 * written by userspace to reflect the last read data, after issueing
+	 * an smp_mb() to separate the data read from the ->data_tail store.
+	 * In this case the kernel will not over-write unread data.
+	 *
+	 * See perf_output_put_handle() for the data ordering.
 	 */
 	__u64   data_head;		/* head in the data section */
 	__u64	data_tail;		/* user-space written tail */
@@ -452,6 +548,8 @@ enum perf_event_type {
 	 *
 	 *	{ u32			size;
 	 *	  char                  data[size];}&& PERF_SAMPLE_RAW
+	 *
+	 *	{ u64 from, to, flags } lbr[nr];} && PERF_SAMPLE_BRANCH_STACK
 	 * };
 	 */
 	PERF_RECORD_SAMPLE			= 9,

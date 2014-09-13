@@ -1,7 +1,7 @@
 export ARCH=arm
 export SUBARCH=arm
 export USE_CCACHE=1
-export CROSS_COMPILE=/home/feravolt/ferra/toolchain/bin/arm-gnueabi-
+export CROSS_COMPILE=/home/feravolt/ferra/toolchain/bin/arm-eabi-
 echo ' '
 echo ' '
 echo ' '
