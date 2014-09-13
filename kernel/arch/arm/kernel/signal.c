@@ -690,9 +690,6 @@ static int do_signal(sigset_t *oldset, struct pt_regs *regs, int syscall)
 	if (!user_mode(regs))
 		return 0;
 
-	if (try_to_freeze())
-		goto no_signal;
-
 	single_step_clear(current);
 
 	signr = get_signal_to_deliver(&info, &ka, regs, NULL);
@@ -702,10 +699,6 @@ static int do_signal(sigset_t *oldset, struct pt_regs *regs, int syscall)
 		return 1;
 	}
 
- no_signal:
-	/*
-	 * No signal to deliver to the process - restart the syscall.
-	 */
 	if (syscall) {
 		if (regs->ARM_r0 == -ERESTART_RESTARTBLOCK) {
 			regs->ARM_r0 = -EAGAIN; /* prevent multiple restarts */
