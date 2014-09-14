@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2007 Google, Inc.
+ * Copyright (c) 2008-2010, Code Aurora Forum. All rights reserved.
+ * Copyright (C) 2010 Sony Ericsson Mobile Communications AB.
+ *
+ * This software is licensed under the terms of the GNU General Public
+ * License version 2, as published by the Free Software Foundation, and
+ * may be copied, distributed, and modified under those terms.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ */
+
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/mtd/mtd.h>
@@ -8,9 +24,12 @@
 #include <linux/io.h>
 #include <linux/crc16.h>
 #include <linux/bitrev.h>
+
 #include <asm/dma.h>
 #include <asm/mach/flash.h>
+
 #include <mach/dma.h>
+
 #include "msm_nand.h"
 
 unsigned long msm_nand_phys;

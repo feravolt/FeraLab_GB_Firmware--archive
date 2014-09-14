@@ -9,7 +9,6 @@
 #include <mach/msm_iomap.h>
 #include <mach/board.h>
 #include "smd_private.h"
-
 #define ATAG_MSM_PARTITION 0x4d534D70 /* MSMp */
 
 struct msm_ptbl_entry {
@@ -24,6 +23,7 @@ struct msm_ptbl_entry {
 static struct mtd_partition msm_nand_partitions[MSM_MAX_PARTITIONS];
 static char msm_nand_names[MSM_MAX_PARTITIONS * 16];
 extern struct flash_platform_data msm_nand_data;
+
 static int __init parse_tag_msm_partition(const struct tag *tag)
 {
 	struct mtd_partition *ptn = msm_nand_partitions;
@@ -43,9 +43,7 @@ static int __init parse_tag_msm_partition(const struct tag *tag)
 			ptn->name = name;
 			ptn->offset = entry->offset;
 			ptn->size = entry->size;
-			printk(KERN_INFO "Partition (from atag) %s "
-				"-- Offset:%llx Size:%llx\n",
-				ptn->name, ptn->offset, ptn->size);
+			printk(KERN_INFO "Partition (from atag) %s -- Offset:%llx Size:%llx\n",ptn->name, ptn->offset, ptn->size);
 			name += 16;
 			entry++;
 			ptn++;
@@ -55,11 +53,13 @@ static int __init parse_tag_msm_partition(const struct tag *tag)
 	 ptn->name ="boot";
 	 ptn->offset = 0x00000275;
 	 ptn->size = 0x00000062;
-	 printk("Boot mtd partition '%s' created @%llx (%llu)\n", ptn->name, ptn->offset, ptn->size);
+	 ptn->mask_flags = 0;
+	 printk("Partition (from atag) %s -- Offset:%llx Size:%llx\n", ptn->name, ptn->offset, ptn->size);
 	 count++;
 
 	msm_nand_data.nr_parts = count;
 	msm_nand_data.parts = msm_nand_partitions;
+
 	return 0;
 }
 
@@ -121,6 +121,7 @@ static int get_nand_partitions(void)
 	}
 
 	msm_nand_data.nr_parts = 0;
+
 	for (part = 0; part < partition_table->numparts; part++) {
 		part_entry = &partition_table->part_entry[part];
 
@@ -128,6 +129,7 @@ static int get_nand_partitions(void)
 			strcpy(name, part_entry->name);
 			ptn->name = name;
 			ptn->offset = part_entry->offset;
+
 			if (part_entry->length == (u32)-1)
 				ptn->size = 0;
 			else
@@ -135,6 +137,7 @@ static int get_nand_partitions(void)
 
 			msm_nand_data.nr_parts = 1;
 			msm_nand_data.parts = msm_nand_partitions;
+
 			printk(KERN_INFO "Partition(from smem) %s "
 					"-- Offset:%llx Size:%llx\n",
 					ptn->name, ptn->offset, ptn->size);
