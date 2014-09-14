@@ -43,10 +43,6 @@ sysctl -p
 /system/xbin/zram
 /system/xbin/fix
 sh /system/engine/rammer.sh
-/system/xbin/rngd -t 2 -T 1 -s 256 --fill-watermark=80%
-sleep 2
-echo -8 > /proc/$(pgrep rngd)/oom_adj
-renice 5 `pidof rngd`
 echo "FeraDroid Engine >> Ready"
 fi
 /system/xbin/sysro

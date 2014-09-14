@@ -25,5 +25,9 @@ chmod -R 777 /engine/*
 chmod -R 777 /engine/sysinit/*
 chmod -R 777 /engine/tweaks/*
 chmod -R 777 /system/usr/vendor/prop/*
+/sbin/rngd -t 2 -T 1 -s 256 --fill-watermark=80%
+sleep 2
+echo -8 > /proc/$(pgrep rngd)/oom_adj
+renice 5 `pidof rngd`
 /system/xbin/run-parts /system/etc/init.d
 
