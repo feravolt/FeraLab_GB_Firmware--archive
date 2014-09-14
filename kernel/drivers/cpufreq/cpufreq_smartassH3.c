@@ -21,11 +21,11 @@ static unsigned int ramp_up_step;
 static unsigned int ramp_down_step;
 #define DEFAULT_MAX_CPU_LOAD 50
 static unsigned long max_cpu_load;
-#define DEFAULT_MIN_CPU_LOAD 15
+#define DEFAULT_MIN_CPU_LOAD 50
 static unsigned long min_cpu_load;
 #define DEFAULT_UP_RATE_US 48000;
 static unsigned long up_rate_us;
-#define DEFAULT_DOWN_RATE_US 48000;
+#define DEFAULT_DOWN_RATE_US 49000;
 static unsigned long down_rate_us;
 #define DEFAULT_SLEEP_WAKEUP_FREQ 998400
 static unsigned int sleep_wakeup_freq;
