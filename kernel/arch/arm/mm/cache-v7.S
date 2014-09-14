@@ -27,6 +27,7 @@
  */
 ENTRY(v7_flush_dcache_all)
 	dmb					@ ensure ordering with previous memory accesses
+	mov	r8, lr @ store lr
 	mrc	p15, 1, r0, c0, c0, 1		@ read clidr
 	ands	r3, r0, #0x7000000		@ extract loc from clidr
 	mov	r3, r3, lsr #23			@ left align loc bit field
@@ -71,7 +72,7 @@ finished:
 	mcr	p15, 2, r10, c0, c0, 0		@ select current cache level in cssr
 	dsb
 	isb
-	mov	pc, lr
+	mov	pc, r8
 ENDPROC(v7_flush_dcache_all)
 
 /*
@@ -86,11 +87,11 @@ ENDPROC(v7_flush_dcache_all)
  *
  */
 ENTRY(v7_flush_kern_cache_all)
-	stmfd	sp!, {r4-r5, r7, r9-r11, lr}
+	stmfd	sp!, {r4-r5, r7-r11, lr}
 	bl	v7_flush_dcache_all
 	mov	r0, #0
 	mcr	p15, 0, r0, c7, c5, 0		@ I+BTB cache invalidate
-	ldmfd	sp!, {r4-r5, r7, r9-r11, lr}
+	ldmfd	sp!, {r4-r5, r7-r11, lr}
 	mov	pc, lr
 ENDPROC(v7_flush_kern_cache_all)
 
