@@ -10,7 +10,7 @@
 #include <mach/board.h>
 #include "smd_private.h"
 
-#define ATAG_MSM_PARTITION 0x4d534D70
+#define ATAG_MSM_PARTITION 0x4d534D70 /* MSMp */
 
 struct msm_ptbl_entry {
 	char name[16];
@@ -24,7 +24,6 @@ struct msm_ptbl_entry {
 static struct mtd_partition msm_nand_partitions[MSM_MAX_PARTITIONS];
 static char msm_nand_names[MSM_MAX_PARTITIONS * 16];
 extern struct flash_platform_data msm_nand_data;
-
 static int __init parse_tag_msm_partition(const struct tag *tag)
 {
 	struct mtd_partition *ptn = msm_nand_partitions;
@@ -39,19 +38,25 @@ static int __init parse_tag_msm_partition(const struct tag *tag)
 		count = MSM_MAX_PARTITIONS;
 
 	for (n = 0; n < count; n++) {
-		memcpy(name, entry->name, 15);
-		name[15] = 0;
-		ptn->name = name;
-		ptn->offset = entry->offset;
-		ptn->size = entry->size;
-		printk(KERN_INFO "Partition (from atag) %s "
+			memcpy(name, entry->name, 15);
+			name[15] = 0;
+			ptn->name = name;
+			ptn->offset = entry->offset;
+			ptn->size = entry->size;
+			printk(KERN_INFO "Partition (from atag) %s "
 				"-- Offset:%llx Size:%llx\n",
 				ptn->name, ptn->offset, ptn->size);
-
-		name += 16;
-		entry++;
-		ptn++;
+			name += 16;
+			entry++;
+			ptn++;
 	}
+
+	 ptn = &msm_nand_partitions[count];
+	 ptn->name ="boot";
+	 ptn->offset = 0x00000275;
+	 ptn->size = 0x00000062;
+	 printk("Boot mtd partition '%s' created @%llx (%llu)\n", ptn->name, ptn->offset, ptn->size);
+	 count++;
 
 	msm_nand_data.nr_parts = count;
 	msm_nand_data.parts = msm_nand_partitions;
@@ -82,30 +87,6 @@ struct flash_partition_table {
 	struct flash_partition_entry part_entry[16];
 };
 
-static struct mtd_partition nand_partitions[] = {
-        {
-                .name           = "appslog",
-                .size           = 0x00000044 >> 1,
-                .offset         = 0x00003fbc >> 1,
-        }, {
-                .name           = "cache",
-                .size           = 0x000006f4 >> 1,
-                .offset         = 0x000038c8 >> 1,
-        }, {
-                .name           = "system",
-                .size           = 0x0000160a >> 1,
-                .offset         = 0x000005ae >> 1,
-        }, {
-                .name           = "userdata",
-                .size           = 0x00001d10 >> 1,
-                .offset         = 0x00001bb8 >> 1,
-        }, {
-                .name           = "boot",
-                .size           = 0x00000062 >> 1,
-                .offset         = 0x00000275 >> 1,
-                .mask_flags     = MTD_WRITEABLE,
-        }
-};
 
 static int get_nand_partitions(void)
 {
@@ -116,9 +97,6 @@ static int get_nand_partitions(void)
 	int part;
 
 	if (msm_nand_data.nr_parts)
-		msm_nand_data.nr_parts = ARRAY_SIZE(nand_partitions);
-		msm_nand_data.parts = nand_partitions;
-		return 0;
 		return 0;
 
 	partition_table = (struct flash_partition_table *)
@@ -143,21 +121,13 @@ static int get_nand_partitions(void)
 	}
 
 	msm_nand_data.nr_parts = 0;
-
 	for (part = 0; part < partition_table->numparts; part++) {
 		part_entry = &partition_table->part_entry[part];
 
-		/* Find a match for the Linux file system partition */
 		if (strcmp(part_entry->name, LINUX_FS_PARTITION_NAME) == 0) {
 			strcpy(name, part_entry->name);
 			ptn->name = name;
-
-			/*TODO: Get block count and size info */
 			ptn->offset = part_entry->offset;
-
-			/* For SMEM, -1 indicates remaining space in flash,
-			 * but for MTD it is 0
-			 */
 			if (part_entry->length == (u32)-1)
 				ptn->size = 0;
 			else
@@ -165,7 +135,6 @@ static int get_nand_partitions(void)
 
 			msm_nand_data.nr_parts = 1;
 			msm_nand_data.parts = msm_nand_partitions;
-
 			printk(KERN_INFO "Partition(from smem) %s "
 					"-- Offset:%llx Size:%llx\n",
 					ptn->name, ptn->offset, ptn->size);
@@ -175,7 +144,6 @@ static int get_nand_partitions(void)
 	}
 
 	printk(KERN_WARNING "%s: no partition table found!", __func__);
-
 	return -ENODEV;
 }
 
