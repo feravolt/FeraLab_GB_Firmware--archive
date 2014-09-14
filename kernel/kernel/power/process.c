@@ -15,10 +15,7 @@
 #include <linux/freezer.h>
 #include <linux/wakelock.h>
 
-/* 
- * Timeout for stopping processes
- */
-#define TIMEOUT	(20 * HZ)
+unsigned int __read_mostly freeze_timeout_msecs = 2 * MSEC_PER_SEC;
 
 static inline int freezeable(struct task_struct * p)
 {
@@ -40,8 +37,8 @@ static int try_to_freeze_tasks(bool sig_only)
 	unsigned int wakeup = 0;
 
 	do_gettimeofday(&start);
+	end_time = jiffies + msecs_to_jiffies(freeze_timeout_msecs);
 
-	end_time = jiffies + TIMEOUT;
 	do {
 		todo = 0;
 		read_lock(&tasklist_lock);
