@@ -4,9 +4,7 @@
 /system/bin/charger
 insmod /system/kernel/splboot.ko
 sync
-sleep 3
 cat /system/kernel/miniloader > /proc/splboot/image
 cat /system/kernel/boot.img > /proc/splboot/boot_img
-sleep 3
 echo > /proc/splboot/boot
-sleep 3
+

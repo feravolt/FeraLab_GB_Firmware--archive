@@ -1716,6 +1716,7 @@ static int __init es209ra_hw_version_setup(char *str)
 }
 __setup_param("hwversion=", es209ra_hw_version_setup_1, es209ra_hw_version_setup, 0);
 __setup_param("semcandroidboot.hwversion=", es209ra_hw_version_setup_2, es209ra_hw_version_setup, 0);
+__setup_param("semcandroidboot.startup=", es209ra_startup_reason_setup_2, es209ra_startup_reason_setup, 0);
 int get_predecode_repair_cache(void);
 int set_predecode_repair_cache(void);
 static void __init es209ra_init(void)
