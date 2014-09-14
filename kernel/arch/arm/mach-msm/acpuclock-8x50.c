@@ -121,7 +121,7 @@ static struct clkctl_acpu_speed *acpu_freq_tbl = acpu_freq_tbl_1267;
 #define WAIT_FOR_IRQ_KHZ 245760
 
 #ifdef CONFIG_CPU_FREQ_MSM
-static struct cpufreq_frequency_table freq_table[20];
+static struct cpufreq_frequency_table freq_table[27];
 static void __init cpufreq_table_init(void)
 {
 	unsigned int i;
