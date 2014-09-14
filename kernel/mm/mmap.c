@@ -1703,7 +1703,7 @@ static void unmap_region(struct mm_struct *mm,
 	unmap_vmas(&tlb, vma, start, end, &nr_accounted, NULL);
 	vm_unacct_memory(nr_accounted);
 	free_pgtables(tlb, vma, prev? prev->vm_end: FIRST_USER_ADDRESS,
-				 next? next->vm_start: 0);
+				 next? next->vm_start: USER_PGTABLES_CEILING);
 	tlb_finish_mmu(tlb, start, end);
 }
 
@@ -2033,8 +2033,8 @@ void exit_mmap(struct mm_struct *mm)
 	/* Use -1 here to ensure all VMAs in the mm are unmapped */
 	end = unmap_vmas(&tlb, vma, 0, -1, &nr_accounted, NULL);
 	vm_unacct_memory(nr_accounted);
-	free_pgtables(tlb, vma, FIRST_USER_ADDRESS, 0);
-	tlb_finish_mmu(tlb, 0, end);
+	free_pgtables(tlb, vma, FIRST_USER_ADDRESS, USER_PGTABLES_CEILING);
+	tlb_finish_mmu(tlb, -1, end);
 
 	/*
 	 * Walk the list again, actually closing and freeing it,

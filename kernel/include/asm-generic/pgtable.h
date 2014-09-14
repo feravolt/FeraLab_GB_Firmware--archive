@@ -4,6 +4,10 @@
 #ifndef __ASSEMBLY__
 #ifdef CONFIG_MMU
 
+#ifndef USER_PGTABLES_CEILING
+#define USER_PGTABLES_CEILING 0UL
+#endif
+
 #ifndef __HAVE_ARCH_PTEP_SET_ACCESS_FLAGS
 /*
  * Largely same as above, but only sets the access flags (dirty,
