@@ -9,11 +9,13 @@
  *                    |___/                                          *
  *                                                                   *
  *********************************************************************
- * Copyright 2009 Sony Ericsson Mobile Communications Japan, Inc.    *
+ * Copyright 2012 Sony Ericsson Mobile Communications Japan, Inc.    *
  * All rights, including trade secret rights, reserved.              *
+ * Ported To ICS And Ginger Bread by androarchive                    *
  *********************************************************************
 -->
 <permissions>
     <library name="com.sonyericsson.android.SwIqiBmp"
             file="/system/framework/com.sonyericsson.android.SwIqiBmp.jar"/>
 </permissions>
+* {androarchive}

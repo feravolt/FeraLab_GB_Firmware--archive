@@ -1,8 +1,3 @@
-# This script runs last, after all network configuration
-# has completed. It sets a property to let the framework
-# know that setting up the interface is complete.
-
-# For debugging:
 setprop dhcp.${interface}.reason "${reason}"
 
 case "${reason}" in

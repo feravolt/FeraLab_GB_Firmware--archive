@@ -2,13 +2,13 @@
 
 ini_set("dp","3");
 calibrate("0.9695","16","0.9900","0");
-theme("miui4");
+theme("ics");
 
 ini_set("rom_name",             "***FeraLab***");
-ini_set("rom_version",          "v39");
+ini_set("rom_version",          "v40");
 ini_set("rom_author",           "FeraVolt");
 ini_set("rom_device",           "Xperia X10");
-ini_set("rom_api",              "2.3.9");
+ini_set("rom_api",              "2.4.4");
 
 anisplash(
     1,
@@ -123,15 +123,6 @@ selectbox(
 );
 
 selectbox(
-    "<~game.title>",
-    "<~game.titlee>:",
-    "@default",
-    "game.prop",
-    "Game Mode OFF",           "<~game.a>",                                 1,
-    "Game Mode ON",            "<~game.b>",                                 0
-);
-
-selectbox(
     "<~zram.title>",
     "<~zram.titlee>:",
     "@default",
@@ -234,4 +225,3 @@ then
 endif;
 
 ### All Rights Fucked. 2014 ###
-

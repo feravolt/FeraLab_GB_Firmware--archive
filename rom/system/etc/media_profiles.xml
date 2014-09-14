@@ -87,7 +87,7 @@
         <ImageEncoding quality="100" />
         <ImageEncoding quality="90" />
         <ImageEncoding quality="80" />
-        <ImageDecoding memCap="20000000" />
+        <ImageDecoding memCap="30000000" />
     </CamcorderProfiles>
     <EncoderOutputFileFormat name="mp4" />
     <EncoderOutputFileFormat name="3gp" />

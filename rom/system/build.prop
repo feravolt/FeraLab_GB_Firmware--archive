@@ -1,0 +1,186 @@
+### FeraLab ###
+
+# Build info
+ro.build.date=15.09.2014
+ro.build.date.utc=1308515086
+ro.build.user=FeraVolt
+ro.build.host=FeraLab
+ro.build.product=X10i
+ro.build.version.incremental=tB_P
+ro.build.version.sdk=10
+ro.build.version.codename=REL
+ro.build.version.release=2.4.4
+ro.build.type=user
+ro.build.description=X10i-user 2.3.7 6.0.B.0.743 tB_P release-keys
+ro.build.id=6.0.B.0.743
+ro.build.display.id=v40 Final
+ro.build.tags=release-keys
+ro.build.fingerprint=SEMC/X10i_1232-9897/X10i:2.3.7/6.0.B.0.743/tB_P:user/release-keys
+
+# Device Info
+ro.semc.version.cust=1232-9897
+ro.semc.version.cust_revision=R1C
+ro.semc.product.model=X10i
+ro.semc.content.number=PA3
+ro.semc.version.fs_revision=6.0.B.0.743
+ro.semc.ms_type_id=AAD-3880056-BV
+ro.semc.version.fs=WORLD-1-4-8
+ro.semc.product.name=X10
+ro.semc.product.device=X10
+ro.product.brand=SEMC
+ro.product.name=X10i_1232-9897
+ro.product.device=X10i
+ro.product.model=X10i
+ro.product.board=es209ra
+ro.product.cpu.abi=armeabi-v7a
+ro.product.cpu.abi2=armeabi
+ro.product.manufacturer=Sony Ericsson
+ro.product.locale.language=en
+ro.product.locale.region=GB
+persist.sys.timezone=Europe/Istanbul
+
+# Build Config
+DEVICE_PROVISIONED=1
+keyguard.no_require_sim=true
+ro.com.android.dateformat=MM-dd-yyyy
+ro.com.android.dataroaming=false
+ro.com.google.gmsversion=2.3_r11
+ro.com.google.clientidbase=android-sonyericsson
+ro.config.ringtone=29.ogg
+ro.config.notification_sound=18.ogg
+ro.config.alarm_alert=8.ogg
+ro.hdmi.enable=false
+hw.hdmiON=0
+ro.product.locale.excluded=ar_EG ar_IL fa_IR iw_IL
+ro.product-res-path=framework/SemcGenericUxpRes.apk
+ro.semc.timescape_keys=Sony_Ericsson_Xperia
+ro.semc.sols.product-code=98
+ro.semc.sols.company-code=5
+ro.semc.batt.capacity=1500
+ro.semc.batt.test.z_threshold=50
+ro.semc.batt.test.min_level=70
+ro.setupwizard.mode=DISABLED
+persist.adb.notify=0
+persist.android.strictmode=0
+persist.chargemon.active=1
+persist.service.adb.enable=1
+persist.sys.boot.sound.volume=0
+sys.mem.max_hidden_apps=5
+
+# Qualcomm
+com.qc.hardware=true
+com.qc.hdmi_out=false
+debug.qc.hardware=true
+debug.qctwa.statusbar=1
+debug.qctwa.preservebuf=1
+ro.opengles.version=131072
+
+# FeraLab
+ro.feralab.rom=1
+ro.feralab.rom.version=40
+ro.feralab.rom.android.version=2.4.4
+ro.feralab.device=es209ra
+ro.feralab.engine=18.3
+
+# Networking
+ro.ril.def.agps.feature=1
+ro.ril.def.agps.mode=2
+ro.ril.enable.3g.prefix=1
+ro.ril.gprsclass=10
+ro.ril.hsxpa=2
+ro.ril.hsdpa.category=8
+ro.ril.hsupa.category=6
+ro.ril.oem.ecclist=110,118,119,102,103,104,911
+ro.ril.oem.nosim.ecclist=110,118,119,102,103,104,911
+ro.telephony.call_ring.multiple=false
+ro.tethering.kb_disconnect=1
+rild.libpath=/system/lib/libril-qc-1.so
+rild.libargs=-d /dev/smd0
+net.dns1=8.8.8.8
+net.dns2=8.8.4.4
+net.ppp0.dns1=8.8.8.8
+net.ppp0.dns2=8.8.4.4
+persist.rild.nitz_plmn=
+persist.rild.nitz_long_ons_0=
+persist.rild.nitz_long_ons_1=
+persist.rild.nitz_long_ons_2=
+persist.rild.nitz_long_ons_3=
+persist.rild.nitz_short_ons_0=
+persist.rild.nitz_short_ons_1=
+persist.rild.nitz_short_ons_2=
+persist.rild.nitz_short_ons_3=
+persist.ro.ril.sms_sync_sending=1
+pm.sleep_mode=1
+
+# Wireless
+net.bt.name=FeraLab
+ro.bluetooth.remote.autoconnect=true
+ro.board.platform=qsd8k
+ro.semc.wifi.hostapd=1
+ro.wifi.channels=13
+wifi.interface=wlan0
+wifi.supplicant_scan_interval=450
+
+
+# Media
+media.a1026.nsForVoiceRec=0
+media.a1026.enableA1026=0
+media.stagefright.enable-player=true
+media.stagefright.enable-http=true
+ro.camera.hd_shrink_vf_enabled=1
+ro.camera.sound.forced=0
+ro.media.enc.jpeg.quality=100
+ro.media.dec.jpeg.memcap=30000000
+ro.media.enc.hprof.vid.bps=8000000
+ro.semc.automount.disabled=true
+ro.semc.xloud.supported=true
+ro.service.swiqi2.supported=true
+persist.service.swiqi2.enable=1
+persist.service.xloud.enable=1
+persist.usb.storagemode=mtp
+persist.wpa_supplicant.debug=false
+
+# DRM
+ro.drm.active.num=4
+ro.drm.active.0=semc,1
+ro.drm.active.1=cmla,0
+ro.drm.active.2=viaccess,0
+ro.drm.active.3=marlin,1
+
+# Dalvik VM
+dalvik.vm.checkjni=false
+dalvik.vm.debug.alloc=0
+dalvik.vm.dexopt-data-only=1
+dalvik.vm.dexopt-flags=m=y,v=n,o=v,u=y
+dalvik.vm.jit.codecachesize=0
+dalvik.vm.execution-mode=int:jit
+dalvik.vm.lockprof.threshold=500
+dalvik.vm.heapsize=42m
+dalvik.vm.stack-trace-file=/data/anr/traces.txt
+dalvik.vm.verify-bytecode=false
+ro.config.low_ram=true
+ro.kernel.android.checkjni=0
+
+# Graphics & Display
+debug.composition.type=mdp
+debug.egl.hw=1
+debug.egl.profiler=1
+debug.egl.swapinterval=1
+debug.enabletr=true
+debug.gr.numframebuffers=3
+debug.gr.swapinterval=1
+debug.mdpcomp.logs=0
+debug.overlayui.enable=1
+debug.performance.tuning=1
+debug.sf.hw=1
+debug.sf.swaprect=1
+dev.pm.mdp_samplingrate=1
+ro.floatingtouch.available=1
+ro.sf.lcd_density=240
+persist.sys.composition.type=mdp
+persist.sys.swapbuffer=1
+persist.sys.ui.hw=1
+video.accelerate.hw=1
+
+# Misc
+ro.HOME_APP_ADJ=1

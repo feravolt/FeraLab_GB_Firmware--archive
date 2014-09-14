@@ -11,7 +11,6 @@ chmod 777 /sbin/sysro
 rm -f /system/lib/modules/ar6000.ko
 cp /modules/wifi.ko /system/lib/modules/wifi.ko
 chmod 666 /system/lib/modules/*
-insmod /system/lib/modules/*.ko
 mount -t debugfs debugfs /sys/kernel/debug
 echo 0 > /sys/kernel/debug/msm_fb/0/vsync_enable
 mount -o bind /system/engine /engine

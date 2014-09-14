@@ -2,7 +2,11 @@
 ### FeraDroid Engine v18 | By FeraVolt. 2014 ###
 export PATH=/sbin
 
-rzscontrol /dev/block/ramzswap0 -i -d 27648
+echo 93 > /proc/sys/vm/swappiness
+insmod /system/lib/modules/zram.ko
+sleep 1
+rzscontrol /dev/block/ramzswap0 -i -d 131072
+sleep 1
 busybox swapon /dev/block/ramzswap0
-echo 27 > /proc/sys/vm/swappiness
+free
 

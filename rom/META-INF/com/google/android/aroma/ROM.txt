@@ -1,11 +1,18 @@
 ***FeraLab***
 =============
 
-= v39 = 
-(Warning! FeraKernel v23 requied!)
-> Tuned powersaving
-> RAM usage tweaks
-> zRam improvements
-> Networking optimizations
-> All apps updated & zipalligned
+= v40 = 
+(Warning! FeraKernel v24 requied!)
+> All apps updated, optimized and zipalligned
+> New GPS driver
+> New lights driver
+> New sensors driver
+> New video drivers
+> Updated SuperSu root
+> Updated Viper4Android sound engine
+> FDE v18.1
+> Autobrightness support
+> Sql databases read speed improvement
+> Better enlighter option in AROMA
+> zRam improvement
 > misc..

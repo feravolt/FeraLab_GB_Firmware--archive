@@ -1,34 +1,16 @@
 #!/system/xbin/sh
 ### FeraDroid Engine v18 | By FeraVolt. 2014 ###
 
-for n in 1 2
-do
-  NUMBER_OF_CHECKS=0
-  SLEEP_TIME=1
-  PROCESSES_TOTAL=4
-  CHECK_COUNT=0
-  P_CHECK=0
-  PROCESS_1=0;
-  PROCESS_2=0;
-  PROCESS_3=0;
-  PROCESS_4=0;
+for i in \
+`find /data -iname "*.db"`; 
+do \
+	sqlite3 $i 'VACUUM;'; 
+done;
 
-  if [ $n -eq "1" ]; then
-    sleep 1
-    SWAP_SLEEP_TIME=3; SWAP_NUMBER_OF_CHECKS=27; SWAP_CHECK_COUNT=0; SWAP_CHECK_COUNT_OK=0; while [ $SWAP_CHECK_COUNT -lt $SWAP_NUMBER_OF_CHECKS ]; do if [ `pidof kswapd0` ]; then renice 19 `pidof kswapd0`; SWAP_CHECK_COUNT=$SWAP_NUMBER_OF_CHECKS; SWAP_CHECK_COUNT_OK=1; else sleep $SWAP_SLEEP_TIME; fi; SWAP_CHECK_COUNT=`expr $SWAP_CHECK_COUNT + 1`; done;
-  fi;
-  if [ $n -eq "2" ]; then
-    NUMBER_OF_CHECKS=6
-    SLEEP_TIME=6
-  fi;
-  while [ $CHECK_COUNT -lt $NUMBER_OF_CHECKS ];
-  do
-    if [ $PROCESS_1 -eq "0" ]; then PNAME="com.android.phone"; NICELEVEL=-18; if [ `pidof $PNAME` ]; then renice $NICELEVEL `pidof $PNAME`; PROCESS_1=1; P_CHECK=`expr $P_CHECK + 1`; fi; fi;
-    if [ $PROCESS_2 -eq "0" ]; then PNAME="com.sonyericsson.lockscreen.uxpnxt"; NICELEVEL=-18; if [ `pidof $PNAME` ]; then renice $NICELEVEL `pidof $PNAME`; PROCESS_2=1; P_CHECK=`expr $P_CHECK + 1`; fi; fi;
-    if [ $PROCESS_3 -eq "0" ]; then PNAME="com.android.settings"; NICELEVEL=-18; if [ `pidof $PNAME` ]; then renice $NICELEVEL `pidof $PNAME`; PROCESS_3=1; P_CHECK=`expr $P_CHECK + 1`; fi; fi;
-    if [ $PROCESS_4 -eq "0" ]; then PNAME="com.sonyericsson.home"; NICELEVEL=-18; if [ `pidof $PNAME` ]; then renice $NICELEVEL `pidof $PNAME`; PROCESS_4=1; P_CHECK=`expr $P_CHECK + 1`; fi; fi;
-    if [ $P_CHECK -ge $PROCESSES_TOTAL ]; then CHECK_COUNT=$NUMBER_OF_CHECKS; else sleep $SLEEP_TIME; fi;
-    CHECK_COUNT=`expr $CHECK_COUNT + 1`;
-  done
-done
+for i in \
+`find /data -iname "*.db"`; 
+do \
+	sqlite3 $i 'REINDEX;'; 
+done;
 
+sync;

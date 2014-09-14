@@ -69,6 +69,10 @@ sleep 1
 		sleep 1
 		sync;
 		sleep 1
+		echo 3 > /proc/sys/vm/drop_caches
+		sleep 3
+		sync;
+		sleep 1
 	  if [[ "$ramfree" -ge "$good" ]]
 		then
 			clean=0

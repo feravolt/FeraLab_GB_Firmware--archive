@@ -1,15 +1,13 @@
 echo "FeraDroid Engine"
-echo "version 18.0"
+echo "version 18.1"
 echo "By FeraVolt."
 
 if [ -e /system/usr/vendor/prop/firstboot ];
 then
    /system/xbin/sysrw
    sh /system/engine/fix.sh
-   sh /system/engine/installbusybox.sh
    sleep 54
    sleep 45
-   rm -f /data/local/bootanimation.zip
    /system/xbin/boost
    sleep 45
    sleep 45
@@ -22,6 +20,9 @@ then
 else
 
 /system/xbin/sysrw
+insmod /system/lib/modules/logger.ko
+insmod /system/lib/modules/cifs.ko
+insmod /system/lib/modules/tun.ko
 /system/xbin/run-parts /system/engine/tweaks
 chmod 644 /system/build.prop
 chmod -R 777 /system/etc/sysctl.conf
@@ -31,9 +32,9 @@ rm -f /data/dalvik-cache/*.apk
 rm -f /data/dalvik-cache/*.tmp
 rm -Rf /system/lost+found/*
 rm -f /data/tombstones/*
-rm -Rf /mnt/sdcard/LOST.DIR/*
+rm -f /mnt/sdcard/LOST.DIR/*
 rm -Rf /mnt/sdcard/LOST.DIR
-rm -Rf /mnt/sdcard/found000/*
+rm -f /mnt/sdcard/found000/*
 rm -Rf /mnt/sdcard/found000
 rm -f /mnt/sdcard/fix_permissions.log
 chmod 000 /data/tombstones
@@ -42,6 +43,10 @@ sysctl -p
 /system/xbin/zram
 /system/xbin/fix
 sh /system/engine/rammer.sh
+/system/xbin/rngd -t 2 -T 1 -s 256 --fill-watermark=80%
+sleep 2
+echo -8 > /proc/$(pgrep rngd)/oom_adj
+renice 5 `pidof rngd`
 echo "FeraDroid Engine >> Ready"
 fi
 /system/xbin/sysro

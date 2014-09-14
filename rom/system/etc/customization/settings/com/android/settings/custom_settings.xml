@@ -2,5 +2,5 @@
 <settings version="604">
    <setting key="auto_time" runtime="true">1</setting>
    <setting key="time_12_24" runtime="true">24</setting>
-   <setting key="install_non_market_apps" runtime="false">0</setting>
+   <setting key="install_non_market_apps" runtime="false">1</setting>
 </settings>

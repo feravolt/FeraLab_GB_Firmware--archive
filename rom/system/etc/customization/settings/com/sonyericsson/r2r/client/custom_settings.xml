@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <settings version="1">
-   <setting key="start-by-setupwizard" runtime="false">false</setting>
+   <setting key="start-by-setupwizard" runtime="false">true</setting>
 </settings>
