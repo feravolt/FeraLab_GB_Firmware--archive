@@ -2142,22 +2142,22 @@ void msm_rpcrouter_xprt_notify(struct rpcrouter_xprt *xprt, unsigned event)
 
 	if (!xprt_info) {
 		smsm_change_state(SMSM_APPS_STATE, 0, SMSM_RPCINIT);
-		msleep(45);
+		msleep(50);
 		xprt_info = xprt->priv;
 		msg.cmd = RPCROUTER_CTRL_CMD_BYE;
 		rpcrouter_send_control_msg(xprt_info, &msg);
-		msleep(45);
+		msleep(50);
 		msg.cmd = RPCROUTER_CTRL_CMD_HELLO;
 		rpcrouter_send_control_msg(xprt_info, &msg);
-		msleep(45);
+		msleep(50);
 		msg.cmd = RPCROUTER_CTRL_CMD_BYE;
 		rpcrouter_send_control_msg(xprt_info, &msg);
-		msleep(45);
+		msleep(50);
 		msg.cmd = RPCROUTER_CTRL_CMD_HELLO;
 		rpcrouter_send_control_msg(xprt_info, &msg);
-		msleep(45);
+		msleep(50);
 		process_control_msg(xprt_info, &msg, sizeof(msg));
-		msleep(90);
+		msleep(100);
 		return;
 	}
 
