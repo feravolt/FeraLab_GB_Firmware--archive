@@ -773,7 +773,7 @@ static void __init msm_mddi_tmd_fwvga_display_device_init(void)
 	panel_data->panel_info.lcd.v_pulse_width = 0;
 	panel_data->panel_info.lcd.hw_vsync_mode = TRUE;
 	panel_data->panel_info.lcd.vsync_notifier_period = 0;
-	panel_data->panel_info.lcd.refx100 = 7468;
+	panel_data->panel_info.lcd.refx100 = 5500;
 	panel_data->panel_info.width = 51;
 	panel_data->panel_info.height = 89;
 	panel_data->panel_ext = &tmd_wvga_panel_ext;
