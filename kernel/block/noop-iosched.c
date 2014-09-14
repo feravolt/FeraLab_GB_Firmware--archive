@@ -1,6 +1,3 @@
-/*
- * elevator noop
- */
 #include <linux/blkdev.h>
 #include <linux/elevator.h>
 #include <linux/bio.h>
@@ -34,14 +31,12 @@ static int noop_dispatch(struct request_queue *q, int force)
 static void noop_add_request(struct request_queue *q, struct request *rq)
 {
 	struct noop_data *nd = q->elevator->elevator_data;
-
 	list_add_tail(&rq->queuelist, &nd->queue);
 }
 
 static int noop_queue_empty(struct request_queue *q)
 {
 	struct noop_data *nd = q->elevator->elevator_data;
-
 	return list_empty(&nd->queue);
 }
 
@@ -113,7 +108,6 @@ static void __exit noop_exit(void)
 
 module_init(noop_init);
 module_exit(noop_exit);
-
 
 MODULE_AUTHOR("Jens Axboe");
 MODULE_LICENSE("GPL");

@@ -7,11 +7,11 @@
 
 enum { ASYNC, SYNC };
 
-static const int sync_read_expire = (HZ / 16) * 9;	/* max time before a sync read is submitted. */
-static const int sync_write_expire = (HZ / 2) * 5;	/* max time before a sync write is submitted. */
+static const int sync_read_expire = (HZ / 8) * 3;	/* max time before a sync read is submitted. */
+static const int sync_write_expire = (HZ / 8) * 15;	/* max time before a sync write is submitted. */
 static const int async_read_expire = HZ * 4;	/* ditto for async, these limits are SOFT! */
 static const int async_write_expire = HZ * 16;	/* ditto for async, these limits are SOFT! */
-static const int writes_starved = 4;		/* max times reads can starve a write */
+static const int writes_starved = 3;		/* max times reads can starve a write */
 static const int fifo_batch     = 1;		/* # of sequential requests treated as one
 						   by the above parameters. For throughput. */
 
@@ -76,6 +76,7 @@ static struct request *
 sio_choose_expired_request(struct sio_data *sd)
 {
 	struct request *rq;
+	sd->batched = 0;
 	rq = sio_expired_request(sd, ASYNC, WRITE);
 	if (rq)
 		return rq;
@@ -98,6 +99,7 @@ sio_choose_request(struct sio_data *sd, int data_dir)
 {
 	struct list_head *sync = sd->fifo_list[SYNC];
 	struct list_head *async = sd->fifo_list[ASYNC];
+	sd->batched++;
 
 	if (!list_empty(&sync[data_dir]))
 		return rq_entry_fifo(sync[data_dir].next);
@@ -118,8 +120,6 @@ sio_dispatch_request(struct sio_data *sd, struct request *rq)
 	rq_fifo_clear(rq);
 	elv_dispatch_add_tail(rq->q, rq);
 
-	sd->batched++;
-
 	if (rq_data_dir(rq)) {
 		sd->starved = 0;
 	} else {
@@ -136,13 +136,12 @@ sio_dispatch_requests(struct request_queue *q, int force)
 	struct request *rq = NULL;
 	int data_dir = READ;
 
-	if (sd->batched > sd->fifo_batch) {
-		sd->batched = 0;
+	if (sd->batched >= sd->fifo_batch) {
 		rq = sio_choose_expired_request(sd);
 	}
 
 	if (!rq) {
-		if (sd->starved > sd->writes_starved)
+		if (sd->starved >= sd->writes_starved)
 			data_dir = WRITE;
 
 		rq = sio_choose_request(sd, data_dir);
@@ -265,8 +264,8 @@ STORE_FUNCTION(sio_sync_read_expire_store, &sd->fifo_expire[SYNC][READ], 0, INT_
 STORE_FUNCTION(sio_sync_write_expire_store, &sd->fifo_expire[SYNC][WRITE], 0, INT_MAX, 1);
 STORE_FUNCTION(sio_async_read_expire_store, &sd->fifo_expire[ASYNC][READ], 0, INT_MAX, 1);
 STORE_FUNCTION(sio_async_write_expire_store, &sd->fifo_expire[ASYNC][WRITE], 0, INT_MAX, 1);
-STORE_FUNCTION(sio_fifo_batch_store, &sd->fifo_batch, 0, INT_MAX, 0);
-STORE_FUNCTION(sio_writes_starved_store, &sd->writes_starved, 0, INT_MAX, 0);
+STORE_FUNCTION(sio_fifo_batch_store, &sd->fifo_batch, 1, INT_MAX, 0);
+STORE_FUNCTION(sio_writes_starved_store, &sd->writes_starved, 1, INT_MAX, 0);
 #undef STORE_FUNCTION
 
 #define DD_ATTR(name) \
