@@ -46,7 +46,7 @@ UTS_LEN=64
   
   echo \#define UTS_MACHINE \"$ARCH\"
   echo \#define UTS_VERSION \"`echo $UTS_VERSION`\"
-  echo \#define LINUX_COMPILE_TIME \""
+  echo \#define LINUX_COMPILE_TIME \"EnergyCore\"
   echo \#define LINUX_COMPILE_BY \"FeraVolt\"
   echo \#define LINUX_COMPILE_HOST \"FeraLab\"
 

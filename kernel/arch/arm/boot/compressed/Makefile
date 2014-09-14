@@ -70,7 +70,7 @@ endif
 ifneq ($(PARAMS_PHYS),)
 LDFLAGS_vmlinux += --defsym params_phys=$(PARAMS_PHYS)
 endif
-LDFLAGS_vmlinux += -p --no-undefined -X \
+LDFLAGS_vmlinux += -p --no-undefined -X -T \
 	$(shell $(CC) $(KBUILD_CFLAGS) --print-libgcc-file-name) -T
 
 $(obj)/vmlinux: $(obj)/vmlinux.lds $(obj)/$(HEAD) $(obj)/$(MISC) $(obj)/piggy.o \
