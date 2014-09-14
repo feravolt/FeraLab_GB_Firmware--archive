@@ -51,7 +51,7 @@ cp /home/feravolt/ferra/vendor/host/.output/QUALCOMM_ARM_NATIVEMMC-SDIO/image/ar
 echo ' '
 echo '>> Stripping modules...'
 cd ferra/0UTPUT
-/home/feravolt/ferra/toolchain/bin/arm-gnueabi-strip --strip-unneeded wifi.ko
+/home/feravolt/ferra/toolchain/bin/arm-eabi-strip --strip-unneeded wifi.ko
 cd
 cd ferra
 if [ -e /home/feravolt/ferra/kernel/arch/arm/boot/zImage ]; then
