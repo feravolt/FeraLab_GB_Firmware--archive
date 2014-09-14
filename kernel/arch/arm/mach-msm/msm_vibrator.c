@@ -1,32 +1,15 @@
-/* include/asm/mach-msm/htc_pwrsink.h
- *
- * Copyright (C) 2008 HTC Corporation.
- * Copyright (C) 2007 Google, Inc.
- *
- * This software is licensed under the terms of the GNU General Public
- * License version 2, as published by the Free Software Foundation, and
- * may be copied, distributed, and modified under those terms.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- */
 #include <linux/kernel.h>
 #include <linux/platform_device.h>
 #include <linux/err.h>
 #include <linux/hrtimer.h>
 #include <../../../drivers/staging/android/timed_output.h>
 #include <linux/sched.h>
-
 #include <mach/msm_rpcrouter.h>
 
 #define PM_LIBPROG      0x30000061
 #define PM_LIBVERS      0x10001
-
 #define HTC_PROCEDURE_SET_VIB_ON_OFF	22
-#define PMIC_VIBRATOR_LEVEL	(2000)
+#define PMIC_VIBRATOR_LEVEL	(2500)
 
 static struct work_struct work_vibrator;
 static struct hrtimer vibe_timer;
