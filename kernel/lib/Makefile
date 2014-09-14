@@ -66,6 +66,10 @@ obj-$(CONFIG_REED_SOLOMON) += reed_solomon/
 obj-$(CONFIG_LZO_COMPRESS) += lzo/
 obj-$(CONFIG_LZO_DECOMPRESS) += lzo/
 
+CFLAGS_snappy.o += $(call cc-disable-warning, declaration-after-statement) \
+		-DNDEBUG=1
+obj-$(CONFIG_SNAPPY) += snappy.o
+
 lib-$(CONFIG_DECOMPRESS_GZIP) += decompress_inflate.o
 lib-$(CONFIG_DECOMPRESS_BZIP2) += decompress_bunzip2.o
 lib-$(CONFIG_DECOMPRESS_LZMA) += decompress_unlzma.o

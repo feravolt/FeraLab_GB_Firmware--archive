@@ -188,4 +188,10 @@ config DISABLE_OBSOLETE_CPUMASK_FUNCTIONS
        bool "Disable obsolete cpumask functions" if DEBUG_PER_CPU_MAPS
        depends on EXPERIMENTAL && BROKEN
 
+config SNAPPY
+       tristate "Snappy compressor"
+       help
+         Add the snappy compressor. This is a reasonable compressor that
+         compresses and decompresses extremly fast.
+
 endmenu
