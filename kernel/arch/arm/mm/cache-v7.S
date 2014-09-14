@@ -47,16 +47,17 @@ loop1:
 	ands	r4, r4, r1, lsr #3		@ find maximum number on the way size
 	clz	r5, r4				@ find bit position of way size increment
 loop2:
+	mrc	p15, 1, r1, c0, c0, 0
 	ldr	r7, =0x7fff @
 	ands	r7, r7, r1, lsr #13		@ extract max number of the index size
 	mov	r9, #0
-	mov 	r3, r7
+	mov 	r1, r7
 loop3:
 	orr	r11, r10, r4, lsl r5		@ factor way and cache number into r11
 	orr	r11, r11, r9, lsl r2		@ factor index number into r11
 	mcr	p15, 0, r11, c7, c14, 2		@ clean & invalidate by set/way
 	add	r9, #63
-	and	r9, r9, r3
+	and	r9, r9, r1
 	subs	r7, r7, #1			@ decrement the index
 	bge	loop3
 	subs	r4, r4, #1
