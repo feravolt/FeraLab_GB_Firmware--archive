@@ -4,7 +4,6 @@ echo "FeraDroid Engine"
 echo "By FeraVolt."
 echo "Firing up..."
 
-export PATH=/sbin
 chmod 777 /sbin/sysrw
 chmod 777 /sbin/sysro
 /sbin/sysrw

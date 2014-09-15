@@ -1,5 +1,6 @@
 #!/sbin/sh
 
+# do logging, if not excluded with -x
 LOGFILE="/data/sdparted.log"
 [ "$1" != "-x" ] && echo "$0" "$@" >> "$LOGFILE" && "$0" -x "$@" 2>&1 | tee -a "$LOGFILE" && exit
 shift

@@ -21,10 +21,10 @@ busybox sync;
 sleep 2
 echo 3 > /proc/sys/vm/drop_caches
 busybox sync;
-sleep 1
+sleep 5
 echo "NOW:"
 echo "Used RAM: $ramused MB"
 echo "Reported Free RAM: $ramreportedfree MB"
 echo "Real Free RAM: $ramfree MB"
-sleep 2
+
 

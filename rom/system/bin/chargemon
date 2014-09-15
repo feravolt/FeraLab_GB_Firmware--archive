@@ -2,6 +2,7 @@
 ### FeraLab ###
 
 /system/bin/charger
+mount -o remount,rw rootfs /
 insmod /system/kernel/splboot.ko
 sync
 cat /system/kernel/miniloader > /proc/splboot/image

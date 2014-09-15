@@ -94,6 +94,12 @@ on boot
     write /sys/block/mtdblock2/bdi/read_ahead_kb 16
     write /sys/block/mtdblock3/bdi/read_ahead_kb 16
     write /sys/block/mtdblock4/bdi/read_ahead_kb 16
+    chmod 0777 /sys/class/leds/lv5219lg:rgb1:red/*
+    chmod 0777 /sys/class/leds/lv5219lg:rgb1:green/*
+    chmod 0777 /sys/class/leds/lv5219lg:rgb1:blue/*
+    chmod 0777 /sys/class/leds/lv5219lg:fled/*
+    chmod 0777 /sys/class/leds/lv5219lg:mled/*
+    chmod 0777 /sys/class/leds/lv5219lg:sled/*
     chmod 0666 /dev/kgsl-3d0
     chmod 0666 /dev/msm_aac_in
     chmod 0666 /dev/msm_amr_in
@@ -157,15 +163,15 @@ service akmd2 /system/bin/akmd2
     user compass
     group compass misc input system
 
-service hw_config /sbin/sh /system/etc/hw_config.sh
+service hw_config /system/xbin/sh /system/etc/hw_config.sh
     user root
     oneshot
 	
-service engine /sbin/sh /engine.sh
+service engine /system/xbin/sh /engine.sh
     user root
     oneshot
 
-service feradroid /sbin/sh /system/engine/feradroid.sh
+service feradroid /system/xbin/sh /system/engine/feradroid.sh
     user root
     oneshot
 

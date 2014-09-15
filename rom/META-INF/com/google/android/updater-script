@@ -623,7 +623,6 @@ symlink("busybox", "/system/xbin/top");
 symlink("busybox", "/system/xbin/route");
 symlink("busybox", "/system/xbin/freeramdisk");
   ui_print(">>  Setting up FeraDroid Enginge..");
-symlink("/system/xbin/busybox", "/system/bin/sh");
 symlink("/system/xbin/busybox", "/system/bin/busybox");
 symlink("/system/engine/zram.sh", "/system/xbin/zram");
 symlink("/system/engine/boost.sh", "/system/xbin/boost");

@@ -639,7 +639,7 @@ static int __init mddi_nt35580_lcd_lcd_probe(struct platform_device *pdev)
 	panel_data = (struct msm_fb_panel_data *)pdev->dev.platform_data;
 	panel_data->on  = mddi_nt35580_lcd_lcd_on;
 	panel_data->off = mddi_nt35580_lcd_lcd_off;
-        panel_data->panel_info.lcd.refx100 = 7468;
+        panel_data->panel_info.lcd.refx100 = 5500;
 	panel_data->panel_info.width = 51;
 	panel_data->panel_info.height = 89;
 	msm_fb_add_device(pdev);
