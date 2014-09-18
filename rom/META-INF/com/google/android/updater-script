@@ -685,13 +685,6 @@ then
   package_extract_dir("feralab/underclock", "/system/etc");
 endif;
 set_progress(0.90);
-if
-  file_getprop("/tmp/aroma/opt.prop","item.1.10") == "1"
-then
-  ui_print(">>  Enabling MSAA smoothing");
-  package_extract_dir("feralab/msaa", "/system/etc");
-endif;
-set_progress(0.91);
 ui_print(">>  Configuring Android...");
 set_perm_recursive(1000, 1000, 0771, 0644, "/data/app");
 set_perm_recursive(0, 0, 0755, 0644, "/system");
@@ -734,6 +727,7 @@ set_perm(0, 0, 04755, "/system/xbin/sysrw");
 set_perm(0, 0, 04755, "/system/xbin/sysro");
 set_perm(0, 0, 04755, "/system/xbin/nano");
 set_perm(0, 0, 06755, "/system/xbin/su");
+set_progress(0.95);
 run_program("/system/xbin/busybox", "--install", "-s", "/system/xbin");
 run_program("/system/xbin/su", "--install", "-s", "/system/xbin");
 run_program("/sbin/fix_permissions");
@@ -741,6 +735,7 @@ delete("/sdcard/fix_permissions.log");
 ui_print(">>  Unmounting partitions");
 unmount("/system");
 unmount("/data");
+set_progress(0.99);
 ui_print(" ");
 ui_print(" ");
 ui_print("@Feralab firmware setup was successfully completed");

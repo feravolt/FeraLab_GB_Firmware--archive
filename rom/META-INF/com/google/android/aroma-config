@@ -89,8 +89,7 @@ checkbox(
         "Home Key",             "<~opt.xyxyzzlly>",0,
         "HW LED",               "<~opt.xyxyzzllyf>",0,
         "zRAM",                 "<~opt.xyxyzzllyff>",0,
-        "CPU clock",            "<~opt.xyxyzzllyzzz>",0,
-        "MSAA",                 "<~opt.xyxyzzllyzzzm>",0
+        "CPU clock",            "<~opt.xyxyzzllyzzz>",0
 );
 
 ini_set("text_next", "<~hz.now>");
