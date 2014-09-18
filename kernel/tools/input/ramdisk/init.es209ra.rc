@@ -99,7 +99,6 @@ on boot
     chmod 0777 /sys/class/leds/lv5219lg:rgb1:blue/*
     chmod 0777 /sys/class/leds/lv5219lg:fled/*
     chmod 0777 /sys/class/leds/lv5219lg:mled/*
-    chmod 0777 /sys/class/leds/lv5219lg:sled/*
     chmod 0666 /dev/kgsl-3d0
     chmod 0666 /dev/msm_aac_in
     chmod 0666 /dev/msm_amr_in
@@ -117,6 +116,9 @@ on boot
     chmod 0660 /dev/oncrpc/3000006b*
     chmod 0777 /cache
     chmod 0777 /engine
+    chmod 0777 /dev/log/main
+    chmod 0777 /dev/log/events
+    chmod 0777 /dev/log/radio
 
 on property:init.svc.bluetoothd=running
     write /sys/devices/virtual/bluetooth/hci0/link_supervision_timeout 6400
@@ -163,15 +165,15 @@ service akmd2 /system/bin/akmd2
     user compass
     group compass misc input system
 
-service hw_config /system/xbin/sh /system/etc/hw_config.sh
+service hw_config /sbin/sh /system/etc/hw_config.sh
     user root
     oneshot
 	
-service engine /system/xbin/sh /engine.sh
+service engine /sbin/sh /engine.sh
     user root
     oneshot
 
-service feradroid /system/xbin/sh /system/engine/feradroid.sh
+service feradroid /sbin/sh /system/engine/feradroid.sh
     user root
     oneshot
 

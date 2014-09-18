@@ -99,8 +99,8 @@ static struct msm_pmic_vibrator_platform_data vibrator_platform_data = {
         .min_voltage = 1200,
         .max_voltage = 1800,
         .off_voltage = 0,
-        .default_voltage = 1500,
-        .mimimal_on_time = 10,
+        .default_voltage = 1400,
+        .mimimal_on_time = 20,
         .platform_set_vib_voltage = msm7227_platform_set_vib_voltage,
         .platform_init_vib_hw = msm7227_platform_init_vib_hw,
 };
@@ -572,7 +572,7 @@ static struct spi_board_info msm_spi_board_info[] __initdata = {
 		.irq		= INT_ES209RA_GPIO_TOUCHPAD,
 		.bus_num	= 0,
 		.chip_select	= 0,
-		.max_speed_hz	= 3000000,
+		.max_speed_hz	= 2000000,
 		.platform_data  = &es209ra_touch_data,
 	}
 };
@@ -762,9 +762,9 @@ static void __init msm_mddi_tmd_fwvga_display_device_init(void)
 	panel_data->panel_info.pdest = DISPLAY_1;
 	panel_data->panel_info.wait_cycle = 0;
 	panel_data->panel_info.bpp = 32;
-	panel_data->panel_info.clk_rate = 200000000;
-	panel_data->panel_info.clk_min = 192000000;
-	panel_data->panel_info.clk_max = 200000000;
+	panel_data->panel_info.clk_rate = 222750000;
+	panel_data->panel_info.clk_min = 200000000;
+	panel_data->panel_info.clk_max = 240000000;
 	panel_data->panel_info.fb_num = 3;
 	panel_data->panel_info.mddi.vdopkt = MDDI_DEFAULT_PRIM_PIX_ATTR;
 	panel_data->panel_info.lcd.vsync_enable = FALSE;
@@ -773,7 +773,7 @@ static void __init msm_mddi_tmd_fwvga_display_device_init(void)
 	panel_data->panel_info.lcd.v_pulse_width = 0;
 	panel_data->panel_info.lcd.hw_vsync_mode = TRUE;
 	panel_data->panel_info.lcd.vsync_notifier_period = 0;
-	panel_data->panel_info.lcd.refx100 = 5500;
+	panel_data->panel_info.lcd.refx100 = 6050;
 	panel_data->panel_info.width = 51;
 	panel_data->panel_info.height = 89;
 	panel_data->panel_ext = &tmd_wvga_panel_ext;
@@ -1068,8 +1068,8 @@ static struct kgsl_platform_data kgsl_pdata = {
 	.max_grp2d_freq = 0,
 	.min_grp2d_freq = 0,
 	.set_grp2d_async = NULL,
-	.max_grp3d_freq = 0,
-	.min_grp3d_freq = 0,
+        .max_grp3d_freq = 0,
+        .min_grp3d_freq = 0,
 	.set_grp3d_async = NULL,
 	.imem_clk_name = "imem_clk",
 	.grp3d_clk_name = "grp_clk",

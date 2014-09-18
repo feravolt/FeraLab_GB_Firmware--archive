@@ -1,12 +1,3 @@
-/*
- *  linux/arch/arm/kernel/setup.c
- *
- *  Copyright (C) 1995-2001 Russell King
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation.
- */
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/stddef.h>
@@ -273,6 +264,17 @@ static void __init cacheid_init(void)
 extern struct proc_info_list *lookup_processor_type(unsigned int);
 extern struct machine_desc *lookup_machine_type(unsigned int);
 
+static void __init feat_v6_fixup(void)
+{
+ int id = read_cpuid_id();
+
+ if ((id & 0xff0f0000) != 0x41070000)
+ return;
+
+ if ((((id >> 4) & 0xfff) == 0xb36) && (((id >> 20) & 3) == 0))
+ elf_hwcap &= ~HWCAP_TLS;
+}
+
 static void __init setup_processor(void)
 {
 	struct proc_info_list *list;
@@ -314,7 +316,7 @@ static void __init setup_processor(void)
 #ifndef CONFIG_ARM_THUMB
 	elf_hwcap &= ~HWCAP_THUMB;
 #endif
-
+	feat_v6_fixup();
 	cacheid_init();
 	cpu_proc_init();
 }

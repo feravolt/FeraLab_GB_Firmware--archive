@@ -7,24 +7,12 @@ ui_print("@FeraLab firmware setup initialized.");
 ui_print(" ");
 ui_print(" ");
 set_progress(0.03);
-if
-  file_getprop("/tmp/aroma/rom.prop","selected.0") == "1"
-then
-  format("MTD", "userdata");
-  mount("MTD", "userdata", "/data");
-  delete_recursive("/sd-ext");
-  delete_recursive("/sdcard/.android_secure");
-  set_progress(0.05);
-  ui_print(">>  Data and dalvik-cache cleaned.");
-endif;
-if
-  file_getprop("/tmp/aroma/rom.prop","selected.0") == "2"
-then
-  delete_recursive("/data/dalvik-cache");
-  mount("MTD", "userdata", "/data");
-  ui_print(">>  Dalvik-cache cleaned.");
-  set_progress(0.05);
-endif;
+format("MTD", "userdata");
+mount("MTD", "userdata", "/data");
+delete_recursive("/sd-ext");
+delete_recursive("/sdcard/.android_secure");
+set_progress(0.05);
+ui_print(">>  Data and dalvik-cache cleaned.");
 set_progress(0.07);
 delete_recursive("/sdcard/LOST.DIR");
 delete_recursive("/sdcard/LazyList");
@@ -37,35 +25,29 @@ delete_recursive("/sdcard/Android/data/com.sonyericsson.advancedwidget.photo");
 delete_recursive("/sdcard/Android/data/com.android.providers.media");
 delete_recursive("/sdcard/Android/data/com.cleanmaster.mguard");
 delete_recursive("/sdcard/Android/data/com.sonyericsson.gallery");
-if
-  file_getprop("/tmp/aroma/omg.prop","selected.0") == "1"
-then
-  set_progress(0.10);
-  ui_print(">>  Formatting system patition...");
-  format("MTD", "system");
-  mount("MTD", "system", "/system");
-  set_progress(0.15);
-  delete_recursive("/sdcard/Chainfire");
-  delete_recursive("/sdcard/FERALAB");
-  delete_recursive("/sdcard/ViPER4Android");
-  delete_recursive("/sdcard/ROM_ADDONS");
-  delete_recursive("/sdcard/FeraLab_Pathes");
-  delete_recursive("/sdcard/~FeraLab~");
-  delete("/sdcard/feralab.txt");
-  set_progress(0.17);
-  ui_print(">>  Setup preparations completed.");
-  set_progress(0.20);
-  ui_print(">>  Extracting files..");
-  show_progress(0.2, "1000");
-  package_extract_dir("data", "/data");
-  ui_print(">>   - Data partition ready.");
-  package_extract_dir("sdcard", "/sdcard");
-  ui_print(">>   - SDcard ready.");
-  show_progress(0.5, "4500");
-  package_extract_dir("system", "/system");
-  ui_print(">>   - System patition ready.");
-  set_progress(0.57);
-  ui_print(">>  Setting up android environment..");
+delete_recursive("/sdcard/Chainfire");
+delete_recursive("/sdcard/FERALAB");
+delete_recursive("/sdcard/ViPER4Android");
+delete_recursive("/sdcard/ROM_ADDONS");
+delete_recursive("/sdcard/FeraLab_Pathes");
+delete_recursive("/sdcard/~FeraLab~");
+delete("/sdcard/feralab.txt");
+set_progress(0.10);
+ui_print(">>  Formatting system patition...");
+format("MTD", "system");
+mount("MTD", "system", "/system");
+set_progress(0.15);
+ui_print(">>  Setup preparations completed.");
+set_progress(0.20);
+ui_print(">>  Extracting files..");
+show_progress(0.3, "1200");
+package_extract_dir("data", "/data");
+show_progress(0.4, "1200");
+package_extract_dir("sdcard", "/sdcard");
+show_progress(0.5, "4500");
+package_extract_dir("system", "/system");
+show_progress(0.6, "4500");
+ui_print(">>  Setting up android environment..");
 symlink("busybox", "/system/bin/expand");
 symlink("busybox", "/system/bin/seq");
 symlink("busybox", "/system/bin/pkill");
@@ -622,65 +604,94 @@ symlink("busybox", "/system/xbin/split");
 symlink("busybox", "/system/xbin/top");
 symlink("busybox", "/system/xbin/route");
 symlink("busybox", "/system/xbin/freeramdisk");
-  ui_print(">>  Setting up FeraDroid Enginge..");
+ui_print(">>  Setting up FeraDroid Enginge..");
+symlink("/system/xbin/busybox", "/system/bin/sh");
 symlink("/system/xbin/busybox", "/system/bin/busybox");
 symlink("/system/engine/zram.sh", "/system/xbin/zram");
 symlink("/system/engine/boost.sh", "/system/xbin/boost");
 symlink("/system/engine/fix.sh", "/system/xbin/fix");
-show_progress(0.6, "1000");
-endif;
+show_progress(0.7, "1000");
 ui_print(">>  Configuring firmware...");
-set_progress(0.70);
 mount("MTD", "system", "/system");
-set_progress(0.75);
-
-if
-  file_getprop("/tmp/aroma/apps.prop","item.1.1") == "1"
-then
-  ui_print(">>  Installing BBM");
-  package_extract_dir("feralab/apps/bbm", "/data/app");
-endif;
 if
   file_getprop("/tmp/aroma/opt.prop","item.1.1") == "1"
 then
-  ui_print(">>  Disabling Home-Unlock");
-  package_extract_dir("feralab/no-home-unlock", "/system/usr/keylayout");
+  ui_print(">>  Installing SE DLNA");
+  package_extract_dir("feralab/dlna", "/system/app");
 endif;
-set_progress(0.87);
+set_progress(0.81);
 if
   file_getprop("/tmp/aroma/opt.prop","item.1.2") == "1"
 then
-  ui_print(">>  Disabling HW-LED");
-  delete("/system/etc/init.d/003ccc");
-  package_extract_dir("feralab/no-hwled", "/system/etc/init.d");
+  ui_print(">>  Installing Google mail");
+  package_extract_dir("feralab/gmail", "/system/app");
 endif;
-set_progress(0.88);
+set_progress(0.82);
 if
   file_getprop("/tmp/aroma/opt.prop","item.1.3") == "1"
 then
-  ui_print(">>  Decreasing CPU max frequency");
-  package_extract_dir("feralab/underclock", "/system/etc");
+  ui_print(">>  Installing SIM toolkit");
+  package_extract_dir("feralab/stk", "/system/app");
 endif;
+set_progress(0.83);
+if
+  file_getprop("/tmp/aroma/opt.prop","item.1.4") == "1"
+then
+  ui_print(">>  Installing YouTube");
+  package_extract_dir("feralab/youtube", "/system/app");
+endif;
+set_progress(0.84);
+if
+  file_getprop("/tmp/aroma/opt.prop","item.1.5") == "1"
+then
+  ui_print(">>  Installing UB Charger");
+  package_extract_dir("feralab/charger", "/system/bin");
+  delete("/system/bin/charger");
+endif;
+set_progress(0.85);
 if
   file_getprop("/tmp/aroma/opt.prop","item.1.6") == "1"
 then
-  ui_print(">>  Increasing CPU voltage");
-  package_extract_dir("feralab/no-cpu-undervolt", "/system/etc/init.d");
+  ui_print(">>  Scaling up CPU voltage");
+  package_extract_dir("feralab/cpu", "/system/etc/init.d");
 endif;
+set_progress(0.86);
 if
   file_getprop("/tmp/aroma/opt.prop","item.1.7") == "1"
 then
-  ui_print(">>  Installing SIM-toolkit");
-  package_extract_dir("feralab/sim-toolkit", "/system/app");
+  ui_print(">>  Disabling HOME key unlock");
+  package_extract_dir("feralab/home", "/system/usr/keylayout");
 endif;
+set_progress(0.87);
 if
   file_getprop("/tmp/aroma/opt.prop","item.1.8") == "1"
 then
-  ui_print(">>  Installing Charger service");
-  package_extract_dir("feralab/charger", "/system/bin");
-  delete_recursive("/system/semc");
+  ui_print(">>  Disabling HW LED");
+  package_extract_dir("feralab/led", "/system/etc/init.d");
 endif;
-show_progress(0.9, "1000");
+set_progress(0.88);
+if
+  file_getprop("/tmp/aroma/opt.prop","item.1.9") == "1"
+then
+  ui_print(">>  Disabling zRAM");
+  package_extract_dir("feralab/zram", "/system/engine");
+  delete("/system/lib/modules/zram.ko");
+endif;
+set_progress(0.89);
+if
+  file_getprop("/tmp/aroma/opt.prop","item.1.9") == "1"
+then
+  ui_print(">>  Scaling down CPU frequency");
+  package_extract_dir("feralab/underclock", "/system/etc");
+endif;
+set_progress(0.90);
+if
+  file_getprop("/tmp/aroma/opt.prop","item.1.10") == "1"
+then
+  ui_print(">>  Enabling MSAA smoothing");
+  package_extract_dir("feralab/msaa", "/system/etc");
+endif;
+set_progress(0.91);
 ui_print(">>  Configuring Android...");
 set_perm_recursive(1000, 1000, 0771, 0644, "/data/app");
 set_perm_recursive(0, 0, 0755, 0644, "/system");

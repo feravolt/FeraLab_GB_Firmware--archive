@@ -679,16 +679,12 @@ config TLS_REG_EMUL
 	  a few prototypes like that in existence) and therefore access to
 	  that required register must be emulated.
 
-config HAS_TLS_REG
-	bool
-	depends on !TLS_REG_EMUL
-	default y if SMP || CPU_32v7
+config TLS_USERSPACE_EMUL
+	bool "Support for userspace TLS register emulation"
 	help
-	  This selects support for the CP15 thread register.
-	  It is defined to be available on some ARMv6 processors (including
-	  all SMP capable ARMv6's) or later processors.  User space may
-	  assume directly accessing that register and always obtain the
-	  expected value only on ARMv7 and above.
+	  This option will enable the userspace helper for the TLS register.
+	  May be useful for legacy devices that require backwards-compatibility
+	  with TLS-emulated userspace binaries
 
 config NEEDS_SYSCALL_FOR_CMPXCHG
 	bool

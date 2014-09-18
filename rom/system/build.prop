@@ -1,7 +1,7 @@
 ### FeraLab ###
 
 # Build info
-ro.build.date=15.09.2014
+ro.build.date=17.09.2014
 ro.build.date.utc=1308515086
 ro.build.user=FeraVolt
 ro.build.host=FeraLab
@@ -37,7 +37,6 @@ ro.product.cpu.abi2=armeabi
 ro.product.manufacturer=Sony Ericsson
 ro.product.locale.language=en
 ro.product.locale.region=GB
-persist.sys.timezone=Europe/Istanbul
 
 # Build Config
 DEVICE_PROVISIONED=1
@@ -50,10 +49,8 @@ ro.config.ringtone=29.ogg
 ro.config.notification_sound=18.ogg
 ro.config.alarm_alert=8.ogg
 ro.hdmi.enable=false
-ro.min_pointer_dur=10
 hw.hdmiON=0
 ro.product.locale.excluded=ar_EG ar_IL fa_IR iw_IL
-ro.product.multi_touch_enabled=true
 ro.product-res-path=framework/SemcGenericUxpRes.apk
 ro.semc.timescape_keys=Sony_Ericsson_Xperia
 ro.semc.sols.product-code=98
@@ -67,24 +64,20 @@ persist.android.strictmode=0
 persist.chargemon.active=1
 persist.service.adb.enable=1
 persist.sys.boot.sound.volume=0
-settings.display.autobacklight=1
 sys.mem.max_hidden_apps=5
 
 # Qualcomm
 com.qc.hardware=true
 com.qc.hdmi_out=false
 debug.qc.hardware=true
-debug.qctwa.statusbar=1
-debug.qctwa.preservebuf=1
 ro.opengles.version=131072
-ro.qualcomm.proprietary_obex=true
 
 # FeraLab
 ro.feralab.rom=1
 ro.feralab.rom.version=40
 ro.feralab.rom.android.version=2.4.4
 ro.feralab.device=es209ra
-ro.feralab.engine=18.3
+ro.feralab.engine=18
 
 # Networking
 ro.com.google.locationfeatures=1
@@ -125,7 +118,7 @@ ro.board.platform=qsd8k
 ro.semc.wifi.hostapd=1
 ro.wifi.channels=13
 wifi.interface=wlan0
-wifi.supplicant_scan_interval=3600
+wifi.supplicant_scan_interval=900
 
 
 # Media
@@ -173,8 +166,8 @@ dalvik.vm.dexopt-data-only=1
 dalvik.vm.dexopt-flags=m=y,v=n,o=v,u=y
 dalvik.vm.jit.codecachesize=0
 dalvik.vm.execution-mode=int:jit
-dalvik.vm.lockprof.threshold=400
-dalvik.vm.heapsize=48m
+dalvik.vm.lockprof.threshold=500
+dalvik.vm.heapsize=45m
 dalvik.vm.stack-trace-file=/data/anr/traces.txt
 dalvik.vm.verify-bytecode=false
 ro.config.low_ram=true
@@ -182,28 +175,16 @@ ro.kernel.android.checkjni=0
 
 # Graphics & Display
 debug.composition.type=mdp
-debug.egl.hw=1
 debug.egl.profiler=1
-debug.egl.recordable.rgba8888=1
-debug.egl.swapinterval=1
-debug.enabletr=true
-debug.gr.numframebuffers=3
-debug.gr.swapinterval=1
 debug.mdpcomp.logs=0
 debug.overlayui.enable=1
 debug.performance.tuning=1
 debug.sf.hw=1
-debug.sf.swaprect=1
-dev.pm.mdp_samplingrate=1
+qemu.sf.lcd_density=240
 ro.floatingtouch.available=1
-ro.product.gpu.driver=1
 ro.sf.lcd_density=240
-persist.sys.composition.type=mdp
-persist.sys.swapbuffer=1
-persist.sys.ui.hw=1
-persist.sys.use_dithering=1
 video.accelerate.hw=1
-windowsmgr.max_events_per_sec=500
+windowsmgr.max_events_per_sec=120
 
 # Misc
 ro.HOME_APP_ADJ=1

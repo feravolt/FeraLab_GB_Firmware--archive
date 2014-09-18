@@ -664,6 +664,7 @@ static const char * const vmstat_text[] = {
 	"nr_vmscan_write",
 	"nr_vmscan_write_skip",
 	"nr_writeback_temp",
+	"nr_shmem",
 
 #ifdef CONFIG_NUMA
 	"numa_hit",

@@ -12,138 +12,57 @@ text_quit_msg=Are you sure to quit the installer?
 
 common.for=for
 
-langtest.title=Welcome
-langtest.multiline=Hello and welcome to ***FeraLab*** ROM installation.\
-You can customize ROM now.\
-\
-Happy Flashing and Good Luck!\
-\
-Thanks for Choosing <b>***FeraLab***</b>
-
 welcome.title=Welcome!
-welcome.text1=You are about to Install
-welcome.text2=Please carefully read installer option's descriptions!
+welcome.text1=You are about to install
+welcome.text2=Please carefully read descriptions!
 welcome.version=VERSION
 welcome.codename=DEVELOPER
 welcome.updated=ANDROID
-welcome.next=Press Next to Continue the Installation...
+welcome.next=Press 'Next' to continue...
 
-terms.title=License
-terms.desc=GPLv2 OpenSource License.
-terms.check=I Agree with this Terms and Conditions.
-terms.confirm=Please check the agreement or exit.
-
-changelog.title=Changelog
-changelog.desc=***FeraLab*** ROM changelog
-
-fde.title=Changelog
-fde.desc=FeraDroidEngine changelog
+terms.title=Disclaimer
+terms.desc=Please read carefully!
+terms.check=I agree with this terms and conditions.
+terms.confirm=Agree or exit.
 
 sys.title=System Information
-sys.titlee=Your Device System Information
+sys.titlee=Your current device memory status
 sys.free=Free Space
 sys.system=System Size
 sys.data=Data Size
-sys.sd=SDCard Size
+sys.sd=SD card Size
 sys.sdext=SD-EXT Size
 
-hz.ready=Ready to Install
-hz.readyy=The wizard is ready to begin installation
+opt.a=Extra Configuration
+opt.b=Select desired options. Skip this step if you don't know what to choose.
+opt.c=Options
+opt.d=Install SE DLNA wireless file sharing application.
+opt.z=Install Google mail application.
+opt.xyyx=Install default SIM-toolkit application.
+opt.xyxyz=Install YouTube application.
+opt.xyxyzz=Select this if you have unlocked bootloader to enable offline charging.
+opt.xyxyzzll=Increase CPU voltage. Choose this if you have random reboots of your device.
+opt.xyxyzzlly=Disable HOME key device unlock.
+opt.xyxyzzllyf=Disable HW buttons LED.
+opt.xyxyzzllyff=Disable zRAM. Just in case you realy want it.
+opt.xyxyzzllyzzz=Scale down maximum CPU frequency to 768Mhz. This will greatly save your battery life in cost of overall performance. Option can be overrided later in system settings.
+opt.xyxyzzllyzzzm=Force enable 2x multisampling antialiasing. This will improve visual quality of graphics in cost of performance.
+
+hz.ready=Ready
+hz.readyy=We are ready to begin installation
 hz.aha=If you want to review or change any of your installation settings, press <b>Back</b>. Press Menu Key -> Quit Installation to exit the wizard
 hz.next=Next >
-hz.now=Install Now
+hz.now=Install now!
 
 inst.title=Installing...
-inst.is= ROM is being installed.
-inst.wait=Please wait untill installation prcess is finished
+inst.is=Firmware is being installed..
+inst.wait=Please wait untill installation process is finished
 inst.min=This may take several minutes
-inst.fin=The installation wizard has successfully installed
-inst.next=Press Next to continue
+inst.fin=We have successfully installed
+inst.next=Press 'Next' to continue
 
 finish.fin=Finish
 reboot.title=Finish!
-reboot.titlee=Installed successfully.
-reboot.box=Reboot your device now...
-
-apps.a=Extra Apps
-apps.b=Choose desired applications you want to install in ROM automatically. All listed apps are ultimately optimized.
-apps.c=Applications
-apps.aa=BlackBerry messenger. Sucessfully ported to android 2.3.x.
-apps.bb=Google Chrome browser for 2.3.x.
-apps.cc=Ultimate clean-up tool. RAM clean-up & anti-malware tool included.
-apps.dd=Official Google Drive app with Google Docs integation.
-apps.ee=Official Facebook for Android.
-apps.gg=Official Google mail application.
-apps.hh=Official Instagramm application.
-apps.ii=Default Google Maps.
-apps.jj=Simple notes app with widget.
-apps.kk=Fast and light browser with data compression support.
-apps.ll=Application for creating panorama pictures.
-apps.mm=Floating pie buttons control. Must choose if you have broken hw-keys.
-apps.nn=Official Skype application.
-apps.oo=Official Viber application.
-apps.pp=Official VK application.
-apps.qq=Official WhatsApp messenger.
-apps.rr=Official YouTube application.
-apps.ss=Samsung task manager ported to 2.3.x.
-apps.tt=All in one floating apps with video support.
-
-lite.a=Enlighter
-lite.b=By selecting this option, following system applications will be deleted:\
-\
-BatteryUsageWidget\
-CosmicFlow\
-GoogleLyricsPlugin\
-LearningClient\
-Microbes\
-PicoTts\
-Powersavemode\
-QuickSearchBox\
-SemcDlna\
-SemcEmail\
-SemcMetadataCleanup\
-Smartcontacts\
-TtsService\
-UserDictionaryProvider\
-WikipediaPlugin\
-widgetfavouritepeople\
-MediaWidget
-
-lite.c=Want to enlight your ROM?
-lite.d=Yes. Do it.
-
-opt.a=Extra Configuration
-opt.b=Select desired options. Skip this step if you don't know what to do.
-opt.c=Options
-opt.d=Disable phone wake-up by pressing HOME-key.
-opt.z=Disable HW-LED on bottom keypad.
-opt.xyyx=Set default maximum CPU frequency to 768Mhz. This will greatly save your battery life in cost of overall performance. Option can be overrided later in settings.
-opt.xyxyz=Install black-themed keyboard.
-opt.xyxyzz=Install keyboard with chineese characters support.
-opt.xyxyzzl=Install NXT-GB styled lockscreen (no instant camera access).
-opt.xyxyzzll=Increase CPU voltage. Choose this if you meet random reboots of your device.
-opt.xyxyzzllz=Decrease CPU voltage to minimum. Choose this only if sure that your device is stable with this. (overrides above option)
-opt.xyxyzzlly=Install default SIM-toolkit.
-opt.xyxyzzllyz=Select this if you have unlocked bootloader to enable offline charging.
-
-rom.title=Data
-rom.titlee=Choose if you want to keep your data from previous ROM (SDcard data won't be touched). Warning! Clean installation is VERY recommended!
-rom.d=Clean my data for 100% fast and stable ROM installation. Must choose if you were using non-FeraLab ROM before or FeraLab ROM version below v38.
-rom.s=Keep my data. I agree that some problems may occur.
-
-omg.title=ROM
-omg.titlee=Install ROM. Choose "Configure" only if you have already installed THIS version of ROM.
-omg.d=Install ROM.
-omg.s=I have already installed this version of ROM and just want to configure it.
-
-game.title=Game Mode
-game.titlee=Choose if you want to enable Gaming mode in ROM. See website for more info on how it works.
-game.a=Disable Game Mode and use default settings.
-game.b=Enable Game Mode. Change device ID and disable frame filtering.
-
-zram.title=zRam
-zram.titlee=zRam is SWAP in RAM. It creates a swap-block in RAM & compresses data on-the-fly, using Google Snappy compression algorithm, which is known for it's speed. Simply it virtually expands your RAM. If you don't know what to choose just skip.
-zram.a=Usually a good choice. Enough good for multitasking and speed.
-zram.b=Aimed on providing better multitasking experience.
-zram.c=Disabling zram may slightly increase performance in cost of free RAM & multitasking.
+reboot.titlee=Firmware was successfully installed.
+reboot.box=Reboot device.
 

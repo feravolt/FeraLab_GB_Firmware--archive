@@ -1,18 +1,3 @@
-/*
- *  linux/arch/arm/kernel/traps.c
- *
- *  Copyright (C) 1995-2002 Russell King
- *  Copyright (c) 2009, Code Aurora Forum. All rights reserved.
- *  Fragments that appear the same as linux/arch/i386/kernel/traps.c (C) Linus Torvalds
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation.
- *
- *  'traps.c' handles hardware exceptions after we have saved some state in
- *  'linux/arch/arm/lib/traps.S'.  Mostly a debugging aid, but will probably
- *  kill the offending process.
- */
 #include <linux/module.h>
 #include <linux/signal.h>
 #include <linux/spinlock.h>
@@ -22,12 +7,12 @@
 #include <linux/hardirq.h>
 #include <linux/init.h>
 #include <linux/uaccess.h>
-
 #include <asm/atomic.h>
 #include <asm/cacheflush.h>
 #include <asm/system.h>
 #include <asm/unistd.h>
 #include <asm/traps.h>
+#include <asm/tls.h>
 
 #include "ptrace.h"
 #include "signal.h"
@@ -513,20 +498,19 @@ asmlinkage int arm_syscall(int no, struct pt_regs *regs)
 
 	case NR(set_tls):
 		thread->tp_value = regs->ARM_r0;
-#if defined(CONFIG_HAS_TLS_REG)
-		asm ("mcr p15, 0, %0, c13, c0, 3" : : "r" (regs->ARM_r0) );
+	if (tls_emu)
+	return 0;
+	if (has_tls_reg) {
+	asm ("mcr p15, 0, %0, c13, c0, 3"
+	: : "r" (regs->ARM_r0));
+	}
+#ifndef CONFIG_TLS_USERSPACE_EMUL
+	 else
 #endif
+	{
 
-#if (!defined(CONFIG_HAS_TLS_REG) && !defined(CONFIG_TLS_REG_EMUL)) || \
-      defined(CONFIG_ARCH_MSM_SCORPION)
-		/*
-		 * User space must never try to access this directly.
-		 * Expect your app to break eventually if you do so.
-		 * The user helper at 0xffff0fe0 must be used instead.
-		 * (see entry-armv.S for details)
-		 */
-		*((unsigned int *)0xffff0ff0) = regs->ARM_r0;
-#endif
+	*((unsigned int *)0xffff0ff0) = regs->ARM_r0;
+	}
 		return 0;
 
 #ifdef CONFIG_NEEDS_SYSCALL_FOR_CMPXCHG
@@ -741,6 +725,12 @@ void __init trap_init(void)
 	return;
 }
 
+static void __init kuser_get_tls_init(unsigned long vectors)
+{
+ if (tls_emu || has_tls_reg)
+ memcpy((void *)vectors + 0xfe0, (void *)vectors + 0xfe8, 4);
+}
+
 void __init early_trap_init(void)
 {
 	unsigned long vectors = CONFIG_VECTORS_BASE;
@@ -758,6 +748,7 @@ void __init early_trap_init(void)
 	memcpy((void *)vectors + 0x200, __stubs_start, __stubs_end - __stubs_start);
 	memcpy((void *)vectors + 0x1000 - kuser_sz, __kuser_helper_start, kuser_sz);
 
+	kuser_get_tls_init(vectors);
 	/*
 	 * Copy signal return handlers into the vector page, and
 	 * set sigreturn to be a pointer to these.

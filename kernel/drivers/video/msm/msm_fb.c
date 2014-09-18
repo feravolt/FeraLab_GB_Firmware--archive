@@ -637,9 +637,7 @@ static int msm_fb_blank_sub(int blank_mode, struct fb_info *info,
 	switch (blank_mode) {
 	case FB_BLANK_UNBLANK:
 		if (!mfd->panel_power_on) {
-#if !defined(CONFIG_FB_MSM_MDDI_TMD_NT35580)
 			mdelay(16);
-#endif
 			ret = pdata->on(mfd->pdev);
 			if (ret == 0) {
 #ifdef CONFIG_FB_MSM_SEMC_LCD_BACKLIGHT_CONTROL

@@ -1,18 +1,3 @@
 ; FeraLab
 
-disableExtraSwapBlit=1
-log.resolves=0
-log.pm4=0
-log.pm4mem=0
-log.shaders=0
-log.sc_dev=0
-log.cffdump=0
-log.dumpx=0
-log.primitives=0
-forceAutoTextureCompression=1
 triJuice=3
-textureTiling=1
-untileDynamicTextures=1
-useGpuTilingHints=1
-VAESEnable=0
-

@@ -1,27 +1,9 @@
-/*
- *  linux/arch/arm/kernel/entry-armv.S
- *
- *  Copyright (C) 1996,1997,1998 Russell King.
- *  ARM700 fix by Matthew Godbolt (linux-user@willothewisp.demon.co.uk)
- *  nommu support by Hyok S. Choi (hyok.choi@samsung.com)
- *  Copyright (c) 2009, Code Aurora Forum. All rights reserved.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation.
- *
- *  Low-level vector interface routines
- *
- *  Note:  there is a StrongARM bug in the STMIA rn, {regs}^ instruction
- *  that causes it to save wrong values...  Be aware!
- */
-
 #include <asm/memory.h>
 #include <asm/glue.h>
 #include <asm/vfpmacros.h>
 #include <mach/entry-macro.S>
 #include <asm/thread_notify.h>
-
+#include <asm/tls.h>
 #include "entry-header.S"
 
 /*
@@ -705,14 +687,7 @@ ENTRY(__switch_to)
 	strex	r5, r4, [ip]			@ Clear exclusive monitor
 #endif
 #endif
-#if defined(CONFIG_HAS_TLS_REG)
-	mcr	p15, 0, r3, c13, c0, 3		@ set TLS register
-#endif
-#if (!defined(CONFIG_HAS_TLS_REG) && !defined(CONFIG_TLS_REG_EMUL)) || \
-     defined(CONFIG_ARCH_MSM_SCORPION)
-	mov	r4, #0xffff0fff
-	str	r3, [r4, #-15]			@ TLS val at 0xffff0ff0
-#endif
+	set_tls r3, r4, r5
 #ifdef CONFIG_MMU
 #ifdef CONFIG_EMULATE_DOMAIN_MANAGER_V7
 	stmdb	r13!, {r0-r3, lr}
@@ -983,17 +958,12 @@ kuser_cmpxchg_fixup:
  */
 
 __kuser_get_tls:				@ 0xffff0fe0
-
-#if !defined(CONFIG_HAS_TLS_REG) && !defined(CONFIG_TLS_REG_EMUL)
-	ldr	r0, [pc, #(16 - 8)]		@ TLS stored at 0xffff0ff0
-#else
-	mrc	p15, 0, r0, c13, c0, 3		@ read TLS register
-#endif
+	ldr r0, [pc, #(16 - 8)] @ read TLS, set in kuser_get_tls_init
 	usr_ret	lr
-
-	.rep	5
-	.word	0			@ pad up to __kuser_helper_version
-	.endr
+	mrc p15, 0, r0, c13, c0, 3 @ 0xffff0fe8 hardware TLS code
+	.rep 	 4
+	.word 	 0		 @ 0xffff0ff0 software TLS value, then
+	.endr		  	 @ pad up to __kuser_helper_version
 
 /*
  * Reference declaration:

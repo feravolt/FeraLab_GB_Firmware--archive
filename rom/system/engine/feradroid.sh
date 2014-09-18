@@ -39,7 +39,6 @@ rm -Rf /mnt/sdcard/found000
 rm -f /mnt/sdcard/fix_permissions.log
 chmod 000 /data/tombstones
 sqlite3 /data/data/com.android.providers.settings/databases/settings.db "INSERT INTO secure (name, value) VALUES ('wifi_country_code', 'JP');"
-sysctl -p
 /system/xbin/zram
 /system/xbin/fix
 sh /system/engine/rammer.sh

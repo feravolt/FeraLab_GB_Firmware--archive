@@ -1,4 +1,4 @@
-#!/system/xbin/sh
+#!/sbin/sh
 ### FeraLab ###
 
 echo 998400 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
@@ -29,7 +29,7 @@ then
 fi
 
 if [ -e /system/bin/charger ]
-  echo "LB Kernel!"
+  echo "Locked Bootloader!"
 else
   /system/bin/chargemon
 fi

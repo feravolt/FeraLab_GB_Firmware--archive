@@ -231,20 +231,12 @@ static int mddi_probe(struct platform_device *pdev)
 	pdata->on = mddi_on;
 	pdata->off = mddi_off;
 	pdata->next = pdev;
-
-	/*
-	 * get/set panel specific fb info
-	 */
 	mfd->panel_info = pdata->panel_info;
 
-#ifdef MSMFB_FRAMEBUF_32
 	if (mfd->index == 0)
 		mfd->fb_imgType = MDP_RGBA_8888; /* primary */
 	else
 		mfd->fb_imgType = MDP_RGB_565;	/* secondary */
-#else
-	mfd->fb_imgType = MDP_RGBA_8888;
-#endif
 
 	clk_rate = mfd->panel_info.clk_max;
 	if (mddi_pdata &&
@@ -288,7 +280,6 @@ mddi_probe_err:
 
 static int mddi_pad_ctrl;
 static int mddi_power_locked;
-static int mddi_is_in_suspend;
 
 void mddi_disable(int lock)
 {
@@ -318,6 +309,7 @@ void mddi_disable(int lock)
 		mddi_pdata->mddi_power_save(0);
 }
 
+static int mddi_is_in_suspend;
 static int mddi_suspend(struct platform_device *pdev, pm_message_t state)
 {
 	if (mddi_is_in_suspend)

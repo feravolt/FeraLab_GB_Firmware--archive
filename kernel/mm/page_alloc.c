@@ -1921,7 +1921,7 @@ void show_free_areas(void)
 		" unevictable:%lu"
 #endif
 		" dirty:%lu writeback:%lu unstable:%lu\n"
-		" free:%lu slab:%lu mapped:%lu pagetables:%lu bounce:%lu\n",
+		" free:%lu slab:%lu mapped:%lu pagetables:%lu bounce:%lu\n shmem:%lu",
 		global_page_state(NR_ACTIVE_ANON),
 		global_page_state(NR_ACTIVE_FILE),
 		global_page_state(NR_INACTIVE_ANON),
@@ -1936,6 +1936,7 @@ void show_free_areas(void)
 		global_page_state(NR_SLAB_RECLAIMABLE) +
 			global_page_state(NR_SLAB_UNRECLAIMABLE),
 		global_page_state(NR_FILE_MAPPED),
+		global_page_state(NR_SHMEM),
 		global_page_state(NR_PAGETABLE),
 		global_page_state(NR_BOUNCE));
 
@@ -1955,6 +1956,7 @@ void show_free_areas(void)
 			" inactive_anon:%lukB"
 			" active_file:%lukB"
 			" inactive_file:%lukB"
+			" shmem:%lukB"
 #ifdef CONFIG_UNEVICTABLE_LRU
 			" unevictable:%lukB"
 #endif
@@ -1971,6 +1973,7 @@ void show_free_areas(void)
 			K(zone_page_state(zone, NR_INACTIVE_ANON)),
 			K(zone_page_state(zone, NR_ACTIVE_FILE)),
 			K(zone_page_state(zone, NR_INACTIVE_FILE)),
+			K(zone_page_state(zone, NR_SHMEM)),
 #ifdef CONFIG_UNEVICTABLE_LRU
 			K(zone_page_state(zone, NR_UNEVICTABLE)),
 #endif

@@ -242,7 +242,7 @@ static struct reg_data exit_sleep_1_tmd_panel_old_dric[] = {
 	{PORCHCTRL,            0x002C},
 	{FRCTRL1,              0x0023},
 	{CP_CLK,               0x0004},
-	{VR_ADJ,               0x0009},
+	{VR_ADJ,               0x000F},
 	{GVDD_ADJ,             0x0060},
 	{VMH_ADJ,              0x0038},
 	{VCMH_ADJ,             0x0070},
@@ -275,10 +275,10 @@ static struct reg_data exit_sleep_1_tmd_panel_new_dric[] = {
 	{PORCHCTRL,            0x002C},
 	{FRCTRL1,              0x0023},
 	{CP_CLK,               0x0000},
-	{VR_ADJ,               0x0000},
+	{VR_ADJ,               0x000F},
 	{GVDD_ADJ,             0x0060},
 	{VMH_ADJ,              0x006B},
-	{VCMH_ADJ,             0x0064},
+	{VCMH_ADJ,             0x0070},
 	{AVDD2S_AVDD2C_CTRL,   0x0000},
 	{AVDD2S_AVDD2C_ADJ,    0x00B1},
 	{AVDD2S_AVDD2C_CP_CLK, 0x0000},
@@ -449,7 +449,7 @@ static struct reg_data set_disply_on_tmd_panel_new_dric[] = {
 	{AVDD2S_AVDD2C_CP_CLK, 0x0022},
 	{CP_CLK,               0x0040},
 	{AVDD2S_AVDD2C_ADJ,    0x00BA},
-	{VR_ADJ,               0x000C},
+	{VR_ADJ,               0x000F},
 };
 
 static void nt35580_lcd_power_on(struct platform_device *pdev)
@@ -639,7 +639,7 @@ static int __init mddi_nt35580_lcd_lcd_probe(struct platform_device *pdev)
 	panel_data = (struct msm_fb_panel_data *)pdev->dev.platform_data;
 	panel_data->on  = mddi_nt35580_lcd_lcd_on;
 	panel_data->off = mddi_nt35580_lcd_lcd_off;
-        panel_data->panel_info.lcd.refx100 = 5500;
+        panel_data->panel_info.lcd.refx100 = 6050;
 	panel_data->panel_info.width = 51;
 	panel_data->panel_info.height = 89;
 	msm_fb_add_device(pdev);

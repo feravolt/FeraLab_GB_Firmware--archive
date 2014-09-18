@@ -1094,8 +1094,6 @@ static void mddi_process_rev_packets(void)
 				if (mddi_enable_reg_read_retry_once)
 					mddi_reg_read_retry =
 					    mddi_reg_read_retry_max;
-				else
-					mddi_reg_read_retry++;
 				pmhctl->rev_state = MDDI_REV_REG_READ_SENT;
 				pmhctl->stats.reg_read_failure++;
 			} else {
@@ -1930,7 +1928,6 @@ uint16 mddi_get_next_free_llist_item(mddi_host_type host_idx, boolean wait)
 		} else {
 			forced_wait = TRUE;
 			INIT_COMPLETION(pmhctl->mddi_llist_avail_comp);
-			pmhctl->mddi_waiting_for_llist_avail = TRUE;
 		}
 	}
 	spin_unlock_irqrestore(&mddi_host_spin_lock, flags);

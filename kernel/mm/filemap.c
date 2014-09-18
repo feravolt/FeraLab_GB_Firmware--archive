@@ -1,14 +1,3 @@
-/*
- *	linux/mm/filemap.c
- *
- * Copyright (C) 1994-1999  Linus Torvalds
- */
-
-/*
- * This file handles the generic file mmap semantics used by
- * most "normal" filesystems (but you don't /have/ to use this:
- * the NFS filesystem used to do this differently, for example)
- */
 #include <linux/module.h>
 #include <linux/slab.h>
 #include <linux/compiler.h>
@@ -56,7 +45,8 @@ if (PageUptodate(page) && PageMappedToDisk(page))
 	page->mapping = NULL;
 	mapping->nrpages--;
 	__dec_zone_page_state(page, NR_FILE_PAGES);
-	BUG_ON(page_mapped(page));
+	if (PageSwapBacked(page))
+	__dec_zone_page_state(page, NR_SHMEM);
 	mem_cgroup_uncharge_cache_page(page);
 
 	/*
@@ -411,6 +401,8 @@ int add_to_page_cache_locked(struct page *page, struct address_space *mapping,
 		if (likely(!error)) {
 			mapping->nrpages++;
 			__inc_zone_page_state(page, NR_FILE_PAGES);
+			if (PageSwapBacked(page))
+			__inc_zone_page_state(page, NR_SHMEM);
 		} else {
 			page->mapping = NULL;
 			mem_cgroup_uncharge_cache_page(page);

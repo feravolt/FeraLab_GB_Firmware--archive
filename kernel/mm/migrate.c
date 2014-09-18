@@ -1,17 +1,3 @@
-/*
- * Memory Migration functionality - linux/mm/migration.c
- *
- * Copyright (C) 2006 Silicon Graphics, Inc., Christoph Lameter
- *
- * Page migration was first developed in the context of the memory hotplug
- * project. The main authors of the migration code are:
- *
- * IWAMOTO Toshihiro <iwamoto@valinux.co.jp>
- * Hirokazu Takahashi <taka@valinux.co.jp>
- * Dave Hansen <haveblue@us.ibm.com>
- * Christoph Lameter
- */
-
 #include <linux/migrate.h>
 #include <linux/module.h>
 #include <linux/swap.h>
@@ -289,22 +275,13 @@ static int migrate_page_move_mapping(struct address_space *mapping,
 
 	radix_tree_replace_slot(pslot, newpage);
 	page_unfreeze_refs(page, expected_count - 1);
-
-	/*
-	 * If moved to a different zone then also account
-	 * the page for that zone. Other VM counters will be
-	 * taken care of when we establish references to the
-	 * new page and drop references to the old page.
-	 *
-	 * Note that anonymous pages are accounted for
-	 * via NR_FILE_PAGES and NR_ANON_PAGES if they
-	 * are mapped to swap space.
-	 */
 	__dec_zone_page_state(page, NR_FILE_PAGES);
 	__inc_zone_page_state(newpage, NR_FILE_PAGES);
-
+	if (PageSwapBacked(page)) {
+	__dec_zone_page_state(page, NR_SHMEM);
+	__inc_zone_page_state(newpage, NR_SHMEM);
+	}
 	spin_unlock_irq(&mapping->tree_lock);
-
 	return 0;
 }
 

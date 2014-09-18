@@ -19,8 +19,8 @@
 #define V_STEP			25
 #define L_VAL_384MHZ		0xA
 #define L_VAL_768MHZ		0x14
-#define SEMC_ACPU_MIN_UV_MV	900U
-#define SEMC_ACPU_MAX_UV_MV	1450U
+#define SEMC_ACPU_MIN_UV_MV	800U
+#define SEMC_ACPU_MAX_UV_MV	1500U
 #define SPSS_CLK_CNTL_ADDR	(MSM_CSR_BASE + 0x100)
 #define SPSS_CLK_SEL_ADDR	(MSM_CSR_BASE + 0x104)
 #define SCPLL_CTL_ADDR		(MSM_SCPLL_BASE + 0x4)
@@ -78,7 +78,7 @@ struct clkctl_acpu_speed acpu_freq_tbl_1267[] = {
 	{ 1, 1113600, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1D, 1300 },
 	{ 0, 1152000, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1E, 1325 },
 	{ 1, 1190400, ACPU_PLL_3, 0, 0, 0, 0, 259200, 1, 0x1F, 1350 },
-	{ 1, 1228800, ACPU_PLL_3, 0, 0, 0, 0, 259200, 1, 0x20, 1350 },
+	{ 1, 1228800, ACPU_PLL_3, 0, 0, 0, 0, 259200, 1, 0x20, 1400 },
 	{ 1, 1267200, ACPU_PLL_3, 0, 0, 0, 0, 259200, 1, 0x21, 1425 },
 };
 #else

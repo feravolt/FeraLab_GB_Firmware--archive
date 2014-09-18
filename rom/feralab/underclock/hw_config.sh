@@ -23,12 +23,11 @@ echo 16 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 > $dev/a
 mount -t debugfs debugfs /sys/kernel/debug
 echo '0' > /sys/kernel/debug/msm_fb/0/vsync_enable
 /system/xbin/sysrw
+chown system.system /dev/smd27
+chown root.root /dev
+chmod 755 /dev
+chmod 777 /dev/smd27
 chmod -R 777 /cache
-chmod 777 /dev/log/main
-chmod 777 /dev/log/events
-chmod 777 /dev/log/radio
-chmod 777 /sys/class/leds/lv5219lg:fled/spotlight_enable
-chmod 777 /sys/class/leds/lv5219lg:fled/brightness
 chown root system /sys/devices/system/cpu/cpu0/cpufreq/vdd_levels
 chmod 0664 /sys/devices/system/cpu/cpu0/cpufreq/vdd_levels
 echo 768000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
