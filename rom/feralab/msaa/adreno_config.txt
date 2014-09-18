@@ -1,8 +1,8 @@
 ; FeraLab
 
 triJuice=3
-MSAASmoothing=Normwal
+MSAASmoothing=High
 MSAABufferAllocation=always
 forceMSAAMode=1
-MSAAMode=2
+MSAAMode=4
 

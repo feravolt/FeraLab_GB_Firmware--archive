@@ -762,9 +762,9 @@ static void __init msm_mddi_tmd_fwvga_display_device_init(void)
 	panel_data->panel_info.pdest = DISPLAY_1;
 	panel_data->panel_info.wait_cycle = 0;
 	panel_data->panel_info.bpp = 32;
-	panel_data->panel_info.clk_rate = 222750000;
-	panel_data->panel_info.clk_min = 200000000;
-	panel_data->panel_info.clk_max = 240000000;
+	panel_data->panel_info.clk_rate = 192000000;
+	panel_data->panel_info.clk_min = 190000000;
+	panel_data->panel_info.clk_max = 200000000;
 	panel_data->panel_info.fb_num = 3;
 	panel_data->panel_info.mddi.vdopkt = MDDI_DEFAULT_PRIM_PIX_ATTR;
 	panel_data->panel_info.lcd.vsync_enable = FALSE;
@@ -773,7 +773,7 @@ static void __init msm_mddi_tmd_fwvga_display_device_init(void)
 	panel_data->panel_info.lcd.v_pulse_width = 0;
 	panel_data->panel_info.lcd.hw_vsync_mode = TRUE;
 	panel_data->panel_info.lcd.vsync_notifier_period = 0;
-	panel_data->panel_info.lcd.refx100 = 6050;
+	panel_data->panel_info.lcd.refx100 = 7468;
 	panel_data->panel_info.width = 51;
 	panel_data->panel_info.height = 89;
 	panel_data->panel_ext = &tmd_wvga_panel_ext;
@@ -1074,7 +1074,7 @@ static struct kgsl_platform_data kgsl_pdata = {
 	.imem_clk_name = "imem_clk",
 	.grp3d_clk_name = "grp_clk",
 	.grp2d0_clk_name = NULL,
-	.idle_timeout_3d = HZ/5,
+	.idle_timeout_3d = HZ/20,
 	.idle_timeout_2d = 0,
 	.pt_va_size = SZ_128M,
 	.pt_max_count = 1,
@@ -1317,8 +1317,8 @@ static struct msm_camera_device_platform_data msm_camera_device_data = {
 
 static struct msm_camera_sensor_flash_src msm_flash_src = {
 	.flash_sr_type = MSM_CAMERA_FLASH_SRC_PMIC,
-	._fsrc.pmic_src.low_current  = 30,
-	._fsrc.pmic_src.high_current = 100,
+	._fsrc.pmic_src.low_current  = 20,
+	._fsrc.pmic_src.high_current = 90,
 };
 
 static struct msm_camera_sensor_flash_data flash_semc_imx046_camera = {

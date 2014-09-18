@@ -174,17 +174,18 @@ ro.config.low_ram=true
 ro.kernel.android.checkjni=0
 
 # Graphics & Display
-debug.composition.type=mdp
+debug.composition.type=gpu
+debug.egl.hw=1
 debug.egl.profiler=1
-debug.mdpcomp.logs=0
+debug.gr.swapinterval=1
 debug.overlayui.enable=1
 debug.performance.tuning=1
 debug.sf.hw=1
-qemu.sf.lcd_density=240
+dev.pm.gpu_samplingrate=1
 ro.floatingtouch.available=1
 ro.sf.lcd_density=240
+persist.sys.composition.type=gpu
 video.accelerate.hw=1
-windowsmgr.max_events_per_sec=120
 
 # Misc
 ro.HOME_APP_ADJ=1

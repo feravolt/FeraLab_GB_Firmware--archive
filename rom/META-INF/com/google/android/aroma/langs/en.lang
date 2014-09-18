@@ -46,7 +46,7 @@ opt.xyxyzzlly=Disable HOME key device unlock.
 opt.xyxyzzllyf=Disable HW buttons LED.
 opt.xyxyzzllyff=Disable zRAM. Just in case you realy want it.
 opt.xyxyzzllyzzz=Scale down maximum CPU frequency to 768Mhz. This will greatly save your battery life in cost of overall performance. Option can be overrided later in system settings.
-opt.xyxyzzllyzzzm=Force enable 2x multisampling antialiasing. This will improve visual quality of graphics in cost of performance.
+opt.xyxyzzllyzzzm=Force enable 4x multisampling antialiasing. This will improve visual quality of graphics in cost of performance.
 
 hz.ready=Ready
 hz.readyy=We are ready to begin installation

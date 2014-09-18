@@ -1,5 +1,3 @@
-/* FeraVolt */
-
 #include <linux/kernel.h>
 #include <mach/gpio.h>
 #include <mach/vreg.h>
@@ -452,6 +450,35 @@ static struct reg_data set_disply_on_tmd_panel_new_dric[] = {
 	{VR_ADJ,               0x000F},
 };
 
+#define NV_RPC_PROG		0x3000000e
+#define NV_RPC_VERS		0x00040001
+#define NV_CMD_REMOTE_PROC	9
+#define NV_READ			0
+#define NV_OEMHW_LCD_VSYNC_I	60007
+
+#define MIN_NV	13389 /* ref100=7468 */
+#define MAX_NV	18181 /* ref100=5500 */
+#define DEF_NV	16766 /* ref100=5964 */
+
+struct rpc_request_nv_cmd {
+	struct rpc_request_hdr hdr;
+	uint32_t cmd;
+	uint32_t item;
+	uint32_t more_data;
+	uint32_t desc;
+};
+
+struct rpc_reply_nv_cmd {
+	struct rpc_reply_hdr hdr;
+	uint32_t result;
+	uint32_t more_data;
+	uint32_t desc;
+};
+
+struct nv_oemhw_lcd_vsync {
+	uint32_t vsync_usec;
+};
+
 static void nt35580_lcd_power_on(struct platform_device *pdev)
 {
 	struct msm_fb_panel_data *panel;
@@ -467,10 +494,12 @@ static void nt35580_lcd_driver_initialization(void)
 	write_client_reg(SET_HORIZONTAL_ADDRESS_1, 0x0000);
 	write_client_reg(SET_HORIZONTAL_ADDRESS_2, 0x0001);
 	write_client_reg(SET_HORIZONTAL_ADDRESS_3, 0x00DF);
+
 	write_client_reg(SET_VERTICAL_ADDRESS_0, 0x0000);
 	write_client_reg(SET_VERTICAL_ADDRESS_1, 0x0000);
 	write_client_reg(SET_VERTICAL_ADDRESS_2, 0x0003);
 	write_client_reg(SET_VERTICAL_ADDRESS_3, 0x0055);
+
 	write_client_reg(SET_RAM_ADDRESS_0, 0x0000);
 	write_client_reg(SET_RAM_ADDRESS_1, 0x0000);
 	write_client_reg(SET_RAM_ADDRESS_2, 0x0000);
@@ -522,7 +551,7 @@ static void nt35580_lcd_exit_sleep(void)
 		break;
 	}
 
-	msleep(9);
+	msleep(10);
 	switch (client_id) {
 	case CLIENT_ID_TMD_PANEL_OLD_DRIC:
 		write_client_reg_table(exit_sleep_2_tmd_panel_old_dric,
@@ -544,7 +573,7 @@ static void nt35580_lcd_exit_sleep(void)
 static void nt35580_lcd_set_disply_on(struct work_struct *ignored)
 {
 	write_client_reg(SET_DISPLAY_ON, 0x0000);
-	msleep(18);
+	msleep(20);
 
 	switch (client_id) {
 	case CLIENT_ID_TMD_PANEL_OLD_DRIC:
@@ -566,13 +595,13 @@ static void nt35580_lcd_set_disply_on(struct work_struct *ignored)
 static void nt35580_lcd_set_disply_off(void)
 {
 	write_client_reg(SET_DISPLAY_OFF, 0x0000);
-	msleep(63);
+	msleep(70);
 }
 
 static void nt35580_lcd_sleep_set(void)
 {
 	write_client_reg(ENT_SLEEP_MODE, 0x0000);
-	msleep(10);
+	msleep(100);
 }
 
 static void nt35580_lcd_power_off(struct platform_device *pdev)
@@ -630,18 +659,70 @@ static int mddi_nt35580_lcd_lcd_off(struct platform_device *pdev)
 	default:
 		break;
 	}
+
 	return 0;
+}
+
+static int nt35580_lcd_get_nv_vsync(void)
+{
+	struct get_lcd_vsync_req{
+		struct rpc_request_nv_cmd	nv;
+		struct nv_oemhw_lcd_vsync	data;
+	} req;
+
+	struct get_lcd_vsync_rep{
+		struct rpc_reply_nv_cmd		nv;
+		struct nv_oemhw_lcd_vsync	data;
+	} rep;
+	struct msm_rpc_endpoint *endpoint;
+	uint32_t item = NV_OEMHW_LCD_VSYNC_I;
+	int rc;
+	endpoint = msm_rpc_connect(NV_RPC_PROG, NV_RPC_VERS, 0);
+	if (IS_ERR(endpoint)) {
+		MDDI_MSG_ERR("%s: msm_rpc_connect failed\n", __func__);
+		return 0;
+	}
+	req.nv.cmd			= cpu_to_be32(NV_READ);
+	req.nv.item			= cpu_to_be32(item);
+	req.nv.more_data		= cpu_to_be32(1);
+	req.nv.desc			= cpu_to_be32(item);
+	rc = msm_rpc_call_reply(endpoint, NV_CMD_REMOTE_PROC,
+						  &req, sizeof(req),
+						  &rep, sizeof(rep),
+						  5 * HZ);
+	if (rc < 0) {
+		MDDI_MSG_ERR("%s: msm_rpc_call_reply failed!\n", __func__);
+		return 0;
+	}
+	return be32_to_cpu(rep.data.vsync_usec);
 }
 
 static int __init mddi_nt35580_lcd_lcd_probe(struct platform_device *pdev)
 {
 	struct msm_fb_panel_data *panel_data;
+	int nv_vsync = 0;
+
+	if (!pdev) {
+		printk(KERN_ERR "%s: Display failed\n", __func__);
+		return -1;
+	}
+	if (!pdev->dev.platform_data) {
+		printk(KERN_ERR "%s: Display failed, no platform data\n",
+			__func__);
+		return -1;
+	}
 	panel_data = (struct msm_fb_panel_data *)pdev->dev.platform_data;
+
 	panel_data->on  = mddi_nt35580_lcd_lcd_on;
 	panel_data->off = mddi_nt35580_lcd_lcd_off;
-        panel_data->panel_info.lcd.refx100 = 6050;
-	panel_data->panel_info.width = 51;
-	panel_data->panel_info.height = 89;
+
+	nv_vsync = nt35580_lcd_get_nv_vsync();
+	nv_vsync >>= 16;
+	nv_vsync &= (0xffff);
+	if ((MIN_NV > nv_vsync) || (nv_vsync > MAX_NV))
+		nv_vsync = DEF_NV ;
+	panel_data->panel_info.lcd.refx100 = 100000000 / nv_vsync;
+
 	msm_fb_add_device(pdev);
 	return 0;
 }
@@ -663,4 +744,3 @@ static int __init mddi_nt35580_lcd_lcd_init(void)
 }
 
 module_init(mddi_nt35580_lcd_lcd_init);
-
