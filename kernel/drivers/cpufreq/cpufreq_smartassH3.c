@@ -17,7 +17,7 @@ static unsigned int awake_ideal_freq;
 static unsigned int sleep_ideal_freq;
 #define DEFAULT_RAMP_UP_STEP 256000
 static unsigned int ramp_up_step;
-#define DEFAULT_RAMP_DOWN_STEP 256000
+#define DEFAULT_RAMP_DOWN_STEP 128000
 static unsigned int ramp_down_step;
 #define DEFAULT_MAX_CPU_LOAD 50
 static unsigned long max_cpu_load;
