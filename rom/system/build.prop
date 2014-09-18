@@ -181,7 +181,6 @@ debug.gr.swapinterval=1
 debug.overlayui.enable=1
 debug.performance.tuning=1
 debug.sf.hw=1
-dev.pm.gpu_samplingrate=1
 ro.floatingtouch.available=1
 ro.sf.lcd_density=240
 persist.sys.composition.type=gpu
