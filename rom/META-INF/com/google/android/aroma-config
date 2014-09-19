@@ -84,12 +84,16 @@ checkbox(
         "Gmail",                "<~opt.z>",0,
         "Sim Toolkit",          "<~opt.xyyx>",0,
         "YouTube",              "<~opt.xyxyz>",0,
-        "UB Charger",           "<~opt.xyxyzz>",0,
+        "Powersave",            "<~opt.xyxyzz>",0,
+        "UB Charger",           "<~opt.xyxyzzl>",0,
         "CPU Voltage",          "<~opt.xyxyzzll>",0,
         "Home Key",             "<~opt.xyxyzzlly>",0,
         "HW LED",               "<~opt.xyxyzzllyf>",0,
         "zRAM",                 "<~opt.xyxyzzllyff>",0,
-        "CPU clock",            "<~opt.xyxyzzllyzzz>",0
+        "CPU clock",            "<~opt.xyxyzzllyzzz>",0,
+        "CIFS",                 "<~opt.mmm>",0,
+        "Logger",               "<~opt.mmmm>",0,
+        "VPN",                  "<~opt.mmmmm>",0
 );
 
 ini_set("text_next", "<~hz.now>");

@@ -40,12 +40,17 @@ opt.d=Install SE DLNA wireless file sharing application.
 opt.z=Install Google mail application.
 opt.xyyx=Install default SIM-toolkit application.
 opt.xyxyz=Install YouTube application.
-opt.xyxyzz=Select this if you have unlocked bootloader to enable offline charging.
+opt.xyxyzz=Install Sony Powersave application.
+opt.xyxyzzl=Select this if you have unlocked bootloader to enable offline charging.
 opt.xyxyzzll=Increase CPU voltage. Choose this if you have random reboots of your device.
 opt.xyxyzzlly=Disable HOME key device unlock.
 opt.xyxyzzllyf=Disable HW buttons LED.
 opt.xyxyzzllyff=Disable zRAM. Just in case you realy want it.
 opt.xyxyzzllyzzz=Scale down maximum CPU frequency to 768Mhz. This will greatly save your battery life in cost of overall performance. Option can be overrided later in system settings.
+opt.mmm=Install CIFS network file system module for FeraKernel-v25
+opt.mmmm=Install Logger module for FeraKernel-v25 for debuging purposes
+opt.mmmmm=Install VPN module for FeraKernel-v25
+
 
 hz.ready=Ready
 hz.readyy=We are ready to begin installation

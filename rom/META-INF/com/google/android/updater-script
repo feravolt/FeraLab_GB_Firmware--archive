@@ -644,47 +644,69 @@ set_progress(0.84);
 if
   file_getprop("/tmp/aroma/opt.prop","item.1.5") == "1"
 then
-  ui_print(">>  Installing UB Charger");
-  package_extract_dir("feralab/charger", "/system/bin");
+  ui_print(">>  Installing Sony Powersave");
+  package_extract_dir("feralab/pwsave", "/system/app");
   delete("/system/bin/charger");
 endif;
 set_progress(0.85);
 if
   file_getprop("/tmp/aroma/opt.prop","item.1.6") == "1"
 then
-  ui_print(">>  Scaling up CPU voltage");
-  package_extract_dir("feralab/cpu", "/system/etc/init.d");
+  ui_print(">>  Installing UB Charger");
+  package_extract_dir("feralab/charger", "/system/bin");
+  delete("/system/bin/charger");
 endif;
 set_progress(0.86);
 if
   file_getprop("/tmp/aroma/opt.prop","item.1.7") == "1"
 then
-  ui_print(">>  Disabling HOME key unlock");
-  package_extract_dir("feralab/home", "/system/usr/keylayout");
+  ui_print(">>  Scaling up CPU voltage");
+  package_extract_dir("feralab/cpu", "/system/etc/init.d");
 endif;
 set_progress(0.87);
 if
   file_getprop("/tmp/aroma/opt.prop","item.1.8") == "1"
 then
-  ui_print(">>  Disabling HW LED");
-  package_extract_dir("feralab/led", "/system/etc/init.d");
+  ui_print(">>  Disabling HOME key unlock");
+  package_extract_dir("feralab/home", "/system/usr/keylayout");
 endif;
 set_progress(0.88);
 if
   file_getprop("/tmp/aroma/opt.prop","item.1.9") == "1"
 then
+  ui_print(">>  Disabling HW LED");
+  package_extract_dir("feralab/led", "/system/etc/init.d");
+endif;
+set_progress(0.89);
+if
+  file_getprop("/tmp/aroma/opt.prop","item.1.10") == "1"
+then
   ui_print(">>  Disabling zRAM");
   package_extract_dir("feralab/zram", "/system/engine");
   delete("/system/lib/modules/zram.ko");
 endif;
-set_progress(0.89);
-if
-  file_getprop("/tmp/aroma/opt.prop","item.1.9") == "1"
-then
-  ui_print(">>  Scaling down CPU frequency");
-  package_extract_dir("feralab/underclock", "/system/etc");
-endif;
 set_progress(0.90);
+if
+  file_getprop("/tmp/aroma/opt.prop","item.1.11") == "1"
+then
+  ui_print(">>  Enabling CIFS support");
+  package_extract_dir("feralab/cifs", "/system/lib/modules");
+endif;
+set_progress(0.91);
+if
+  file_getprop("/tmp/aroma/opt.prop","item.1.12") == "1"
+then
+  ui_print(">>  Enabling Logger");
+  package_extract_dir("feralab/logger", "/system/lib/modules");
+endif;
+set_progress(0.92);
+if
+  file_getprop("/tmp/aroma/opt.prop","item.1.13") == "1"
+then
+  ui_print(">>  Enabling VPN support");
+  package_extract_dir("feralab/vpn", "/system");
+endif;
+set_progress(0.93);
 ui_print(">>  Configuring Android...");
 set_perm_recursive(1000, 1000, 0771, 0644, "/data/app");
 set_perm_recursive(0, 0, 0755, 0644, "/system");
