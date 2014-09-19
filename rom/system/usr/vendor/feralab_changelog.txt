@@ -2,7 +2,8 @@
         FeraLab GB Firmware        
 ###################################
 
->>> Kernel - v25 <<<
+
+       >>> Kernel - v25 <<<
 - Built with latest LINARO crosscompiler
 - Improved ARM signal logic
 - Fixed android timed output driver
@@ -43,12 +44,13 @@
 - Updated MM core
 - Increased USB charger mA to 500
 - Updated kernel config
-- Various bugfixes and improvements
 - Vibrator & LEDs undervolt
+- RAM allocation fix
+- Various bugfixes and improvements
 
 
->>> ROM - v40 <<<
-- Updated all applications
+        >>> ROM - v40 <<<
+- Updated and zipaligned all applications
 - Heavy-duty APK optimization for whole system
 - Auto-preconfiguration on first boot
 - Updated and fixed FDE tweaks
@@ -60,10 +62,11 @@
 - Android L-like UI design
 - Injected latest Viper4Android MusicFX
 - Injected Pie control
-- Updated system settings layout
+- Updated system settings layout & features
 - Firmware changelog support
 - WiFi tethering fixes
 - Android 4.x-like recent applications layout
+- Injected Samsung task manager
 - New gallery app
 - Injected Chrome browser
 - Updated & fixed Adobe Flash player
@@ -72,14 +75,13 @@
 - New ringtones and notification sounds
 - New HD wallpapers
 - Fixed system permissions
-- Fixed and tuned GPS
+- Fixed and tuned GPS config
 - New GPS driver with A-GPS support
 - New lights & sensors driver
 - Updated OpenSSL security
-- Updated AROM installer UI
-- Recostructed & fixed AROMA installation wizard
+- Reconstructed & fixed AROMA installation wizard
 - Removed bloatware system applications
-- Black SONY keryboard by default
+- Black SONY keyboard by default
 - Updated clock's font
 - Updated some libs and removed unused ones
 - GMS core fixes
@@ -87,9 +89,10 @@
 - Increased JPEG memory
 - Misc media tunings
 - Updated & fixed Google Play
-- Changed configuration for most apps
+- Changed pre-configuration for most system apps
 - SMALI-optimized
 - HW keys tune-up
+- Virtual RAM expansion by zRAM up to 415Mb
 - A LOT of various bug-fixes and imprrovements
 
 
