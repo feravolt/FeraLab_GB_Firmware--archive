@@ -151,7 +151,6 @@ ifeq ($(FASTFPE),$(wildcard $(FASTFPE)))
 FASTFPE_OBJ	:=$(FASTFPE)/
 endif
 core-y				+= arch/arm/kernel/ arch/arm/mm/ arch/arm/common/
-core-y        			+= arch/arm/net/
 core-y				+= $(machdirs) $(platdirs)
 core-$(CONFIG_FPE_NWFPE)	+= arch/arm/nwfpe/
 core-$(CONFIG_FPE_FASTFPE)	+= $(FASTFPE_OBJ)
