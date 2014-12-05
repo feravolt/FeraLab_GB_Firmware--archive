@@ -73,7 +73,7 @@ struct timex {
 	long tolerance;		/* clock frequency tolerance (ppm)
 				 * (read only)
 				 */
-	struct timeval time;	/* (read only, except for ADJ_SETOFFSET) */
+	struct timeval time;	/* (read only) */
 	long tick;		/* (modified) usecs between clock ticks */
 
 	long ppsfreq;           /* pps frequency (scaled ppm) (ro) */
@@ -102,7 +102,6 @@ struct timex {
 #define ADJ_STATUS		0x0010	/* clock status */
 #define ADJ_TIMECONST		0x0020	/* pll time constant */
 #define ADJ_TAI			0x0080	/* set TAI offset */
-#define ADJ_SETOFFSET		0x0100  /* add 'time' to current time */
 #define ADJ_MICRO		0x1000	/* select microsecond resolution */
 #define ADJ_NANO		0x2000	/* select nanosecond resolution */
 #define ADJ_TICK		0x4000	/* tick value */
@@ -110,16 +109,13 @@ struct timex {
 #define ADJ_OFFSET_SINGLESHOT	0x8001	/* old-fashioned adjtime */
 #define ADJ_OFFSET_SS_READ	0xa001	/* read-only adjtime */
 
-/* NTP userland likes the MOD_ prefix better */
+/* xntp 3.4 compatibility names */
 #define MOD_OFFSET	ADJ_OFFSET
 #define MOD_FREQUENCY	ADJ_FREQUENCY
 #define MOD_MAXERROR	ADJ_MAXERROR
 #define MOD_ESTERROR	ADJ_ESTERROR
 #define MOD_STATUS	ADJ_STATUS
 #define MOD_TIMECONST	ADJ_TIMECONST
-#define MOD_TAI	ADJ_TAI
-#define MOD_MICRO	ADJ_MICRO
-#define MOD_NANO	ADJ_NANO
 
 
 /*

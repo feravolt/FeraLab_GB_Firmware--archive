@@ -2,7 +2,7 @@
 *******************************************************************************
 **
 **  Copyright (C) Sistina Software, Inc.  1997-2003  All rights reserved.
-**  Copyright (C) 2004-2011 Red Hat, Inc.  All rights reserved.
+**  Copyright (C) 2004-2008 Red Hat, Inc.  All rights reserved.
 **
 **  This copyrighted material is made available to anyone wishing to use,
 **  modify, copy, or redistribute it subject to the terms and conditions
@@ -48,10 +48,10 @@ typedef void dlm_lockspace_t;
  *
  * 0 if lock request was successful
  * -EAGAIN if request would block and is flagged DLM_LKF_NOQUEUE
+ * -ENOMEM if there is no memory to process request
+ * -EINVAL if there are invalid parameters
  * -DLM_EUNLOCK if unlock request was successful
  * -DLM_ECANCEL if a cancel completed successfully
- * -EDEADLK if a deadlock was detected
- * -ETIMEDOUT if the lock request was canceled due to a timeout
  */
 
 #define DLM_SBF_DEMOTED		0x01

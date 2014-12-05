@@ -39,7 +39,7 @@ EOF
       exit 0
       ;;
     --v | --ve | --ver | --vers | --versi | --versio | --version)
-      echo 'catchsegv (crosstool-NG linaro-1.13.1+bzr2694 - Linaro GCC 2014.06 - Cortex-A8) 2.19-2014.08'
+      echo 'catchsegv (crosstool-NG linaro-1.13.1+bzr - FeraLab Linaro Toolchain 4.7.4) 2.19-2014.08'
       echo 'Copyright (C) 2014 Free Software Foundation, Inc.
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.

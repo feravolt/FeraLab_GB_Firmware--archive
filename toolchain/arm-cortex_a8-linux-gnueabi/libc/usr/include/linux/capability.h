@@ -49,6 +49,9 @@ typedef struct __user_cap_data_struct {
 } *cap_user_data_t;
 
 
+#define XATTR_CAPS_SUFFIX "capability"
+#define XATTR_NAME_CAPS XATTR_SECURITY_PREFIX XATTR_CAPS_SUFFIX
+
 #define VFS_CAP_REVISION_MASK	0xFF000000
 #define VFS_CAP_REVISION_SHIFT	24
 #define VFS_CAP_FLAGS_MASK	~VFS_CAP_REVISION_MASK
@@ -175,7 +178,7 @@ struct vfs_cap_data {
 /* Allow modification of routing tables */
 /* Allow setting arbitrary process / process group ownership on
    sockets */
-/* Allow binding to any address for transparent proxying (also via NET_RAW) */
+/* Allow binding to any address for transparent proxying */
 /* Allow setting TOS (type of service) */
 /* Allow setting promiscuous mode */
 /* Allow clearing driver statistics */
@@ -187,7 +190,6 @@ struct vfs_cap_data {
 
 /* Allow use of RAW sockets */
 /* Allow use of PACKET sockets */
-/* Allow binding to any address for transparent proxying (also via NET_ADMIN) */
 
 #define CAP_NET_RAW          13
 
@@ -224,6 +226,7 @@ struct vfs_cap_data {
 /* Allow configuration of the secure attention key */
 /* Allow administration of the random device */
 /* Allow examination and configuration of disk quotas */
+/* Allow configuring the kernel's syslog (printk behaviour) */
 /* Allow setting the domainname */
 /* Allow setting the hostname */
 /* Allow calling bdflush() */
@@ -329,16 +332,7 @@ struct vfs_cap_data {
 
 #define CAP_MAC_ADMIN        33
 
-/* Allow configuring the kernel's syslog (printk behaviour) */
-
-#define CAP_SYSLOG           34
-
-/* Allow triggering something that will wake the system */
-
-#define CAP_WAKE_ALARM            35
-
-
-#define CAP_LAST_CAP         CAP_WAKE_ALARM
+#define CAP_LAST_CAP         CAP_MAC_ADMIN
 
 #define cap_valid(x) ((x) >= 0 && (x) <= CAP_LAST_CAP)
 

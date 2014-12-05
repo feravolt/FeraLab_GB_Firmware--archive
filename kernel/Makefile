@@ -1,7 +1,7 @@
 VERSION = 2
 PATCHLEVEL = 6
 SUBLEVEL = 32
-EXTRAVERSION = .25
+EXTRAVERSION = .27
 NAME = FeraKernel
 MAKEFLAGS += -rR --no-print-directory
 
@@ -193,8 +193,8 @@ KBUILD_CFLAGS := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 	-Wno-unused-but-set-variable -Wno-uninitialized \
 	-fno-delete-null-pointer-checks -ftree-vectorize \
 	-fivopts -fsched-spec-load -fgraphite-identity \
-	-ftree-loop-distribution -Wno-unused-variable -fsingle-precision-constant \
-	-march=armv7-a -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp
+	-ftree-loop-distribution -Wno-unused-variable -Wno-format-security \
+	-fsingle-precision-constant -march=armv7-a -mtune=cortex-a8
 
 KBUILD_AFLAGS   := -D__ASSEMBLY__
 KERNELRELEASE = $(shell cat include/config/kernel.release 2> /dev/null)
@@ -762,11 +762,8 @@ modules modules_install: FORCE
 
 endif
 
-CLEAN_DIRS  += $(MODVERDIR)
-CLEAN_DIRS  -= tools
-CLEAN_FILES +=	vmlinux System.map \
-                .tmp_kallsyms* .tmp_version .tmp_vmlinux* .tmp_System.map
-
+CLEAN_DIRS	+= $(MODVERDIR)
+CLEAN_FILES	+= vmlinux System.map .tmp_kallsyms* .tmp_version .tmp_vmlinux* .tmp_System.map
 MRPROPER_DIRS  += include/config include2 usr/include
 MRPROPER_FILES += .config .config.old include/asm .version .old_version \
                   include/linux/autoconf.h include/linux/version.h      \

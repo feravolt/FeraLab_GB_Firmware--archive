@@ -5,12 +5,14 @@
 
 /* User visible stuff. Glibc provides its own but libc5 folk will use these */
 
-struct ec_addr {
+struct ec_addr
+{
   unsigned char station;		/* Station number.  */
   unsigned char net;			/* Network number.  */
 };
 
-struct sockaddr_ec {
+struct sockaddr_ec
+{
   unsigned short sec_family;
   unsigned char port;			/* Port number.  */
   unsigned char cb;			/* Control/flag byte.  */

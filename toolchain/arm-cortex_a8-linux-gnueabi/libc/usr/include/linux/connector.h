@@ -1,7 +1,7 @@
 /*
  * 	connector.h
  * 
- * 2004-2005 Copyright (c) Evgeniy Polyakov <zbr@ioremap.net>
+ * 2004-2005 Copyright (c) Evgeniy Polyakov <johnpol@2ka.mipt.ru>
  * All rights reserved.
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -40,12 +40,8 @@
 #define CN_DST_VAL			0x1
 #define CN_IDX_DM			0x7	/* Device Mapper */
 #define CN_VAL_DM_USERSPACE_LOG		0x1
-#define CN_IDX_DRBD			0x8
-#define CN_VAL_DRBD			0x1
-#define CN_KVP_IDX			0x9	/* HyperV KVP */
-#define CN_KVP_VAL			0x1	/* queries from the kernel */
 
-#define CN_NETLINK_USERS		10	/* Highest index + 1 */
+#define CN_NETLINK_USERS		8
 
 /*
  * Maximum connector's message size.

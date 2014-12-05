@@ -38,4 +38,4 @@ dlopen=''
 dlpreopen=''
 
 # Directory that this library needs to be installed in:
-libdir='/media/hdd_linux/linaro/builds/arm-cortex_a8-linux-gnueabi/arm-cortex_a8-linux-gnueabi/lib/arm-linux-gnueabi'
+libdir='/home/feravolt/ferra/toolchain/builds/arm-cortex_a8-linux-gnueabi/arm-cortex_a8-linux-gnueabi/lib/arm-linux-gnueabi'

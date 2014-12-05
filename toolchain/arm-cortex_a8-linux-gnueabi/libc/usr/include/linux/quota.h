@@ -73,8 +73,6 @@
 /* Quota format type IDs */
 #define	QFMT_VFS_OLD 1
 #define	QFMT_VFS_V0 2
-#define QFMT_OCFS2 3
-#define	QFMT_VFS_V1 4
 
 /* Size of block in which space limits are passed through the quota
  * interface */
@@ -167,5 +165,12 @@ enum {
 };
 #define QUOTA_NL_A_MAX (__QUOTA_NL_A_MAX - 1)
 
+
+
+# /* nodep */ include <sys/cdefs.h>
+
+__BEGIN_DECLS
+long quotactl __P ((unsigned int, const char *, int, caddr_t));
+__END_DECLS
 
 #endif /* _QUOTA_ */

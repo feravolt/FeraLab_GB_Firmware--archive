@@ -1,2 +1,2 @@
-obj-$(CONFIG_BPF_JIT) += bpf_jit_32.o
+obj-y += bpf_jit_32.o
 

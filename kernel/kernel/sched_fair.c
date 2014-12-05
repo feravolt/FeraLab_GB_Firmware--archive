@@ -2,9 +2,9 @@
 
 #include <linux/latencytop.h>
 
-unsigned int sysctl_sched_latency = 6000000ULL;
-unsigned int sysctl_sched_min_granularity = 750000ULL;
-static unsigned int sched_nr_latency = 8;
+unsigned int sysctl_sched_latency = 5000000ULL;
+unsigned int sysctl_sched_min_granularity = 1000000ULL;
+static unsigned int sched_nr_latency = 5;
 const_debug unsigned int sysctl_sched_child_runs_first = 1;
 unsigned int __read_mostly sysctl_sched_compat_yield;
 unsigned int sysctl_sched_wakeup_granularity = 1000000UL;

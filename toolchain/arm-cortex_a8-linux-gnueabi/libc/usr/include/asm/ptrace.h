@@ -29,8 +29,6 @@
 #define PTRACE_SETCRUNCHREGS	26
 #define PTRACE_GETVFPREGS	27
 #define PTRACE_SETVFPREGS	28
-#define PTRACE_GETHBPREGS	29
-#define PTRACE_SETHBPREGS	30
 
 /*
  * PSR bits
@@ -69,9 +67,8 @@
 #define PSR_c		0x000000ff	/* Control		*/
 
 /*
- * ARMv7 groups of PSR bits
+ * ARMv7 groups of APSR bits
  */
-#define APSR_MASK	0xf80f0000	/* N, Z, C, V, Q and GE flags */
 #define PSR_ISET_MASK	0x01000010	/* ISA state (J, T) mask */
 #define PSR_IT_MASK	0x0600fc00	/* If-Then execution state mask */
 #define PSR_ENDIAN_MASK	0x00000200	/* Endianness state mask */
@@ -122,12 +119,6 @@ struct pt_regs {
 #define ARM_r1		uregs[1]
 #define ARM_r0		uregs[0]
 #define ARM_ORIG_r0	uregs[17]
-
-/*
- * The size of the user-visible VFP state as seen by PTRACE_GET/SETVFPREGS
- * and core dumps.
- */
-#define ARM_VFPREGS_SIZE ( 32 * 8 /*fpregs*/ + 4 /*fpscr*/ )
 
 
 #endif /* __ASSEMBLY__ */

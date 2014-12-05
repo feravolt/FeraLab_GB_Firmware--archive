@@ -44,14 +44,7 @@
 #define PORT_RM9000	16	/* PMC-Sierra RM9xxx internal UART */
 #define PORT_OCTEON	17	/* Cavium OCTEON internal UART */
 #define PORT_AR7	18	/* Texas Instruments AR7 internal UART */
-#define PORT_U6_16550A	19	/* ST-Ericsson U6xxx internal UART */
-#define PORT_TEGRA	20	/* NVIDIA Tegra internal UART */
-#define PORT_XR17D15X	21	/* Exar XR17D15x UART */
-#define PORT_BRCM_TRUMANAGE	25
-#define PORT_ALTR_16550_F32 26 /* Altera 16550 UART with 32 FIFOs */
-#define PORT_ALTR_16550_F64 27 /* Altera 16550 UART with 64 FIFOs */
-#define PORT_ALTR_16550_F128 28 /* Altera 16550 UART with 128 FIFOs */
-#define PORT_MAX_8250	28	/* max port ID */
+#define PORT_MAX_8250	18	/* max port ID */
 
 /*
  * ARM specific type numbers.  These are not currently guaranteed
@@ -101,7 +94,7 @@
 /* PPC CPM type number */
 #define PORT_CPM        58
 
-/* MPC52xx (and MPC512x) type numbers */
+/* MPC52xx type numbers */
 #define PORT_MPC52xx	59
 
 /* IBM icom */
@@ -185,37 +178,6 @@
 
 /* BCM63xx family SoCs */
 #define PORT_BCM63XX	89
-
-/* Aeroflex Gaisler GRLIB APBUART */
-#define PORT_APBUART    90
-
-/* Altera UARTs */
-#define PORT_ALTERA_JTAGUART	91
-#define PORT_ALTERA_UART	92
-
-/* SH-SCI */
-#define PORT_SCIFB	93
-
-/* MAX3107 */
-#define PORT_MAX3107	94
-
-/* High Speed UART for Medfield */
-#define PORT_MFD	95
-
-/* TI OMAP-UART */
-#define PORT_OMAP	96
-
-/* VIA VT8500 SoC */
-#define PORT_VT8500	97
-
-/* Xilinx PSS UART */
-#define PORT_XUARTPS	98
-
-/* Atheros AR933X SoC */
-#define PORT_AR933X	99
-
-/* Energy Micro efm32 SoC */
-#define PORT_EFMUART   100
 
 
 #endif /* LINUX_SERIAL_CORE_H */

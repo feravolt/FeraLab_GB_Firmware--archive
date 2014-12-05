@@ -24,8 +24,7 @@
 #define MRT6_DEL_MFC	(MRT6_BASE+5)	/* Delete a multicast forwarding entry	*/
 #define MRT6_VERSION	(MRT6_BASE+6)	/* Get the kernel multicast version	*/
 #define MRT6_ASSERT	(MRT6_BASE+7)	/* Activate PIM assert mode		*/
-#define MRT6_PIM	(MRT6_BASE+8)	/* enable PIM code			*/
-#define MRT6_TABLE	(MRT6_BASE+9)	/* Specify mroute table ID		*/
+#define MRT6_PIM	(MRT6_BASE+8)	/* enable PIM code	*/
 
 #define SIOCGETMIFCNT_IN6	SIOCPROTOPRIVATE	/* IP protocol privates */
 #define SIOCGETSGCNT_IN6	(SIOCPROTOPRIVATE+1)
@@ -43,7 +42,7 @@ typedef unsigned short mifi_t;
 typedef	__u32		if_mask;
 #define NIFBITS (sizeof(if_mask) * 8)        /* bits per mask */
 
-#if !defined(DIV_ROUND_UP)
+#if !defined(__KERNEL__) && !defined(DIV_ROUND_UP)
 #define	DIV_ROUND_UP(x,y)	(((x) + ((y) - 1)) / (y))
 #endif
 
@@ -76,7 +75,8 @@ struct mif6ctl {
  *	Cache manipulation structures for mrouted and PIMd
  */
 
-struct mf6cctl {
+struct mf6cctl
+{
 	struct sockaddr_in6 mf6cc_origin;		/* Origin of mcast	*/
 	struct sockaddr_in6 mf6cc_mcastgrp;		/* Group in question	*/
 	mifi_t	mf6cc_parent;			/* Where it arrived	*/
@@ -87,7 +87,8 @@ struct mf6cctl {
  *	Group count retrieval for pim6sd
  */
 
-struct sioc_sg_req6 {
+struct sioc_sg_req6
+{
 	struct sockaddr_in6 src;
 	struct sockaddr_in6 grp;
 	unsigned long pktcnt;
@@ -99,7 +100,8 @@ struct sioc_sg_req6 {
  *	To get vif packet counts
  */
 
-struct sioc_mif_req6 {
+struct sioc_mif_req6
+{
 	mifi_t	mifi;		/* Which iface */
 	unsigned long icount;	/* In packets */
 	unsigned long ocount;	/* Out packets */
@@ -117,7 +119,7 @@ struct sioc_mif_req6 {
  * Structure used to communicate from kernel to multicast router.
  * We'll overlay the structure onto an MLD header (not an IPv6 heder like igmpmsg{}
  * used for IPv4 implementation). This is because this structure will be passed via an
- * IPv6 raw socket, on which an application will only receiver the payload i.e the data after
+ * IPv6 raw socket, on wich an application will only receiver the payload i.e the data after
  * the IPv6 header and all the extension headers. (See section 3 of RFC 3542)
  */
 

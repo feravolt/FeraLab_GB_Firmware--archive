@@ -14,11 +14,9 @@
 #ifndef _LINUX_NFSD_FH_H
 #define _LINUX_NFSD_FH_H
 
-#include <linux/types.h>
-#include <linux/nfs.h>
-#include <linux/nfs2.h>
-#include <linux/nfs3.h>
-#include <linux/nfs4.h>
+# include <linux/types.h>
+#include <linux/nfsd/const.h>
+#include <linux/nfsd/debug.h>
 
 /*
  * This is the old "dentry style" Linux NFSv2 file handle.
@@ -40,16 +38,16 @@ struct nfs_fhbase_old {
  * This is the new flexible, extensible style NFSv2/v3 file handle.
  * by Neil Brown <neilb@cse.unsw.edu.au> - March 2000
  *
- * The file handle starts with a sequence of four-byte words.
- * The first word contains a version number (1) and three descriptor bytes
+ * The file handle is seens as a list of 4byte words.
+ * The first word contains a version number (1) and four descriptor bytes
  * that tell how the remaining 3 variable length fields should be handled.
  * These three bytes are auth_type, fsid_type and fileid_type.
  *
- * All four-byte values are in host-byte-order.
+ * All 4byte values are in host-byte-order.
  *
  * The auth_type field specifies how the filehandle can be authenticated
  * This might allow a file to be confirmed to be in a writable part of a
- * filetree without checking the path from it up to the root.
+ * filetree without checking the path from it upto the root.
  * Current values:
  *     0  - No authentication.  fb_auth is 0 bytes long
  * Possible future values:

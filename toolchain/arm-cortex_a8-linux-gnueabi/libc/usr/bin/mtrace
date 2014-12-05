@@ -21,7 +21,7 @@ eval "exec /usr/bin/perl -S $0 $@"
 # <http://www.gnu.org/licenses/>.
 
 $VERSION = "2.19-2014.08";
-$PKGVERSION = "(crosstool-NG linaro-1.13.1+bzr2694 - Linaro GCC 2014.06 - Cortex-A8) ";
+$PKGVERSION = "(crosstool-NG linaro-1.13.1+bzr - FeraLab Linaro Toolchain 4.7.4) ";
 $REPORT_BUGS_TO = '<https://bugs.launchpad.net/gcc-linaro>';
 $progname = $0;
 
