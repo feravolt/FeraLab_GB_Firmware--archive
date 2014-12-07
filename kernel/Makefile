@@ -179,8 +179,8 @@ MODFLAGS	= -DMODULE
 CFLAGS_MODULE   = $(MODFLAGS) -fno-pic
 AFLAGS_MODULE   = $(MODFLAGS)
 LDFLAGS_MODULE  =
-CFLAGS_KERNEL	= -ftree-vectorize -ffast-math -fsingle-precision-constant -mfpu=neon
-AFLAGS_KERNEL	= -ftree-vectorize -ffast-math -fsingle-precision-constant -mfpu=neon
+CFLAGS_KERNEL	=
+AFLAGS_KERNEL	=
 
 LINUXINCLUDE    := -Iinclude \
                    $(if $(KBUILD_SRC),-Iinclude2 -I$(srctree)/include) \
@@ -188,13 +188,26 @@ LINUXINCLUDE    := -Iinclude \
                    -include include/linux/autoconf.h
 KBUILD_CPPFLAGS := -D__KERNEL__
 
-KBUILD_CFLAGS := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
-	-fno-strict-aliasing -fno-common -mno-unaligned-access \
-	-Wno-unused-but-set-variable -Wno-uninitialized \
-	-fno-delete-null-pointer-checks -ftree-vectorize \
-	-fivopts -fsched-spec-load -fgraphite-identity \
-	-ftree-loop-distribution -Wno-unused-variable -Wno-format-security \
-	-fsingle-precision-constant -march=armv7-a -mtune=cortex-a8
+KBUILD_CFLAGS := -Ofast -Wall -Wno-trigraphs -Wno-uninitialized -Wno-address \
+		 -Wno-unused-but-set-variable -Wno-unused-variable -Wno-format-security \
+		 -fno-strict-aliasing -fno-common -fno-delete-null-pointer-checks \
+		 -ftree-vectorize -fsingle-precision-constant -fgraphite-identity \
+		 -fivopts -fomit-frame-pointer -fno-inline-functions \
+		 -march=armv7-a -mcpu=cortex-a8 -mtune=cortex-a8 -mfpu=neon
+
+KBUILD_CFLAGS += $(call cc-disable-warning,maybe-uninitialized)
+KBUILD_CFLAGS += $(call cc-disable-warning,array-bounds)
+KBUILD_CFLAGS += $(call cc-option, -fno-stack-protector)
+KBUILD_CFLAGS += $(call cc-option,-Wdeclaration-after-statement,)
+KBUILD_CFLAGS += $(call cc-option,-Wno-pointer-sign,)
+KBUILD_CFLAGS += $(call cc-option,-fwrapv)
+KBUILD_CFLAGS += $(call cc-option,-fno-dwarf2-cfi-asm)
+
+ifdef CONFIG_FRAME_POINTER
+KBUILD_CFLAGS	+= -fno-omit-frame-pointer -fno-optimize-sibling-calls
+else
+KBUILD_CFLAGS	+= -fomit-frame-pointer
+endif
 
 KBUILD_AFLAGS   := -D__ASSEMBLY__
 KERNELRELEASE = $(shell cat include/config/kernel.release 2> /dev/null)
@@ -313,42 +326,9 @@ include/config/auto.conf: ;
 endif
 
 all: vmlinux
-
-KBUILD_CFLAGS += -Ofast -Wno-address
-KBUILD_CFLAGS += $(call cc-disable-warning,maybe-uninitialized) -fno-inline-functions
-KBUILD_CFLAGS += $(call cc-disable-warning,array-bounds)
 include $(srctree)/arch/$(SRCARCH)/Makefile
-KBUILD_CFLAGS += $(call cc-option, -fno-stack-protector)
-
-ifdef CONFIG_FRAME_POINTER
-KBUILD_CFLAGS	+= -fno-omit-frame-pointer -fno-optimize-sibling-calls
-else
-KBUILD_CFLAGS	+= -fomit-frame-pointer
-endif
-
-ifdef CONFIG_DEBUG_INFO
-KBUILD_CFLAGS	+= -g
-KBUILD_AFLAGS	+= -gdwarf-2
-endif
-
-ifdef CONFIG_FUNCTION_TRACER
-KBUILD_CFLAGS	+= -pg
-endif
-
-ifdef CONFIG_DEBUG_SECTION_MISMATCH
-KBUILD_CFLAGS += $(call cc-option, -fno-inline-functions-called-once)
-endif
-
 NOSTDINC_FLAGS += -nostdinc -isystem $(shell $(CC) -print-file-name=include)
 CHECKFLAGS     += $(NOSTDINC_FLAGS)
-
-KBUILD_CFLAGS += $(call cc-option,-Wdeclaration-after-statement,)
-
-KBUILD_CFLAGS += $(call cc-option,-Wno-pointer-sign,)
-
-KBUILD_CFLAGS	+= $(call cc-option,-fwrapv)
-
-KBUILD_CFLAGS	+= $(call cc-option,-fno-dwarf2-cfi-asm)
 
 warn-assign = \
 $(warning "WARNING: Appending $$K$(1) ($(K$(1))) from $(origin K$(1)) to kernel $$$(1)")
