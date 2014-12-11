@@ -2,6 +2,7 @@
 
 on early-init
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 998400
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 384000
     write /proc/1/oom_adj -16
     start ueventd
     mkdir /mnt 0775 root system
