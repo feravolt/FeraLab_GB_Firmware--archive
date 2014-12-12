@@ -187,16 +187,16 @@ ro.config.low_ram=true
 ro.kernel.android.checkjni=0
 
 # Graphics & Display
-debug.composition.type=mdp
+debug.composition.type=gpu
 debug.egl.hw=1
 debug.egl.profiler=1
-debug.egl.swapinterval=1
-debug.enabletr=false
 debug.gr.numframebuffers=3
 debug.gr.swapinterval=1
 debug.performance.tuning=1
 debug.sf.hw=1
+dev.pm.dyn_samplingrate=1
 ro.floatingtouch.available=1
+ro.max.fling_velocity=4000
 ro.sf.lcd_density=240
 persist.sys.ui.hw=1
 video.accelerate.hw=1
