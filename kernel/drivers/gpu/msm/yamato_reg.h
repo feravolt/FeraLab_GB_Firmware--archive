@@ -1,31 +1,3 @@
-/* Copyright (c) 2002,2007-2010, Code Aurora Forum. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are
- * met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above
- *       copyright notice, this list of conditions and the following
- *       disclaimer in the documentation and/or other materials provided
- *       with the distribution.
- *     * Neither the name of Code Aurora Forum, Inc. nor the names of its
- *       contributors may be used to endorse or promote products derived
- *       from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS
- * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
- * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
- * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
- * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- */
 #ifndef _YAMATO_REG_H
 #define _YAMATO_REG_H
 
@@ -203,19 +175,14 @@ union reg_cp_rb_cntl {
 
 #define RB_COLOR_INFO__COLOR_FORMAT_MASK                   0x0000000fL
 #define RB_COPY_DEST_INFO__COPY_DEST_FORMAT__SHIFT         0x00000004
-
-
 #define SQ_INT_CNTL__PS_WATCHDOG_MASK                      0x00000001L
 #define SQ_INT_CNTL__VS_WATCHDOG_MASK                      0x00000002L
-
 #define MH_INTERRUPT_MASK__AXI_READ_ERROR                  0x00000001L
 #define MH_INTERRUPT_MASK__AXI_WRITE_ERROR                 0x00000002L
 #define MH_INTERRUPT_MASK__MMU_PAGE_FAULT                  0x00000004L
-
 #define RBBM_INT_CNTL__RDERR_INT_MASK                      0x00000001L
 #define RBBM_INT_CNTL__DISPLAY_UPDATE_INT_MASK             0x00000002L
 #define RBBM_INT_CNTL__GUI_IDLE_INT_MASK                   0x00080000L
-
 #define RBBM_STATUS__CMDFIFO_AVAIL_MASK                    0x0000001fL
 #define RBBM_STATUS__TC_BUSY_MASK                          0x00000020L
 #define RBBM_STATUS__HIRQ_PENDING_MASK                     0x00000100L
@@ -236,7 +203,6 @@ union reg_cp_rb_cntl {
 #define RBBM_STATUS__SQ_CNTX0_BUSY_MASK                    0x10000000L
 #define RBBM_STATUS__RB_CNTX_BUSY_MASK                     0x40000000L
 #define RBBM_STATUS__GUI_ACTIVE_MASK                       0x80000000L
-
 #define CP_INT_CNTL__SW_INT_MASK                           0x00080000L
 #define CP_INT_CNTL__T0_PACKET_IN_IB_MASK                  0x00800000L
 #define CP_INT_CNTL__OPCODE_ERROR_MASK                     0x01000000L
@@ -246,15 +212,12 @@ union reg_cp_rb_cntl {
 #define CP_INT_CNTL__IB2_INT_MASK                          0x20000000L
 #define CP_INT_CNTL__IB1_INT_MASK                          0x40000000L
 #define CP_INT_CNTL__RB_INT_MASK                           0x80000000L
-
 #define MASTER_INT_SIGNAL__MH_INT_STAT                     0x00000020L
 #define MASTER_INT_SIGNAL__SQ_INT_STAT                     0x04000000L
 #define MASTER_INT_SIGNAL__CP_INT_STAT                     0x40000000L
 #define MASTER_INT_SIGNAL__RBBM_INT_STAT                   0x80000000L
-
 #define RB_EDRAM_INFO__EDRAM_SIZE_MASK                     0x0000000fL
 #define RB_EDRAM_INFO__EDRAM_RANGE_MASK                    0xffffc000L
-
 #define	MH_ARBITER_CONFIG__SAME_PAGE_GRANULARITY__SHIFT    0x00000006
 #define	MH_ARBITER_CONFIG__L1_ARB_ENABLE__SHIFT            0x00000007
 #define	MH_ARBITER_CONFIG__L1_ARB_HOLD_ENABLE__SHIFT       0x00000008
@@ -269,7 +232,6 @@ union reg_cp_rb_cntl {
 #define	MH_ARBITER_CONFIG__TC_CLNT_ENABLE__SHIFT           0x00000018
 #define	MH_ARBITER_CONFIG__RB_CLNT_ENABLE__SHIFT           0x00000019
 #define	MH_ARBITER_CONFIG__PA_CLNT_ENABLE__SHIFT           0x0000001a
-
 #define	MH_MMU_CONFIG__RB_W_CLNT_BEHAVIOR__SHIFT           0x00000004
 #define	MH_MMU_CONFIG__CP_W_CLNT_BEHAVIOR__SHIFT           0x00000006
 #define	MH_MMU_CONFIG__CP_R0_CLNT_BEHAVIOR__SHIFT          0x00000008
@@ -281,16 +243,13 @@ union reg_cp_rb_cntl {
 #define	MH_MMU_CONFIG__VGT_R1_CLNT_BEHAVIOR__SHIFT         0x00000014
 #define	MH_MMU_CONFIG__TC_R_CLNT_BEHAVIOR__SHIFT           0x00000016
 #define	MH_MMU_CONFIG__PA_W_CLNT_BEHAVIOR__SHIFT           0x00000018
-
 #define	CP_RB_CNTL__RB_BUFSZ__SHIFT                        0x00000000
 #define	CP_RB_CNTL__RB_BLKSZ__SHIFT                        0x00000008
 #define	CP_RB_CNTL__RB_POLL_EN__SHIFT                      0x00000014
 #define	CP_RB_CNTL__RB_NO_UPDATE__SHIFT                    0x0000001b
-
 #define	RB_COLOR_INFO__COLOR_FORMAT__SHIFT                 0x00000000
 #define	RB_EDRAM_INFO__EDRAM_MAPPING_MODE__SHIFT           0x00000004
 #define	RB_EDRAM_INFO__EDRAM_RANGE__SHIFT                  0x0000000e
-
 #define REG_CP_CSQ_IB1_STAT              0x01FE
 #define REG_CP_CSQ_IB2_STAT              0x01FF
 #define REG_CP_CSQ_RB_STAT               0x01FD
@@ -322,9 +281,7 @@ union reg_cp_rb_cntl {
 #define REG_CP_STATE_DEBUG_INDEX         0x01EC
 #define REG_CP_ST_BASE                   0x044D
 #define REG_CP_ST_BUFSZ                  0x044E
-
 #define REG_MASTER_INT_SIGNAL            0x03B7
-
 #define REG_MH_ARBITER_CONFIG            0x0A40
 #define REG_MH_INTERRUPT_CLEAR           0x0A44
 #define REG_MH_INTERRUPT_MASK            0x0A42
@@ -339,7 +296,6 @@ union reg_cp_rb_cntl {
 #define REG_MH_MMU_VA_RANGE              0x0041
 #define REG_MH_CLNT_INTF_CTRL_CONFIG1    0x0A54
 #define REG_MH_CLNT_INTF_CTRL_CONFIG2    0x0A55
-
 #define REG_PA_CL_VPORT_XSCALE           0x210F
 #define REG_PA_CL_VPORT_ZOFFSET          0x2114
 #define REG_PA_CL_VPORT_ZSCALE           0x2113
@@ -360,9 +316,7 @@ union reg_cp_rb_cntl {
 #define REG_PA_SU_POLY_OFFSET_BACK_OFFSET 0x2383
 #define REG_PA_SU_POLY_OFFSET_FRONT_SCALE 0x2380
 #define REG_PA_SU_SC_MODE_CNTL           0x2205
-
 #define REG_PC_INDEX_OFFSET		0x2102
-
 #define REG_RBBM_CNTL                    0x003B
 #define REG_RBBM_INT_ACK                 0x03B6
 #define REG_RBBM_INT_CNTL                0x03B4
@@ -378,7 +332,6 @@ union reg_cp_rb_cntl {
 #define REG_RBBM_READ_ERROR              0x03B3
 #define REG_RBBM_SOFT_RESET              0x003C
 #define REG_RBBM_STATUS                  0x05D0
-
 #define REG_RB_COLORCONTROL              0x2202
 #define REG_RB_COLOR_DEST_MASK           0x2326
 #define REG_RB_COLOR_MASK                0x2104
@@ -388,12 +341,10 @@ union reg_cp_rb_cntl {
 #define REG_RB_MODECONTROL               0x2208
 #define REG_RB_SURFACE_INFO              0x2000
 #define REG_RB_SAMPLE_POS		 0x220a
-
 #define REG_SCRATCH_ADDR                 0x01DD
 #define REG_SCRATCH_REG0                 0x0578
 #define REG_SCRATCH_REG2                 0x057A
 #define REG_SCRATCH_UMSK                 0x01DC
-
 #define REG_SQ_CF_BOOLEANS               0x4900
 #define REG_SQ_CF_LOOP                   0x4908
 #define REG_SQ_GPR_MANAGEMENT            0x0D00
@@ -406,12 +357,10 @@ union reg_cp_rb_cntl {
 #define REG_SQ_VS_PROGRAM                0x21F7
 #define REG_SQ_WRAPPING_0                0x2183
 #define REG_SQ_WRAPPING_1                0x2184
-
 #define REG_VGT_ENHANCE                  0x2294
 #define REG_VGT_INDX_OFFSET              0x2102
 #define REG_VGT_MAX_VTX_INDX             0x2100
 #define REG_VGT_MIN_VTX_INDX             0x2101
-
 #define REG_TP0_CHICKEN			 0x0E1E
 #define REG_TC_CNTL_STATUS             	 0x0E00
 #define REG_PA_SC_AA_CONFIG            	 0x2301
@@ -427,12 +376,16 @@ union reg_cp_rb_cntl {
 #define REG_RB_SAMPLE_COUNT_CTL          0x2324
 #define REG_SQ_CONSTANT_0                0x4000
 #define REG_SQ_FETCH_0                   0x4800
-
 #define REG_MH_AXI_ERROR		 0xA45
 #define REG_MH_DEBUG_CTRL		 0xA4E
 #define REG_MH_DEBUG_DATA		 0xA4F
 #define REG_COHER_BASE_PM4		 0xA2A
 #define REG_COHER_STATUS_PM4		 0xA2B
 #define REG_COHER_SIZE_PM4		 0xA29
-
-#endif /* _YAMATO_REG_H */
+#define REG_LEIA_PC_INDX_OFFSET          REG_VGT_INDX_OFFSET
+#define REG_LEIA_PC_VERTEX_REUSE_BLOCK_CNTL REG_VGT_VERTEX_REUSE_BLOCK_CNTL
+#define REG_LEIA_PC_MAX_VTX_INDX         REG_VGT_MAX_VTX_INDX
+#define REG_LEIA_GRAS_CONTROL            0x2210
+#define REG_LEIA_VSC_BIN_SIZE            0x0C01
+#define REG_LEIA_VSC_PIPE_DATA_LENGTH_7  0x0C1D
+#endif

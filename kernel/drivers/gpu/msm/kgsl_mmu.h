@@ -1,52 +1,45 @@
-/* Copyright (c) 2002,2007-2010, Code Aurora Forum. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are
- * met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above
- *       copyright notice, this list of conditions and the following
- *       disclaimer in the documentation and/or other materials provided
- *       with the distribution.
- *     * Neither the name of Code Aurora Forum, Inc. nor the names of its
- *       contributors may be used to endorse or promote products derived
- *       from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS
- * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
- * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
- * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
- * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- */
 #ifndef __GSL_MMU_H
 #define __GSL_MMU_H
 #include <linux/types.h>
 #include <linux/msm_kgsl.h>
 #include "kgsl_sharedmem.h"
 
-/* Identifier for the global page table */
-/* Per process page tables will probably pass in the thread group
-   as an identifier */
-
 #define KGSL_MMU_GLOBAL_PT 0
-
 #define GSL_PT_SUPER_PTE 8
 #define GSL_PT_PAGE_WV		0x00000001
 #define GSL_PT_PAGE_RV		0x00000002
 #define GSL_PT_PAGE_DIRTY	0x00000004
-/* MMU Flags */
 #define KGSL_MMUFLAGS_TLBFLUSH         0x10000000
 #define KGSL_MMUFLAGS_PTUPDATE         0x20000000
-
-/* Macros to manage TLB flushing */
+#define ADDR_MH_ARBITER_CONFIG           0x0A40
+#define ADDR_MH_INTERRUPT_CLEAR          0x0A44
+#define ADDR_MH_INTERRUPT_MASK           0x0A42
+#define ADDR_MH_INTERRUPT_STATUS         0x0A43
+#define ADDR_MH_AXI_ERROR                0x0A45
+#define ADDR_MH_AXI_HALT_CONTROL         0x0A50
+#define ADDR_MH_CLNT_INTF_CTRL_CONFIG1   0x0A54
+#define ADDR_MH_CLNT_INTF_CTRL_CONFIG2   0x0A55
+#define ADDR_MH_MMU_CONFIG               0x0040
+#define ADDR_MH_MMU_INVALIDATE           0x0045
+#define ADDR_MH_MMU_MPU_BASE             0x0046
+#define ADDR_MH_MMU_MPU_END              0x0047
+#define ADDR_MH_MMU_PT_BASE              0x0042
+#define ADDR_MH_MMU_TRAN_ERROR           0x0044
+#define ADDR_MH_MMU_VA_RANGE             0x0041
+#define ADDR_VGC_MH_READ_ADDR            0x0510
+#define ADDR_VGC_MH_DATA_ADDR            0x0518
+#define ADDR_MH_MMU_PAGE_FAULT           0x0043
+#define ADDR_VGC_COMMANDSTREAM           0x0000
+#define ADDR_VGC_IRQENABLE               0x0438
+#define ADDR_VGC_IRQSTATUS               0x0418
+#define ADDR_VGC_IRQ_ACTIVE_CNT          0x04E0
+#define ADDR_VGC_MMUCOMMANDSTREAM        0x03FC
+#define ADDR_VGV3_CONTROL                0x0070
+#define ADDR_VGV3_LAST                   0x007F
+#define ADDR_VGV3_MODE                   0x0071
+#define ADDR_VGV3_NEXTADDR               0x0075
+#define ADDR_VGV3_NEXTCMD                0x0076
+#define ADDR_VGV3_WRITEADDR              0x0072
 #define GSL_TLBFLUSH_FILTER_ENTRY_NUMBITS     (sizeof(unsigned char) * 8)
 #define GSL_TLBFLUSH_FILTER_GET(superpte)			     \
 	      (*((unsigned char *)				    \
@@ -62,12 +55,8 @@
 				      0, pagetable->tlbflushfilter.size)
 
 
-#ifdef CONFIG_MSM_KGSL_MMU
 extern unsigned int kgsl_cache_enable;
-#endif
-
 struct kgsl_device;
-
 struct kgsl_ptstats {
 	int64_t  maps;
 	int64_t  unmaps;
@@ -93,7 +82,6 @@ struct kgsl_pagetable {
 	struct gen_pool *pool;
 	struct list_head list;
 	unsigned int name;
-	/* Maintain filter to manage tlb flushing */
 	struct kgsl_tlbflushfilter tlbflushfilter;
 	unsigned int tlb_flags;
 };
@@ -165,8 +153,6 @@ static inline unsigned int kgsl_pt_get_flags(struct kgsl_pagetable *pt,
 	return result;
 }
 
-
-#ifdef CONFIG_MSM_KGSL_MMU
 int kgsl_mmu_map(struct kgsl_pagetable *pagetable,
 		 unsigned int address,
 		 int range,
@@ -178,23 +164,6 @@ int kgsl_mmu_unmap(struct kgsl_pagetable *pagetable,
 					unsigned int gpuaddr, int range);
 
 unsigned int kgsl_virtaddr_to_physaddr(unsigned int virtaddr);
-#else
-static inline int kgsl_mmu_map(struct kgsl_pagetable *pagetable,
-		 unsigned int address,
-		 int range,
-		 unsigned int protflags,
-		 unsigned int *gpuaddr,
-		 unsigned int flags)
-{
-	*gpuaddr = address;
-	return 0;
-}
-
-static inline int kgsl_mmu_unmap(struct kgsl_pagetable *pagetable,
-					unsigned int gpuaddr, int range)
-{ return 0; }
-
-#endif
 
 int kgsl_mmu_map_global(struct kgsl_pagetable *pagetable,
 			struct kgsl_memdesc *memdesc, unsigned int protflags,
@@ -205,4 +174,4 @@ int kgsl_mmu_querystats(struct kgsl_pagetable *pagetable,
 
 void kgsl_mh_intrcallback(struct kgsl_device *device);
 
-#endif /* __GSL_MMU_H */
+#endif

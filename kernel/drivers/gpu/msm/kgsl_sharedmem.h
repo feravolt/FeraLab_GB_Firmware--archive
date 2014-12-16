@@ -1,31 +1,3 @@
-/* Copyright (c) 2002,2007-2010, Code Aurora Forum. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are
- * met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above
- *       copyright notice, this list of conditions and the following
- *       disclaimer in the documentation and/or other materials provided
- *       with the distribution.
- *     * Neither the name of Code Aurora Forum, Inc. nor the names of its
- *       contributors may be used to endorse or promote products derived
- *       from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS
- * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
- * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
- * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
- * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- */
 #ifndef __GSL_SHAREDMEM_H
 #define __GSL_SHAREDMEM_H
 
@@ -37,17 +9,13 @@
 
 struct kgsl_pagetable;
 
-/* Memflags for caching operations */
 #define KGSL_MEMFLAGS_CACHE_INV		0x00000001
 #define KGSL_MEMFLAGS_CACHE_FLUSH	0x00000002
 #define KGSL_MEMFLAGS_CACHE_CLEAN	0x00000004
 #define KGSL_MEMFLAGS_CACHE_MASK	0x0000000F
-
-/* Flags to differentiate memory types */
 #define KGSL_MEMFLAGS_CONPHYS 	0x00001000
 #define KGSL_MEMFLAGS_VMALLOC_MEM	0x00002000
 #define KGSL_MEMFLAGS_HOSTADDR		0x00004000
-
 #define KGSL_MEMFLAGS_ALIGNANY	0x00000000
 #define KGSL_MEMFLAGS_ALIGN32	0x00000000
 #define KGSL_MEMFLAGS_ALIGN64	0x00060000
@@ -62,8 +30,6 @@ struct kgsl_pagetable;
 #define KGSL_MEMFLAGS_ALIGN32K	0x000F0000
 #define KGSL_MEMFLAGS_ALIGN64K	0x00100000
 #define KGSL_MEMFLAGS_ALIGNPAGE	KGSL_MEMFLAGS_ALIGN4K
-
-
 #define KGSL_MEMFLAGS_ALIGN_MASK 	0x00FF0000
 #define KGSL_MEMFLAGS_ALIGN_SHIFT	16
 
@@ -119,4 +85,4 @@ int kgsl_sharedmem_set(const struct kgsl_memdesc *memdesc,
 void kgsl_cache_range_op(unsigned long addr, int size,
 			 unsigned int flags);
 
-#endif /* __GSL_SHAREDMEM_H */
+#endif

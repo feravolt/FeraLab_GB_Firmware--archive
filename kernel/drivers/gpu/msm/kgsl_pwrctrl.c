@@ -1,28 +1,9 @@
-/* Copyright (c) 2010-2011, Code Aurora Forum. All rights reserved.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 and
- * only version 2 as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301, USA.
- *
- */
 #include <linux/interrupt.h>
 #include <linux/err.h>
 #include <mach/clk.h>
 #include <mach/dal_axi.h>
 #include <mach/msm_bus.h>
-
 #include "kgsl.h"
-#include "kgsl_log.h"
 
 static int kgsl_pwrctrl_fraction_store(struct device *dev,
 				     struct device_attribute *attr,
@@ -164,8 +145,6 @@ int kgsl_pwrctrl_pwrrail(struct kgsl_device *device, unsigned int pwrflag)
 	case KGSL_PWRFLAGS_POWER_OFF:
 		if (pwr->power_flags & KGSL_PWRFLAGS_POWER_ON) {
 			if (internal_pwr_rail_ctl(pwr->pwr_rail, KGSL_FALSE)) {
-				KGSL_DRV_ERR(
-					"call internal_pwr_rail_ctl failed\n");
 				return KGSL_FAILURE;
 			}
 			if (pwr->gpu_reg)
@@ -179,8 +158,6 @@ int kgsl_pwrctrl_pwrrail(struct kgsl_device *device, unsigned int pwrflag)
 	case KGSL_PWRFLAGS_POWER_ON:
 		if (pwr->power_flags & KGSL_PWRFLAGS_POWER_OFF) {
 			if (internal_pwr_rail_ctl(pwr->pwr_rail, KGSL_TRUE)) {
-				KGSL_DRV_ERR(
-					"call internal_pwr_rail_ctl failed\n");
 				return KGSL_FAILURE;
 			}
 
@@ -310,16 +287,10 @@ void kgsl_check_suspended(struct kgsl_device *device)
 		wait_for_completion(&device->hwaccess_gate);
 		mutex_lock(&device->mutex);
 	}
- }
+}
 
-
-/******************************************************************/
-/* Caller must hold the device mutex. */
 int kgsl_pwrctrl_sleep(struct kgsl_device *device)
 {
-	KGSL_DRV_DBG("kgsl_pwrctrl_sleep device %d!!!\n", device->id);
-
-	/* Work through the legal state transitions */
 	if (device->requested_state == KGSL_STATE_NAP) {
 		if (device->ftbl.device_isidle(device))
 			goto nap;
@@ -349,9 +320,6 @@ clk_off:
 	return KGSL_SUCCESS;
 }
 
-
-/******************************************************************/
-/* Caller must hold the device mutex. */
 int kgsl_pwrctrl_wake(struct kgsl_device *device)
 {
 	int status = KGSL_SUCCESS;
@@ -360,22 +328,14 @@ int kgsl_pwrctrl_wake(struct kgsl_device *device)
 
 	if (device->state == KGSL_STATE_SUSPEND)
 		return status;
-
-	/* Turn on the core clocks */
 	status = kgsl_pwrctrl_clk(device, KGSL_PWRFLAGS_CLK_ON);
 	if (device->state != KGSL_STATE_NAP) {
 		kgsl_pwrctrl_axi(device, KGSL_PWRFLAGS_AXI_ON);
 	}
-	/* Enable state before turning on irq */
 	device->state = KGSL_STATE_ACTIVE;
 	kgsl_pwrctrl_irq(device, KGSL_PWRFLAGS_IRQ_ON);
-
-	/* Re-enable HW access */
 	mod_timer(&device->idle_timer, jiffies + FIRST_TIMEOUT);
-
-	KGSL_DRV_VDBG("<-- kgsl_yamato_wake(). Return value %d\n", status);
 	wake_lock(&device->idle_wakelock);
-
 	return status;
 }
 

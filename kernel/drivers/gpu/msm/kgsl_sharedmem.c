@@ -1,20 +1,3 @@
-/* Copyright (c) 2002,2007-2011, Code Aurora Forum. All rights reserved.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 and
- * only version 2 as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301, USA.
- *
- */
 #include <linux/io.h>
 #include <linux/spinlock.h>
 #include <linux/genalloc.h>
@@ -26,7 +9,6 @@
 #include "kgsl_sharedmem.h"
 #include "kgsl_device.h"
 #include "kgsl.h"
-#include "kgsl_log.h"
 
 #ifdef CONFIG_OUTER_CACHE
 static void _outer_cache_range_op(unsigned long addr, int size,
@@ -45,8 +27,6 @@ static void _outer_cache_range_op(unsigned long addr, int size,
 			physaddr = __pa(end);
 
 		if (physaddr == 0) {
-			KGSL_MEM_ERR("Unable to find physaddr for "
-				     "address: %x\n", (unsigned int)end);
 			return;
 		}
 
@@ -96,7 +76,6 @@ kgsl_sharedmem_vmalloc(struct kgsl_memdesc *memdesc,
 
 	memdesc->hostptr = vmalloc(size);
 	if (memdesc->hostptr == NULL) {
-		KGSL_MEM_ERR("vmalloc failed: %x\n", size);
 		return -ENOMEM;
 	}
 
@@ -126,11 +105,7 @@ kgsl_sharedmem_vmalloc(struct kgsl_memdesc *memdesc,
 void
 kgsl_sharedmem_free(struct kgsl_memdesc *memdesc)
 {
-	KGSL_MEM_VDBG("enter (memdesc=%p, physaddr=%08x, size=%d)\n",
-			memdesc, memdesc->physaddr, memdesc->size);
-
 	BUG_ON(memdesc == NULL);
-
 	if (memdesc->size > 0) {
 		if (memdesc->priv & KGSL_MEMFLAGS_VMALLOC_MEM) {
 			if (memdesc->gpuaddr)
@@ -149,7 +124,6 @@ kgsl_sharedmem_free(struct kgsl_memdesc *memdesc)
 	}
 
 	memset(memdesc, 0, sizeof(struct kgsl_memdesc));
-	KGSL_MEM_VDBG("return\n");
 }
 
 int
@@ -158,15 +132,9 @@ kgsl_sharedmem_readl(const struct kgsl_memdesc *memdesc,
 			unsigned int offsetbytes)
 {
 	if (memdesc == NULL || memdesc->hostptr == NULL || dst == NULL) {
-		KGSL_MEM_ERR("bad ptr memdesc %p hostptr %p dst %p\n",
-				memdesc,
-				(memdesc ? memdesc->hostptr : NULL),
-				dst);
 		return -EINVAL;
 	}
 	if (offsetbytes + sizeof(unsigned int) > memdesc->size) {
-		KGSL_MEM_ERR("bad range: offset %d memdesc %d\n",
-				offsetbytes, memdesc->size);
 		return -ERANGE;
 	}
 	*dst = readl(memdesc->hostptr + offsetbytes);
@@ -179,15 +147,9 @@ kgsl_sharedmem_read(const struct kgsl_memdesc *memdesc, void *dst,
 {
 	BUG_ON(sizebytes == sizeof(unsigned int));
 	if (memdesc == NULL || memdesc->hostptr == NULL || dst == NULL) {
-		KGSL_MEM_ERR("bad ptr memdesc %p hostptr %p dst %p\n",
-				memdesc,
-				(memdesc ? memdesc->hostptr : NULL),
-				dst);
 		return -EINVAL;
 	}
 	if (offsetbytes + sizebytes > memdesc->size) {
-		KGSL_MEM_ERR("bad range: offset %d size %d memdesc %d\n",
-				offsetbytes, sizebytes, memdesc->size);
 		return -ERANGE;
 	}
 	memcpy(dst, memdesc->hostptr + offsetbytes, sizebytes);
@@ -200,13 +162,9 @@ kgsl_sharedmem_writel(const struct kgsl_memdesc *memdesc,
 			uint32_t src)
 {
 	if (memdesc == NULL || memdesc->hostptr == NULL) {
-		KGSL_MEM_ERR("bad ptr memdesc %p hostptr %p\n", memdesc,
-				(memdesc ? memdesc->hostptr : NULL));
 		return -EINVAL;
 	}
 	if (offsetbytes + sizeof(unsigned int) > memdesc->size) {
-		KGSL_MEM_ERR("bad range: offset %d memdesc %d\n",
-				offsetbytes, memdesc->size);
 		return -ERANGE;
 	}
 	writel(src, memdesc->hostptr + offsetbytes);
@@ -221,13 +179,9 @@ kgsl_sharedmem_write(const struct kgsl_memdesc *memdesc,
 {
 	BUG_ON(sizebytes == sizeof(unsigned int));
 	if (memdesc == NULL || memdesc->hostptr == NULL) {
-		KGSL_MEM_ERR("bad ptr memdesc %p hostptr %p\n", memdesc,
-				(memdesc ? memdesc->hostptr : NULL));
 		return -EINVAL;
 	}
 	if (offsetbytes + sizebytes > memdesc->size) {
-		KGSL_MEM_ERR("bad range: offset %d size %d memdesc %d\n",
-				offsetbytes, sizebytes, memdesc->size);
 		return -ERANGE;
 	}
 
@@ -240,13 +194,9 @@ kgsl_sharedmem_set(const struct kgsl_memdesc *memdesc, unsigned int offsetbytes,
 			unsigned int value, unsigned int sizebytes)
 {
 	if (memdesc == NULL || memdesc->hostptr == NULL) {
-		KGSL_MEM_ERR("bad ptr memdesc %p hostptr %p\n", memdesc,
-				(memdesc ? memdesc->hostptr : NULL));
 		return -EINVAL;
 	}
 	if (offsetbytes + sizebytes > memdesc->size) {
-		KGSL_MEM_ERR("bad range: offset %d size %d memdesc %d\n",
-				offsetbytes, sizebytes, memdesc->size);
 		return -ERANGE;
 	}
 	memset(memdesc->hostptr + offsetbytes, value, sizebytes);

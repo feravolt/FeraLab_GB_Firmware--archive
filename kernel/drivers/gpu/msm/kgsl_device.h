@@ -1,31 +1,3 @@
-/* Copyright (c) 2002,2007-2011, Code Aurora Forum. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are
- * met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above
- *       copyright notice, this list of conditions and the following
- *       disclaimer in the documentation and/or other materials provided
- *       with the distribution.
- *     * Neither the name of Code Aurora Forum, Inc. nor the names of its
- *       contributors may be used to endorse or promote products derived
- *       from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS
- * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
- * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
- * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
- * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- */
 #ifndef _KGSL_DEVICE_H
 #define _KGSL_DEVICE_H
 
@@ -37,31 +9,15 @@
 #include <linux/msm_kgsl.h>
 #include <linux/idr.h>
 #include <linux/wakelock.h>
-
 #include <asm/atomic.h>
-
 #include "kgsl_mmu.h"
 #include "kgsl_pwrctrl.h"
-#include "kgsl_log.h"
 
 #define KGSL_TIMEOUT_NONE       0
 #define KGSL_TIMEOUT_DEFAULT    0xFFFFFFFF
-
 #define FIRST_TIMEOUT (HZ / 2)
-
 #define KGSL_CHIPID_YAMATODX_REV21  0x20100
 #define KGSL_CHIPID_YAMATODX_REV211 0x20101
-#define KGSL_CHIPID_LEIA_REV470_TEMP 0x10001
-#define KGSL_CHIPID_LEIA_REV470 0x2010000
-
-/* KGSL device state is initialized to INIT when platform_probe		*
- * sucessfully initialized the device.  Once a device has been opened	*
- * (started) it becomes active.  NAP implies that only low latency	*
- * resources (for now clocks on some platforms) are off.  SLEEP implies	*
- * that the KGSL module believes a device is idle (has been inactive	*
- * past its timer) and all system resources are released.  SUSPEND is	*
- * requested by the kernel and will be enforced upon all open devices.	*/
-
 #define KGSL_STATE_NONE		0x00000000
 #define KGSL_STATE_INIT		0x00000001
 #define KGSL_STATE_ACTIVE	0x00000002
@@ -69,9 +25,7 @@
 #define KGSL_STATE_SLEEP	0x00000008
 #define KGSL_STATE_SUSPEND	0x00000010
 #define KGSL_STATE_HUNG		0x00000020
-
 #define KGSL_GRAPHICS_MEMORY_LOW_WATERMARK  0x1000000
-
 #define KGSL_IS_PAGE_ALIGNED(addr) (!((addr) & (~PAGE_MASK)))
 
 struct kgsl_device;
@@ -174,8 +128,6 @@ struct kgsl_context {
 
 	/* Pointer to the owning device instance */
 	struct kgsl_device_private *dev_priv;
-
-	/* Pointer to the device specific context information */
 	void *devctxt;
 };
 
@@ -215,11 +167,8 @@ kgsl_get_mmu(struct kgsl_device *device)
 
 static inline int kgsl_create_device_workqueue(struct kgsl_device *device)
 {
-	KGSL_DRV_INFO("creating workqueue: %s\n", device->name);
 	device->work_queue = create_workqueue(device->name);
 	if (!device->work_queue) {
-		KGSL_DRV_ERR("Failed to create workqueue %s\n",
-				device->name);
 		return -EINVAL;
 	}
 	return 0;
@@ -230,10 +179,6 @@ kgsl_find_context(struct kgsl_device_private *dev_priv, uint32_t id)
 {
 	struct kgsl_context *ctxt =
 		idr_find(&dev_priv->device->context_idr, id);
-
-	/* Make sure that the context belongs to the current instance so
-	   that other processes can't guess context IDs and mess things up */
-
 	return  (ctxt && ctxt->dev_priv == dev_priv) ? ctxt : NULL;
 }
 
