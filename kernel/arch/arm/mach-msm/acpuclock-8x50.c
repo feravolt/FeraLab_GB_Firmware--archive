@@ -73,13 +73,15 @@ struct clkctl_acpu_speed acpu_freq_tbl_1267[] = {
 	{ 0, 921600, ACPU_PLL_3, 0, 0, 0, 0, 160000, 1, 0x18, 1250 },
 	{ 0, 960000, ACPU_PLL_3, 0, 0, 0, 0, 160000, 1, 0x19, 1250 },
 	{ 1, 998400, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1A, 1250 },
-	{ 0, 1036800, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1B, 1275 },
+	{ 1, 1036800, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1B, 1275 },
 	{ 0, 1075200, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1C, 1300 },
 	{ 1, 1113600, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1D, 1300 },
 	{ 0, 1152000, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1E, 1325 },
 	{ 1, 1190400, ACPU_PLL_3, 0, 0, 0, 0, 259200, 1, 0x1F, 1350 },
 	{ 1, 1228800, ACPU_PLL_3, 0, 0, 0, 0, 259200, 1, 0x20, 1400 },
 	{ 1, 1267200, ACPU_PLL_3, 0, 0, 0, 0, 259200, 1, 0x21, 1425 },
+	{ 1, 1305600, ACPU_PLL_3, 0, 0, 0, 0, 259200, 1, 0x22, 1450 },
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 };
 #else
 struct clkctl_acpu_speed acpu_freq_tbl_1267[] = {
@@ -121,7 +123,7 @@ static struct clkctl_acpu_speed *acpu_freq_tbl = acpu_freq_tbl_1267;
 #define WAIT_FOR_IRQ_KHZ 245760
 
 #ifdef CONFIG_CPU_FREQ_MSM
-static struct cpufreq_frequency_table freq_table[27];
+static struct cpufreq_frequency_table freq_table[28];
 static void __init cpufreq_table_init(void)
 {
 	unsigned int i;
@@ -465,7 +467,7 @@ static void __init acpu_freq_tbl_fixup(void)
 	switch (tcsr_spare2 & 0xF0) {
 	case 0x30:
 	case 0x00:
-		max_acpu_khz = 1267200;
+		max_acpu_khz = 1305600;
 		break;
 	default:
 		goto skip_efuse_fixup;
@@ -516,9 +518,7 @@ void __init msm_acpu_clock_init(struct msm_acpu_clock_platform_data *clkdata)
 	acpu_freq_tbl_fixup();
 	acpuclk_init();
 	lpj_init();
-
-	if (drv_state.current_speed->acpuclk_khz < PLL0_S->acpuclk_khz)
-		acpuclk_set_rate(PLL0_S->acpuclk_khz, SETRATE_CPUFREQ);
+	acpuclk_set_rate(PLL0_S->acpuclk_khz, SETRATE_CPUFREQ);
 #ifdef CONFIG_CPU_FREQ_MSM
 	cpufreq_table_init();
 	cpufreq_frequency_table_get_attr(freq_table, smp_processor_id());

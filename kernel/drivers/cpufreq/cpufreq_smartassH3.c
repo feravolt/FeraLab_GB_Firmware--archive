@@ -11,7 +11,7 @@
 #include <asm/cputime.h>
 #include <linux/earlysuspend.h>
 
-#define DEFAULT_AWAKE_IDEAL_FREQ 998400
+#define DEFAULT_AWAKE_IDEAL_FREQ 1036800
 static unsigned int awake_ideal_freq;
 #define DEFAULT_SLEEP_IDEAL_FREQ 245760
 static unsigned int sleep_ideal_freq;
@@ -19,15 +19,15 @@ static unsigned int sleep_ideal_freq;
 static unsigned int ramp_up_step;
 #define DEFAULT_RAMP_DOWN_STEP 128000
 static unsigned int ramp_down_step;
-#define DEFAULT_MAX_CPU_LOAD 50
+#define DEFAULT_MAX_CPU_LOAD 54
 static unsigned long max_cpu_load;
 #define DEFAULT_MIN_CPU_LOAD 15
 static unsigned long min_cpu_load;
-#define DEFAULT_UP_RATE_US 48000;
+#define DEFAULT_UP_RATE_US 36000;
 static unsigned long up_rate_us;
 #define DEFAULT_DOWN_RATE_US 99000;
 static unsigned long down_rate_us;
-#define DEFAULT_SLEEP_WAKEUP_FREQ 998400
+#define DEFAULT_SLEEP_WAKEUP_FREQ 1036800
 static unsigned int sleep_wakeup_freq;
 #define DEFAULT_SAMPLE_RATE_JIFFIES 2
 static unsigned int sample_rate_jiffies;
