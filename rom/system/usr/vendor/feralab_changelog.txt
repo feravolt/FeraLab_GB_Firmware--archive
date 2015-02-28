@@ -3,59 +3,14 @@
 ###################################
 
 
-       >>> Kernel - v25 <<<
-- Built with latest LINARO crosscompiler
-- Improved ARM signal logic
-- Fixed android timed output driver
-- zRAM squashed update from 3.10 kernel
-- Set 'lagfree' as default CPU governor
-- Set 'noop' as default I/O scheduler
-- Modulized kernel to make it more light
-- Random entropy generator fixes
-- Updated boot logic for locked bootloader kernel
-- Updated CFQ I/O scheduler
-- Updated SIO I/O scheduler
-- Improved kernel task scheduling
-- Updated I/O block core
-- Updated CPU driver
-- Fixed CPU overclock
-- Fixed framebuffer delays
-- Tuned sched-fair values
-- Updated I/O priority logic 
-- Fixed display v-sync
-- Updated MSM vibrator driver
-- Set 64K as default MTU in NET core
-- Lazy cache flushing on non-mapped pages
-- Decreased the amount of time the device waits after deepsleep
-- Fixed negative idle stats for offline cpu
-- Fixed ARM process logic
-- Assumed no context when IRQs are disabled during data abort 
-- Improved pagetable logic
-- Ported Snappy-C version 1.1.0 algorithm
-- Tuned SmartAssH3 CPU governor
-- Optimised v7 Dcache flush_all routine
-- Added v7 flush_dcache_by_level() API
-- Tuned LCD driver
-- Fixed GPS permissions
-- Updated LMK driver
-- Tuned LMK parameters
-- Various ramdisk fixes
-- Added ARM v7 TLS HW caps emulation support
-- Updated MM core
-- Increased USB charger mA to 500
-- Updated kernel config
-- Vibrator & LEDs undervolt
-- RAM allocation fix
-- Various bugfixes and improvements
-
-
-        >>> ROM - v40 <<<
-- Updated and zipaligned all applications
-- Heavy-duty APK optimization for whole system
-- Auto-preconfiguration on first boot
-- Updated and fixed FDE tweaks
-- Adapted to new kernel
-- A LOT of various bug-fixes and imprrovements
+        >>> ROM - v40.1 <<<
+- Updated busybox
+- FeraKernel-v27 optimized
+- SDcard daemon from CM12. Optimized.
+- No Gapps.
+- Updated APNs config
+- CM12 Clock font
+- Zram tune-up
 
 
 More on feralab.org

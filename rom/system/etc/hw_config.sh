@@ -22,6 +22,10 @@ echo 16 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 > $dev/a
 
 mount -t debugfs debugfs /sys/kernel/debug
 echo '0' > /sys/kernel/debug/msm_fb/0/vsync_enable
+insmod /system/lib/modules/logger.ko
+insmod /system/lib/modules/cifs.ko
+insmod /system/lib/modules/tun.ko
+insmod /system/lib/modules/zram.ko
 /system/xbin/sysrw
 chown system.system /dev/smd27
 chown root.root /dev
