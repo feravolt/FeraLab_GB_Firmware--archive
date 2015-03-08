@@ -85,7 +85,7 @@ checkbox(
         "Sim Toolkit",          "<~opt.xyyx>",0,
         "YouTube",              "<~opt.xyxyz>",0,
         "Powersave",            "<~opt.xyxyzz>",0,
-        "UB Charger",           "<~opt.xyxyzzl>",0,
+        "UB Charger",           "<~opt.xyxyzzl>",1,
         "CPU Voltage",          "<~opt.xyxyzzll>",0,
         "Home Key",             "<~opt.xyxyzzlly>",0,
         "HW LED",               "<~opt.xyxyzzllyf>",0,

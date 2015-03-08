@@ -3,14 +3,16 @@
 ###################################
 
 
-        >>> ROM - v40.1 <<<
-- Updated busybox
-- FeraKernel-v27 optimized
+        >>> ROM - v40.2 <<<
 - SDcard daemon from CM12. Optimized.
 - No Gapps.
 - Updated APNs config
 - CM12 Clock font
 - Zram tune-up
-
+- Video-drivers tune-up
+- Build.prop - tuneup
+- SuperSU updated
+- Misc
+- FeraKernel-v27.1
 
 More on feralab.org

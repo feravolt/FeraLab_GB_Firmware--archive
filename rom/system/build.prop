@@ -1,7 +1,7 @@
 ### FeraLab ###
 
 # Build info
-ro.build.date=17.12.2014
+ro.build.date=08.03.2015
 ro.build.date.utc=1308515086
 ro.build.user=FeraVolt
 ro.build.host=FeraLab
@@ -10,12 +10,12 @@ ro.build.version.incremental=tB_P
 ro.build.version.sdk=10
 ro.build.version.codename=REL
 ro.build.version.release=2.4.4
-ro.build.type=user
-ro.build.description=X10i-user 2.3.7 6.0.B.0.743 tB_P release-keys
+ro.build.type=userdebug
+ro.build.description=X10i-user 2.3.7 6.0.B.0.743 tB_P test-keys
 ro.build.id=6.0.B.0.743
-ro.build.display.id=v40.1 Final
-ro.build.tags=release-keys
-ro.build.fingerprint=SEMC/X10i_1232-9897/X10i:2.3.7/6.0.B.0.743/tB_P:user/release-keys
+ro.build.display.id=v40.2 Final
+ro.build.tags=test-keys
+ro.build.fingerprint=SEMC/X10i_1232-9897/X10i:2.3.7/6.0.B.0.743/tB_P:userdebug/test-keys
 
 # Device Info
 ro.semc.version.cust=1232-9897
@@ -43,6 +43,7 @@ DEVICE_PROVISIONED=1
 keyguard.no_require_sim=true
 ro.com.android.dateformat=MM-dd-yyyy
 ro.com.android.dataroaming=false
+ro.com.android.mobiledata=false
 ro.com.google.gmsversion=2.3_r11
 ro.com.google.clientidbase=android-sonyericsson
 ro.config.ringtone=29.ogg
@@ -50,6 +51,7 @@ ro.config.notification_sound=18.ogg
 ro.config.alarm_alert=8.ogg
 ro.hdmi.enable=false
 hw.hdmiON=0
+ro.kernel.qemu=0
 ro.product.locale.excluded=ar_EG ar_IL fa_IR iw_IL
 ro.product-res-path=framework/SemcGenericUxpRes.apk
 ro.screen.layout=normal
@@ -65,6 +67,7 @@ persist.android.strictmode=0
 persist.chargemon.active=1
 persist.service.adb.enable=1
 persist.sys.boot.sound.volume=0
+persist.sys.strictmode.disable=true
 
 # Qualcomm
 com.qc.hardware=true
@@ -93,6 +96,8 @@ ro.ril.oem.ecclist=110,118,119,102,103,104,911
 ro.ril.oem.nosim.ecclist=110,118,119,102,103,104,911
 ro.ril.power.collapse=1
 ro.telephony.call_ring.delay=0
+ro.telephony.call_ring.multiple=0
+ro.telephony.default_network=0
 ro.tethering.kb_disconnect=1
 rild.libpath=/system/lib/libril-qc-1.so
 rild.libargs=-d /dev/smd0
@@ -154,6 +159,7 @@ ro.media.enc.hprof.vid.bps=8000000
 ro.semc.automount.disabled=true
 ro.semc.xloud.supported=true
 ro.service.swiqi2.supported=true
+ro.vold.umsdirtyratio=20
 persist.audio.fluence.mode=False
 persist.audio.handset.mic=Analog
 persist.audio.vr.enable=false
@@ -190,8 +196,10 @@ ro.kernel.android.checkjni=0
 debug.composition.type=mdp
 debug.egl.hw=1
 debug.egl.profiler=1
+debug.enabletr=false
 debug.gr.numframebuffers=3
 debug.gr.swapinterval=1
+debug.mdpcomp.logs=0
 debug.performance.tuning=1
 debug.sf.hw=1
 dev.pm.dyn_samplingrate=1
