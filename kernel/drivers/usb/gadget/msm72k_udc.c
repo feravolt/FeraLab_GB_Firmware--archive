@@ -47,6 +47,10 @@
 #include <mach/rpc_hsusb.h>
 #include <linux/uaccess.h>
 #include <linux/wakelock.h>
+#ifdef CONFIG_FORCE_FAST_CHARGE
+#include <linux/fastchg.h>
+#define USB_FASTCHG_LOAD 1000 /* uA */
+#endif
 
 static const char driver_name[] = "msm72k_udc";
 
@@ -146,8 +150,8 @@ static void usb_do_remote_wakeup(struct work_struct *w);
 
 #ifdef CONFIG_USB_POWER_REENUMERATION
 /* Max power */
-#define USB_MAX_POWER_500MA	0x1F4
-#define USB_MAX_POWER_100MA	0x64
+#define USB_MAX_POWER_500MA	0xFA
+#define USB_MAX_POWER_100MA	0x32
 #define USB_MAX_POWER_0MA	0x0
 
 #define USB_REENUM_TIMEOUT	msecs_to_jiffies(3000)
@@ -268,7 +272,11 @@ static ssize_t print_switch_state(struct switch_dev *sdev, char *buf)
 
 static inline enum chg_type usb_get_chg_type(struct usb_info *ui)
 {
+#ifdef CONFIG_FORCE_FAST_CHARGE
+	if ((readl(USB_PORTSC) & PORTSC_LS) == PORTSC_LS || force_fast_charge == 1)
+#else
 	if ((readl(USB_PORTSC) & PORTSC_LS) == PORTSC_LS)
+#endif
 		return USB_CHG_TYPE__WALLCHARGER;
 	else
 #ifdef CONFIG_SUPPORT_ALIEN_USB_CHARGER
@@ -276,10 +284,6 @@ static inline enum chg_type usb_get_chg_type(struct usb_info *ui)
 			if (ui->usb_state == USB_STATE_CONFIGURED) {
 				return USB_CHG_TYPE__SDP;
 			} else {
-				/*
-				 * Looks like HOST PC: charger type will be set
-				 * when link is established.
-				 */
 				pr_info("\n*********** Charger Type: might be"
 					" HOST PC\n\n");
 				schedule_delayed_work(&ui->chg_type_work,
@@ -290,23 +294,29 @@ static inline enum chg_type usb_get_chg_type(struct usb_info *ui)
 			return ui->chg_type;
 		}
 #else
+#ifdef CONFIG_FORCE_FAST_CHARGE
+		return USB_CHG_TYPE__WALLCHARGER;
+#else
 		return USB_CHG_TYPE__SDP;
-#endif /* CONFIG_SUPPORT_ALIEN_USB_CHARGER */
+#endif
+#endif
 }
 
-#define USB_WALLCHARGER_CHG_CURRENT 1800
+#define USB_WALLCHARGER_CHG_CURRENT 1500
 static int usb_get_max_power(struct usb_info *ui)
 {
 	unsigned long flags;
 	enum chg_type temp;
 	int suspended;
 	int configured;
+	unsigned bmaxpow;
 
 	spin_lock_irqsave(&ui->lock, flags);
 	temp = ui->chg_type;
 	suspended = ui->usb_state == USB_STATE_SUSPENDED ? 1 : 0;
 	configured = ui->online;
 	spin_unlock_irqrestore(&ui->lock, flags);
+	bmaxpow = ui->b_max_pow;
 
 	if (temp == USB_CHG_TYPE__INVALID)
 		return -ENODEV;
@@ -322,7 +332,7 @@ static int usb_get_max_power(struct usb_info *ui)
 	if (suspended || !configured)
 		return 0;
 
-	return ui->b_max_pow;
+	return bmaxpow;
 }
 
 static void usb_chg_stop(struct work_struct *w)
@@ -353,7 +363,8 @@ static void usb_chg_detect(struct work_struct *w)
 		return;
 	}
 
-	temp = ui->chg_type = usb_get_chg_type(ui);
+	temp = usb_get_chg_type(ui);
+	ui->chg_type = usb_get_chg_type(ui);
 	spin_unlock_irqrestore(&ui->lock, flags);
 
 #ifdef CONFIG_SUPPORT_ALIEN_USB_CHARGER
@@ -468,7 +479,7 @@ static int usb_ep_get_stall(struct msm_endpoint *ept)
 
 static unsigned ulpi_read(struct usb_info *ui, unsigned reg)
 {
-	unsigned timeout = 100000;
+	unsigned timeout = 90000;
 
 	/* initiate read operation */
 	writel(ULPI_RUN | ULPI_READ | ULPI_ADDR(reg),
@@ -487,7 +498,7 @@ static unsigned ulpi_read(struct usb_info *ui, unsigned reg)
 
 static void ulpi_write(struct usb_info *ui, unsigned val, unsigned reg)
 {
-	unsigned timeout = 10000;
+	unsigned timeout = 9000;
 
 	/* initiate write operation */
 	writel(ULPI_RUN | ULPI_WRITE |
@@ -1698,9 +1709,9 @@ void msm_hsusb_set_vbus_state(int online)
 }
 
 #ifdef CONFIG_USB_POWER_REENUMERATION
-u8 usb_reenum_get_maxpower(void)
+int usb_reenum_get_maxpower(void)
 {
-	u8 max_power = USB_MAX_POWER_0MA;
+	int max_power = USB_MAX_POWER_0MA;
 	struct usb_info *ui = the_usb_info;
 
 	if (ui->reenum_count == 0)
@@ -1739,9 +1750,6 @@ static void usb_do_reenum_work(struct work_struct *w)
 
 	spin_lock_irqsave(&ui->lock, flags);
 	if (ui->online || !ui->reenum_work_scheduled) {
-		/* If we have been configured or not scheduling the
-		 * reenum work queue then do nothing.
-		 */
 		ui->reenum_work_scheduled = 0;
 	} else if (!ui->reenum_work_need_more_delay) {
 		spin_unlock_irqrestore(&ui->lock, flags);
@@ -2242,7 +2250,19 @@ static int msm72k_udc_vbus_draw(struct usb_gadget *_gadget, unsigned mA)
 	ui->b_max_pow = mA;
 	ui->flags = USB_FLAG_CONFIGURED;
 	spin_unlock_irqrestore(&ui->lock, flags);
-
+	if (force_fast_charge == 1) {
+		if (mA >= USB_FASTCHG_LOAD){
+			pr_info("Available current already greater than USB fastcharging current!!!\n");
+			dev_info(&ui->gadget.dev, "(NOFC)Avail curr from USB = %u\n", mA);
+		} else {				
+			mA = USB_FASTCHG_LOAD;
+			pr_info("USB fast charging is ON!!!\n");
+			dev_info(&ui->gadget.dev, "(FC)Avail curr from USB = %u\n", mA);
+		}
+	} else {
+		pr_info("USB fast charging is OFF.\n");
+	}
+	dev_info(&ui->gadget.dev, "Avail curr from USB = %u\n", mA);
 	schedule_work(&ui->work);
 
 	return 0;
@@ -2328,6 +2348,16 @@ static ssize_t store_usb_chg_current(struct device *dev,
 		return -EINVAL;
 
 	ui->chg_current = mA;
+	if (force_fast_charge == 1) {
+		if (mA >= USB_FASTCHG_LOAD){
+			pr_info("2Available current already greater than USB fastcharging current!!!\n");
+		} else {				
+			mA = USB_FASTCHG_LOAD;
+			pr_info("2USB fast charging is ON!!!\n");
+		}
+	} else {
+		pr_info("2USB fast charging is OFF.\n");
+	}
 	hsusb_chg_vbus_draw(mA);
 
 	return count;

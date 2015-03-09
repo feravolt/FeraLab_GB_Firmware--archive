@@ -1,235 +1,3 @@
-/*
- * file_storage.c -- File-backed USB Storage Gadget, for USB development
- *
- * Copyright (C) 2003-2008 Alan Stern
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions, and the following disclaimer,
- *    without modification.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. The names of the above-listed copyright holders may not be used
- *    to endorse or promote products derived from this software without
- *    specific prior written permission.
- *
- * ALTERNATIVELY, this software may be distributed under the terms of the
- * GNU General Public License ("GPL") as published by the Free Software
- * Foundation, either version 2 of that License or (at your option) any
- * later version.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
- * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
-
-/*
- * The File-backed Storage Gadget acts as a USB Mass Storage device,
- * appearing to the host as a disk drive or as a CD-ROM drive.  In addition
- * to providing an example of a genuinely useful gadget driver for a USB
- * device, it also illustrates a technique of double-buffering for increased
- * throughput.  Last but not least, it gives an easy way to probe the
- * behavior of the Mass Storage drivers in a USB host.
- *
- * Backing storage is provided by a regular file or a block device, specified
- * by the "file" module parameter.  Access can be limited to read-only by
- * setting the optional "ro" module parameter.  (For CD-ROM emulation,
- * access is always read-only.)  The gadget will indicate that it has
- * removable media if the optional "removable" module parameter is set.
- *
- * The gadget supports the Control-Bulk (CB), Control-Bulk-Interrupt (CBI),
- * and Bulk-Only (also known as Bulk-Bulk-Bulk or BBB) transports, selected
- * by the optional "transport" module parameter.  It also supports the
- * following protocols: RBC (0x01), ATAPI or SFF-8020i (0x02), QIC-157 (0c03),
- * UFI (0x04), SFF-8070i (0x05), and transparent SCSI (0x06), selected by
- * the optional "protocol" module parameter.  In addition, the default
- * Vendor ID, Product ID, and release number can be overridden.
- *
- * There is support for multiple logical units (LUNs), each of which has
- * its own backing file.  The number of LUNs can be set using the optional
- * "luns" module parameter (anywhere from 1 to 8), and the corresponding
- * files are specified using comma-separated lists for "file" and "ro".
- * The default number of LUNs is taken from the number of "file" elements;
- * it is 1 if "file" is not given.  If "removable" is not set then a backing
- * file must be specified for each LUN.  If it is set, then an unspecified
- * or empty backing filename means the LUN's medium is not loaded.  Ideally
- * each LUN would be settable independently as a disk drive or a CD-ROM
- * drive, but currently all LUNs have to be the same type.  The CD-ROM
- * emulation includes a single data track and no audio tracks; hence there
- * need be only one backing file per LUN.  Note also that the CD-ROM block
- * length is set to 512 rather than the more common value 2048.
- *
- * Requirements are modest; only a bulk-in and a bulk-out endpoint are
- * needed (an interrupt-out endpoint is also needed for CBI).  The memory
- * requirement amounts to two 16K buffers, size configurable by a parameter.
- * Support is included for both full-speed and high-speed operation.
- *
- * Note that the driver is slightly non-portable in that it assumes a
- * single memory/DMA buffer will be useable for bulk-in, bulk-out, and
- * interrupt-in endpoints.  With most device controllers this isn't an
- * issue, but there may be some with hardware restrictions that prevent
- * a buffer from being used by more than one endpoint.
- *
- * Module options:
- *
- *	file=filename[,filename...]
- *				Required if "removable" is not set, names of
- *					the files or block devices used for
- *					backing storage
- *	ro=b[,b...]		Default false, booleans for read-only access
- *	removable		Default false, boolean for removable media
- *	luns=N			Default N = number of filenames, number of
- *					LUNs to support
- *	stall			Default determined according to the type of
- *					USB device controller (usually true),
- *					boolean to permit the driver to halt
- *					bulk endpoints
- *	cdrom			Default false, boolean for whether to emulate
- *					a CD-ROM drive
- *	transport=XXX		Default BBB, transport name (CB, CBI, or BBB)
- *	protocol=YYY		Default SCSI, protocol name (RBC, 8020 or
- *					ATAPI, QIC, UFI, 8070, or SCSI;
- *					also 1 - 6)
- *	vendor=0xVVVV		Default 0x0525 (NetChip), USB Vendor ID
- *	product=0xPPPP		Default 0xa4a5 (FSG), USB Product ID
- *	release=0xRRRR		Override the USB release number (bcdDevice)
- *	buflen=N		Default N=16384, buffer size used (will be
- *					rounded down to a multiple of
- *					PAGE_CACHE_SIZE)
- *
- * If CONFIG_USB_FILE_STORAGE_TEST is not set, only the "file", "ro",
- * "removable", "luns", "stall", and "cdrom" options are available; default
- * values are used for everything else.
- *
- * The pathnames of the backing files and the ro settings are available in
- * the attribute files "file" and "ro" in the lun<n> subdirectory of the
- * gadget's sysfs directory.  If the "removable" option is set, writing to
- * these files will simulate ejecting/loading the medium (writing an empty
- * line means eject) and adjusting a write-enable tab.  Changes to the ro
- * setting are not allowed when the medium is loaded or if CD-ROM emulation
- * is being used.
- *
- * This gadget driver is heavily based on "Gadget Zero" by David Brownell.
- * The driver's SCSI command interface was based on the "Information
- * technology - Small Computer System Interface - 2" document from
- * X3T9.2 Project 375D, Revision 10L, 7-SEP-93, available at
- * <http://www.t10.org/ftp/t10/drafts/s2/s2-r10l.pdf>.  The single exception
- * is opcode 0x23 (READ FORMAT CAPACITIES), which was based on the
- * "Universal Serial Bus Mass Storage Class UFI Command Specification"
- * document, Revision 1.0, December 14, 1998, available at
- * <http://www.usb.org/developers/devclass_docs/usbmass-ufi10.pdf>.
- */
-
-
-/*
- *				Driver Design
- *
- * The FSG driver is fairly straightforward.  There is a main kernel
- * thread that handles most of the work.  Interrupt routines field
- * callbacks from the controller driver: bulk- and interrupt-request
- * completion notifications, endpoint-0 events, and disconnect events.
- * Completion events are passed to the main thread by wakeup calls.  Many
- * ep0 requests are handled at interrupt time, but SetInterface,
- * SetConfiguration, and device reset requests are forwarded to the
- * thread in the form of "exceptions" using SIGUSR1 signals (since they
- * should interrupt any ongoing file I/O operations).
- *
- * The thread's main routine implements the standard command/data/status
- * parts of a SCSI interaction.  It and its subroutines are full of tests
- * for pending signals/exceptions -- all this polling is necessary since
- * the kernel has no setjmp/longjmp equivalents.  (Maybe this is an
- * indication that the driver really wants to be running in userspace.)
- * An important point is that so long as the thread is alive it keeps an
- * open reference to the backing file.  This will prevent unmounting
- * the backing file's underlying filesystem and could cause problems
- * during system shutdown, for example.  To prevent such problems, the
- * thread catches INT, TERM, and KILL signals and converts them into
- * an EXIT exception.
- *
- * In normal operation the main thread is started during the gadget's
- * fsg_bind() callback and stopped during fsg_unbind().  But it can also
- * exit when it receives a signal, and there's no point leaving the
- * gadget running when the thread is dead.  So just before the thread
- * exits, it deregisters the gadget driver.  This makes things a little
- * tricky: The driver is deregistered at two places, and the exiting
- * thread can indirectly call fsg_unbind() which in turn can tell the
- * thread to exit.  The first problem is resolved through the use of the
- * REGISTERED atomic bitflag; the driver will only be deregistered once.
- * The second problem is resolved by having fsg_unbind() check
- * fsg->state; it won't try to stop the thread if the state is already
- * FSG_STATE_TERMINATED.
- *
- * To provide maximum throughput, the driver uses a circular pipeline of
- * buffer heads (struct fsg_buffhd).  In principle the pipeline can be
- * arbitrarily long; in practice the benefits don't justify having more
- * than 2 stages (i.e., double buffering).  But it helps to think of the
- * pipeline as being a long one.  Each buffer head contains a bulk-in and
- * a bulk-out request pointer (since the buffer can be used for both
- * output and input -- directions always are given from the host's
- * point of view) as well as a pointer to the buffer and various state
- * variables.
- *
- * Use of the pipeline follows a simple protocol.  There is a variable
- * (fsg->next_buffhd_to_fill) that points to the next buffer head to use.
- * At any time that buffer head may still be in use from an earlier
- * request, so each buffer head has a state variable indicating whether
- * it is EMPTY, FULL, or BUSY.  Typical use involves waiting for the
- * buffer head to be EMPTY, filling the buffer either by file I/O or by
- * USB I/O (during which the buffer head is BUSY), and marking the buffer
- * head FULL when the I/O is complete.  Then the buffer will be emptied
- * (again possibly by USB I/O, during which it is marked BUSY) and
- * finally marked EMPTY again (possibly by a completion routine).
- *
- * A module parameter tells the driver to avoid stalling the bulk
- * endpoints wherever the transport specification allows.  This is
- * necessary for some UDCs like the SuperH, which cannot reliably clear a
- * halt on a bulk endpoint.  However, under certain circumstances the
- * Bulk-only specification requires a stall.  In such cases the driver
- * will halt the endpoint and set a flag indicating that it should clear
- * the halt in software during the next device reset.  Hopefully this
- * will permit everything to work correctly.  Furthermore, although the
- * specification allows the bulk-out endpoint to halt when the host sends
- * too much data, implementing this would cause an unavoidable race.
- * The driver will always use the "no-stall" approach for OUT transfers.
- *
- * One subtle point concerns sending status-stage responses for ep0
- * requests.  Some of these requests, such as device reset, can involve
- * interrupting an ongoing file I/O operation, which might take an
- * arbitrarily long time.  During that delay the host might give up on
- * the original ep0 request and issue a new one.  When that happens the
- * driver should not notify the host about completion of the original
- * request, as the host will no longer be waiting for it.  So the driver
- * assigns to each ep0 request a unique tag, and it keeps track of the
- * tag value of the request associated with a long-running exception
- * (device-reset, interface-change, or configuration-change).  When the
- * exception handler is finished, the status-stage response is submitted
- * only if the current ep0 request tag is equal to the exception request
- * tag.  Thus only the most recently received ep0 request will get a
- * status-stage response.
- *
- * Warning: This driver source file is too long.  It ought to be split up
- * into a header file plus about 3 separate .c files, to handle the details
- * of the Gadget, USB Mass Storage, and SCSI protocols.
- */
-
-
-/* #define VERBOSE_DEBUG */
-/* #define DUMP_MSGS */
-
-
 #include <linux/blkdev.h>
 #include <linux/completion.h>
 #include <linux/dcache.h>
@@ -247,26 +15,12 @@
 #include <linux/string.h>
 #include <linux/freezer.h>
 #include <linux/utsname.h>
-
 #include <linux/usb/ch9.h>
 #include <linux/usb/gadget.h>
-
 #include "gadget_chips.h"
-
-
-
-/*
- * Kbuild is not very cooperative with respect to linking separately
- * compiled library objects into one module.  So for now we won't use
- * separate compilation ... ensuring init/exit sections work to shrink
- * the runtime footprint, and giving us at least some parts of what
- * a "gcc --combine ... part1.c part2.c part3.c ... " build would.
- */
 #include "usbstring.c"
 #include "config.c"
 #include "epautoconf.c"
-
-/*-------------------------------------------------------------------------*/
 
 #define DRIVER_DESC		"File-backed Storage Gadget"
 #define DRIVER_NAME		"g_file_storage"
@@ -279,22 +33,9 @@ MODULE_DESCRIPTION(DRIVER_DESC);
 MODULE_AUTHOR("Alan Stern");
 MODULE_LICENSE("Dual BSD/GPL");
 
-/* Thanks to NetChip Technologies for donating this product ID.
- *
- * DO NOT REUSE THESE IDs with any other driver!!  Ever!!
- * Instead:  allocate your own, using normal USB-IF procedures. */
 #define DRIVER_VENDOR_ID	0x0525	// NetChip
 #define DRIVER_PRODUCT_ID	0xa4a5	// Linux-USB File-backed Storage Gadget
 
-
-/*
- * This driver assumes self-powered hardware and has no way for users to
- * trigger remote wakeup.  It uses autoconfiguration to select endpoints
- * and endpoint addresses.
- */
-
-
-/*-------------------------------------------------------------------------*/
 
 #define LDBG(lun,fmt,args...) \
 	dev_dbg(&(lun)->dev , fmt , ## args)
@@ -333,11 +74,6 @@ MODULE_LICENSE("Dual BSD/GPL");
 	dev_warn(&(d)->gadget->dev , fmt , ## args)
 #define INFO(d, fmt, args...) \
 	dev_info(&(d)->gadget->dev , fmt , ## args)
-
-
-/*-------------------------------------------------------------------------*/
-
-/* Encapsulate the module parameter settings */
 
 #define MAX_LUNS	8
 

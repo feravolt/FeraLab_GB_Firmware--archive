@@ -104,7 +104,7 @@ static unsigned ulpi_read(struct msm_otg *dev, unsigned reg)
 
 static int ulpi_write(struct msm_otg *dev, unsigned val, unsigned reg)
 {
-	unsigned timeout = 10000;
+	unsigned timeout = 9000;
 
 	/* initiate write operation */
 	writel(ULPI_RUN | ULPI_WRITE |
