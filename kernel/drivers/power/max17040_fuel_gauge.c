@@ -851,6 +851,7 @@ static void max17040_update_online(enum semc_charger connected,
 		dev_info(max17040_dev, "Avail curr from USB = %u\n", current_ma);
 	} else {
 		pr_info("USB fast charging is OFF.\n");
+		dev_info(max17040_dev, "Avail curr from USB = %u\n", current_ma);
 	}
 #endif
 }

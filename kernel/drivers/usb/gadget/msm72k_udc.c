@@ -146,8 +146,8 @@ static void usb_do_remote_wakeup(struct work_struct *w);
 
 #ifdef CONFIG_USB_POWER_REENUMERATION
 /* Max power */
-#define USB_MAX_POWER_500MA	0xFA
-#define USB_MAX_POWER_100MA	0x32
+#define USB_MAX_POWER_500MA	0x1F4
+#define USB_MAX_POWER_100MA	0x64
 #define USB_MAX_POWER_0MA	0x0
 
 #define USB_REENUM_TIMEOUT	msecs_to_jiffies(3000)
