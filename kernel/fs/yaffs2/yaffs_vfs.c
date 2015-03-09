@@ -1,40 +1,3 @@
-/*
- * YAFFS: Yet Another Flash File System. A NAND-flash specific file system.
- *
- * Copyright (C) 2002-2011 Aleph One Ltd.
- *   for Toby Churchill Ltd and Brightstar Engineering
- *
- * Created by Charles Manning <charles@aleph1.co.uk>
- * Acknowledgements:
- * Luc van OostenRyck for numerous patches.
- * Nick Bane for numerous patches.
- * Nick Bane for 2.5/2.6 integration.
- * Andras Toth for mknod rdev issue.
- * Michael Fischer for finding the problem with inode inconsistency.
- * Some code bodily lifted from JFFS
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation.
- */
-
-/*
- *
- * This is the file system front-end to YAFFS that hooks it up to
- * the VFS.
- *
- * Special notes:
- * >> 2.4: sb->u.generic_sbp points to the struct yaffs_dev associated with
- *         this superblock
- * >> 2.6: sb->s_fs_info  points to the struct yaffs_dev associated with this
- *         superblock
- * >> inode->u.generic_ip points to the associated struct yaffs_obj.
- */
-
-/*
- * There are two variants of the VFS glue code. This variant should compile
- * for any version of Linux.
- */
 #include <linux/version.h>
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 10))
@@ -78,6 +41,7 @@
 #include <linux/interrupt.h>
 #include <linux/string.h>
 #include <linux/ctype.h>
+#include <linux/cleancache.h>
 
 #if (YAFFS_NEW_FOLLOW_LINK == 1)
 #include <linux/namei.h>
@@ -973,6 +937,9 @@ static int yaffs_readpage_nolock(struct file *f, struct page *pg)
 		"yaffs_readpage_nolock at %08x, size %08x",
 	   	(unsigned)(pg->index << PAGE_CACHE_SHIFT),
 	   	(unsigned)PAGE_CACHE_SIZE);
+	ret = cleancache_get_page(pg);
+	if (!ret)
+	  goto cleancache_got;
 
 	obj = yaffs_dentry_to_obj(f->f_dentry);
 
@@ -998,11 +965,13 @@ static int yaffs_readpage_nolock(struct file *f, struct page *pg)
 	if (ret >= 0)
 		ret = 0;
 
+cleancache_got:
 	if (ret) {
 		ClearPageUptodate(pg);
 		SetPageError(pg);
 	} else {
 		SetPageUptodate(pg);
+		SetPageMappedToDisk(pg);
 		ClearPageError(pg);
 	}
 
@@ -2986,6 +2955,7 @@ static struct super_block *yaffs_internal_read_super(int yaffs_version,
 		dev->is_checkpointed);
 
 	yaffs_trace(YAFFS_TRACE_OS, "yaffs_read_super: done");
+	cleancache_init_fs(sb);
 	return sb;
 }
 
