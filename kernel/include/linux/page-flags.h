@@ -1,7 +1,3 @@
-/*
- * Macros for manipulating and testing page->flags
- */
-
 #ifndef PAGE_FLAGS_H
 #define PAGE_FLAGS_H
 
@@ -11,64 +7,6 @@
 #include <linux/bounds.h>
 #endif /* !__GENERATING_BOUNDS_H */
 
-/*
- * Various page->flags bits:
- *
- * PG_reserved is set for special pages, which can never be swapped out. Some
- * of them might not even exist (eg empty_bad_page)...
- *
- * The PG_private bitflag is set on pagecache pages if they contain filesystem
- * specific data (which is normally at page->private). It can be used by
- * private allocations for its own usage.
- *
- * During initiation of disk I/O, PG_locked is set. This bit is set before I/O
- * and cleared when writeback _starts_ or when read _completes_. PG_writeback
- * is set before writeback starts and cleared when it finishes.
- *
- * PG_locked also pins a page in pagecache, and blocks truncation of the file
- * while it is held.
- *
- * page_waitqueue(page) is a wait queue of all tasks waiting for the page
- * to become unlocked.
- *
- * PG_uptodate tells whether the page's contents is valid.  When a read
- * completes, the page becomes uptodate, unless a disk I/O error happened.
- *
- * PG_referenced, PG_reclaim are used for page reclaim for anonymous and
- * file-backed pagecache (see mm/vmscan.c).
- *
- * PG_error is set to indicate that an I/O error occurred on this page.
- *
- * PG_arch_1 is an architecture specific page state bit.  The generic code
- * guarantees that this bit is cleared for a page when it first is entered into
- * the page cache.
- *
- * PG_highmem pages are not permanently mapped into the kernel virtual address
- * space, they need to be kmapped separately for doing IO on the pages.  The
- * struct page (these bits with information) are always mapped into kernel
- * address space...
- *
- * PG_buddy is set to indicate that the page is free and in the buddy system
- * (see mm/page_alloc.c).
- *
- */
-
-/*
- * Don't use the *_dontuse flags.  Use the macros.  Otherwise you'll break
- * locked- and dirty-page accounting.
- *
- * The page flags field is split into two parts, the main flags area
- * which extends from the low bits upwards, and the fields area which
- * extends from the high bits downwards.
- *
- *  | FIELD | ... | FLAGS |
- *  N-1           ^       0
- *               (NR_PAGEFLAGS)
- *
- * The fields area is reserved for fields mapping zone, node (for NUMA) and
- * SPARSEMEM section (for variants of SPARSEMEM that require section ids like
- * SPARSEMEM_EXTREME with !SPARSEMEM_VMEMMAP).
- */
 enum pageflags {
 	PG_locked,		/* Page is locked. Don't touch. */
 	PG_error,

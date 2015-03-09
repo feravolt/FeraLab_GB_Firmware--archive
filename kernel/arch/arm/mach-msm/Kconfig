@@ -984,5 +984,12 @@ config X10_UNDERVOLT
 	default n
 	help
 	  This option will undervolt Q-com Snapdragon CPU for qsk8k board (e.g. SE x10).
+	  
+config FORCE_FAST_CHARGE
+	bool "Force AC charge mode at will"
+	default y
+	help
+	A simple sysfs interface to force adapters that
+	are detected as USB to charge as AC.
 endif
 

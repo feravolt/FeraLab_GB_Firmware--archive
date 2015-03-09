@@ -10,12 +10,12 @@ ro.build.version.incremental=tB_P
 ro.build.version.sdk=10
 ro.build.version.codename=REL
 ro.build.version.release=2.4.4
-ro.build.type=userdebug
-ro.build.description=X10i-user 2.3.7 6.0.B.0.743 tB_P test-keys
+ro.build.type=user
+ro.build.description=X10i-user 2.3.7 6.0.B.0.743 tB_P release-keys
 ro.build.id=6.0.B.0.743
 ro.build.display.id=v40.2 Final
-ro.build.tags=test-keys
-ro.build.fingerprint=SEMC/X10i_1232-9897/X10i:2.3.7/6.0.B.0.743/tB_P:userdebug/test-keys
+ro.build.tags=release-keys
+ro.build.fingerprint=SEMC/X10i_1232-9897/X10i:2.3.7/6.0.B.0.743/tB_P:user/release-keys
 
 # Device Info
 ro.semc.version.cust=1232-9897
@@ -51,7 +51,6 @@ ro.config.notification_sound=18.ogg
 ro.config.alarm_alert=8.ogg
 ro.hdmi.enable=false
 hw.hdmiON=0
-ro.kernel.qemu=0
 ro.product.locale.excluded=ar_EG ar_IL fa_IR iw_IL
 ro.product-res-path=framework/SemcGenericUxpRes.apk
 ro.screen.layout=normal

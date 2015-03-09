@@ -1,6 +1,11 @@
+config XVMALLOC
+	bool
+	default y
+
 config RAMZSWAP
 	tristate "Compressed in-memory swap device (ramzswap)"
-	depends on SWAP
+	depends on BLOCK && SWAP && SYSFS
+	select XVMALLOC
 	default n
 	help
 	  Creates virtual block devices which can (only) be used as swap disks. Pages swapped to these disks are compressed and stored in memory itself.

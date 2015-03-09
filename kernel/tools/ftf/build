@@ -26,7 +26,7 @@ echo
 echo device: x10 >>  manifest.mf
 echo branding: FeraKernel >>  manifest.mf
 echo Created-By: FeraVolt >>  manifest.mf
-echo version: v27 >>  manifest.mf
+echo version: v28 >>  manifest.mf
 jar cvfm0 kernel.jar manifest.mf loader.sin kernel.sin
 mv kernel.jar FeraKernel.ftf
 rm manifest.mf 

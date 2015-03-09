@@ -6,6 +6,10 @@
 #ifdef CONFIG_SEMC_LOW_BATT_SHUTDOWN
 #include <mach/semc_low_batt_shutdown.h>
 #endif
+#ifdef CONFIG_FORCE_FAST_CHARGE
+#include <linux/fastchg.h>
+#define USB_FASTCHG_LOAD 1000 /* uA */
+#endif
 
 #define MAX17040_ADDR		0x36
 #define MAX17040_REG_VCELL	0x02
@@ -835,6 +839,20 @@ static void max17040_update_online(enum semc_charger connected,
 	if (max17040_info.ac_online  != prev_ac_online ||
 	    max17040_info.usb_online != prev_usb_online)
 		max17040_notify_change();
+		
+#ifdef CONFIG_FORCE_FAST_CHARGE
+	if (force_fast_charge == 1) {
+		if (current_ma >= USB_FASTCHG_LOAD){
+			pr_info("Available current already greater than USB fastcharging current!!!\n");
+		} else {				
+			current_ma = USB_FASTCHG_LOAD;
+			pr_info("USB fast charging is ON!!!\n");
+		}
+		dev_info(max17040_dev, "Avail curr from USB = %u\n", current_ma);
+	} else {
+		pr_info("USB fast charging is OFF.\n");
+	}
+#endif
 }
 
 static int max17040_suspend(struct i2c_client *client, pm_message_t mesg)

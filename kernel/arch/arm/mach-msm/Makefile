@@ -13,6 +13,7 @@ obj-$(CONFIG_CPU_FREQ_MSM) += cpufreq.o
 obj-$(CONFIG_DEBUG_FS) += nohlt.o
 obj-y += pmic.o
 obj-y += internal_power_rail.o
+obj-$(CONFIG_FORCE_FAST_CHARGE) += fastchg.o
 
 obj-$(CONFIG_ARCH_MSM_ARM11) += acpuclock.o timer.o gpio.o
 obj-$(CONFIG_ARCH_MSM_SCORPION) += timer.o gpio.o

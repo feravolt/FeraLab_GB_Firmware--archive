@@ -44,3 +44,4 @@ obj-$(CONFIG_SMP) += allocpercpu.o
 obj-$(CONFIG_QUICKLIST) += quicklist.o
 obj-$(CONFIG_CGROUP_MEM_RES_CTLR) += memcontrol.o page_cgroup.o
 obj-$(CONFIG_CLEANCACHE) += cleancache.o
+obj-$(CONFIG_FRONTSWAP) += frontswap.o
