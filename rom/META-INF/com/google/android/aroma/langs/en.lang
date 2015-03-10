@@ -47,9 +47,10 @@ opt.xyxyzzlly=Disable HOME key device unlock.
 opt.xyxyzzllyf=Disable HW buttons LED.
 opt.xyxyzzllyff=Disable zRAM. Just in case you realy want it.
 opt.xyxyzzllyzzz=Scale down maximum CPU frequency to 768Mhz. This will greatly save your battery life in cost of overall performance. Option can be overrided later in system settings.
-opt.mmm=Install CIFS network file system module for FeraKernel-v25
-opt.mmmm=Install Logger module for FeraKernel-v25 for debuging purposes
-opt.mmmmm=Install VPN module for FeraKernel-v25
+opt.mmm=Install CIFS network file system module for FeraKernel-v28
+opt.mmmm=Install Logger module for FeraKernel-v28 for debuging purposes
+opt.mmmmm=Install VPN module for FeraKernel-v28
+opt.mmmmmь=Enable FastCharge mode support for FeraKernel-v28
 
 
 hz.ready=Ready

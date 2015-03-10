@@ -824,7 +824,7 @@ static void max17040_update_online(enum semc_charger connected,
 	case WALL_CHARGER:
 		max17040_info.ac_online	= MAX17040_CHARGER_ONLINE;
 		max17040_info.usb_online	= MAX17040_CHARGER_NOT_ONLINE;
-		dev_info(max17040_dev, "[BD]Avail curr from WallCharger = %u\n", current_ma);
+		dev_info(max17040_dev, "[BD]Avail curr from FastCharge USB = %u\n", current_ma);
 		break;
 	default:
 		dev_err(max17040_dev,

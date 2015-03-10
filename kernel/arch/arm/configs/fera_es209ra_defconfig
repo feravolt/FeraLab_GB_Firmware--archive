@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.32.28
-# Mon Mar  9 22:25:44 2015
+# Tue Mar 10 21:22:48 2015
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -1578,7 +1578,8 @@ CONFIG_RAMZSWAP=m
 # CONFIG_RAMZSWAP_STATS is not set
 # CONFIG_ZRAM_LZO is not set
 CONFIG_ZRAM_SNAPPY=y
-CONFIG_ZCACHE=y
+# CONFIG_ZCACHE is not set
+# CONFIG_ZSMALLOC is not set
 
 #
 # File systems

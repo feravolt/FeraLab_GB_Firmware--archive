@@ -1,11 +1,11 @@
-﻿### ***FeraLab*** 2014 ###
+﻿### ***FeraLab*** 2015 ###
 
 ini_set("dp","3");
 calibrate("0.9695","16","0.9900","0");
 theme("ics");
 
 ini_set("rom_name",             "***FeraLab***");
-ini_set("rom_version",          "v40");
+ini_set("rom_version",          "v40.2");
 ini_set("rom_author",           "FeraVolt");
 ini_set("rom_device",           "Xperia X10");
 ini_set("rom_api",              "2.4.4");
@@ -93,7 +93,8 @@ checkbox(
         "CPU clock",            "<~opt.xyxyzzllyzzz>",0,
         "CIFS",                 "<~opt.mmm>",0,
         "Logger",               "<~opt.mmmm>",0,
-        "VPN",                  "<~opt.mmmmm>",0
+        "VPN",                  "<~opt.mmmmm>",0,
+        "FastCharge",           "<~opt.mmmmmm>",1
 );
 
 ini_set("text_next", "<~hz.now>");

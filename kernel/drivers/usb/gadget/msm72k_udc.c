@@ -49,7 +49,7 @@
 #include <linux/wakelock.h>
 #ifdef CONFIG_FORCE_FAST_CHARGE
 #include <linux/fastchg.h>
-#define USB_FASTCHG_LOAD 1000 /* uA */
+#define USB_FASTCHG_LOAD 1500 /* uA */
 #endif
 
 static const char driver_name[] = "msm72k_udc";
@@ -295,7 +295,9 @@ static inline enum chg_type usb_get_chg_type(struct usb_info *ui)
 		}
 #else
 #ifdef CONFIG_FORCE_FAST_CHARGE
+if (force_fast_charge == 1) {
 		return USB_CHG_TYPE__WALLCHARGER;
+}
 #else
 		return USB_CHG_TYPE__SDP;
 #endif
@@ -2250,19 +2252,18 @@ static int msm72k_udc_vbus_draw(struct usb_gadget *_gadget, unsigned mA)
 	ui->b_max_pow = mA;
 	ui->flags = USB_FLAG_CONFIGURED;
 	spin_unlock_irqrestore(&ui->lock, flags);
+	dev_info(&ui->gadget.dev, "Initial curr from USB = %u\n", mA);
 	if (force_fast_charge == 1) {
 		if (mA >= USB_FASTCHG_LOAD){
 			pr_info("Available current already greater than USB fastcharging current!!!\n");
-			dev_info(&ui->gadget.dev, "(NOFC)Avail curr from USB = %u\n", mA);
 		} else {				
 			mA = USB_FASTCHG_LOAD;
 			pr_info("USB fast charging is ON!!!\n");
-			dev_info(&ui->gadget.dev, "(FC)Avail curr from USB = %u\n", mA);
+			dev_info(&ui->gadget.dev, "FastCharging curr = %u\n", mA);
 		}
 	} else {
 		pr_info("USB fast charging is OFF.\n");
 	}
-	dev_info(&ui->gadget.dev, "Avail curr from USB = %u\n", mA);
 	schedule_work(&ui->work);
 
 	return 0;
@@ -2348,16 +2349,6 @@ static ssize_t store_usb_chg_current(struct device *dev,
 		return -EINVAL;
 
 	ui->chg_current = mA;
-	if (force_fast_charge == 1) {
-		if (mA >= USB_FASTCHG_LOAD){
-			pr_info("2Available current already greater than USB fastcharging current!!!\n");
-		} else {				
-			mA = USB_FASTCHG_LOAD;
-			pr_info("2USB fast charging is ON!!!\n");
-		}
-	} else {
-		pr_info("2USB fast charging is OFF.\n");
-	}
 	hsusb_chg_vbus_draw(mA);
 
 	return count;

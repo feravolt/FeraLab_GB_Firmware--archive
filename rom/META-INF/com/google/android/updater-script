@@ -706,6 +706,12 @@ then
   ui_print(">>  Enabling VPN support");
   package_extract_dir("feralab/vpn", "/system");
 endif;
+if
+  file_getprop("/tmp/aroma/opt.prop","item.1.14") == "1"
+then
+  ui_print(">>  Enabling FastCharge support");
+  package_extract_dir("feralab/fc", "/system/etc/init.d");
+endif;
 set_progress(0.93);
 ui_print(">>  Configuring Android...");
 set_perm_recursive(1000, 1000, 0771, 0644, "/data/app");
