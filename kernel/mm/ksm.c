@@ -1319,7 +1319,7 @@ static signed long __sched deferred_schedule_timeout(signed long timeout)
 
 	expire = timeout + jiffies;
 
-	setup_deferrable_timer_on_stack(&timer, process_timeout,
+	setup_timer_on_stack(&timer, process_timeout,
 			(unsigned long)current);
 	mod_timer(&timer, expire);
 	schedule();
@@ -1350,14 +1350,14 @@ static int ksm_scan_thread(void *nothing)
 		mutex_unlock(&ksm_thread_mutex);
 
 		if (ksmd_should_run()) {
-			if (use_deferred_timer)
+		  if (use_deferred_timer)
 				deferred_schedule_timeout(
 				msecs_to_jiffies(ksm_thread_sleep_millisecs));
 			else
 				schedule_timeout_interruptible(
 				msecs_to_jiffies(ksm_thread_sleep_millisecs));
 		} else {
-			wait_event_freezable(ksm_thread_wait,
+			wait_event_interruptible(ksm_thread_wait,
 				ksmd_should_run() || kthread_should_stop());
 		}
 	}

@@ -7,7 +7,6 @@
 #include <linux/sched.h>
 #include <linux/smp.h>
 #include <linux/init.h>
-#include <linux/export.h>
 #include <asm/cputype.h>
 #include <asm/thread_notify.h>
 #include <asm/vfp.h>

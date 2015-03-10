@@ -85,3 +85,4 @@ obj-$(CONFIG_CRYPTO_TEST) += tcrypt.o
 #
 obj-$(CONFIG_XOR_BLOCKS) += xor.o
 obj-$(CONFIG_ASYNC_CORE) += async_tx/
+obj-$(CONFIG_CRYPTO_ABLK_HELPER) += ablk_helper.o
