@@ -1,0 +1,4 @@
+#!/system/xbin/sh
+### FeraDroid Engine v18 | By FeraVolt. 2015 ###
+
+echo 1 > /sys/kernel/fast_charge/force_fast_charge

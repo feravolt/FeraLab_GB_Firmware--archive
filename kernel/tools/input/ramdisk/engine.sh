@@ -12,6 +12,7 @@ cp /modules/wifi.ko /system/lib/modules/wifi.ko
 chmod 666 /system/lib/modules/*
 mount -t debugfs debugfs /sys/kernel/debug
 echo 0 > /sys/kernel/debug/msm_fb/0/vsync_enable
+echo 1 > /sys/kernel/mm/ksm/deferred_timer
 mount -o bind /system/engine /engine
 chmod 777 /engine
 chmod 777 /cache
