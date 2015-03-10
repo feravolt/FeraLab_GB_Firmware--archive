@@ -192,7 +192,7 @@ KBUILD_CFLAGS := -Ofast -Wall -Wno-trigraphs -Wno-uninitialized -Wno-address \
 		 -Wno-unused-but-set-variable -Wno-unused-variable -Wno-format-security \
 		 -fno-strict-aliasing -fno-common -fno-delete-null-pointer-checks \
 		 -ftree-vectorize -fsingle-precision-constant -fgraphite-identity \
-		 -fivopts -fomit-frame-pointer -fno-inline-functions \
+		 -fivopts -fomit-frame-pointer -fno-inline-functions -funsafe-math-optimizations \
 		 -march=armv7-a -mcpu=cortex-a8 -mtune=cortex-a8 -mfpu=neon
 
 KBUILD_CFLAGS += $(call cc-disable-warning,maybe-uninitialized)

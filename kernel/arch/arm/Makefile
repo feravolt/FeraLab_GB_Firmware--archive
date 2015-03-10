@@ -26,11 +26,8 @@ comma = ,
 
 CONFIG_SHELL :=/bin/sh
 GCC_VERSION      := $(shell $(CONFIG_SHELL) $(PWD)/scripts/gcc-version.sh $(CROSS_COMPILE)gcc)
-ifeq ($(GCC_VERSION),0401)
-arch-$(CONFIG_CPU_32v7)         :=-D__LINUX_ARM_ARCH__=7 $(call cc-option,-march=armv7a,-march=armv5t -Wa$(comma)-march=armv7a)
-else
-arch-$(CONFIG_CPU_32v7)		:=-D__LINUX_ARM_ARCH__=7 $(call cc-option,-march=armv7-a,-march=armv5t -Wa$(comma)-march=armv7a)
-endif
+
+arch-$(CONFIG_CPU_32v7)	:=-D__LINUX_ARM_ARCH__=7 $(call cc-option,-march=armv7-a,-mcpu=cortex-a8 -mfpu=neon -ftree-vectorize -Wa$(comma)-march=armv7-a)
 arch-$(CONFIG_CPU_32v6)		:=-D__LINUX_ARM_ARCH__=6 $(call cc-option,-march=armv6,-march=armv5t -Wa$(comma)-march=armv6)
 ifeq ($(CONFIG_CPU_32v6),y)
 arch-$(CONFIG_CPU_32v6K)	:=-D__LINUX_ARM_ARCH__=6 $(call cc-option,-march=armv6k,-march=armv5t -Wa$(comma)-march=armv6k)
