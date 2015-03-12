@@ -689,25 +689,31 @@ set_progress(0.90);
 if
   file_getprop("/tmp/aroma/opt.prop","item.1.11") == "1"
 then
+  ui_print(">>  CPU underclock");
+  package_extract_dir("feralab/underclock", "/system/etc");
+endif;
+if
+  file_getprop("/tmp/aroma/opt.prop","item.1.12") == "1"
+then
   ui_print(">>  Enabling CIFS support");
   package_extract_dir("feralab/cifs", "/system/lib/modules");
 endif;
 set_progress(0.91);
 if
-  file_getprop("/tmp/aroma/opt.prop","item.1.12") == "1"
+  file_getprop("/tmp/aroma/opt.prop","item.1.13") == "1"
 then
   ui_print(">>  Enabling Logger");
   package_extract_dir("feralab/logger", "/system/lib/modules");
 endif;
 set_progress(0.92);
 if
-  file_getprop("/tmp/aroma/opt.prop","item.1.13") == "1"
+  file_getprop("/tmp/aroma/opt.prop","item.1.14") == "1"
 then
   ui_print(">>  Enabling VPN support");
   package_extract_dir("feralab/vpn", "/system");
 endif;
 if
-  file_getprop("/tmp/aroma/opt.prop","item.1.14") == "1"
+  file_getprop("/tmp/aroma/opt.prop","item.1.15") == "1"
 then
   ui_print(">>  Enabling FastCharge support");
   package_extract_dir("feralab/fc", "/system/etc/init.d");
