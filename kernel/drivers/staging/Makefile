@@ -31,6 +31,7 @@ obj-$(CONFIG_EPL)		+= epl/
 obj-$(CONFIG_ANDROID)		+= android/
 obj-$(CONFIG_SNAPPY_COMPRESS)   += snappy/
 obj-$(CONFIG_SNAPPY_DECOMPRESS) += snappy/
-obj-$(CONFIG_ZRAM)		+= zram/
+obj-$(CONFIG_RAMZSWAP)		+= zram/
+obj-$(CONFIG_XVMALLOC)		+= zram/
 
 
