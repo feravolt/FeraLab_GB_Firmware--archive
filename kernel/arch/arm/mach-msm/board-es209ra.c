@@ -572,7 +572,7 @@ static struct spi_board_info msm_spi_board_info[] __initdata = {
 		.irq		= INT_ES209RA_GPIO_TOUCHPAD,
 		.bus_num	= 0,
 		.chip_select	= 0,
-		.max_speed_hz	= 2000000,
+		.max_speed_hz	= 1000000,
 		.platform_data  = &es209ra_touch_data,
 	}
 };
@@ -1068,8 +1068,8 @@ static struct kgsl_platform_data kgsl_pdata = {
 	.max_grp2d_freq = 0,
 	.min_grp2d_freq = 0,
 	.set_grp2d_async = NULL,
-        .max_grp3d_freq = 0,
-        .min_grp3d_freq = 0,
+	.max_grp3d_freq = 235*1000*1000,
+	.min_grp3d_freq = 192*1000*1000,
 	.set_grp3d_async = NULL,
 	.imem_clk_name = "imem_clk",
 	.grp3d_clk_name = "grp_clk",
