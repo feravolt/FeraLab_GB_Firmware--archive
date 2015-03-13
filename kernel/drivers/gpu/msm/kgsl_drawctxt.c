@@ -1158,6 +1158,7 @@ int kgsl_drawctxt_destroy(struct kgsl_device *device,
 	}
 
 	kgsl_yamato_idle(device, KGSL_TIMEOUT_DEFAULT);
+	kgsl_setstate(device, KGSL_MMUFLAGS_PTUPDATE);
 	kgsl_sharedmem_free(&drawctxt->gpustate);
 	kgsl_sharedmem_free(&drawctxt->context_gmem_shadow.gmemshadow);
 	kfree(drawctxt);
