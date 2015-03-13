@@ -1,19 +1,3 @@
-/*
- * Memory merging support.
- *
- * This code enables dynamic sharing of identical pages found in different
- * memory areas, even if they are not shared by fork()
- *
- * Copyright (C) 2008-2009 Red Hat, Inc.
- * Authors:
- *	Izik Eidus
- *	Andrea Arcangeli
- *	Chris Wright
- *	Hugh Dickins
- *
- * This work is licensed under the terms of the GNU GPL, version 2.
- */
-
 #include <linux/errno.h>
 #include <linux/mm.h>
 #include <linux/fs.h>
@@ -36,53 +20,6 @@
 #include <asm/tlbflush.h>
 #include "internal.h"
 
-/*
- * A few notes about the KSM scanning process,
- * to make it easier to understand the data structures below:
- *
- * In order to reduce excessive scanning, KSM sorts the memory pages by their
- * contents into a data structure that holds pointers to the pages' locations.
- *
- * Since the contents of the pages may change at any moment, KSM cannot just
- * insert the pages into a normal sorted tree and expect it to find anything.
- * Therefore KSM uses two data structures - the stable and the unstable tree.
- *
- * The stable tree holds pointers to all the merged pages (ksm pages), sorted
- * by their contents.  Because each such page is write-protected, searching on
- * this tree is fully assured to be working (except when pages are unmapped),
- * and therefore this tree is called the stable tree.
- *
- * In addition to the stable tree, KSM uses a second data structure called the
- * unstable tree: this tree holds pointers to pages which have been found to
- * be "unchanged for a period of time".  The unstable tree sorts these pages
- * by their contents, but since they are not write-protected, KSM cannot rely
- * upon the unstable tree to work correctly - the unstable tree is liable to
- * be corrupted as its contents are modified, and so it is called unstable.
- *
- * KSM solves this problem by several techniques:
- *
- * 1) The unstable tree is flushed every time KSM completes scanning all
- *    memory areas, and then the tree is rebuilt again from the beginning.
- * 2) KSM will only insert into the unstable tree, pages whose hash value
- *    has not changed since the previous scan of all memory areas.
- * 3) The unstable tree is a RedBlack Tree - so its balancing is based on the
- *    colors of the nodes and not on their contents, assuring that even when
- *    the tree gets "corrupted" it won't get out of balance, so scanning time
- *    remains the same (also, searching and inserting nodes in an rbtree uses
- *    the same algorithm, so we have no overhead when we flush and rebuild).
- * 4) KSM never flushes the stable tree, which means that even if it were to
- *    take 10 attempts to find a page in the unstable tree, once it is found,
- *    it is secured in the stable tree.  (When we scan a new page, we first
- *    compare it against the stable tree, and then against the unstable tree.)
- */
-
-/**
- * struct mm_slot - ksm information per mm that is being scanned
- * @link: link to the mm_slots hash list
- * @mm_list: link into the mm_slots list, rooted in ksm_mm_head
- * @rmap_list: head for this mm_slot's singly-linked list of rmap_items
- * @mm: the mm that this information is valid for
- */
 struct mm_slot {
 	struct hlist_node link;
 	struct list_head mm_list;
@@ -90,15 +27,6 @@ struct mm_slot {
 	struct mm_struct *mm;
 };
 
-/**
- * struct ksm_scan - cursor for scanning
- * @mm_slot: the current mm_slot we are scanning
- * @address: the next address inside that to be scanned
- * @rmap_list: link to the next rmap to be scanned in the rmap_list
- * @seqnr: count of completed full scans (needed when removing unstable node)
- *
- * There is only the one ksm_scan instance of this cursor structure.
- */
 struct ksm_scan {
 	struct mm_slot *mm_slot;
 	unsigned long address;
@@ -106,29 +34,12 @@ struct ksm_scan {
 	unsigned long seqnr;
 };
 
-/**
- * struct stable_node - node of the stable rbtree
- * @page: pointer to struct page of the ksm page
- * @node: rb node of this ksm page in the stable tree
- * @hlist: hlist head of rmap_items using this ksm page
- */
 struct stable_node {
 	struct page *page;
 	struct rb_node node;
 	struct hlist_head hlist;
 };
 
-/**
- * struct rmap_item - reverse mapping item for virtual addresses
- * @rmap_list: next rmap_item in mm_slot's singly-linked rmap_list
- * @filler: unused space we're making available in this patch
- * @mm: the memory structure this rmap_item is pointing into
- * @address: the virtual address this rmap_item tracks (+ flags in low bits)
- * @oldchecksum: previous checksum of the page at that virtual address
- * @node: rb node of this rmap_item in the unstable tree
- * @head: pointer to stable_node heading this list in the stable tree
- * @hlist: link into hlist of rmap_items hanging off that stable_node
- */
 struct rmap_item {
 	struct rmap_item *rmap_list;
 	unsigned long filler;
@@ -185,14 +96,14 @@ static unsigned long ksm_max_kernel_pages;
 static unsigned int ksm_thread_pages_to_scan = 100;
 
 /* Milliseconds ksmd should sleep between batches */
-static unsigned int ksm_thread_sleep_millisecs = 21;
+static unsigned int ksm_thread_sleep_millisecs = 3600;
 
 static bool use_deferred_timer;
 
 #define KSM_RUN_STOP	0
 #define KSM_RUN_MERGE	1
 #define KSM_RUN_UNMERGE	2
-static unsigned int ksm_run = KSM_RUN_STOP;
+static unsigned int ksm_run = KSM_RUN_MERGE;
 
 static DECLARE_WAIT_QUEUE_HEAD(ksm_thread_wait);
 static DEFINE_MUTEX(ksm_thread_mutex);
@@ -633,30 +544,18 @@ static int write_protect_page(struct vm_area_struct *vma, struct page *page,
 	if (!ptep)
 		goto out;
 
-	if (pte_write(*ptep)) {
+	if (pte_write(*ptep) || pte_dirty(*ptep)) {
 		pte_t entry;
 
 		swapped = PageSwapCache(page);
 		flush_cache_page(vma, addr, page_to_pfn(page));
-		/*
-		 * Ok this is tricky, when get_user_pages_fast() run it doesnt
-		 * take any lock, therefore the check that we are going to make
-		 * with the pagecount against the mapcount is racey and
-		 * O_DIRECT can happen right after the check.
-		 * So we clear the pte and flush the tlb before the check
-		 * this assure us that no O_DIRECT can happen after the check
-		 * or in the middle of the check.
-		 */
 		entry = ptep_clear_flush(vma, addr, ptep);
-		/*
-		 * Check that no O_DIRECT or similar I/O is in progress on the
-		 * page
-		 */
 		if (page_mapcount(page) + 1 + swapped != page_count(page)) {
 			set_pte_at(mm, addr, ptep, entry);
 			goto out_unlock;
 		}
-		entry = pte_wrprotect(entry);
+		if (pte_dirty(entry)) set_page_dirty(page);
+		entry = pte_mkclean(pte_wrprotect(entry));
 		set_pte_at(mm, addr, ptep, entry);
 	}
 	*orig_pte = *ptep;
@@ -719,6 +618,7 @@ static int replace_page(struct vm_area_struct *vma, struct page *page,
 	set_pte_at(mm, addr, ptep, mk_pte(kpage, vma->vm_page_prot));
 
 	page_remove_rmap(page);
+	if (!page_mapped(page)) try_to_free_swap(page);
 	put_page(page);
 
 	pte_unmap_unlock(ptep, ptl);
@@ -1175,6 +1075,7 @@ static struct rmap_item *scan_get_next_rmap_item(struct page **page)
 
 	slot = ksm_scan.mm_slot;
 	if (slot == &ksm_mm_head) {
+	  lru_add_drain_all();
 		root_unstable_tree = RB_ROOT;
 
 		spin_lock(&ksm_mmlist_lock);
