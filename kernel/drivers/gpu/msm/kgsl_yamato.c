@@ -618,7 +618,7 @@ static int kgsl_yamato_start(struct kgsl_device *device, unsigned int init_ram)
 	kgsl_yamato_regwrite(device, REG_RBBM_SOFT_RESET, 0x00000001);
 	msleep(30);
 	kgsl_yamato_regwrite(device, REG_RBBM_SOFT_RESET, 0x00000000);
-	kgsl_yamato_regwrite(device, REG_RBBM_CNTL, 0x00004442);
+	kgsl_yamato_regwrite(device, REG_RBBM_CNTL, 0x0000FFFF);
 	kgsl_yamato_regwrite(device, REG_MH_ARBITER_CONFIG,
 				KGSL_CFG_YAMATO_MHARB);
 	kgsl_yamato_regwrite(device, REG_SQ_VS_PROGRAM, 0x00000000);
