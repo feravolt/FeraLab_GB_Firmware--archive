@@ -1,4 +1,4 @@
-### FeraDroid Engine v18 | By FeraVolt. 2014 ###
+### FeraDroid Engine v18 | By FeraVolt. 2015
 
 dev=/sys/class/leds/lv5219lg:mled
 echo 1 > $dev/als_enable

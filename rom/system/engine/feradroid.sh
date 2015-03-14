@@ -20,9 +20,6 @@ then
 else
 
 /system/xbin/sysrw
-insmod /system/lib/modules/logger.ko
-insmod /system/lib/modules/cifs.ko
-insmod /system/lib/modules/tun.ko
 /system/xbin/run-parts /system/engine/tweaks
 chmod 644 /system/build.prop
 chmod -R 777 /system/etc/sysctl.conf

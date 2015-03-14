@@ -51,12 +51,10 @@ cp /home/feravolt/ferra/vendor/host/.output/QUALCOMM_ARM_NATIVEMMC-SDIO/image/ar
 cp /home/feravolt/ferra/kernel/drivers/net/tun.ko /home/feravolt/ferra/0UTPUT
 cp /home/feravolt/ferra/kernel/drivers/staging/android/logger.ko /home/feravolt/ferra/0UTPUT
 cp /home/feravolt/ferra/kernel/fs/cifs/cifs.ko /home/feravolt/ferra/0UTPUT
-mv /home/feravolt/ferra/kernel/drivers/staging/zram/ramzswap.ko /home/feravolt/ferra/0UTPUT/zram.ko
 echo ' '
 echo '>> Stripping modules...'
 cd ferra/0UTPUT
 /home/feravolt/ferra/toolchain/bin/arm-eabi-strip --strip-unneeded wifi.ko
-/home/feravolt/ferra/toolchain/bin/arm-eabi-strip --strip-unneeded zram.ko
 /home/feravolt/ferra/toolchain/bin/arm-eabi-strip --strip-unneeded cifs.ko
 /home/feravolt/ferra/toolchain/bin/arm-eabi-strip --strip-unneeded logger.ko
 /home/feravolt/ferra/toolchain/bin/arm-eabi-strip --strip-unneeded tun.ko

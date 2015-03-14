@@ -1,4 +1,4 @@
-### FeraDroid Engine v18 | By FeraVolt. 2014 ###
+### FeraDroid Engine v18 | By FeraVolt. 2015
 
 dev=/sys/class/leds/lv5219lg:mled
 echo 1 > $dev/als_enable
@@ -25,7 +25,6 @@ echo '0' > /sys/kernel/debug/msm_fb/0/vsync_enable
 insmod /system/lib/modules/logger.ko
 insmod /system/lib/modules/cifs.ko
 insmod /system/lib/modules/tun.ko
-insmod /system/lib/modules/zram.ko
 /system/xbin/sysrw
 chown system.system /dev/smd27
 chown root.root /dev
