@@ -91,7 +91,7 @@ struct completion mdp_ppp_comp;
 struct semaphore mdp_ppp_mutex;
 struct semaphore mdp_pipe_ctrl_mutex;
 
-unsigned long mdp_timer_duration = (HZ);   /* 1 sec */
+unsigned long mdp_timer_duration = (3*HZ);   /* 3 sec */
 /* unsigned long mdp_mdp_timer_duration=0; */
 
 boolean mdp_ppp_waiting = FALSE;
@@ -323,7 +323,7 @@ int mdp_ppp_pipe_wait(void)
 
 	if (mdp_ppp_waiting == TRUE) {
 		ret = wait_for_completion_interruptible_timeout(&mdp_ppp_comp,
-								5 * HZ);
+								9*HZ);
 
 		if (!ret)
 			printk(KERN_ERR "%s: Timed out waiting for the MDP.\n",
