@@ -232,11 +232,7 @@ static int mddi_probe(struct platform_device *pdev)
 	pdata->off = mddi_off;
 	pdata->next = pdev;
 	mfd->panel_info = pdata->panel_info;
-
-	if (mfd->index == 0)
-		mfd->fb_imgType = MDP_RGBA_8888; /* primary */
-	else
-		mfd->fb_imgType = MDP_RGB_565;	/* secondary */
+	mfd->fb_imgType = MDP_RGBA_8888;
 
 	clk_rate = mfd->panel_info.clk_max;
 	if (mddi_pdata &&
