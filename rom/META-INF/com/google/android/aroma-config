@@ -91,9 +91,7 @@ checkbox(
         "HW LED",               "<~opt.xyxyzzllyf>",0,
         "zRAM",                 "<~opt.xyxyzzllyff>",0,
         "CPU clock",            "<~opt.xyxyzzllyzzz>",0,
-        "CIFS",                 "<~opt.mmm>",0,
         "Logger",               "<~opt.mmmm>",0,
-        "VPN",                  "<~opt.mmmmm>",0,
         "FastCharge",           "<~opt.mmmmmm>",1
 );
 
