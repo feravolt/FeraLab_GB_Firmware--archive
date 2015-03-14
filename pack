@@ -29,8 +29,6 @@ echo '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
 echo ' '
 echo '>> Making ROM package...'
 cd
-cp -f /home/feravolt/ferra/0UTPUT/cifs.ko /home/feravolt/ferra/rom/system/lib/modules
-cp -f /home/feravolt/ferra/0UTPUT/tun.ko /home/feravolt/ferra/rom/system/lib/modules
 cp -f /home/feravolt/ferra/0UTPUT/logger.ko /home/feravolt/ferra/rom/system/lib/modules
 cd ferra/rom
 zip -r FeraLab.zip ./* -9
