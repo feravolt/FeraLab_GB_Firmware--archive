@@ -11,9 +11,9 @@
 #include <linux/rbtree.h>
 
 static const int read_expire = HZ / 4;
-static const int write_expire = (HZ / 2) * 5;
-static const int writes_starved = 1;
-static const int fifo_batch = 8;
+static const int write_expire = HZ * 5;
+static const int writes_starved = 4;
+static const int fifo_batch = 4;
 
 struct deadline_data {
 	struct rb_root sort_list[2];	
