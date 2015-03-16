@@ -1,23 +1,3 @@
-/* SEMC:modified */
-/* 
-   Proximity sensor driver
-
-   Copyright (C) 2009 Sony Ericsson Mobile Communications Japan, Inc.
-
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License, version 2, as
-   published by the Free Software Foundation.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*/
-
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/fs.h>
@@ -30,31 +10,21 @@
 #include <asm/gpio.h>
 #include <linux/ctype.h>
 #include <linux/wakelock.h>
-
 #include <linux/es209ra_proximity.h>
 
-#define DEBUG	0
-
-static unsigned long Proximity_BurstDuration;	/* Burst duration(micro sec) */
+static unsigned long Proximity_BurstDuration;
 struct wake_lock proximity_wakelock;
 
 static void Proximity_initialize(void);
-
-/* initialize function for PROXIMITY */
 static void Proximity_initialize()
 {
-	/* initialize */
 	gpio_set_value(PROXIMITY_GPIO_LEDON_PIN,PROXIMITY_GPIO_LEDON_DISABLE);
 	gpio_set_value(PROXIMITY_GPIO_ENBAR_PIN,PROXIMITY_GPIO_ENBAR_DISABLE);
 	gpio_set_value(PROXIMITY_GPIO_ENBAR_PIN,PROXIMITY_GPIO_POWER_OFF);
 }
 
-/* open command for PROXIMITY device file */
 static int Proximity_open(struct inode *inode, struct file *file)
 {
-	#if DEBUG
-	printk("PROXIMITY has been opened\n");
-	#endif
 	Proximity_initialize();
 	return 0;
 }
@@ -62,38 +32,15 @@ static int Proximity_open(struct inode *inode, struct file *file)
 /* release command for PROXIMITY device file */
 static int Proximity_close(struct inode *inode, struct file *file)
 {
-	#if DEBUG
-	printk("PROXIMITY has been closed\n");
-	#endif
 	Proximity_initialize();
 	return 0;
 }
 
-/* read command for PROXIMITY */
 static ssize_t Proximity_read(struct file *file, char __user *buf, size_t count, loff_t *offset)
 {
-	#if DEBUG
-	gpio_set_value(PROXIMITY_GPIO_POWER_PIN,PROXIMITY_GPIO_POWER_ON);
-	/* wait */
-	udelay(100);
-	gpio_set_value(PROXIMITY_GPIO_ENBAR_PIN,PROXIMITY_GPIO_ENBAR_ENABLE);
-	/* wait */
-	udelay(20);
-	gpio_set_value(PROXIMITY_GPIO_LEDON_PIN,PROXIMITY_GPIO_LEDON_ENABLE);
-
-	/* wait */
-	udelay(Proximity_BurstDuration);
-
-	printk("PROXIMITY: DOUT : %d\n" , (gpio_get_value(PROXIMITY_GPIO_DOUT_PIN)==PROXIMITY_GPIO_DOUT_ON)?1:0);
-
-	gpio_set_value(PROXIMITY_GPIO_LEDON_PIN,PROXIMITY_GPIO_LEDON_DISABLE);
-	gpio_set_value(PROXIMITY_GPIO_ENBAR_PIN,PROXIMITY_GPIO_ENBAR_DISABLE);
-	gpio_set_value(PROXIMITY_GPIO_POWER_PIN,PROXIMITY_GPIO_POWER_OFF);
-	#endif
 	return 0;
 }
 
-/* write command for PROXIMITY */
 static ssize_t Proximity_write(struct file *file, const char __user *buf, size_t count, loff_t *offset)
 {
 	return 0;
@@ -107,26 +54,18 @@ static void Proximity_setlock(int lock)
 		wake_unlock(&proximity_wakelock);
 }
 
-/* ioctl command for PROXIMITY */
 static int Proximity_ioctl(struct inode *inode, struct file *file, unsigned int cmd, unsigned long arg)
 {
 	int err = 0;
 	unsigned int data = 0;
 	unsigned long time = 0;
 
-	/* check cmd */
 	if(_IOC_TYPE(cmd) != PROXIMITY_IOC_MAGIC)
 	{
-		#if DEBUG
-		printk("cmd magic type error\n");
-		#endif
 		return -ENOTTY;
 	}
 	if(_IOC_NR(cmd) > PROXIMITY_IOC_MAXNR)
 	{
-		#if DEBUG
-		printk("cmd number error\n");
-		#endif
 		return -ENOTTY;
 	}
 
@@ -136,9 +75,6 @@ static int Proximity_ioctl(struct inode *inode, struct file *file, unsigned int 
 		err = !access_ok(VERIFY_READ, (void __user*)arg, _IOC_SIZE(cmd));
 	if(err)
 	{
-		#if DEBUG
-		printk("cmd access_ok error\n");
-		#endif
 		return -EFAULT;
 	}
 
@@ -147,9 +83,6 @@ static int Proximity_ioctl(struct inode *inode, struct file *file, unsigned int 
 	case PROXIMITY_SET_POWER_STATE:
 		if(copy_from_user((unsigned char*)&data, (unsigned char*)arg, 1)!=0)
 		{
-			#if DEBUG
-			printk("copy_from_user error\n");
-			#endif
 			return -EFAULT;
 		}
 		gpio_set_value(PROXIMITY_GPIO_POWER_PIN,
@@ -160,9 +93,6 @@ static int Proximity_ioctl(struct inode *inode, struct file *file, unsigned int 
 		data = gpio_get_value(PROXIMITY_GPIO_POWER_PIN);
 		if(copy_to_user((unsigned char*)arg, (unsigned char*)&data, 1)!=0)
 		{
-			#if DEBUG
-			printk("copy_to_user error\n");
-			#endif
 			return -EFAULT;
 		}
 		return err;
@@ -170,9 +100,6 @@ static int Proximity_ioctl(struct inode *inode, struct file *file, unsigned int 
 	case PROXIMITY_SET_DEVICE_MODE:
 		if(copy_from_user((unsigned char*)&data, (unsigned char*)arg, 1)!=0)
 		{
-			#if DEBUG
-			printk("copy_from_user error\n");
-			#endif
 			return -EFAULT;
 		}
 		gpio_set_value(PROXIMITY_GPIO_ENBAR_PIN,
@@ -183,9 +110,6 @@ static int Proximity_ioctl(struct inode *inode, struct file *file, unsigned int 
 		data = gpio_get_value(PROXIMITY_GPIO_ENBAR_PIN);
 		if(copy_to_user((unsigned char*)arg, (unsigned char*)&data, 1)!=0)
 		{
-			#if DEBUG
-			printk("copy_to_user error\n");
-			#endif
 			return -EFAULT;
 		}
 		return err;
@@ -193,9 +117,6 @@ static int Proximity_ioctl(struct inode *inode, struct file *file, unsigned int 
 	case PROXIMITY_SET_LED_MODE:
 		if(copy_from_user((unsigned char*)&data, (unsigned char*)arg, 1)!=0)
 		{
-			#if DEBUG
-			printk("copy_from_user error\n");
-			#endif
 			return -EFAULT;
 		}
 		gpio_set_value(PROXIMITY_GPIO_LEDON_PIN,
@@ -206,9 +127,6 @@ static int Proximity_ioctl(struct inode *inode, struct file *file, unsigned int 
 		data = gpio_get_value(PROXIMITY_GPIO_LEDON_PIN);
 		if(copy_to_user((unsigned char*)arg, (unsigned char*)&data, 1)!=0)
 		{
-			#if DEBUG
-			printk("copy_to_user error\n");
-			#endif
 			return -EFAULT;
 		}
 		return err;
@@ -217,9 +135,6 @@ static int Proximity_ioctl(struct inode *inode, struct file *file, unsigned int 
 		data = gpio_get_value(PROXIMITY_GPIO_DOUT_PIN);
 		if(copy_to_user((unsigned char*)arg, (unsigned char*)&data, 1)!=0)
 		{
-			#if DEBUG
-			printk("copy_to_user error\n");
-			#endif
 			return -EFAULT;
 		}
 		return err;
@@ -227,55 +142,34 @@ static int Proximity_ioctl(struct inode *inode, struct file *file, unsigned int 
 	case PROXIMITY_SET_BURST_ON_TIME:
 		if(copy_from_user((unsigned long*)&time, (unsigned long*)arg, sizeof(arg))!=0)
 		{
-			#if DEBUG
-			printk("copy_from_user error\n");
-			#endif
 			return -EFAULT;
 		}
 		if((time < PROXIMITY_BURST_ON_TIME_MIN) || (time > PROXIMITY_BURST_ON_TIME_MAX)) {
-			#if DEBUG
-			printk("Requested time is out of range\n");
-			#endif
 			return -EFAULT;
 		}
-		#if DEBUG
 		Proximity_BurstDuration = time;
-		printk("PROXIMITY: Burst-on-time is set to %ld(us)\n" , time);
-		#endif
 		return err;
 
 	case PROXIMITY_GET_BURST_ON_TIME:
 		if(copy_to_user((unsigned long*)arg, (unsigned long*)&Proximity_BurstDuration, sizeof(arg))!=0)
 		{
-			#if DEBUG
-			printk("copy_to_user error\n");
-			#endif
 			return -EFAULT;
 		}
 		return err;
 
 	case PROXIMITY_DO_SENSING:
 		gpio_set_value(PROXIMITY_GPIO_POWER_PIN,PROXIMITY_GPIO_POWER_ON);
-		/* wait */
-		udelay(100);
+		udelay(90);
 		gpio_set_value(PROXIMITY_GPIO_ENBAR_PIN,PROXIMITY_GPIO_ENBAR_ENABLE);
-		/* wait */
-		udelay(20);
+		udelay(18);
 		gpio_set_value(PROXIMITY_GPIO_LEDON_PIN,PROXIMITY_GPIO_LEDON_ENABLE);
-
-		/* wait */
 		udelay(Proximity_BurstDuration);
-
 		data = gpio_get_value(PROXIMITY_GPIO_DOUT_PIN);
-
 		gpio_set_value(PROXIMITY_GPIO_LEDON_PIN,PROXIMITY_GPIO_LEDON_DISABLE);
 		gpio_set_value(PROXIMITY_GPIO_ENBAR_PIN,PROXIMITY_GPIO_ENBAR_DISABLE);
 		gpio_set_value(PROXIMITY_GPIO_POWER_PIN,PROXIMITY_GPIO_POWER_OFF);
 		if(copy_to_user((unsigned char*)arg, (unsigned char*)&data, 1)!=0)
 		{
-			#if DEBUG
-			printk("copy_to_user error\n");
-			#endif
 			return -EFAULT;
 		}
 		return err;
@@ -318,7 +212,6 @@ static int __init Proximity_init(void)
 		goto err;
 	}
 
-	/* gpio configurations */
 	res = gpio_request(PROXIMITY_GPIO_POWER_PIN, "POWER");
 	if (res) {
 		printk(KERN_ERR
@@ -348,14 +241,9 @@ static int __init Proximity_init(void)
 	gpio_direction_output(PROXIMITY_GPIO_ENBAR_PIN, PROXIMITY_GPIO_ENBAR_DISABLE);
 	gpio_direction_output(PROXIMITY_GPIO_LEDON_PIN, PROXIMITY_GPIO_LEDON_DISABLE);
 	gpio_direction_input(PROXIMITY_GPIO_DOUT_PIN);
-
 	Proximity_BurstDuration = PROXIMITY_BURST_ON_TIME_DEFAULT;
-
-	/* init wakelock */
 	wake_lock_init(&proximity_wakelock, WAKE_LOCK_SUSPEND, "proximitylock");
-
 	printk(KERN_INFO "PROXIMITY driver installation succeeded\n");
-
 	return 0;
 
 
@@ -378,17 +266,14 @@ static void __exit Proximity_exit(void)
 	gpio_free(PROXIMITY_GPIO_ENBAR_PIN);
 	gpio_free(PROXIMITY_GPIO_LEDON_PIN);
 	gpio_free(PROXIMITY_GPIO_DOUT_PIN);
-
 	misc_deregister(&Proximity_device);
 	wake_lock_destroy(&proximity_wakelock);
-
 	printk(KERN_INFO "PROXIMITY driver removed\n");
 }
 
 MODULE_AUTHOR("SEMC");
 MODULE_DESCRIPTION("Proximity sensor driver");
 MODULE_LICENSE("GPL");
-
 module_init(Proximity_init);
 module_exit(Proximity_exit);
 
