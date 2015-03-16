@@ -120,7 +120,8 @@ struct msm_timer_sync_data_t {
 static irqreturn_t msm_timer_interrupt(int irq, void *dev_id)
 {
 	struct clock_event_device *evt = dev_id;
-	evt->event_handler(evt);
+	if (evt->event_handler)
+	  evt->event_handler(evt);
 	return IRQ_HANDLED;
 }
 
@@ -557,7 +558,7 @@ int64_t msm_timer_enter_idle(void)
 	count = msm_read_timer_count(clock);
 	if (clock->stopped++ == 0)
 		clock->stopped_tick = count + clock->sleep_offset;
-	alarm = readl(clock->regbase + TIMER_MATCH_VAL);
+	alarm = clock->alarm_vtime - clock->offset;
 	delta = alarm - count;
 	if (delta <= -(int32_t)((clock->freq << clock->shift) >> 10)) {
 		/* timer should have triggered 1ms ago */
@@ -813,7 +814,9 @@ static void __init msm_timer_init(void)
 		struct clock_event_device *ce = &clock->clockevent;
 		struct clocksource *cs = &clock->clocksource;
 		writel(0, clock->regbase + TIMER_ENABLE);
+		writel(0, clock->regbase + TIMER_CLEAR);
 		writel(~0, clock->regbase + TIMER_MATCH_VAL);
+		while (msm_read_timer_count(clock));
 
 		if ((clock->freq << clock->shift) == GPT_HZ) {
 			clock->rollover_offset = 0;
