@@ -467,6 +467,7 @@ static void __init acpu_freq_tbl_fixup(void)
 	switch (tcsr_spare2 & 0xF0) {
 	case 0x30:
 	case 0x00:
+	case 0x10
 		max_acpu_khz = 1305600;
 		break;
 	default:

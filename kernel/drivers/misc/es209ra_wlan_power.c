@@ -71,7 +71,7 @@ static int wlan_vreg_config (const char *name, int level, int on)
 
 static int __init wlan_power_init(void)
 {
-    if (wlan_vreg_config("wlan", 2900, 1))
+    if (wlan_vreg_config("wlan", 2700, 1))
     pr_err("failed to set vreg_wlan\n");
 
     if (gpio_request(143, "wlan18_en"))
@@ -153,7 +153,7 @@ static void __exit wlan_power_exit(void)
 #endif
     gpio_free(143);
     
-    if (wlan_vreg_config("wlan", 2900, 0))
+    if (wlan_vreg_config("wlan", 2700, 0))
     pr_err("failed to set vreg_wlan\n");
 
     printk(KERN_INFO "wlan_power exit\n");
