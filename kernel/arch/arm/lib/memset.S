@@ -8,12 +8,12 @@ ENTRY(memset)
 	ands	r3, r0, #3		@ 1 unaligned?
 	mov	ip, r0			@ preserve r0 as return value
 	bne	6f			@ 1
+
 1:	orr	r1, r1, r1, lsl #8
 	orr	r1, r1, r1, lsl #16
 	mov	r3, r1
 	cmp	r2, #16
 	blt	4f
-
 #if ! CALGN(1)+0
 	stmfd	sp!, {r8, lr}
 	mov	r8, r1
@@ -32,7 +32,6 @@ ENTRY(memset)
 	tst	r2, #16
 	stmneia	ip!, {r1, r3, r8, lr}
 	ldmfd	sp!, {r8, lr}
-
 #else
 	stmfd	sp!, {r4-r8, lr}
 	mov	r4, r1
@@ -53,6 +52,7 @@ ENTRY(memset)
 	tst	r8, #(1 << 30)
 	mov	r8, r1
 	strne	r1, [ip], #4
+
 3:	subs	r2, r2, #64
 	stmgeia	ip!, {r1, r3-r8, lr}
 	stmgeia	ip!, {r1, r3-r8, lr}
@@ -63,18 +63,20 @@ ENTRY(memset)
 	tst	r2, #16
 	stmneia	ip!, {r4-r7}
 	ldmfd	sp!, {r4-r8, lr}
-
 #endif
+
 4:	tst	r2, #8
 	stmneia	ip!, {r1, r3}
 	tst	r2, #4
 	strne	r1, [ip], #4
+
 5:	tst	r2, #2
 	strneb	r1, [ip], #1
 	strneb	r1, [ip], #1
 	tst	r2, #1
 	strneb	r1, [ip], #1
 	mov	pc, lr
+
 6:	subs	r2, r2, #4		@ 1 do we have enough
 	blt	5b			@ 1 bytes to align with?
 	cmp	r3, #2			@ 1
@@ -84,4 +86,3 @@ ENTRY(memset)
 	add	r2, r2, r3		@ 1 (r2 = r2 - (4 - r3))
 	b	1b
 ENDPROC(memset)
-

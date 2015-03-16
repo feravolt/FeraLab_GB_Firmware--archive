@@ -2,13 +2,18 @@
 
 ini_set("dp","3");
 calibrate("0.9695","16","0.9900","0");
-theme("ics");
+theme("miui4");
 
 ini_set("rom_name",             "***FeraLab***");
 ini_set("rom_version",          "v40.2");
 ini_set("rom_author",           "FeraVolt");
 ini_set("rom_device",           "Xperia X10");
 ini_set("rom_api",              "2.4.4");
+
+splash(
+    3000,
+    "feralab"
+);
 
 fontresload( "0", "ttf/Roboto-Regular.ttf;ttf/DroidSansFallback.ttf;", "12" );
 fontresload( "1", "ttf/Roboto-Regular.ttf;ttf/DroidSansFallback.ttf;", "14" );
