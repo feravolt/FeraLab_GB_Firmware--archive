@@ -79,6 +79,8 @@ fi;
 echo ' '
 echo '>> Compilation completed.'
 cd
+rm -f /home/feravolt/.flashTool/firmwares/FeraKernel.ftf
+cp /home/feravolt/ferra/0UTPUT/FeraKernel.ftf /home/feravolt/.flashTool/firmwares/FeraKernel.ftf
 cd ferra
 echo ' '
 echo '>> FeraKernel ready.'

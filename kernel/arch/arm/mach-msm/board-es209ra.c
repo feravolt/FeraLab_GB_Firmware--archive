@@ -63,7 +63,7 @@
 #define SMEM_SPINLOCK_I2C	"S:6"
 #define PMIC_VREG_WLAN_LEVEL	2600
 #define PMIC_VREG_GP6_LEVEL	2850
-#define TPS65023_MAX_DCDC1	1600
+#define TPS65023_MAX_DCDC1	1500
 #define PMEM_KERNEL_EBI1_SIZE	0x48000
 #define MSM_PMEM_MDP_SIZE	0x1C91000
 #define MSM_PMEM_ADSP_SIZE	0x2196000
@@ -72,10 +72,8 @@
 #define MSM_PMEM_SMI_BASE	0x02B00000
 #define MSM_FB_BASE		0x02B00000
 #define MSM_FB_SIZE		0x500000
-#define MSM_GPU_PHYS_SIZE	SZ_8M
-#define MSM_GPU_PHYS_BASE	(MSM_FB_BASE + MSM_FB_SIZE)
-#define MSM_PMEM_SMIPOOL_BASE	(MSM_GPU_PHYS_BASE + MSM_GPU_PHYS_SIZE)
-#define MSM_PMEM_SMIPOOL_SIZE	(MSM_PMEM_SMI_SIZE - MSM_FB_SIZE - MSM_GPU_PHYS_SIZE)
+#define MSM_PMEM_SMIPOOL_BASE	(MSM_FB_BASE + MSM_FB_SIZE)
+#define MSM_PMEM_SMIPOOL_SIZE	(MSM_PMEM_SMI_SIZE - MSM_FB_SIZE)
 
 static int msm7227_platform_set_vib_voltage(u16 volt_mv)
 {
@@ -434,16 +432,21 @@ static struct android_pmem_platform_data android_pmem_kernel_ebi1_pdata = {
 	.cached = 0,
 };
 
+static struct android_pmem_platform_data android_pmem_kernel_smi_pdata = {
+	.name = PMEM_KERNEL_SMI_DATA_NAME,
+	.cached = 0,
+};
+
 static struct android_pmem_platform_data android_pmem_pdata = {
 	.name = "pmem",
-	.allocator_type = PMEM_ALLOCATORTYPE_BITMAP,
+	.allocator_type = PMEM_ALLOCATORTYPE_ALLORNOTHING,
 	.cached = 1,
 };
 
 static struct android_pmem_platform_data android_pmem_adsp_pdata = {
 	.name = "pmem_adsp",
 	.allocator_type = PMEM_ALLOCATORTYPE_BITMAP,
-	.cached = 1,
+	.cached = 0,
 };
 
 static struct android_pmem_platform_data android_pmem_smipool_pdata = {
@@ -451,7 +454,7 @@ static struct android_pmem_platform_data android_pmem_smipool_pdata = {
 	.start = MSM_PMEM_SMIPOOL_BASE,
 	.size = MSM_PMEM_SMIPOOL_SIZE,
 	.allocator_type = PMEM_ALLOCATORTYPE_BITMAP,
-	.cached = 1,
+	.cached = 0,
 };
 
 static struct platform_device android_pmem_device = {
@@ -476,6 +479,12 @@ static struct platform_device android_pmem_kernel_ebi1_device = {
 	.name = "android_pmem",
 	.id = 3,
 	.dev = { .platform_data = &android_pmem_kernel_ebi1_pdata },
+};
+
+static struct platform_device android_pmem_kernel_smi_device = {
+	.name = "android_pmem",
+	.id = 4,
+	.dev = { .platform_data = &android_pmem_kernel_smi_pdata },
 };
 
 static struct resource msm_fb_resources[] = {
@@ -1402,6 +1411,7 @@ static struct platform_device *devices[] __initdata = {
 	&msm_device_smd,
 	&msm_device_dmov,
 	&android_pmem_kernel_ebi1_device,
+	&android_pmem_kernel_smi_device,
 	&android_pmem_device,
 	&android_pmem_adsp_device,
 	&android_pmem_smipool_device,
@@ -1684,6 +1694,16 @@ static void __init pmem_kernel_ebi1_size_setup(char **p)
 }
 __early_param("pmem_kernel_ebi1_size=", pmem_kernel_ebi1_size_setup);
 
+static unsigned pmem_kernel_smi_size = MSM_PMEM_SMIPOOL_SIZE;
+static int __init pmem_kernel_smi_size_setup(char *p)
+{
+	pmem_kernel_smi_size = memparse(p, NULL);
+	if (pmem_kernel_smi_size > MSM_PMEM_SMIPOOL_SIZE)
+		pmem_kernel_smi_size = MSM_PMEM_SMIPOOL_SIZE;
+	return 0;
+}
+early_param("pmem_kernel_smi_size", pmem_kernel_smi_size_setup);
+
 static unsigned pmem_mdp_size = MSM_PMEM_MDP_SIZE;
 static void __init pmem_mdp_size_setup(char **p)
 {
@@ -1767,6 +1787,22 @@ static void __init es209ra_allocate_memory_regions(void)
 		pr_info("allocating %lu bytes at %p (%lx physical) for kernel"
 			" ebi1 pmem arena\n", size, addr, __pa(addr));
 	}
+
+	size = pmem_kernel_smi_size;
+	if (size > MSM_PMEM_SMIPOOL_SIZE) {
+		printk(KERN_ERR "pmem kernel smi arena size %lu is too big\n",
+			size);
+
+		size = MSM_PMEM_SMIPOOL_SIZE;
+	}
+
+	android_pmem_kernel_smi_pdata.start = MSM_PMEM_SMIPOOL_BASE;
+	android_pmem_kernel_smi_pdata.size = size;
+
+	pr_info("allocating %lu bytes at %lx (%lx physical)"
+		"for pmem kernel smi arena\n", size,
+		(long unsigned int) MSM_PMEM_SMIPOOL_BASE,
+		__pa(MSM_PMEM_SMIPOOL_BASE));
 
 	size = pmem_mdp_size;
 	if (size) {
