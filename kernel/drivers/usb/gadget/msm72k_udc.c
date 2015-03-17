@@ -877,6 +877,7 @@ static void handle_setup(struct usb_info *ui)
 	struct usb_request *req = ui->setup_req;
 	int ret;
 
+	udelay(10);
 	memcpy(&ctl, ui->ep0out.head->setup_data, sizeof(ctl));
 	writel(EPT_RX(0), USB_ENDPTSETUPSTAT);
 
