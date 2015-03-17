@@ -23,7 +23,7 @@
 
 #define ON  1
 #define OFF 0
-#define MSM_AXI_QOS_PREVIEW	128000
+#define MSM_AXI_QOS_PREVIEW	192000
 
 static void     *vfe_syncdata;
 

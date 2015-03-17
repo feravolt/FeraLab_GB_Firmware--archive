@@ -62,16 +62,16 @@
 #define AKM8973_GPIO_RESET_OFF	1
 #define SMEM_SPINLOCK_I2C	"S:6"
 #define PMIC_VREG_WLAN_LEVEL	2600
-#define PMIC_VREG_GP6_LEVEL	2850
+#define PMIC_VREG_GP6_LEVEL	2700
 #define TPS65023_MAX_DCDC1	1500
-#define PMEM_KERNEL_EBI1_SIZE	0x48000
-#define MSM_PMEM_MDP_SIZE	0x1C91000
-#define MSM_PMEM_ADSP_SIZE	0x2196000
+#define PMEM_KERNEL_EBI1_SIZE	0x28000
+#define MSM_PMEM_MDP_SIZE	0x1700000
+#define MSM_PMEM_ADSP_SIZE	0x2096000
 #define MSM_SHARED_RAM_PHYS	0x00100000
 #define MSM_PMEM_SMI_SIZE	0x01500000
 #define MSM_PMEM_SMI_BASE	0x02B00000
 #define MSM_FB_BASE		0x02B00000
-#define MSM_FB_SIZE		0x500000
+#define MSM_FB_SIZE		0x4FB000
 #define MSM_PMEM_SMIPOOL_BASE	(MSM_FB_BASE + MSM_FB_SIZE)
 #define MSM_PMEM_SMIPOOL_SIZE	(MSM_PMEM_SMI_SIZE - MSM_FB_SIZE)
 
@@ -446,7 +446,7 @@ static struct android_pmem_platform_data android_pmem_pdata = {
 static struct android_pmem_platform_data android_pmem_adsp_pdata = {
 	.name = "pmem_adsp",
 	.allocator_type = PMEM_ALLOCATORTYPE_BITMAP,
-	.cached = 0,
+	.cached = 1,
 };
 
 static struct android_pmem_platform_data android_pmem_smipool_pdata = {
@@ -454,7 +454,7 @@ static struct android_pmem_platform_data android_pmem_smipool_pdata = {
 	.start = MSM_PMEM_SMIPOOL_BASE,
 	.size = MSM_PMEM_SMIPOOL_SIZE,
 	.allocator_type = PMEM_ALLOCATORTYPE_BITMAP,
-	.cached = 0,
+	.cached = 1,
 };
 
 static struct platform_device android_pmem_device = {
@@ -1118,7 +1118,7 @@ static struct keyreset_platform_data es209ra_reset_keys_pdata = {
     KEY_HOME,
     0
   },
-  .down_time_ms = 2700,
+  .down_time_ms = 3600,
 };
 
 struct platform_device es209ra_reset_keys_device = {
@@ -1326,8 +1326,8 @@ static struct msm_camera_device_platform_data msm_camera_device_data = {
 
 static struct msm_camera_sensor_flash_src msm_flash_src = {
 	.flash_sr_type = MSM_CAMERA_FLASH_SRC_PMIC,
-	._fsrc.pmic_src.low_current  = 20,
-	._fsrc.pmic_src.high_current = 90,
+	._fsrc.pmic_src.low_current  = 30,
+	._fsrc.pmic_src.high_current = 100,
 };
 
 static struct msm_camera_sensor_flash_data flash_semc_imx046_camera = {
@@ -1582,7 +1582,7 @@ static unsigned int es209ra_sdcc_slot_status(struct device *dev)
 }
 
 static struct mmc_platform_data es209ra_sdcc_data1 = {
-	.ocr_mask	    = MMC_VDD_27_28 | MMC_VDD_28_29,
+	.ocr_mask	    = MMC_VDD_25_26 | MMC_VDD_26_27,
 	.translate_vdd	= msm_sdcc_setup_power,
 	.status		    = es209ra_sdcc_slot_status,
 	.status_irq	    = INT_ES209RA_GPIO_CARD_INS_N,
@@ -1591,7 +1591,7 @@ static struct mmc_platform_data es209ra_sdcc_data1 = {
 };
 
 static struct mmc_platform_data es209ra_sdcc_data2 = {
-	.ocr_mask	= MMC_VDD_23_24 | MMC_VDD_25_26,
+	.ocr_mask	= MMC_VDD_25_26 | MMC_VDD_26_27,
 	.translate_vdd	= msm_sdcc_setup_power,
 	.mmc_bus_width  = MMC_CAP_4_BIT_DATA,
 };
@@ -1747,6 +1747,7 @@ static void __init es209ra_init(void)
 	printk(KERN_ERR "PVR0F2 (1): %x\n", get_predecode_repair_cache());
 	set_predecode_repair_cache();
 	printk(KERN_ERR "PVR0F2 (2): %x\n", get_predecode_repair_cache());
+	msm_clock_init(msm_clocks_8x50, msm_num_clocks_8x50);
 	msm_acpu_clock_init(&qsd8x50_clock_data);
 	msm_hsusb_pdata.swfi_latency = msm_pm_data
 		[MSM_PM_SLEEP_MODE_RAMP_DOWN_AND_WAIT_FOR_INTERRUPT].latency;
@@ -1845,7 +1846,6 @@ static void __init es209ra_map_io(void)
 	msm_shared_ram_phys = MSM_SHARED_RAM_PHYS;
 	msm_map_qsd8x50_io();
 	es209ra_allocate_memory_regions();
-	msm_clock_init(msm_clocks_8x50, msm_num_clocks_8x50);
 }
 
 
