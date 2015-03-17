@@ -66,7 +66,7 @@
 #define TPS65023_MAX_DCDC1	1500
 #define PMEM_KERNEL_EBI1_SIZE	0x28000
 #define MSM_PMEM_MDP_SIZE	0x1700000
-#define MSM_PMEM_ADSP_SIZE	0x2096000
+#define MSM_PMEM_ADSP_SIZE	0x2196000
 #define MSM_SHARED_RAM_PHYS	0x00100000
 #define MSM_PMEM_SMI_SIZE	0x01500000
 #define MSM_PMEM_SMI_BASE	0x02B00000
@@ -1582,7 +1582,7 @@ static unsigned int es209ra_sdcc_slot_status(struct device *dev)
 }
 
 static struct mmc_platform_data es209ra_sdcc_data1 = {
-	.ocr_mask	    = MMC_VDD_25_26 | MMC_VDD_26_27,
+	.ocr_mask	    = MMC_VDD_27_28 | MMC_VDD_28_29,
 	.translate_vdd	= msm_sdcc_setup_power,
 	.status		    = es209ra_sdcc_slot_status,
 	.status_irq	    = INT_ES209RA_GPIO_CARD_INS_N,
