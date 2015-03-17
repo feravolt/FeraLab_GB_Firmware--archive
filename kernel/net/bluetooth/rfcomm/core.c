@@ -47,6 +47,7 @@
 #include <net/bluetooth/rfcomm.h>
 
 #define VERSION "1.11"
+#define RFCOMM_HDR_SIZE 6
 
 static bool disable_cfc = false;
 static int channel_mtu = -1;
@@ -1834,11 +1835,7 @@ static inline void rfcomm_accept_connection(struct rfcomm_session *s)
 	s = rfcomm_session_add(nsock, BT_OPEN);
 	if (s) {
 		rfcomm_session_hold(s);
-
-		/* We should adjust MTU on incoming sessions.
-		 * L2CAP MTU minus UIH header and FCS. */
-		s->mtu = min(l2cap_pi(nsock->sk)->omtu, l2cap_pi(nsock->sk)->imtu) - 5;
-
+		s->mtu = min(l2cap_pi(nsock->sk)->omtu, l2cap_pi(nsock->sk)->imtu) - RFCOMM_HDR_SIZE;
 		rfcomm_schedule(RFCOMM_SCHED_RX);
 	} else
 		sock_release(nsock);
@@ -1853,11 +1850,7 @@ static inline void rfcomm_check_connection(struct rfcomm_session *s)
 	switch(sk->sk_state) {
 	case BT_CONNECTED:
 		s->state = BT_CONNECT;
-
-		/* We can adjust MTU on outgoing sessions.
-		 * L2CAP MTU minus UIH header and FCS. */
-		s->mtu = min(l2cap_pi(sk)->omtu, l2cap_pi(sk)->imtu) - 5;
-
+		s->mtu = min(l2cap_pi(sk)->omtu, l2cap_pi(sk)->imtu) - RFCOMM_HDR_SIZE;
 		rfcomm_send_sabm(s, 0);
 		break;
 
@@ -1871,9 +1864,7 @@ static inline void rfcomm_check_connection(struct rfcomm_session *s)
 static inline void rfcomm_process_sessions(void)
 {
 	struct list_head *p, *n;
-
 	rfcomm_lock();
-
 	list_for_each_safe(p, n, &session_list) {
 		struct rfcomm_session *s;
 		s = list_entry(p, struct rfcomm_session, list);
@@ -1911,7 +1902,6 @@ static int rfcomm_add_listener(bdaddr_t *ba)
 	struct rfcomm_session *s;
 	int    err = 0;
 
-	/* Create socket */
 	err = rfcomm_l2sock_create(&sock);
 	if (err < 0) {
 		BT_ERR("Create socket failed %d", err);
