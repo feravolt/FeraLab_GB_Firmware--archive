@@ -1,7 +1,7 @@
 ### FeraLab ###
 
 # Build info
-ro.build.date=15.03.2015
+ro.build.date=21.03.2015
 ro.build.date.utc=1308515086
 ro.build.user=FeraVolt
 ro.build.host=FeraLab
@@ -95,8 +95,6 @@ ro.ril.oem.ecclist=110,118,119,102,103,104,911
 ro.ril.oem.nosim.ecclist=110,118,119,102,103,104,911
 ro.ril.power.collapse=1
 ro.telephony.call_ring.delay=0
-ro.telephony.call_ring.multiple=0
-ro.telephony.default_network=0
 ro.tethering.kb_disconnect=1
 rild.libpath=/system/lib/libril-qc-1.so
 rild.libargs=-d /dev/smd0
@@ -195,7 +193,7 @@ ro.kernel.android.checkjni=0
 debug.composition.type=mdp
 debug.egl.hw=1
 debug.egl.profiler=1
-debug.enabletr=false
+debug.egl.swapinterval=1 
 debug.gr.numframebuffers=3
 debug.gr.swapinterval=1
 debug.mdpcomp.logs=0
