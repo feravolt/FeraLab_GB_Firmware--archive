@@ -97,8 +97,7 @@ bool freeze_task(struct task_struct *p, bool sig_only)
 	}
 
 	if (should_send_signal(p)) {
-		if (!signal_pending(p))
-			fake_signal_wake_up(p);
+		fake_signal_wake_up(p);
 	} else if (sig_only) {
 		return false;
 	} else {

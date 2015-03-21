@@ -1,19 +1,11 @@
-/*
- * drivers/power/process.c - Functions for starting/stopping processes on 
- *                           suspend transitions.
- *
- * Originally from swsusp.
- */
-
-
 #undef DEBUG
-
 #include <linux/interrupt.h>
 #include <linux/suspend.h>
 #include <linux/module.h>
 #include <linux/syscalls.h>
 #include <linux/freezer.h>
 #include <linux/wakelock.h>
+#include <linux/delay.h>
 
 unsigned int __read_mostly freeze_timeout_msecs = 2 * MSEC_PER_SEC;
 
@@ -39,7 +31,7 @@ static int try_to_freeze_tasks(bool sig_only)
 	do_gettimeofday(&start);
 	end_time = jiffies + msecs_to_jiffies(freeze_timeout_msecs);
 
-	do {
+	while (true) {
 		todo = 0;
 		read_lock(&tasklist_lock);
 		do_each_thread(g, p) {
@@ -49,25 +41,19 @@ static int try_to_freeze_tasks(bool sig_only)
 			if (!freeze_task(p, sig_only))
 				continue;
 
-			/*
-			 * Now that we've done set_freeze_flag, don't
-			 * perturb a task in TASK_STOPPED or TASK_TRACED.
-			 * It is "frozen enough".  If the task does wake
-			 * up, it will immediately call try_to_freeze.
-			 */
 			if (!task_is_stopped_or_traced(p) &&
 			    !freezer_should_skip(p))
 				todo++;
 		} while_each_thread(g, p);
 		read_unlock(&tasklist_lock);
-		yield();			/* Yield is okay here */
 		if (todo && has_wake_lock(WAKE_LOCK_SUSPEND)) {
-			wakeup = 1;
-			break;
+		  wakeup = 1;
+		  break;
 		}
-		if (time_after(jiffies, end_time))
+		if (!todo || time_after(jiffies, end_time))
 			break;
-	} while (todo);
+	msleep(9);
+	}
 
 	do_gettimeofday(&end);
 	elapsed_csecs64 = timeval_to_ns(&end) - timeval_to_ns(&start);
@@ -75,11 +61,6 @@ static int try_to_freeze_tasks(bool sig_only)
 	elapsed_csecs = elapsed_csecs64;
 
 	if (todo) {
-		/* This does not unfreeze processes that are already frozen
-		 * (we have slightly ugly calling convention in that respect,
-		 * and caller must call thaw_processes() if something fails),
-		 * but it cleans up leftover PF_FREEZE requests.
-		 */
 		if(wakeup) {
 			printk("\n");
 			printk(KERN_ERR "Freezing of %s aborted\n",
@@ -113,9 +94,6 @@ static int try_to_freeze_tasks(bool sig_only)
 	return todo ? -EBUSY : 0;
 }
 
-/**
- *	freeze_processes - tell processes to enter the refrigerator
- */
 int freeze_processes(void)
 {
 	int error;
