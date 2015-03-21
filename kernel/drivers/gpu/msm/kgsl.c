@@ -15,6 +15,7 @@
 #include <asm/atomic.h>
 #include <linux/ashmem.h>
 #include "kgsl.h"
+#include "kgsl_mmu.h"
 #include "kgsl_yamato.h"
 #include "kgsl_cmdstream.h"
 #include "kgsl_drm.h"
@@ -1052,17 +1053,16 @@ error:
 }
 
 static int kgsl_get_phys_file(int fd, unsigned long *start, unsigned long *len,
-			      struct file **filep)
+			      unsigned long *vstart, struct file **filep)
 {
 	struct file *fbfile;
 	int put_needed;
-	unsigned long vstart = 0;
 	int ret = 0;
 	dev_t rdev;
 	struct fb_info *info;
 
 	*filep = NULL;
-	if (!get_pmem_file(fd, start, &vstart, len, filep))
+	if (!get_pmem_file(fd, start, vstart, len, filep))
 		return 0;
 
 	fbfile = fget_light(fd, &put_needed);
@@ -1074,6 +1074,7 @@ static int kgsl_get_phys_file(int fd, unsigned long *start, unsigned long *len,
 	if (info) {
 		*start = info->fix.smem_start;
 		*len = info->fix.smem_len;
+		*vstart = (unsigned long)__va(info->fix.smem_start);
 		ret = 0;
 	} else
 		ret = -1;
@@ -1095,7 +1096,7 @@ static int kgsl_ioctl_map_user_mem(struct kgsl_process_private *private,
 	int result = 0;
 	struct kgsl_map_user_mem param;
 	struct kgsl_mem_entry *entry = NULL;
-	unsigned long start = 0, len = 0;
+	unsigned long start = 0, len = 0, vstart = 0;
 	struct file *file_ptr = NULL;
 	uint64_t total_offset;
 
@@ -1114,7 +1115,7 @@ static int kgsl_ioctl_map_user_mem(struct kgsl_process_private *private,
 	switch (param.memtype) {
 	case KGSL_USER_MEM_TYPE_PMEM:
 		if (kgsl_get_phys_file(param.fd, &start,
-					&len, &file_ptr)) {
+					&len, &vstart, &file_ptr)) {
 			result = -EINVAL;
 			goto error;
 		}
@@ -1199,8 +1200,12 @@ static int kgsl_ioctl_map_user_mem(struct kgsl_process_private *private,
 	entry->file_ptr = file_ptr;
 	entry->memdesc.pagetable = private->pagetable;
 	entry->memdesc.size = ALIGN(param.len, PAGE_SIZE);
-	entry->memdesc.hostptr = NULL;
 	entry->memdesc.physaddr = start + (param.offset & PAGE_MASK);
+	if (param.memtype == KGSL_USER_MEM_TYPE_PMEM)
+	  entry->memdesc.hostptr =
+	  (void *)(vstart + (param.offset & PAGE_MASK));
+	else
+	  entry->memdesc.hostptr = __va(entry->memdesc.physaddr);
 	if (param.memtype != KGSL_USER_MEM_TYPE_PMEM) {
 		result = kgsl_mmu_map(private->pagetable,
 				entry->memdesc.physaddr, entry->memdesc.size,
@@ -1619,54 +1624,6 @@ error_class_create:
 	return err;
 }
 
-static void
-kgsl_ptpool_cleanup(void)
-{
-	int size = kgsl_driver.ptpool.entries * kgsl_driver.ptsize;
-
-	if (kgsl_driver.ptpool.hostptr)
-		dma_free_coherent(NULL, size, kgsl_driver.ptpool.hostptr,
-				  kgsl_driver.ptpool.physaddr);
-
-
-	kfree(kgsl_driver.ptpool.bitmap);
-
-	memset(&kgsl_driver.ptpool, 0, sizeof(kgsl_driver.ptpool));
-}
-
-/* Allocate memory and structures for the pagetable pool */
-
-static int __devinit
-kgsl_ptpool_init(void)
-{
-	int size = kgsl_driver.ptpool.entries * kgsl_driver.ptsize;
-
-	if (size > SZ_4M) {
-		size = SZ_4M;
-		kgsl_driver.ptpool.entries = SZ_4M / kgsl_driver.ptsize;
-	}
-
-	kgsl_driver.ptpool.hostptr =
-		dma_alloc_coherent(NULL, size, &kgsl_driver.ptpool.physaddr,
-				   GFP_KERNEL);
-
-	if (kgsl_driver.ptpool.hostptr == NULL) {
-		return -ENOMEM;
-	}
-
-	kgsl_driver.ptpool.bitmap =
-		kzalloc((kgsl_driver.ptpool.entries / BITS_PER_BYTE) + 1,
-			GFP_KERNEL);
-
-	if (kgsl_driver.ptpool.bitmap == NULL) {
-		return -ENOMEM;
-	}
-
-	memset(kgsl_driver.ptpool.hostptr, 0, size);
-	spin_lock_init(&kgsl_driver.ptpool.lock);
-	return 0;
-}
-
 static int __devinit kgsl_platform_probe(struct platform_device *pdev)
 {
 	int i, result = 0;
@@ -1688,7 +1645,8 @@ static int __devinit kgsl_platform_probe(struct platform_device *pdev)
 	kgsl_driver.pt_va_size = pdata->pt_va_size;
 	kgsl_driver.ptpool.entries = pdata->pt_max_count;
 
-	result = kgsl_ptpool_init();
+	result = kgsl_ptpool_init(&kgsl_driver.ptpool, kgsl_driver.ptsize,
+				  kgsl_driver.ptpool.entries);
 
 	if (result != 0)
 		goto done;
@@ -1726,12 +1684,10 @@ done:
 static int kgsl_platform_remove(struct platform_device *pdev)
 {
 	pm_runtime_disable(&pdev->dev);
-
-	kgsl_ptpool_cleanup();
+	kgsl_ptpool_destroy(&kgsl_driver.ptpool);
 	kgsl_driver_cleanup();
 	kgsl_drm_exit();
 	kgsl_device_unregister();
-
 	return 0;
 }
 

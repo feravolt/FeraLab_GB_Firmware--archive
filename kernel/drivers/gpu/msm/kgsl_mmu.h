@@ -116,6 +116,24 @@ struct kgsl_mmu {
 	struct kgsl_pagetable  *hwpagetable;
 };
 
+struct kgsl_ptpool_chunk {
+	size_t size;
+	unsigned int count;
+	int dynamic;
+	void *data;
+	unsigned int phys;
+	unsigned long *bitmap;
+	struct list_head list;
+};
+
+struct kgsl_ptpool {
+	size_t ptsize;
+	struct mutex lock;
+	struct list_head list;
+	int entries;
+	int static_entries;
+	int chunks;
+};
 
 static inline int
 kgsl_mmu_isenabled(struct kgsl_mmu *mmu)
@@ -164,6 +182,8 @@ int kgsl_mmu_unmap(struct kgsl_pagetable *pagetable,
 					unsigned int gpuaddr, int range);
 
 unsigned int kgsl_virtaddr_to_physaddr(unsigned int virtaddr);
+void kgsl_ptpool_destroy(struct kgsl_ptpool *pool);
+int kgsl_ptpool_init(struct kgsl_ptpool *pool, int ptsize, int entries);
 
 int kgsl_mmu_map_global(struct kgsl_pagetable *pagetable,
 			struct kgsl_memdesc *memdesc, unsigned int protflags,

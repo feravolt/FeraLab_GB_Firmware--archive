@@ -44,7 +44,7 @@ int kgsl_sharedmem_vmalloc(struct kgsl_memdesc *memdesc,
 static inline int
 kgsl_sharedmem_alloc_coherent(struct kgsl_memdesc *memdesc, size_t size)
 {
-	size = ALIGN(size, KGSL_PAGESIZE);
+	size = ALIGN(size, PAGE_SIZE);
 
 	memdesc->hostptr = dma_alloc_coherent(NULL, size, &memdesc->physaddr,
 					      GFP_KERNEL);

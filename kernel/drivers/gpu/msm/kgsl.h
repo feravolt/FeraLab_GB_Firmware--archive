@@ -46,13 +46,7 @@ struct kgsl_driver {
 	unsigned int ptsize;
 	unsigned int pt_va_size;
 
-	struct {
-		unsigned long *bitmap;
-		int entries;
-		spinlock_t lock;
-		void *hostptr;
-		unsigned int physaddr;
-	} ptpool;
+	struct kgsl_ptpool ptpool;
 };
 
 extern struct kgsl_driver kgsl_driver;
