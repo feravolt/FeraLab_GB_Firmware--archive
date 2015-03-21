@@ -894,7 +894,7 @@ done:
 void kgsl_destroy_mem_entry(struct kgsl_mem_entry *entry)
 {
 	kgsl_mmu_unmap(entry->memdesc.pagetable,
-			entry->memdesc.gpuaddr & KGSL_PAGEMASK,
+			entry->memdesc.gpuaddr & PAGE_MASK,
 			entry->memdesc.size);
 	if (KGSL_MEMFLAGS_VMALLOC_MEM & entry->memdesc.priv)
 		vfree((void *)entry->memdesc.physaddr);
@@ -1200,7 +1200,7 @@ static int kgsl_ioctl_map_user_mem(struct kgsl_process_private *private,
 	entry->memdesc.pagetable = private->pagetable;
 	entry->memdesc.size = ALIGN(param.len, PAGE_SIZE);
 	entry->memdesc.hostptr = NULL;
-	entry->memdesc.physaddr = start + (param.offset & KGSL_PAGEMASK);
+	entry->memdesc.physaddr = start + (param.offset & PAGE_MASK);
 	if (param.memtype != KGSL_USER_MEM_TYPE_PMEM) {
 		result = kgsl_mmu_map(private->pagetable,
 				entry->memdesc.physaddr, entry->memdesc.size,
@@ -1218,9 +1218,7 @@ static int kgsl_ioctl_map_user_mem(struct kgsl_process_private *private,
 	if (result)
 		goto error_free_entry;
 
-	/* If the offset is not at 4K boundary then add the correct offset
-	 * value to gpuaddr */
-	total_offset = entry->memdesc.gpuaddr + (param.offset & ~KGSL_PAGEMASK);
+	total_offset = entry->memdesc.gpuaddr + (param.offset & ~PAGE_MASK);
 	if (total_offset > (uint64_t)UINT_MAX) {
 		result = -EINVAL;
 		goto error_unmap_entry;
@@ -1246,7 +1244,7 @@ static int kgsl_ioctl_map_user_mem(struct kgsl_process_private *private,
 
 error_unmap_entry:
 	kgsl_mmu_unmap(entry->memdesc.pagetable,
-			entry->memdesc.gpuaddr & KGSL_PAGEMASK,
+			entry->memdesc.gpuaddr & PAGE_MASK,
 			entry->memdesc.size);
 error_free_entry:
 	kfree(entry);
@@ -1686,7 +1684,7 @@ static int __devinit kgsl_platform_probe(struct platform_device *pdev)
 	kgsl_yamato_init_pwrctrl(device);
 	kgsl_driver.ptsize = KGSL_PAGETABLE_ENTRIES(pdata->pt_va_size) *
 		KGSL_PAGETABLE_ENTRY_SIZE;
-	kgsl_driver.ptsize = ALIGN(kgsl_driver.ptsize, KGSL_PAGESIZE);
+	kgsl_driver.ptsize = ALIGN(kgsl_driver.ptsize, PAGE_SIZE);
 	kgsl_driver.pt_va_size = pdata->pt_va_size;
 	kgsl_driver.ptpool.entries = pdata->pt_max_count;
 

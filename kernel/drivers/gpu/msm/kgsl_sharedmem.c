@@ -16,7 +16,7 @@ static void _outer_cache_range_op(unsigned long addr, int size,
 {
 	unsigned long end;
 
-	for (end = addr; end < (addr + size); end += KGSL_PAGESIZE) {
+	for (end = addr; end < (addr + size); end += PAGE_SIZE) {
 		unsigned long physaddr = 0;
 
 		if (flags & KGSL_MEMFLAGS_VMALLOC_MEM)
@@ -31,11 +31,11 @@ static void _outer_cache_range_op(unsigned long addr, int size,
 		}
 
 		if (flags & KGSL_MEMFLAGS_CACHE_FLUSH)
-			outer_flush_range(physaddr, physaddr + KGSL_PAGESIZE);
+			outer_flush_range(physaddr, physaddr + PAGE_SIZE);
 		else if (flags & KGSL_MEMFLAGS_CACHE_CLEAN)
-			outer_clean_range(physaddr, physaddr + KGSL_PAGESIZE);
+			outer_clean_range(physaddr, physaddr + PAGE_SIZE);
 		else if (flags & KGSL_MEMFLAGS_CACHE_INV)
-			outer_inv_range(physaddr, physaddr + KGSL_PAGESIZE);
+			outer_inv_range(physaddr, physaddr + PAGE_SIZE);
 	}
 	mb();
 }
@@ -49,8 +49,8 @@ static void _outer_cache_range_op(unsigned long addr, int size,
 void kgsl_cache_range_op(unsigned long addr, int size,
 			 unsigned int flags)
 {
-	BUG_ON(addr & (KGSL_PAGESIZE - 1));
-	BUG_ON(size & (KGSL_PAGESIZE - 1));
+	BUG_ON(addr & (PAGE_SIZE - 1));
+	BUG_ON(size & (PAGE_SIZE - 1));
 
 	if (flags & KGSL_MEMFLAGS_CACHE_FLUSH)
 		dmac_flush_range((const void *)addr,
@@ -72,7 +72,7 @@ kgsl_sharedmem_vmalloc(struct kgsl_memdesc *memdesc,
 {
 	int result;
 
-	size = ALIGN(size, KGSL_PAGESIZE * 2);
+	size = ALIGN(size, PAGE_SIZE * 2);
 
 	memdesc->hostptr = vmalloc(size);
 	if (memdesc->hostptr == NULL) {

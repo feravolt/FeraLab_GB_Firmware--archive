@@ -24,7 +24,7 @@
 #define IDX_2D(X) ((X)-KGSL_DEVICE_2D0)
 #define KGSL_PAGETABLE_ENTRY_SIZE  4
 #define KGSL_PT_EXTRA_ENTRIES      16
-#define KGSL_PAGETABLE_ENTRIES(_sz) (((_sz) >> KGSL_PAGESIZE_SHIFT) + \
+#define KGSL_PAGETABLE_ENTRIES(_sz) (((_sz) >> PAGE_SHIFT) + \
 				     KGSL_PT_EXTRA_ENTRIES)
 #define KGSL_CONTAINER_OF(ptr, type, member) \
 		container_of(ptr, type, member)

@@ -1,12 +1,6 @@
 #ifndef __GSL_SHAREDMEM_H
 #define __GSL_SHAREDMEM_H
-
 #include <linux/dma-mapping.h>
-
-#define KGSL_PAGESIZE           0x1000
-#define KGSL_PAGESIZE_SHIFT     12
-#define KGSL_PAGEMASK           (~(KGSL_PAGESIZE - 1))
-
 struct kgsl_pagetable;
 
 #define KGSL_MEMFLAGS_CACHE_INV		0x00000001
