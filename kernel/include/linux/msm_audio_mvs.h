@@ -1,30 +1,3 @@
-/* Copyright (c) 2010, Code Aurora Forum. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are
- * met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above
- *       copyright notice, this list of conditions and the following
- *       disclaimer in the documentation and/or other materials provided
- *       with the distribution.
- *     * Neither the name of Code Aurora Forum, Inc. nor the names of its
- *       contributors may be used to endorse or promote products derived
- *       from this software without specific prior written permission.
-
- * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS
- * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
- * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
- * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
- * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
 #ifndef __MSM_AUDIO_MVS_H
 #define __MSM_AUDIO_MVS_H
 
@@ -36,13 +9,22 @@
 	(AUDIO_MAX_COMMON_IOCTL_NUM + 1), unsigned)
 
 /* MVS modes */
-#define MVS_MODE_IS127 2
-#define MVS_MODE_AMR 5
-#define MVS_MODE_LINEAR_PCM 9
-#define MVS_MODE_PCM 12
-#define MVS_MODE_AMR_WB 13
-#define MVS_MODE_G729A 14
-#define MVS_MODE_G711A 15
+#define MVS_MODE_IS733 0x1 /*QCELP 13K*/
+#define MVS_MODE_IS127 0x2 /*EVRC-8k*/
+#define MVS_MODE_4GV_NB 0x3 /*EVRC-B*/
+#define MVS_MODE_4GV_WB 0x4 /*EVRC-WB*/
+#define MVS_MODE_AMR 0x5
+#define MVS_MODE_EFR 0x6
+#define MVS_MODE_FR 0x7
+#define MVS_MODE_HR 0x8
+#define MVS_MODE_LINEAR_PCM 0x9
+#define MVS_MODE_G711 0xA
+#define MVS_MODE_PCM 0xC
+#define MVS_MODE_AMR_WB 0xD
+#define MVS_MODE_G729A 0xE
+#define MVS_MODE_G711A 0xF
+#define MVS_MODE_G722 0x10
+#define MVS_MODE_PCM_WB 0x12
 
 enum msm_audio_amr_mode {
 	MVS_AMR_MODE_0475, /* AMR 4.75 kbps */
@@ -65,12 +47,17 @@ enum msm_audio_amr_mode {
 	MVS_AMR_MODE_UNDEF
 };
 
+/*The MVS VOC rate type is used to identify the rate of QCELP 13K(IS733),
+EVRC(IS127), 4GV, or 4GV-WB frame.*/
 enum msm_audio_voc_rate {
 		MVS_VOC_0_RATE, /* Blank frame */
 		MVS_VOC_8_RATE, /* 1/8 rate    */
 		MVS_VOC_4_RATE, /* 1/4 rate    */
 		MVS_VOC_2_RATE, /* 1/2 rate    */
-		MVS_VOC_1_RATE	/* Full rate   */
+		MVS_VOC_1_RATE,/* Full rate   */
+		MVS_VOC_ERASURE, /* erasure frame */
+		MVS_VOC_RATE_MAX,
+		MVS_VOC_RATE_UNDEF = MVS_VOC_RATE_MAX
 };
 
 enum msm_audio_amr_frame_type {
@@ -90,6 +77,19 @@ enum msm_audio_g711a_mode {
 	MVS_G711A_MODE_ALAW
 };
 
+enum msm_audio_g711_mode {
+	MVS_G711_MODE_MULAW,
+	MVS_G711_MODE_ALAW
+};
+
+enum mvs_g722_mode_type {
+	MVS_G722_MODE_01,
+	MVS_G722_MODE_02,
+	MVS_G722_MODE_03,
+	MVS_G722_MODE_MAX,
+	MVS_G722_MODE_UNDEF
+};
+
 enum msm_audio_g711a_frame_type {
 	MVS_G711A_SPEECH_GOOD,
 	MVS_G711A_SID,
@@ -104,12 +104,37 @@ enum msm_audio_g729a_frame_type {
 	MVS_G729A_ERASURE
 };
 
+struct min_max_rate {
+	uint32_t min_rate;
+	uint32_t max_rate;
+};
+
 struct msm_audio_mvs_config {
 	uint32_t mvs_mode;
 	uint32_t rate_type;
+	struct min_max_rate min_max_rate;
+	uint32_t dtx_mode;
 };
 
-#define MVS_MAX_VOC_PKT_SIZE 320
+#define MVS_MAX_VOC_PKT_SIZE 640
+
+struct gsm_header {
+	uint8_t bfi;
+	uint8_t sid;
+	uint8_t taf;
+	uint8_t ufi;
+};
+
+struct q6_msm_audio_mvs_frame {
+	union {
+	uint32_t frame_type;
+	uint32_t packet_rate;
+	struct gsm_header gsm_frame_type;
+	} header;
+	uint32_t len;
+	uint8_t voc_pkt[MVS_MAX_VOC_PKT_SIZE];
+
+};
 
 struct msm_audio_mvs_frame {
 	uint32_t frame_type;
@@ -118,4 +143,12 @@ struct msm_audio_mvs_frame {
 
 };
 
+#define Q5V2_MVS_MAX_VOC_PKT_SIZE 320
+
+struct q5v2_msm_audio_mvs_frame {
+	uint32_t frame_type;
+	uint32_t len;
+	uint8_t voc_pkt[Q5V2_MVS_MAX_VOC_PKT_SIZE];
+
+};
 #endif /* __MSM_AUDIO_MVS_H */

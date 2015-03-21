@@ -52,7 +52,6 @@
 #include <mach/semc_low_batt_shutdown.h>
 #include <linux/semc/msm_pmic_vibrator.h>
 #include <linux/bma150_ng.h>
-#include "qdsp6/q6audio.h"
 #include <linux/nt35580.h>
 #include "../../../drivers/video/msm/msm_fb_panel.h"
 #include "../../../drivers/video/msm/mddihost.h"
@@ -62,7 +61,7 @@
 #define AKM8973_GPIO_RESET_OFF	1
 #define SMEM_SPINLOCK_I2C	"S:6"
 #define PMIC_VREG_WLAN_LEVEL	2600
-#define PMIC_VREG_GP6_LEVEL	2700
+#define PMIC_VREG_GP6_LEVEL	2850
 #define TPS65023_MAX_DCDC1	1500
 #define PMEM_KERNEL_EBI1_SIZE	0x28000
 #define MSM_PMEM_MDP_SIZE	0x1700000
@@ -714,21 +713,9 @@ static struct vreg *vreg_gp2;
 static void tmd_wvga_lcd_power_on(void)
 {
 	int rc = 0;
-
 	local_irq_disable();
-
 	rc = vreg_enable(vreg_gp2);
-	if (rc) {
-		local_irq_enable();
-		printk(KERN_ERR"%s:vreg_enable(gp2)err. rc=%d\n", __func__, rc);
-		return;
-	}
 	rc = vreg_enable(vreg_mmc);
-	if (rc) {
-		local_irq_enable();
-		printk(KERN_ERR"%s:vreg_enable(mmc)err. rc=%d\n", __func__, rc);
-		return;
-	}
 	local_irq_enable();
 	msleep(45);
 	gpio_set_value(NT35580_GPIO_XRST, 1);
@@ -736,7 +723,7 @@ static void tmd_wvga_lcd_power_on(void)
 	gpio_set_value(NT35580_GPIO_XRST, 0);
 	msleep(1);
 	gpio_set_value(NT35580_GPIO_XRST, 1);
-	msleep(210);
+	msleep(180);
 }
 
 static void tmd_wvga_lcd_power_off(void)
@@ -764,7 +751,6 @@ static struct platform_device mddi_tmd_wvga_display_device = {
 static void __init msm_mddi_tmd_fwvga_display_device_init(void)
 {
 	struct msm_fb_panel_data *panel_data = &tmd_wvga_panel_data;
-	printk(KERN_DEBUG "%s \n", __func__);
 	panel_data->panel_info.yres = 854;
         panel_data->panel_info.xres = 480;
 	panel_data->panel_info.type = MDDI_PANEL;
@@ -787,18 +773,8 @@ static void __init msm_mddi_tmd_fwvga_display_device_init(void)
 	panel_data->panel_info.height = 89;
 	panel_data->panel_ext = &tmd_wvga_panel_ext;
 	mddi_tmd_wvga_display_device.dev.platform_data = &tmd_wvga_panel_data;
-
 	vreg_gp2 = vreg_get(NULL, "gp2");
-	if (IS_ERR(vreg_gp2)) {
-		printk(KERN_ERR "%s: vreg_get(gp2) err.\n", __func__);
-		return;
-	}
 	vreg_mmc = vreg_get(NULL, "mmc");
-	if (IS_ERR(vreg_mmc)) {
-		printk(KERN_ERR "%s: vreg_get(mmc) err.\n", __func__);
-		return;
-	}
-
 	platform_device_register(&mddi_tmd_wvga_display_device);
 }
 
@@ -833,7 +809,7 @@ static struct resource msm_audio_resources[] = {
 	{
 		.name	= "audio_base_addr",
 		.start	= 0xa0700000,
-		.end	= 0xa0700000 + 4,
+		.end	= 0xa0700000 + 3,
 		.flags	= IORESOURCE_MEM,
 	},
 };
@@ -853,7 +829,6 @@ static void __init audio_gpio_init(void)
 		rc = gpio_tlmm_config(audio_gpio_on[pin],
 			GPIO_ENABLE);
 	}
-	set_audio_gpios(msm_audio_resources[1].start);
 }
 
 static struct resource bluesleep_resources[] = {
@@ -884,7 +859,6 @@ static struct platform_device msm_bluesleep_device = {
 	.resource	= bluesleep_resources,
 };
 
-#ifdef CONFIG_BT
 static struct platform_device msm_bt_power_device = {
 	.name = "bt_power",
 };
@@ -902,33 +876,19 @@ enum {
 };
 
 static struct msm_gpio bt_config_power_on[] = {
-	{ GPIO_CFG(29, 0, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA),	"BT_WAKE" },
-	{ GPIO_CFG(21, 0, GPIO_INPUT,  GPIO_NO_PULL, GPIO_2MA),	"HOST_WAKE" },
+	{ GPIO_CFG(29, 0, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA), "BT_WAKE" },
+	{ GPIO_CFG(21, 0, GPIO_INPUT,  GPIO_NO_PULL, GPIO_2MA), "HOST_WAKE" },
 	{ GPIO_CFG(77, 0, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA), "BT_VDD_IO" },
 	{ GPIO_CFG(157, 1, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA), "UART1DM_RFR" },
 	{ GPIO_CFG(141, 1, GPIO_INPUT,  GPIO_NO_PULL, GPIO_2MA), "UART1DM_CTS" },
 	{ GPIO_CFG(139, 1, GPIO_INPUT,  GPIO_NO_PULL, GPIO_2MA), "UART1DM_RX" },
 	{ GPIO_CFG(140, 1, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA), "UART1DM_TX" }
 };
-#if 0
-static unsigned bt_config_power_off[] = {
-	GPIO_CFG(29, 0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),	/* WAKE */
-	GPIO_CFG(21, 0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),	/* HOST_WAKE */
-	GPIO_CFG(77, 0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),	/* PWR_EN */
-	GPIO_CFG(157, 0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),	/* RFR */
-	GPIO_CFG(141, 0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),	/* CTS */
-	GPIO_CFG(139, 0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),	/* Rx */
-	GPIO_CFG(140, 0, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),	/* Tx */
-};
-#endif
 
-#if 1
 static int bluetooth_power(int on)
 {
 	printk(KERN_DEBUG "Bluetooth power switch: %d\n", on);
-
 	gpio_set_value(77, on);
-
 	return 0;
 }
 
@@ -947,115 +907,9 @@ static void __init bt_power_init(void)
 		}
 	}
 	gpio_set_value(77, 0);
-
 	msm_bt_power_device.dev.platform_data = &bluetooth_power;
 	printk(KERN_DEBUG "Bluetooth power switch initialized\n");
 }
-#else
-static int bluetooth_power(int on)
-{
-	struct vreg *vreg_bt;
-	struct vreg *vreg_wlan;
-	int pin, rc;
-
-	vreg_bt = vreg_get(NULL, "gp6");
-
-	if (IS_ERR(vreg_bt)) {
-		printk(KERN_ERR "%s: vreg get failed (%ld)\n",
-		       __func__, PTR_ERR(vreg_bt));
-		return PTR_ERR(vreg_bt);
-	}
-
-	vreg_wlan = vreg_get(NULL, "wlan");
-
-	if (IS_ERR(vreg_wlan)) {
-		printk(KERN_ERR "%s: vreg get failed (%ld)\n",
-		       __func__, PTR_ERR(vreg_wlan));
-		return PTR_ERR(vreg_wlan);
-	}
-
-	if (on) {
-		for (pin = 0; pin < ARRAY_SIZE(bt_config_power_on); pin++) {
-			rc = gpio_tlmm_config(bt_config_power_on[pin],
-					      GPIO_ENABLE);
-			if (rc) {
-				printk(KERN_ERR
-				       "%s: gpio_tlmm_config(%#x)=%d\n",
-				       __func__, bt_config_power_on[pin], rc);
-				return -EIO;
-			}
-		}
-
-		rc = vreg_set_level(vreg_bt, PMIC_VREG_GP6_LEVEL);
-		if (rc) {
-			printk(KERN_ERR "%s: vreg bt set level failed (%d)\n",
-			       __func__, rc);
-			return -EIO;
-		}
-		rc = vreg_enable(vreg_bt);
-		if (rc) {
-			printk(KERN_ERR "%s: vreg bt enable failed (%d)\n",
-			       __func__, rc);
-			return -EIO;
-		}
-
-		rc = vreg_set_level(vreg_wlan, PMIC_VREG_WLAN_LEVEL);
-		if (rc) {
-			printk(KERN_ERR "%s: vreg wlan set level failed (%d)\n",
-			       __func__, rc);
-			return -EIO;
-		}
-		rc = vreg_enable(vreg_wlan);
-		if (rc) {
-			printk(KERN_ERR "%s: vreg wlan enable failed (%d)\n",
-			       __func__, rc);
-			return -EIO;
-		}
-
-		gpio_set_value(22, on);
-		gpio_set_value(18, on);
-	} else {
-		gpio_set_value(18, on);
-		gpio_set_value(22, on);
-
-		rc = vreg_disable(vreg_wlan);
-		if (rc) {
-			printk(KERN_ERR "%s: vreg wlan disable failed (%d)\n",
-			       __func__, rc);
-			return -EIO;
-		}
-		rc = vreg_disable(vreg_bt);
-		if (rc) {
-			printk(KERN_ERR "%s: vreg bt disable failed (%d)\n",
-			       __func__, rc);
-			return -EIO;
-		}
-
-		for (pin = 0; pin < ARRAY_SIZE(bt_config_power_off); pin++) {
-			rc = gpio_tlmm_config(bt_config_power_off[pin],
-					      GPIO_ENABLE);
-			if (rc) {
-				printk(KERN_ERR
-				       "%s: gpio_tlmm_config(%#x)=%d\n",
-				       __func__, bt_config_power_off[pin], rc);
-				return -EIO;
-			}
-		}
-	}
-
-	printk(KERN_DEBUG "Bluetooth power switch: %d\n", on);
-
-	return 0;
-}
-
-static void __init bt_power_init(void)
-{
-	msm_bt_power_device.dev.platform_data = &bluetooth_power;
-}
-#endif
-#else
-#define bt_power_init(x) do {} while (0)
-#endif
 
 static struct resource kgsl_resources[] = {
        {
@@ -1283,8 +1137,6 @@ static void config_gpio_table(uint32_t *table, int len)
 	for (n = 0; n < len; n++) {
 		rc = gpio_tlmm_config(table[n], GPIO_ENABLE);
 		if (rc) {
-			printk(KERN_ERR "%s: gpio_tlmm_config(%#x)=%d\n",
-				__func__, table[n], rc);
 			break;
 		}
 	}
@@ -1591,7 +1443,7 @@ static struct mmc_platform_data es209ra_sdcc_data1 = {
 };
 
 static struct mmc_platform_data es209ra_sdcc_data2 = {
-	.ocr_mask	= MMC_VDD_25_26 | MMC_VDD_26_27,
+	.ocr_mask	= MMC_VDD_27_28 | MMC_VDD_28_29,
 	.translate_vdd	= msm_sdcc_setup_power,
 	.mmc_bus_width  = MMC_CAP_4_BIT_DATA,
 };
@@ -1837,8 +1689,10 @@ static void __init es209ra_fixup(struct machine_desc *desc, struct tag *tags,
 	mi->nr_banks=2;
 	mi->bank[0].start = PHYS_OFFSET;
 	mi->bank[0].size = (232*1024*1024);
+	mi->bank[0].node = PHYS_TO_NID(mi->bank[0].start);
 	mi->bank[1].start = 0x30000000;
-	mi->bank[1].size = (127*1024*1024);
+	mi->bank[1].size = (128*1024*1024);
+	mi->bank[1].node = PHYS_TO_NID(mi->bank[1].start);
 }
 
 static void __init es209ra_map_io(void)
@@ -1847,7 +1701,6 @@ static void __init es209ra_map_io(void)
 	msm_map_qsd8x50_io();
 	es209ra_allocate_memory_regions();
 }
-
 
 MACHINE_START(ES209RA, "ES209RA")
 	.boot_params	= PHYS_OFFSET + 0x100,

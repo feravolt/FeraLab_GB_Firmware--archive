@@ -2,7 +2,7 @@
  *
  * Copyright (C) 2009 Google, Inc.
  * Copyright (C) 2009 HTC Corporation
- * Copyright (c) 2009, Code Aurora Forum. All rights reserved.
+ * Copyright (c) 2009, The Linux Foundation. All rights reserved.
  *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and
@@ -165,7 +165,7 @@ static ssize_t mp3_write(struct file *file, const char __user *buf,
 	return buf - start;
 }
 
-static int mp3_fsync(struct file *f, struct dentry *dentry, int datasync)
+static int mp3_fsync(struct file *f, int datasync)
 {
 	struct mp3 *mp3 = f->private_data;
 	if (mp3->ac)

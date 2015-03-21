@@ -1,21 +1,3 @@
-/* arch/arm/mach-msm/include/mach/msm_audio_aac.h
- *
- * Copyright (c) 2009, Code Aurora Forum. All rights reserved.
- *
- * This software is licensed under the terms of the GNU General Public
- * License version 2, as published by the Free Software Foundation, and
- * may be copied, distributed, and modified under those terms.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
- * See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, you can find it at http://www.fsf.org.
- *
- */
-
 #ifndef __MSM_AUDIO_AAC_H
 #define __MSM_AUDIO_AAC_H
 
@@ -32,10 +14,14 @@
 #define AUDIO_GET_AAC_ENC_CONFIG  _IOR(AUDIO_IOCTL_MAGIC, \
   (AUDIO_MAX_COMMON_IOCTL_NUM+4), struct msm_audio_aac_enc_config)
 
+#define AUDIO_SET_AAC_MIX_CONFIG  _IOR(AUDIO_IOCTL_MAGIC, \
+(AUDIO_MAX_COMMON_IOCTL_NUM+5), unsigned)
+
 #define AUDIO_AAC_FORMAT_ADTS		-1
 #define	AUDIO_AAC_FORMAT_RAW		0x0000
 #define	AUDIO_AAC_FORMAT_PSUEDO_RAW	0x0001
 #define AUDIO_AAC_FORMAT_LOAS		0x0002
+#define AUDIO_AAC_FORMAT_ADIF		0x0003
 
 #define AUDIO_AAC_OBJECT_LC            	0x0002
 #define AUDIO_AAC_OBJECT_LTP		0x0004
@@ -77,6 +63,7 @@ struct msm_audio_aac_config {
 	unsigned short sbr_ps_on_flag;
 	unsigned short dual_mono_mode;
 	unsigned short channel_configuration;
+	unsigned short sample_rate;
 };
 
 struct msm_audio_aac_enc_config {

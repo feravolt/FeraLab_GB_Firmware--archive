@@ -1,4 +1,4 @@
-/* Copyright (c) 2010, Code Aurora Forum. All rights reserved.
+/* Copyright (c) 2010, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -9,13 +9,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301, USA.
- *
  */
 
+#include <linux/slab.h>
 #include <linux/fs.h>
 #include <linux/module.h>
 #include <linux/miscdevice.h>
@@ -44,7 +40,10 @@ static long dtmf_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 	switch (cmd) {
 
 	case AUDIO_START: {
+		pr_debug("[%s:%s] AUDIO_START\n", __MM_FILE__, __func__);
 		if (dtmf->ac) {
+			pr_err("[%s:%s] active session already existing\n",
+				__MM_FILE__, __func__);
 			rc = -EBUSY;
 		} else {
 			dtmf->ac = q6audio_open_dtmf(48000, 2, 0);
@@ -57,6 +56,9 @@ static long dtmf_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 		rc = copy_from_user((void *)&dtmf->cfg, (void *)arg,
 					sizeof(struct msm_dtmf_config));
 
+		pr_debug("[%s:%s] PLAY_DTMF: high = %d, low = %d\n",
+			__MM_FILE__, __func__, dtmf->cfg.dtmf_hi,
+			dtmf->cfg.dtmf_low);
 		rc = q6audio_play_dtmf(dtmf->ac, dtmf->cfg.dtmf_hi,
 					dtmf->cfg.dtmf_low, dtmf->cfg.duration,
 					dtmf->cfg.rx_gain);
@@ -72,6 +74,7 @@ static long dtmf_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 	}
 	mutex_unlock(&dtmf->lock);
 
+	pr_debug("[%s:%s] rc = %d\n", __MM_FILE__, __func__, rc) ;
 	return rc;
 }
 
@@ -80,6 +83,7 @@ static int dtmf_open(struct inode *inode, struct file *file)
 	int rc = 0;
 
 	struct dtmf *dtmf;
+	pr_info("[%s:%s] open\n", __MM_FILE__, __func__);
 	dtmf = kzalloc(sizeof(struct dtmf), GFP_KERNEL);
 
 	if (!dtmf)
@@ -97,6 +101,7 @@ static int dtmf_release(struct inode *inode, struct file *file)
 	if (dtmf->ac)
 		q6audio_close(dtmf->ac);
 	kfree(dtmf);
+	pr_info("[%s:%s] release\n", __MM_FILE__, __func__);
 	return 0;
 }
 

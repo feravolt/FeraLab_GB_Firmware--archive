@@ -62,13 +62,7 @@ struct q6_device_info {
 #define CAD_HW_DEVICE_ID_DEFAULT_TX		0x0E
 #define CAD_HW_DEVICE_ID_DEFAULT_RX		0x0F
 
-#define CAD_HW_DEVICE_ID_BTDSP_SCO_MIC                      0x16
-#define CAD_HW_DEVICE_ID_BTDSP_SCO_SPKR                     0x17
-#define CAD_HW_DEVICE_ID_BTC_SCO_MIC                        0x18
-#define CAD_HW_DEVICE_ID_BTC_SCO_SPKR                       0x19
-#define CAD_HW_DEVICE_ID_BTCDSP_SCO_MIC                     0x1A
-#define CAD_HW_DEVICE_ID_BTCDSP_SCO_SPKR                    0x1B
-#define CAD_HW_DEVICE_ID_VREC_SPKR_MIC                      0x1C
+
 #define CAD_HW_DEVICE_ID_SPKR_PHONE_DUAL_MIC_BROADSIDE      0x2B
 #define CAD_HW_DEVICE_ID_SPKR_PHONE_DUAL_MIC_ENDFIRE        0x2D
 #define CAD_HW_DEVICE_ID_HANDSET_DUAL_MIC_BROADSIDE         0x2C
@@ -220,15 +214,6 @@ static struct q6_device_info q6_audio_devices[] = {
 		.hw	= Q6_HW_SPEAKER,
 	},
 	{
-		.id	= ADSP_AUDIO_DEVICE_ID_SPKR_PHONE_MIC,
-		.cad_id	= CAD_HW_DEVICE_ID_VREC_SPKR_MIC,
-		.path	= ADIE_PATH_SPEAKER_TX,
-		.rate   = 16000,
-		.dir	= Q6_TX,
-		.codec	= Q6_ICODEC_TX,
-		.hw	= Q6_HW_SPEAKER,
-	},
-	{
 		.id	= ADSP_AUDIO_DEVICE_ID_HANDSET_DUAL_MIC,
 		.cad_id	= CAD_HW_DEVICE_ID_HANDSET_DUAL_MIC_ENDFIRE,
 		.path	= ADIE_CODEC_HANDSET_SPKR_EF_TX,
@@ -276,7 +261,7 @@ static struct q6_device_info q6_audio_devices[] = {
 	{
 		.id	= ADSP_AUDIO_DEVICE_ID_BT_SCO_SPKR,
 		.cad_id	= CAD_HW_DEVICE_ID_BT_SCO_SPKR,
-		.path	= 0, /* No need to set ADIE path for Bluetooth. */
+		.path	= 0, /* XXX */
 		.rate   = 48000,
 		.dir	= Q6_RX,
 		.codec	= Q6_ECODEC_RX,
@@ -285,7 +270,7 @@ static struct q6_device_info q6_audio_devices[] = {
 	{
 		.id	= ADSP_AUDIO_DEVICE_ID_BT_A2DP_SPKR,
 		.cad_id	= CAD_HW_DEVICE_ID_BT_A2DP_SPKR,
-		.path	= 0, /* No need to set ADIE path for Bluetooth */
+		.path	= 0, /* XXX */
 		.rate   = 48000,
 		.dir	= Q6_RX,
 		.codec	= Q6_ECODEC_RX,
@@ -294,61 +279,7 @@ static struct q6_device_info q6_audio_devices[] = {
 	{
 		.id	= ADSP_AUDIO_DEVICE_ID_BT_SCO_MIC,
 		.cad_id	= CAD_HW_DEVICE_ID_BT_SCO_MIC,
-		.path	= 0, /* No need to set ADIE path for Bluetooth */
-		.rate   = 8000,
-		.dir	= Q6_TX,
-		.codec	= Q6_ECODEC_TX,
-		.hw	= Q6_HW_BT_SCO,
-	},
-	{
-		.id	= ADSP_AUDIO_DEVICE_ID_BT_SCO_SPKR,
-		.cad_id	= CAD_HW_DEVICE_ID_BTDSP_SCO_SPKR,
-		.path	= 0, /* No need to set ADIE path for Bluetooth */
-		.rate   = 48000,
-		.dir	= Q6_RX,
-		.codec	= Q6_ECODEC_RX,
-		.hw	= Q6_HW_BT_SCO,
-	},
-	{
-		.id	= ADSP_AUDIO_DEVICE_ID_BT_SCO_SPKR,
-		.cad_id	= CAD_HW_DEVICE_ID_BTC_SCO_SPKR,
-		.path	= 0, /* No need to set ADIE path for Bluetooth */
-		.rate   = 48000,
-		.dir	= Q6_RX,
-		.codec	= Q6_ECODEC_RX,
-		.hw	= Q6_HW_BT_SCO,
-	},
-	{
-		.id	= ADSP_AUDIO_DEVICE_ID_BT_SCO_SPKR,
-		.cad_id	= CAD_HW_DEVICE_ID_BTCDSP_SCO_SPKR,
-		.path	= 0, /* No need to set ADIE path for Bluetooth */
-		.rate   = 48000,
-		.dir	= Q6_RX,
-		.codec	= Q6_ECODEC_RX,
-		.hw	= Q6_HW_BT_SCO,
-	},
-	{
-		.id	= ADSP_AUDIO_DEVICE_ID_BT_SCO_MIC,
-		.cad_id	= CAD_HW_DEVICE_ID_BTDSP_SCO_MIC,
-		.path	= 0, /* No need to set ADIE path for Bluetooth */
-		.rate   = 8000,
-		.dir	= Q6_TX,
-		.codec	= Q6_ECODEC_TX,
-		.hw	= Q6_HW_BT_SCO,
-	},
-	{
-		.id	= ADSP_AUDIO_DEVICE_ID_BT_SCO_MIC,
-		.cad_id	= CAD_HW_DEVICE_ID_BTC_SCO_MIC,
-		.path	= 0, /* No need to set ADIE path for Bluetooth */
-		.rate   = 8000,
-		.dir	= Q6_TX,
-		.codec	= Q6_ECODEC_TX,
-		.hw	= Q6_HW_BT_SCO,
-	},
-	{
-		.id	= ADSP_AUDIO_DEVICE_ID_BT_SCO_MIC,
-		.cad_id	= CAD_HW_DEVICE_ID_BTCDSP_SCO_MIC,
-		.path	= 0, /* No need to set ADIE path for Bluetooth */
+		.path	= 0, /* XXX */
 		.rate   = 8000,
 		.dir	= Q6_TX,
 		.codec	= Q6_ECODEC_TX,
@@ -357,7 +288,7 @@ static struct q6_device_info q6_audio_devices[] = {
 	{
 		.id	= ADSP_AUDIO_DEVICE_ID_I2S_SPKR,
 		.cad_id	= CAD_HW_DEVICE_ID_I2S_RX,
-		.path	= 0, /* No need to set ADIE path for I2S. */
+		.path	= 0, /* XXX */
 		.rate   = 48000,
 		.dir	= Q6_RX,
 		.codec	= Q6_SDAC_RX,
@@ -366,11 +297,29 @@ static struct q6_device_info q6_audio_devices[] = {
 	{
 		.id	= ADSP_AUDIO_DEVICE_ID_I2S_MIC,
 		.cad_id	= CAD_HW_DEVICE_ID_I2S_TX,
-		.path	= 0, /* No need to set ADIE path for I2S. */
+		.path	= 0, /* XXX */
 		.rate   = 16000,
 		.dir	= Q6_TX,
 		.codec	= Q6_SDAC_TX,
 		.hw	= Q6_HW_SPEAKER,
+	},
+	{
+		.id	= ADSP_AUDIO_DEVICE_ID_AUXPCM_RX,
+		.cad_id	= CAD_HW_DEVICE_ID_BT_SCO_SPKR,
+		.path	= 0, /* XXX */
+		.rate   = 8000,
+		.dir	= Q6_RX,
+		.codec	= Q6_ECODEC_RX,
+		.hw	= Q6_HW_BT_SCO,
+	},
+	{
+		.id	= ADSP_AUDIO_DEVICE_ID_AUXPCM_TX,
+		.cad_id	= CAD_HW_DEVICE_ID_BT_SCO_MIC,
+		.path	= 0, /* XXX */
+		.rate   = 8000,
+		.dir	= Q6_TX,
+		.codec	= Q6_ECODEC_TX,
+		.hw	= Q6_HW_BT_SCO,
 	},
 	{
 		.id	= 0,

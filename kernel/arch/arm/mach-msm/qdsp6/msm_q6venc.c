@@ -1,21 +1,4 @@
-/* Copyright (c) 2008-2009, Code Aurora Forum. All rights reserved.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 and
- * only version 2 as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301, USA.
- *
- */
-
+#include <linux/slab.h>
 #include <linux/cdev.h>
 #include <linux/file.h>
 #include <linux/device.h>
@@ -26,8 +9,9 @@
 #include <linux/spinlock.h>
 #include <linux/uaccess.h>
 #include <linux/wakelock.h>
-#include <linux/android_pmem.h>
 #include <linux/msm_q6venc.h>
+#include <linux/android_pmem.h>
+#include <linux/cpuidle.h>
 #include "dal.h"
 
 #define DALDEVICEID_VENC_DEVICE         0x0200002D
@@ -1018,7 +1002,7 @@ static int q6venc_open(struct inode *inode, struct file *file)
 	int i;
 	int ret = 0;
 	struct venc_dev *dvenc;
-	struct venc_msg_list *plist;
+	struct venc_msg_list *plist, *tmp;
 	struct dal_info version_info;
 
 	dvenc = kzalloc(sizeof(struct venc_dev), GFP_KERNEL);
@@ -1073,7 +1057,7 @@ static int q6venc_open(struct inode *inode, struct file *file)
 err_venc_dal_open:
 	dal_detach(dvenc->q6_handle);
 err_venc_dal_attach:
-	list_for_each_entry(plist, &dvenc->venc_msg_list_free, list) {
+	list_for_each_entry_safe(plist, tmp, &dvenc->venc_msg_list_free, list) {
 		list_del(&plist->list);
 		kfree(plist);
 	}

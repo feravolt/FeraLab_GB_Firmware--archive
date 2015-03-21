@@ -1,19 +1,4 @@
-/* arch/arm/mach-msm/qdsp6/dal.c
- *
- * Copyright (C) 2009 Google, Inc.
- * Author: Brian Swetland <swetland@google.com>
- *
- * This software is licensed under the terms of the GNU General Public
- * License version 2, as published by the Free Software Foundation, and
- * may be copied, distributed, and modified under those terms.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- */
-
+#include <linux/slab.h>
 #include <linux/kernel.h>
 #include <linux/spinlock.h>
 #include <linux/mutex.h>
@@ -21,9 +6,7 @@
 #include <linux/sched.h>
 #include <linux/wait.h>
 #include <linux/errno.h>
-
 #include <linux/delay.h>
-
 #include <mach/msm_smd.h>
 #include <mach/debug_mm.h>
 #include <mach/msm_qdsp6_audio.h>
@@ -57,9 +40,7 @@ struct dal_trace {
 #define DAL_HDR_SIZE		(sizeof(struct dal_hdr))
 #define DAL_DATA_MAX		512
 #define DAL_MSG_MAX		(DAL_HDR_SIZE + DAL_DATA_MAX)
-
 #define DAL_VERSION		0x11
-
 #define DAL_MSGID_DDI		0x00
 #define DAL_MSGID_ATTACH	0x01
 #define DAL_MSGID_DETACH	0x02
@@ -69,25 +50,13 @@ struct dal_trace {
 struct dal_channel {
 	struct list_head list;
 	struct list_head clients;
-
-	/* synchronization for changing channel state,
-	 * adding/removing clients, smd callbacks, etc
-	 */
 	spinlock_t lock;
-
 	struct smd_channel *sch;
 	char *name;
-
-	/* events are delivered at IRQ context immediately, so
-	 * we only need one assembly buffer for the entire channel
-	 */
 	struct dal_hdr hdr;
 	unsigned char data[DAL_DATA_MAX];
-
 	unsigned count;
 	void *ptr;
-
-	/* client which the current inbound message is for */
 	struct dal_client *active;
 };
 
@@ -96,23 +65,14 @@ struct dal_client {
 	struct dal_channel *dch;
 	void *cookie;
 	dal_event_func_t event;
-
-	/* opaque handle for the far side */
 	void *remote;
-
-	/* dal rpc calls are fully synchronous -- only one call may be
-	 * active per client at a time
-	 */
 	struct mutex write_lock;
 	wait_queue_head_t wait;
-
 	unsigned char data[DAL_DATA_MAX];
-
 	void *reply;
 	int reply_max;
 	int status;
-	unsigned msgid; /* msgid of expected reply */
-
+	unsigned msgid;
 	spinlock_t tr_lock;
 	unsigned tr_head;
 	unsigned tr_tail;
@@ -243,12 +203,6 @@ check_data:
 		if (r != len)
 			panic("invalid read");
 
-#if DAL_TRACE
-		pr_info("[%s:%s] dal recv %p <- %p %02x:%04x:%02x %d\n",
-			__MM_FILE__, __func__, hdr->to, hdr->from, hdr->msgid,
-			hdr->ddi, hdr->prototype, hdr->length - sizeof(*hdr));
-		print_hex_dump_bytes("", DUMP_PREFIX_OFFSET, dch->ptr, len);
-#endif
 		dch->count = 0;
 
 		client = dch->active;
@@ -298,6 +252,7 @@ static struct dal_channel *dal_open_channel(const char *name, uint32_t cpu)
 {
 	struct dal_channel *dch;
 
+	pr_debug("[%s:%s]\n", __MM_FILE__, __func__);
 	mutex_lock(&dal_channel_list_lock);
 
 	list_for_each_entry(dch, &dal_channel_list, list) {
@@ -324,8 +279,7 @@ found_it:
 					__func__);
 			dch = NULL;
 		}
-		/* FIXME: wait for channel to open before returning */
-		msleep(100);
+		msleep(90);
 	}
 
 fail:
@@ -347,19 +301,10 @@ int dal_call_raw(struct dal_client *client,
 	client->msgid = hdr->msgid | DAL_MSGID_REPLY;
 	client->status = -EBUSY;
 
-#if DAL_TRACE
-	pr_info("[%s:%s:%x] dal send %p -> %p %02x:%04x:%02x %d\n",
-		__MM_FILE__, __func__, (unsigned int)client, hdr->from, hdr->to,
-		hdr->msgid, hdr->ddi, hdr->prototype,
-		hdr->length - sizeof(*hdr));
-	print_hex_dump_bytes("", DUMP_PREFIX_OFFSET, data, data_len);
-#endif
-
 	if (client->tr_log)
 		dal_trace_log(client, hdr, data, data_len);
 
 	spin_lock_irqsave(&dch->lock, flags);
-	/* FIXME: ensure entire message is written or none. */
 	smd_write(dch->sch, hdr, sizeof(*hdr));
 	smd_write(dch->sch, data, data_len);
 	spin_unlock_irqrestore(&dch->lock, flags);
@@ -425,6 +370,7 @@ struct dal_client *dal_attach(uint32_t device_id, const char *name,
 	unsigned long flags;
 	int r;
 
+	pr_debug("[%s:%s]\n", __MM_FILE__, __func__);
 	dch = dal_open_channel(name, cpu);
 	if (!dch)
 		return 0;
@@ -475,6 +421,7 @@ int dal_detach(struct dal_client *client)
 	struct dal_channel *dch;
 	unsigned long flags;
 
+	pr_debug("[%s:%s]\n", __MM_FILE__, __func__);
 	mutex_lock(&client->write_lock);
 	if (client->remote) {
 		struct dal_hdr hdr;
@@ -495,11 +442,6 @@ int dal_detach(struct dal_client *client)
 	dch = client->dch;
 	spin_lock_irqsave(&dch->lock, flags);
 	if (dch->active == client) {
-		/* We have received a message header for this client
-		 * but not the body of the message.  Ensure that when
-		 * the body arrives we don't write it into the now-closed
-		 * client.  In *theory* this should never happen.
-		 */
 		dch->active = 0;
 		dch->ptr = dch->data;
 	}
@@ -516,8 +458,6 @@ void *dal_get_remote_handle(struct dal_client *client)
 {
 	return client->remote;
 }
-
-/* convenience wrappers */
 
 int dal_call_f0(struct dal_client *client, uint32_t ddi, uint32_t arg1)
 {
@@ -605,6 +545,36 @@ int dal_call_f9(struct dal_client *client, uint32_t ddi, void *obuf,
 	if (res >= 4)
 		res = (int)tmp[0];
 
+	if (!res) {
+		if (tmp[1] > olen)
+			return -EIO;
+		memcpy(obuf, &tmp[2], tmp[1]);
+	}
+	return res;
+}
+
+int dal_call_f11(struct dal_client *client, uint32_t ddi, uint32_t s1,
+		void *obuf, uint32_t olen)
+{
+	uint32_t tmp[DAL_DATA_MAX/4] = {0};
+	int res;
+	int param_idx = 0;
+	int num_bytes = 4;
+
+	num_bytes += (DIV_ROUND_UP(olen, 4)) * 4;
+
+	if ((num_bytes > DAL_DATA_MAX - 12) || (olen > DAL_DATA_MAX - 8))
+		return -EINVAL;
+
+	tmp[param_idx] = s1;
+	param_idx++;
+	tmp[param_idx] = olen;
+	param_idx += DIV_ROUND_UP(olen, 4);
+
+	res = dal_call(client, ddi, 11, tmp, param_idx * 4, tmp, sizeof(tmp));
+
+	if (res >= 4)
+		res = (int) tmp[0];
 	if (!res) {
 		if (tmp[1] > olen)
 			return -EIO;
