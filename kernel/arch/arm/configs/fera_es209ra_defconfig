@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.32.28
-# Sun Mar 22 11:24:51 2015
+# Sun Mar 22 12:11:53 2015
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -809,8 +809,7 @@ CONFIG_ANDROID_PMEM=y
 # CONFIG_SEMCCLASS is not set
 CONFIG_SENSORS_ES209RA_PROXIMITY=y
 CONFIG_ES209RA_WLAN_POWER=y
-CONFIG_TSIF=y
-CONFIG_TSIF_CHRDEV=y
+# CONFIG_TSIF is not set
 # CONFIG_IFACE_STAT is not set
 # CONFIG_C2PORT is not set
 

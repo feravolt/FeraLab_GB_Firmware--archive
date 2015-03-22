@@ -937,23 +937,6 @@ static struct platform_device es209ra_audio_jack_device = {
     },
 };
 
-#define TSIF_A_SYNC      GPIO_CFG(106, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA)
-#define TSIF_A_DATA      GPIO_CFG(107, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA)
-#define TSIF_A_EN        GPIO_CFG(108, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA)
-#define TSIF_A_CLK       GPIO_CFG(109, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA)
-
-static const struct msm_gpio tsif_gpios[] = {
-	{ .gpio_cfg = TSIF_A_CLK,  .label =  "tsif_clk", },
-	{ .gpio_cfg = TSIF_A_EN,   .label =  "tsif_en", },
-	{ .gpio_cfg = TSIF_A_DATA, .label =  "tsif_data", },
-	{ .gpio_cfg = TSIF_A_SYNC, .label =  "tsif_sync", },
-};
-
-static struct msm_tsif_platform_data tsif_platform_data = {
-	.num_gpios = ARRAY_SIZE(tsif_gpios),
-	.gpios = tsif_gpios,
-};
-
 static int qsd8x50_tps65023_set_dcdc1(int mVolts)
 {
 	int rc = 0;
@@ -1243,7 +1226,6 @@ static struct platform_device *devices[] __initdata = {
 	&msm_bt_power_device,
 	&msm_device_uart_dm2,
 	&msm_device_kgsl,
-	&msm_device_tsif,
 	&hs_device,
 	&msm_camera_sensor_semc_imx046_camera,
 	&vibrator_device,
