@@ -1,28 +1,9 @@
-/*
- * leds-msm-pmic.c - MSM PMIC LEDs driver.
- *
- * Copyright (c) 2009, Code Aurora Forum. All rights reserved.
- *
- * This software is licensed under the terms of the GNU General Public
- * License version 2, as published by the Free Software Foundation, and
- * may be copied, distributed, and modified under those terms.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
- * See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, you can find it at http://www.fsf.org.
- */
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/platform_device.h>
 #include <linux/leds.h>
-
 #include <mach/pmic.h>
-
-#define MAX_KEYPAD_BL_LEVEL	16
+#define MAX_KEYPAD_BL_LEVEL 16
 
 static void msm_keypad_bl_led_set(struct led_classdev *led_cdev,
 	enum led_brightness value)
@@ -60,7 +41,6 @@ static int __devexit msm_pmic_led_remove(struct platform_device *pdev)
 	return 0;
 }
 
-#ifdef CONFIG_PM
 static int msm_pmic_led_suspend(struct platform_device *dev,
 		pm_message_t state)
 {
@@ -75,10 +55,6 @@ static int msm_pmic_led_resume(struct platform_device *dev)
 
 	return 0;
 }
-#else
-#define msm_pmic_led_suspend NULL
-#define msm_pmic_led_resume NULL
-#endif
 
 static struct platform_driver msm_pmic_led_driver = {
 	.probe		= msm_pmic_led_probe,

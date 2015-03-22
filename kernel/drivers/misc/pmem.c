@@ -52,53 +52,24 @@
 #define PMEM_32BIT_WORD_ORDER (5)
 #define PMEM_BITS_PER_WORD_MASK (BITS_PER_LONG - 1)
 
-#ifdef CONFIG_ANDROID_PMEM_DEBUG
-#define PMEM_DEBUG 1
-#else
 #define PMEM_DEBUG 0
-#endif
-
 #define SYSTEM_ALLOC_RETRY 10
-
-/* indicates that a refernce to this file has been taken via get_pmem_file,
- * the file should not be released until put_pmem_file is called */
 #define PMEM_FLAGS_BUSY 0x1
-/* indicates that this is a suballocation of a larger master range */
 #define PMEM_FLAGS_CONNECTED 0x1 << 1
-/* indicates this is a master and not a sub allocation and that it is mmaped */
 #define PMEM_FLAGS_MASTERMAP 0x1 << 2
-/* submap and unsubmap flags indicate:
- * 00: subregion has never been mmaped
- * 10: subregion has been mmaped, reference to the mm was taken
- * 11: subretion has ben released, refernece to the mm still held
- * 01: subretion has been released, reference to the mm has been released
- */
 #define PMEM_FLAGS_SUBMAP 0x1 << 3
 #define PMEM_FLAGS_UNSUBMAP 0x1 << 4
 
 struct pmem_data {
-	/* in alloc mode: an index into the bitmap
-	 * in no_alloc mode: the size of the allocation */
 	int index;
-	/* see flags above for descriptions */
 	unsigned int flags;
-	/* protects this data field, if the mm_mmap sem will be held at the
-	 * same time as this sem, the mm sem must be taken first (as this is
-	 * the order for vma_open and vma_close ops */
 	struct rw_semaphore sem;
-	/* info about the mmaping process */
 	struct vm_area_struct *vma;
-	/* task struct of the mapping process */
 	struct task_struct *task;
-	/* process id of teh mapping process */
 	pid_t pid;
-	/* file descriptor of the master */
 	int master_fd;
-	/* file struct of the master */
 	struct file *master_file;
-	/* a list of currently available regions if this is a suballocation */
 	struct list_head region_list;
-	/* a linked list of data so we can access them for debugging */
 	struct list_head list;
 #if PMEM_DEBUG
 	int ref;

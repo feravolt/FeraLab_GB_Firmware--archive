@@ -94,13 +94,14 @@ static int msm7227_platform_init_vib_hw(void)
 
 static struct msm_pmic_vibrator_platform_data vibrator_platform_data = {
         .min_voltage = 1200,
-        .max_voltage = 1800,
+        .max_voltage = 2100,
         .off_voltage = 0,
-        .default_voltage = 1400,
-        .mimimal_on_time = 20,
+        .default_voltage = 1800,
+        .mimimal_on_time = 10,
         .platform_set_vib_voltage = msm7227_platform_set_vib_voltage,
         .platform_init_vib_hw = msm7227_platform_init_vib_hw,
 };
+
 static struct platform_device vibrator_device = {
         .name = "msm_pmic_vibrator",
         .id = -1,
@@ -778,59 +779,6 @@ static void __init msm_mddi_tmd_fwvga_display_device_init(void)
 	platform_device_register(&mddi_tmd_wvga_display_device);
 }
 
-static struct resource msm_audio_resources[] = {
-	{
-		.flags  = IORESOURCE_DMA,
-	},
-	{
-		.name   = "aux_pcm_dout",
-		.start  = 68,
-		.end    = 68,
-		.flags  = IORESOURCE_IO,
-	},
-	{
-		.name   = "aux_pcm_din",
-		.start  = 69,
-		.end    = 69,
-		.flags  = IORESOURCE_IO,
-	},
-	{
-		.name   = "aux_pcm_syncout",
-		.start  = 70,
-		.end    = 70,
-		.flags  = IORESOURCE_IO,
-	},
-	{
-		.name   = "aux_pcm_clkin_a",
-		.start  = 71,
-		.end    = 71,
-		.flags  = IORESOURCE_IO,
-	},
-	{
-		.name	= "audio_base_addr",
-		.start	= 0xa0700000,
-		.end	= 0xa0700000 + 3,
-		.flags	= IORESOURCE_MEM,
-	},
-};
-
-static unsigned audio_gpio_on[] = {
-	GPIO_CFG(68, 1, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA),
-	GPIO_CFG(69, 1, GPIO_INPUT,  GPIO_NO_PULL, GPIO_2MA),
-	GPIO_CFG(70, 2, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA),
-	GPIO_CFG(71, 2, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA),
-};
-
-static void __init audio_gpio_init(void)
-{
-	int pin, rc;
-
-	for (pin = 0; pin < ARRAY_SIZE(audio_gpio_on); pin++) {
-		rc = gpio_tlmm_config(audio_gpio_on[pin],
-			GPIO_ENABLE);
-	}
-}
-
 static struct resource bluesleep_resources[] = {
 	{
 		.name	= "gpio_host_wake",
@@ -989,6 +937,22 @@ static struct platform_device es209ra_audio_jack_device = {
     },
 };
 
+#define TSIF_A_SYNC      GPIO_CFG(106, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA)
+#define TSIF_A_DATA      GPIO_CFG(107, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA)
+#define TSIF_A_EN        GPIO_CFG(108, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA)
+#define TSIF_A_CLK       GPIO_CFG(109, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA)
+
+static const struct msm_gpio tsif_gpios[] = {
+	{ .gpio_cfg = TSIF_A_CLK,  .label =  "tsif_clk", },
+	{ .gpio_cfg = TSIF_A_EN,   .label =  "tsif_en", },
+	{ .gpio_cfg = TSIF_A_DATA, .label =  "tsif_data", },
+	{ .gpio_cfg = TSIF_A_SYNC, .label =  "tsif_sync", },
+};
+
+static struct msm_tsif_platform_data tsif_platform_data = {
+	.num_gpios = ARRAY_SIZE(tsif_gpios),
+	.gpios = tsif_gpios,
+};
 
 static int qsd8x50_tps65023_set_dcdc1(int mVolts)
 {
@@ -1279,6 +1243,7 @@ static struct platform_device *devices[] __initdata = {
 	&msm_bt_power_device,
 	&msm_device_uart_dm2,
 	&msm_device_kgsl,
+	&msm_device_tsif,
 	&hs_device,
 	&msm_camera_sensor_semc_imx046_camera,
 	&vibrator_device,
@@ -1615,7 +1580,6 @@ static void __init es209ra_init(void)
 	es209ra_init_usb();
 	es209ra_init_mmc();
 	bt_power_init();
-	audio_gpio_init();
 	msm_device_i2c_init();
 	msm_qsd_spi_init();
 	i2c_register_board_info(0, msm_i2c_board_info,

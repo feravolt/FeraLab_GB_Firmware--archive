@@ -1,20 +1,3 @@
-/* include/asm/mach-msm/leds-cpld.c
- *
- * Copyright (C) 2008 HTC Corporation.
- *
- * Author: Farmer Tseng
- *
- * This software is licensed under the terms of the GNU General Public
- * License version 2, as published by the Free Software Foundation, and
- * may be copied, distributed, and modified under those terms.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- */
-
 #include <linux/module.h>
 #include <linux/init.h>
 #include <linux/slab.h>
@@ -30,7 +13,7 @@ static int _g_cpld_led_addr;
 
 struct CPLD_LED_data {
 	spinlock_t data_lock;
-	struct led_classdev leds[4];	/* blue, green, red */
+	struct led_classdev leds[4];
 };
 
 static ssize_t led_blink_solid_show(struct device *dev,
@@ -50,17 +33,13 @@ static ssize_t led_blink_solid_show(struct device *dev,
 		idx = 2;
 
 	CPLD_LED = container_of(led_cdev, struct CPLD_LED_data, leds[idx]);
-
 	spin_lock(&CPLD_LED->data_lock);
 	reg_val = readb(_g_cpld_led_addr);
 	reg_val = reg_val >> (2 * idx + 1);
 	reg_val &= 0x1;
 	spin_unlock(&CPLD_LED->data_lock);
-
-	/* no lock needed for this */
 	sprintf(buf, "%u\n", reg_val);
 	ret = strlen(buf) + 1;
-
 	return ret;
 }
 
@@ -86,9 +65,7 @@ static ssize_t led_blink_solid_store(struct device *dev,
 		idx = 2;
 
 	CPLD_LED = container_of(led_cdev, struct CPLD_LED_data, leds[idx]);
-
 	state = simple_strtoul(buf, &after, 10);
-
 	count = after - buf;
 
 	if (*after && isspace(*after))
@@ -127,11 +104,8 @@ static ssize_t cpldled_blink_all_show(struct device *dev,
 	else
 		reg_val = 0;
 	spin_unlock(&CPLD_LED->data_lock);
-
-	/* no lock needed for this */
 	sprintf(buf, "%u\n", reg_val);
 	ret = strlen(buf) + 1;
-
 	return ret;
 }
 
@@ -147,9 +121,7 @@ static ssize_t cpldled_blink_all_store(struct device *dev,
 	struct CPLD_LED_data *CPLD_LED = dev_get_drvdata(dev);
 
 	state = simple_strtoul(buf, &after, 10);
-
 	count = after - buf;
-
 	if (*after && isspace(*after))
 		count++;
 
@@ -165,7 +137,6 @@ static ssize_t cpldled_blink_all_store(struct device *dev,
 		writeb(reg_val, _g_cpld_led_addr);
 		spin_unlock(&CPLD_LED->data_lock);
 	}
-
 	return ret;
 }
 
@@ -297,7 +268,7 @@ static int CPLD_LED_probe(struct platform_device *pdev)
 
 	spin_lock_init(&CPLD_LED->data_lock);
 
-	for (i = 0; i < 4; i++) {	/* red, green, blue jogball */
+	for (i = 0; i < 4; i++) {
 		ret = led_classdev_register(&pdev->dev, &CPLD_LED->leds[i]);
 		if (ret) {
 			printk(KERN_ERR
@@ -372,7 +343,6 @@ static int __devexit CPLD_LED_remove(struct platform_device *pdev)
 	device_remove_file(&pdev->dev, &dev_attr_blink_all);
 	device_remove_file(&pdev->dev, &dev_attr_grppwm);
 	device_remove_file(&pdev->dev, &dev_attr_grpfreq);
-
 	kfree(CPLD_LED);
 	return 0;
 }
