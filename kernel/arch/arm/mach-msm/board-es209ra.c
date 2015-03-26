@@ -581,7 +581,7 @@ static struct spi_board_info msm_spi_board_info[] __initdata = {
 		.irq		= INT_ES209RA_GPIO_TOUCHPAD,
 		.bus_num	= 0,
 		.chip_select	= 0,
-		.max_speed_hz	= 1000000,
+		.max_speed_hz	= 500000,
 		.platform_data  = &es209ra_touch_data,
 	}
 };
@@ -705,34 +705,6 @@ static void __init msm_fb_add_devices(void)
 	msm_fb_register_device("emdh", &mddi_pdata);
 	msm_fb_register_device("tvenc", 0);
 	msm_fb_register_device("lcdc", 0);
-}
-
-static unsigned audio_gpio_on[] = {
-	GPIO_CFG(68, 1, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA),
-	GPIO_CFG(69, 1, GPIO_INPUT,  GPIO_NO_PULL, GPIO_2MA),
-	GPIO_CFG(70, 2, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA),
-	GPIO_CFG(71, 2, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA),
-	GPIO_CFG(142, 2, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA),
-	GPIO_CFG(143, 1, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA),
-	GPIO_CFG(144, 1, GPIO_INPUT, GPIO_PULL_DOWN, GPIO_2MA),
-	GPIO_CFG(145, 1, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA),
-	GPIO_CFG(146, 2, GPIO_OUTPUT, GPIO_NO_PULL, GPIO_2MA),
-};
-
-static void __init audio_gpio_init(void)
-{
-	int pin, rc;
-
-	for (pin = 0; pin < ARRAY_SIZE(audio_gpio_on); pin++) {
-		rc = gpio_tlmm_config(audio_gpio_on[pin],
-			GPIO_ENABLE);
-		if (rc) {
-			printk(KERN_ERR
-				"%s: gpio_tlmm_config(%#x)=%d\n",
-				__func__, audio_gpio_on[pin], rc);
-			return;
-		}
-	}
 }
 
 #define NT35580_GPIO_XRST 100
@@ -1590,7 +1562,6 @@ static void __init es209ra_init(void)
 	es209ra_init_usb();
 	es209ra_init_mmc();
 	bt_power_init();
-	audio_gpio_init();
 	msm_device_i2c_init();
 	msm_qsd_spi_init();
 	i2c_register_board_info(0, msm_i2c_board_info,

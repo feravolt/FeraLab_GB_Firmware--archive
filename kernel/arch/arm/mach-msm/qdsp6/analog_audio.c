@@ -7,7 +7,7 @@
 #include <asm/mach-types.h>
 #include <mach/debug_mm.h>
 
-#define GPIO_HEADSET_AMP 157
+#define GPIO_HEADSET_AMP 149
 #define GPIO_SPEAKER_AMP 39
 #define GPIO_HEADSET_SHDN_N 48
 

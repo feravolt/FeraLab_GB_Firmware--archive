@@ -96,7 +96,7 @@ static unsigned long ksm_max_kernel_pages;
 static unsigned int ksm_thread_pages_to_scan = 100;
 
 /* Milliseconds ksmd should sleep between batches */
-static unsigned int ksm_thread_sleep_millisecs = 3600;
+static unsigned int ksm_thread_sleep_millisecs = 4500;
 
 static bool use_deferred_timer;
 

@@ -1307,7 +1307,6 @@ static void _audio_tx_clk_enable(void)
 		ecodec_clk_enable();
 		break;
 	case Q6_SDAC_TX:
-		/* TODO: In QCT BSP, clk rate was set to 20480000 */
 		sdac_clk_refcount++;
 		if (sdac_clk_refcount == 1) {
 			clk_set_rate(sdac_clk, 12288000);
