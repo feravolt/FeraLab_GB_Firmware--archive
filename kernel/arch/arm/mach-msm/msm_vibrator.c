@@ -9,7 +9,7 @@
 #define PM_LIBPROG      0x30000061
 #define PM_LIBVERS      0x10001
 #define HTC_PROCEDURE_SET_VIB_ON_OFF	22
-#define PMIC_VIBRATOR_LEVEL	(2500)
+#define PMIC_VIBRATOR_LEVEL	(2100)
 
 static struct work_struct work_vibrator;
 static struct hrtimer vibe_timer;

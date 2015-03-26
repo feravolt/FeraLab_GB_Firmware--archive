@@ -16,4 +16,3 @@ obj-y += audio_ctl.o
 obj-y += msm_q6vdec.o
 obj-y += msm_q6venc.o
 obj-y += dsp_debug.o
-obj-$(CONFIG_QSD_AUDIO) += audiov2/

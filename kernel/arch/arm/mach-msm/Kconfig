@@ -751,38 +751,6 @@ config MSM_CPU_FREQ_MIN
 
 endif # CPU_FREQ_MSM
 
-config MSM_HW3D
-	tristate "MSM Hardware 3D Register Driver"
-	depends on ANDROID_PMEM
-	default y
-	help
-	  Provides access to registers needed by the userspace OpenGL|ES
-	  library.
-
-config MSM_ADSP
-	depends on (ARCH_MSM7X01A || ARCH_MSM7X25 || ARCH_MSM7X27)
-	tristate "MSM ADSP driver"
-	depends on ANDROID_PMEM
-	default y
-	help
-	  Provides access to registers needed by the userspace aDSP library.
-
-config MSM_ADSP_REPORT_EVENTS
-	bool "Report modem events from the DSP"
-	default y
-	depends on (MSM_ADSP || MSM7KV2_AUDIO)
-	help
-	  Normally, only messages from the aDSP are reported to userspace.
-	  With this option, we report events from the aDSP as well.
-
-config MSM7KV2_AUDIO
-	bool "MSM7K v2 audio"
-	depends on (ARCH_MSM7X30 && ANDROID_PMEM)
-	default y
-	help
-	  Enables QDSP5V2-based audio drivers for audio playbacks and
-	  voice call.
-
 config MSM_VREG_SWITCH_INVERTED
 	bool "Reverse vreg switch polarity"
 	default n
@@ -813,26 +781,6 @@ config WIFI_MEM_PREALLOC
 	bool "Preallocate memory for WiFi buffers"
 	help
 	  Preallocates memory buffers for WiFi driver
-
-config QSD_AUDIO
-	bool "QSD audio"
-	depends on ARCH_MSM_SCORPION && MSM_DALRPC && ANDROID_PMEM
-	default y
-	help
-	  Provides PCM, MP3, and AAC audio playback.
-
-config AUDIO_AAC_PLUS
-	bool "AAC+ Audio"
-	default y
-	help
-	  Provides AAC+ decoding
-
-config AUDIO_ENHANCED_AAC_PLUS
-	depends on AUDIO_AAC_PLUS
-	bool "Enhanced AAC+ Audio"
-	default y
-	help
-	  Provides Enhanced AAC+ decoding
 
 config SURF_FFA_GPIO_KEYPAD
 	bool "MSM SURF/FFA GPIO keypad"
@@ -929,12 +877,6 @@ config ES209RA_INPUT_GPIO_MATRIX
 	  Difference from the common driver is as follows:
 	   1. Support discard timer for long key press.
 	   2. Pull-up the KR line when the other KR line is being driven.
-
-config AUDIO_QDSP_AMP_GPIO_CTRL
-	bool "Enable audio qdsp amp gpio ctrl"
-	default n
-	help
-	  Enable GPIO control of audio qdsp amplifier.
 
 config MSM_SPM
 	bool "Subsystem Power Manager"
