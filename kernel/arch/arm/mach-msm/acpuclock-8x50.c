@@ -16,7 +16,7 @@
 #define SIMPLE_SLEW		6
 #define COMPLEX_SLEW		7
 #define VREF_SEL		1
-#define V_STEP			25
+#define V_STEP			(25 * (2 - VREF_SEL))
 #define L_VAL_384MHZ		0xA
 #define L_VAL_768MHZ		0x14
 #define SEMC_ACPU_MIN_UV_MV	950U
@@ -52,39 +52,39 @@ struct clkctl_acpu_speed {
 };
 
 #ifdef CONFIG_X10_UNDERVOLT
-struct clkctl_acpu_speed acpu_freq_tbl_1267[] = {
-	{0, 19200, ACPU_PLL_TCXO, 0, 0, 0, 0, 14000, 0, 0, 1000},
-	{0, 192000, ACPU_PLL_1, 1, 5, 0, 0, 14000, 2, 0, 1000},
-	{1, 245760, ACPU_PLL_0, 4, 0, 0, 0, 29000, 0, 0, 1025},
-	{1, 384000, ACPU_PLL_3, 0, 0, 0, 0, 58000, 1, 0xA, 1025},
-	{0, 422400, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xB, 1025},
-	{0, 460800, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xC, 1025},
-	{0, 499200, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xD, 1050},
-	{0, 537600, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xE, 1050},
-	{1, 576000, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xF, 1050},
-	{0, 614400, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0x10, 1075},
-	{0, 652800, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0x11, 1075},
-	{0, 691200, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0x12, 1100},
-	{0, 729600, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0x13, 1100},
-	{1, 768000, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x14, 1125},
-	{0, 806400, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x15, 1150},
-	{0, 844800, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x16, 1175},
-	{0, 883200, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x17, 1200},
-	{0, 921600, ACPU_PLL_3, 0, 0, 0, 0, 160000, 1, 0x18, 1250},
-	{0, 960000, ACPU_PLL_3, 0, 0, 0, 0, 160000, 1, 0x19, 1250},
-	{1, 998400, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1A, 1300},
-	{1, 1036800, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1B, 1300},
-	{1, 1075200, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1C, 1300},
-	{1, 1113600, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1D, 1325},
-	{1, 1152000, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1E, 1325},
-	{1, 1190400, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1F, 1350},
-	{1, 1228800, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x20, 1375},
-	{1, 1267200, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x21, 1425},
-	{1, 1305600, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x22, 1425},
-	{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+struct clkctl_acpu_speed acpu_freq_tbl_1305[] = {
+	{ 0, 19200, ACPU_PLL_TCXO, 0, 0, 0, 0, 14000, 0, 0, 1000},
+	{ 0, 192000, ACPU_PLL_1, 1, 5, 0, 0, 14000, 2, 0, 1000},
+	{ 1, 245760, ACPU_PLL_0, 4, 0, 0, 0, 29000, 0, 0, 1000},
+	{ 1, 384000, ACPU_PLL_3, 0, 0, 0, 0, 58000, 1, 0xA, 1025},
+	{ 0, 422400, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xB, 1025},
+	{ 0, 460800, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xC, 1025},
+	{ 0, 499200, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xD, 1050},
+	{ 0, 537600, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xE, 1050},
+	{ 1, 576000, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0xF, 1050},
+	{ 0, 614400, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0x10, 1075},
+	{ 0, 652800, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0x11, 1075},
+	{ 0, 691200, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0x12, 1100},
+	{ 0, 729600, ACPU_PLL_3, 0, 0, 0, 0, 117000, 1, 0x13, 1100},
+	{ 1, 768000, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x14, 1125},
+	{ 0, 806400, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x15, 1150},
+	{ 0, 844800, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x16, 1175},
+	{ 0, 883200, ACPU_PLL_3, 0, 0, 0, 0, 128000, 1, 0x17, 1200},
+	{ 0, 921600, ACPU_PLL_3, 0, 0, 0, 0, 160000, 1, 0x18, 1250},
+	{ 0, 960000, ACPU_PLL_3, 0, 0, 0, 0, 160000, 1, 0x19, 1250},
+	{ 1, 998400, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1A, 1300},
+	{ 1, 1036800, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1B, 1300},
+	{ 1, 1075200, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1C, 1300},
+	{ 1, 1113600, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1D, 1325},
+	{ 1, 1152000, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1E, 1325},
+	{ 1, 1190400, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x1F, 1350},
+	{ 1, 1228800, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x20, 1375},
+	{ 1, 1267200, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x21, 1425},
+	{ 1, 1305600, ACPU_PLL_3, 0, 0, 0, 0, 192000, 1, 0x22, 1425},
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 };
 #else
-struct clkctl_acpu_speed acpu_freq_tbl_1267[] = {
+struct clkctl_acpu_speed acpu_freq_tbl_1305[] = {
 	{ 0, 19200, ACPU_PLL_TCXO, 0, 0, 0, 0, 14000, 0, 0, 1000 },
 	{ 0, 192000, ACPU_PLL_1, 1, 5, 0, 0, 14000, 2, 0, 1000 },
 	{ 1, 245760, ACPU_PLL_0, 4, 0, 0, 0, 29000, 0, 0, 1000 },
@@ -116,7 +116,7 @@ struct clkctl_acpu_speed acpu_freq_tbl_1267[] = {
 };
 #endif
 
-static struct clkctl_acpu_speed *acpu_freq_tbl = acpu_freq_tbl_1267;
+static struct clkctl_acpu_speed *acpu_freq_tbl = acpu_freq_tbl_1305;
 #define AXI_S	(&acpu_freq_tbl[1])
 #define PLL0_S	(&acpu_freq_tbl[2])
 #define POWER_COLLAPSE_KHZ 192000
@@ -183,7 +183,7 @@ static void scpll_set_freq(uint32_t lval, unsigned freq_switch)
 	writel(regval, SCPLL_CTL_ADDR);
 	dmb();
 	while (readl(SCPLL_STATUS_ADDR) & 0x1);
-	udelay(63);
+	udelay(90);
 }
 static void scpll_apps_enable(bool state)
 {
@@ -227,7 +227,7 @@ static void scpll_init(void)
 	regval |= (0x7);
 	writel(regval, SCPLL_CTL_ADDR);
 	while (readl(SCPLL_STATUS_ADDR) & 0x1);
-	udelay(450);
+	udelay(720);
 	regval = readl(SCPLL_FSM_CTL_EXT_ADDR);
 	regval &= ~(0x3f << 3);
 	regval |= (L_VAL_768MHZ << 3);
@@ -238,7 +238,7 @@ static void scpll_init(void)
 	regval |= (0x7);
 	writel(regval, SCPLL_CTL_ADDR);
 	while (readl(SCPLL_STATUS_ADDR) & 0x1);
-	udelay(63);
+	udelay(90);
 	scpll_apps_enable(0);
 }
 
@@ -454,7 +454,6 @@ static void __init acpu_freq_tbl_fixup(void)
 	uint32_t tcsr_spare2, pll0_m_val;
 	unsigned int max_acpu_khz;
 	unsigned int i;
-
 	ct_csr_base = ioremap(CT_CSR_PHYS, PAGE_SIZE);
 	BUG_ON(ct_csr_base == NULL);
 	tcsr_spare2 = readl(TCSR_SPARE2_ADDR);
@@ -462,19 +461,10 @@ static void __init acpu_freq_tbl_fixup(void)
 	if ((tcsr_spare2 & 0xF000) != 0xA000) {
 		pr_info("Efuse data on Max ACPU freq not present.\n");
 		goto skip_efuse_fixup;
+	} else {
+	  	max_acpu_khz = 1305600;
+		pr_info("Max ACPU freq from efuse data is %d KHz\n", max_acpu_khz);
 	}
-
-	switch (tcsr_spare2 & 0xF0) {
-	case 0x30:
-	case 0x00:
-	case 0x10:
-		max_acpu_khz = 1305600;
-		break;
-	default:
-		goto skip_efuse_fixup;
-	}
-
-	pr_info("Max ACPU freq from efuse data is %d KHz\n", max_acpu_khz);
 
 	for (i = 0; acpu_freq_tbl[i].acpuclk_khz != 0; i++) {
 		if (acpu_freq_tbl[i].acpuclk_khz > max_acpu_khz) {
@@ -556,7 +546,6 @@ void acpuclk_set_vdd(unsigned int khz, int vdd)
 			new_vdd = min(max((unsigned int)vdd, SEMC_ACPU_MIN_UV_MV), SEMC_ACPU_MAX_UV_MV);
 		else continue;
 		acpu_freq_tbl[i].vdd = new_vdd;
-
 	}
 	mutex_unlock(&drv_state.lock);
 }

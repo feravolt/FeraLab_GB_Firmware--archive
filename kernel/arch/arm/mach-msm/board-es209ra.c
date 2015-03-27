@@ -950,7 +950,9 @@ static int qsd8x50_tps65023_set_dcdc1(int mVolts)
 static struct msm_acpu_clock_platform_data qsd8x50_clock_data = {
 	.acpu_switch_time_us = 20,
 	.max_speed_delta_khz = 256000,
-	.vdd_switch_time_us = 62,
+	.power_collapse_khz  = 192000,
+	.wait_for_irq_khz    = 245760,
+	.vdd_switch_time_us  = 62,
 	.max_vdd = TPS65023_MAX_DCDC1,
 	.acpu_set_vdd = qsd8x50_tps65023_set_dcdc1,
 };
@@ -1465,7 +1467,7 @@ static void msm_i2c_gpio_config(int iface, int config_type)
 }
 
 static struct msm_i2c_platform_data msm_i2c_pdata = {
-	.clk_freq = 384000,
+	.clk_freq = 100000,
 	.rsl_id = SMEM_SPINLOCK_I2C,
 	.pri_clk = 95,
 	.pri_dat = 96,
