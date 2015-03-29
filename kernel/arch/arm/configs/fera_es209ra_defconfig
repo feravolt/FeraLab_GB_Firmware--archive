@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.32.28
-# Fri Mar 27 00:14:33 2015
+# Sun Mar 29 22:09:13 2015
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -271,7 +271,7 @@ CONFIG_CPU_CP15_MMU=y
 # Processor Features
 #
 CONFIG_ARM_THUMB=y
-# CONFIG_ARM_THUMBEE is not set
+CONFIG_ARM_THUMBEE=y
 # CONFIG_CPU_ICACHE_DISABLE is not set
 # CONFIG_CPU_DCACHE_DISABLE is not set
 CONFIG_CPU_CACHE_ERR_REPORT=y
@@ -331,7 +331,7 @@ CONFIG_ALIGNMENT_TRAP=y
 #
 CONFIG_ZBOOT_ROM_TEXT=0x0
 CONFIG_ZBOOT_ROM_BSS=0x0
-CONFIG_CMDLINE="console=ttyMSM0 cgroup_disable=memory g_android.product_id=0x312E"
+CONFIG_CMDLINE="console=ttyMSM0 cgroup_disable=memory g_android.product_id=0x312E vmalloc=293M"
 # CONFIG_XIP_KERNEL is not set
 CONFIG_KEXEC=y
 # CONFIG_CRASH_DUMP is not set

@@ -1,15 +1,3 @@
-/*
- *  linux/arch/arm/mm/proc-v7.S
- *
- *  Copyright (C) 2001 Deep Blue Solutions Ltd.
- *  Copyright (c) 2009, Code Aurora Forum. All rights reserved.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation.
- *
- *  This is the "shell" of the ARMv7 processor support.
- */
 #include <linux/linkage.h>
 #include <asm/assembler.h>
 #include <asm/domain.h>
@@ -17,7 +5,6 @@
 #include <asm/hwcap.h>
 #include <asm/pgtable-hwdef.h>
 #include <asm/pgtable.h>
-
 #include "proc-macros.S"
 
 #define TTB_C		(1 << 0)
@@ -26,7 +13,6 @@
 #define TTB_RGN_OC_WBWA	(1 << 3)
 #define TTB_RGN_OC_WT	(2 << 3)
 #define TTB_RGN_OC_WB	(3 << 3)
-
 #ifndef CONFIG_SMP
 #define TTB_FLAGS	TTB_C|TTB_RGN_OC_WB		@ mark PTWs cacheable, outer WB
 #else
@@ -41,29 +27,18 @@ ENTRY(cpu_v7_proc_fin)
 	mov	pc, lr
 ENDPROC(cpu_v7_proc_fin)
 
-/*
- *	cpu_v7_reset(loc)
- *
- *	Perform a soft reset of the system.  Put the CPU into the
- *	same state as it would be if it had been reset, and branch
- *	to what would be the reset vector.
- *
- *	- loc   - location to jump to for soft reset
- *
- *	It is assumed that:
- */
 	.align	5
 ENTRY(cpu_v7_reset)
-	mov	pc, r0
+	mrc     p15, 0, r1, c1, c0, 0           @ ctrl register
+	bic     r1, r1, #0x0001                 @ ...............m
+        mcr     p15, 0, r1, c1, c0, 0           @ Turn off MMU
+        mcr     p15, 0, ip, c8, c7, 0           @ invalidate I & D,flush TLB
+        mcr     p15, 0, ip, c7, c5, 6           @ flush BTC
+        dsb
+        isb
+	mov     pc,r0
 ENDPROC(cpu_v7_reset)
 
-/*
- *	cpu_v7_do_idle()
- *
- *	Idle the processor (eg, wait for interrupt).
- *
- *	IRQs are already disabled.
- */
 ENTRY(cpu_v7_do_idle)
 	dsb					@ WFI may enter a low-power mode
 	wfi
@@ -82,16 +57,6 @@ ENTRY(cpu_v7_dcache_clean_area)
 	mov	pc, lr
 ENDPROC(cpu_v7_dcache_clean_area)
 
-/*
- *	cpu_v7_switch_mm(pgd_phys, tsk)
- *
- *	Set the translation table base pointer to be pgd_phys
- *
- *	- pgd_phys - physical address of new TTB
- *
- *	It is assumed that:
- *	- we are not using split page tables
- */
 ENTRY(cpu_v7_switch_mm)
 #ifdef CONFIG_MMU
 #ifdef CONFIG_EMULATE_DOMAIN_MANAGER_V7
@@ -112,44 +77,27 @@ cpu_v7_switch_mm_private:
 	mov	pc, lr
 ENDPROC(cpu_v7_switch_mm)
 
-/*
- *	cpu_v7_set_pte_ext(ptep, pte)
- *
- *	Set a level 2 translation table entry.
- *
- *	- ptep  - pointer to level 2 translation table entry
- *		  (hardware version is stored at -1024 bytes)
- *	- pte   - PTE value to store
- *	- ext	- value for extended PTE bits
- */
 ENTRY(cpu_v7_set_pte_ext)
 #ifdef CONFIG_MMU
 	str	r1, [r0], #-2048		@ linux version
-
 	bic	r3, r1, #0x000003f0
 	bic	r3, r3, #PTE_TYPE_MASK
 	orr	r3, r3, r2
 	orr	r3, r3, #PTE_EXT_AP0 | 2
-
 	tst	r1, #1 << 4
 	orrne	r3, r3, #PTE_EXT_TEX(1)
-
 	tst	r1, #L_PTE_WRITE
 	tstne	r1, #L_PTE_DIRTY
 	orreq	r3, r3, #PTE_EXT_APX
-
 	tst	r1, #L_PTE_USER
 	orrne	r3, r3, #PTE_EXT_AP1
 	tstne	r3, #PTE_EXT_APX
 	bicne	r3, r3, #PTE_EXT_APX | PTE_EXT_AP0
-
 	tst	r1, #L_PTE_EXEC
 	orreq	r3, r3, #PTE_EXT_XN
-
 	tst	r1, #L_PTE_YOUNG
 	tstne	r1, #L_PTE_PRESENT
 	moveq	r3, #0
-
 	str	r3, [r0]
 	mcr	p15, 0, r0, c7, c10, 1		@ flush_pte
 #endif
@@ -159,24 +107,8 @@ ENDPROC(cpu_v7_set_pte_ext)
 cpu_v7_name:
 	.ascii	"ARMv7 Processor"
 	.align
-
 	.section ".text.init", #alloc, #execinstr
 
-/*
- *	__v7_setup
- *
- *	Initialise TLB, Caches, and MMU state ready to switch the MMU
- *	on.  Return in r0 the new CP15 C1 control register setting.
- *
- *	We automatically detect if we have a Harvard cache, and use the
- *	Harvard cache control instructions insead of the unified cache
- *	control instructions.
- *
- *	This should be able to cover all ARMv7 cores.
- *
- *	It is assumed that:
- *	- cache type register is implemented
- */
 __v7_setup:
 #ifdef CONFIG_SMP
 	mrc p15, 0, r0, c1, c0, 1
@@ -226,12 +158,6 @@ __v7_setup:
 	mov	pc, lr				@ return to head.S:__ret
 ENDPROC(__v7_setup)
 
-	/*   AT
-	 *  TFR   EV X F   I D LR
-	 * .EEE ..EE PUI. .T.T 4RVI ZFRS BLDP WCAM
-	 * rxxx rrxx xxx0 0101 xxxx xxxx x111 xxxx < forced
-	 *    1    0 110       0011 1.00 .111 1101 < we want
-	 */
 	.type	v7_crval, #object
 v7_crval:
 	crval	clear=0x0120c302, mmuset=0x10c0387d, ucset=0x00c0187c
@@ -251,7 +177,6 @@ ENTRY(v7_processor_functions)
 	.word	cpu_v7_switch_mm
 	.word	cpu_v7_set_pte_ext
 	.size	v7_processor_functions, . - v7_processor_functions
-
 	.type	cpu_arch_name, #object
 cpu_arch_name:
 	.asciz	"armv7"
@@ -262,12 +187,7 @@ cpu_elf_name:
 	.asciz	"v7"
 	.size	cpu_elf_name, . - cpu_elf_name
 	.align
-
 	.section ".proc.info.init", #alloc, #execinstr
-
-	/*
-	 * Match any ARMv7 processor core.
-	 */
 	.type	__v7_proc_info, #object
 __v7_proc_info:
 	.long	0x000f0000		@ Required ID value

@@ -22,9 +22,6 @@
 #ifdef CONFIG_KEXEC
 #include <linux/kexec.h>
 #endif
-#ifdef CONFIG_CRASH_DUMP
-#include <linux/crash_dump.h>
-#endif
 #include <asm/cpu.h>
 #include <asm/cputype.h>
 #include <asm/elf.h>
@@ -65,9 +62,9 @@ extern void reboot_setup(char *str);
 
 unsigned int processor_id;
 EXPORT_SYMBOL(processor_id);
-unsigned int __machine_arch_type;
+unsigned int __machine_arch_type __read_mostly;
 EXPORT_SYMBOL(__machine_arch_type);
-unsigned int cacheid;
+unsigned int cacheid __read_mostly;;
 EXPORT_SYMBOL(cacheid);
 
 unsigned int __atags_pointer __initdata;
@@ -81,24 +78,24 @@ EXPORT_SYMBOL(system_serial_low);
 unsigned int system_serial_high;
 EXPORT_SYMBOL(system_serial_high);
 
-unsigned int elf_hwcap;
+unsigned int elf_hwcap __read_mostly;
 EXPORT_SYMBOL(elf_hwcap);
 
 
 #ifdef MULTI_CPU
-struct processor processor;
+struct processor processor __read_mostly;
 #endif
 #ifdef MULTI_TLB
-struct cpu_tlb_fns cpu_tlb;
+struct cpu_tlb_fns cpu_tlb __read_mostly;
 #endif
 #ifdef MULTI_USER
-struct cpu_user_fns cpu_user;
+struct cpu_user_fns cpu_user __read_mostly;
 #endif
 #ifdef MULTI_CACHE
-struct cpu_cache_fns cpu_cache;
+struct cpu_cache_fns cpu_cache __read_mostly;
 #endif
 #ifdef CONFIG_OUTER_CACHE
-struct outer_cache_fns outer_cache;
+struct outer_cache_fns outer_cache __read_mostly;
 #endif
 
 struct stack {
@@ -518,43 +515,6 @@ setup_ramdisk(int doload, int prompt, int image_start, unsigned int rd_sz)
 #endif
 }
 
-#if defined(CONFIG_CRASH_DUMP)
-#define CAPTURE_KERNEL_MEM_SIZE (7*1024*1024)
-static void __init
-reserve_crashkernel_mem(struct resource *res)
-{
-	unsigned long crashk_base;
-	unsigned long crashk_size;
-
-	if (res)
-		crashk_base = ((res->end + 1) -
-				CAPTURE_KERNEL_MEM_SIZE) & (~(SZ_2M - 1));
-	else
-		crashk_base = 0x0;
-
-	crashk_size = (res->end + 1) - crashk_base;
-
-	if (crashk_base <= 0 || crashk_size <= 0) {
-		printk(KERN_WARNING "KDUMP: crashkernel reservation failed - "
-				"invalid base address/size\n");
-		return;
-	}
-
-	crashk_res.start = crashk_base;
-	crashk_res.end = crashk_base + crashk_size - 1;
-	if (reserve_bootmem(crashk_res.start, crashk_size, BOOTMEM_DEFAULT)) {
-		printk(KERN_WARNING "KDUMP: reserve bootmem failed\n");
-		return;
-	} else
-		printk(KERN_INFO "KDUMP: Reserved Crashk Memory\n");
-
-	if (request_resource(res, &crashk_res))
-		printk(KERN_WARNING "KDUMP: request_resource Failed\n");
-
-	return;
-}
-#endif
-
 static void __init
 request_standard_resources(struct meminfo *mi, struct machine_desc *mdesc)
 {
@@ -585,9 +545,6 @@ request_standard_resources(struct meminfo *mi, struct machine_desc *mdesc)
 		    kernel_data.end <= res->end)
 			request_resource(res, &kernel_data);
 	}
-#if defined(CONFIG_CRASH_DUMP)
-	reserve_crashkernel_mem(res);
-#endif
 
 	if (mdesc->video_start) {
 		video_ram.start = mdesc->video_start;
@@ -595,10 +552,6 @@ request_standard_resources(struct meminfo *mi, struct machine_desc *mdesc)
 		request_resource(&iomem_resource, &video_ram);
 	}
 
-	/*
-	 * Some machines don't have the possibility of ever
-	 * possessing lp0, lp1 or lp2
-	 */
 	if (mdesc->reserve_lp0)
 		request_resource(&ioport_resource, &lp0);
 	if (mdesc->reserve_lp1)
@@ -794,19 +747,6 @@ static int __init customize_machine(void)
 	return 0;
 }
 arch_initcall(customize_machine);
-
-#ifdef CONFIG_CRASH_DUMP
-static int __init parse_elfcorehdr(char *p)
-{
-	if (p) {
-		elfcorehdr_addr = memparse(p, &p);
-		if (reserve_bootmem(elfcorehdr_addr, 16*1024, BOOTMEM_DEFAULT))
-			printk(KERN_WARNING "KDUMP: reserve_mem failed\n");
-	}
-	return 1;
-}
-__setup("elfcorehdr=", parse_elfcorehdr);
-#endif
 
 void __init setup_arch(char **cmdline_p)
 {
