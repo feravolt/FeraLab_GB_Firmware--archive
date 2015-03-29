@@ -496,7 +496,11 @@ asmlinkage void __exception do_IPI(struct pt_regs *regs)
 
 void smp_send_reschedule(int cpu)
 {
-	send_ipi_message(cpumask_of_cpu(cpu), IPI_RESCHEDULE);
+  if (unlikely(cpu_is_offline(cpu))) {
+    WARN_ON(1);
+    return;
+  }
+  send_ipi_message(cpumask_of_cpu(cpu), IPI_RESCHEDULE);
 }
 
 void smp_send_timer(void)
@@ -515,7 +519,8 @@ void smp_send_stop(void)
 {
 	cpumask_t mask = cpu_online_map;
 	cpu_clear(smp_processor_id(), mask);
-	send_ipi_message(mask, IPI_CPU_STOP);
+	if (!cpus_empty(mask))
+	  send_ipi_message(mask, IPI_CPU_STOP);
 }
 
 /*
