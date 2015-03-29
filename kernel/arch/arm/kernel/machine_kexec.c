@@ -68,34 +68,6 @@ void setup_mm_for_kdump(char mode)
 	}
 }
 
-static void append_crash_params_cmdline(void)
-{
-	struct tag *tag = (struct tag *)kexec_boot_atags;
-	char crashtime[32];
-	unsigned int size;
-	int remaining_size, required_size;
-
-	do {
-		if (tag->hdr.tag == ATAG_CMDLINE)
-			break;
-		else
-			tag = tag_next(tag);
-
-	} while (tag->hdr.size > 0);
-
-	sprintf(crashtime, " crashtime=%lu", get_seconds());
-	remaining_size = COMMAND_LINE_SIZE - strlen(tag->u.cmdline.cmdline);
-	required_size = strlen(crashtime);
-	if (unlikely(remaining_size < required_size))
-		return;
-	strncat(tag->u.cmdline.cmdline, crashtime, sizeof(crashtime));
-	size = (strlen(tag->u.cmdline.cmdline) + sizeof(struct tag_header));
-	tag->hdr.size = ALIGN(size, sizeof(unsigned int))/sizeof(unsigned int);
-	tag = tag_next(tag);
-	tag->hdr.tag = ATAG_NONE;
-	tag->hdr.size = 0;
-}
-
 void machine_kexec(struct kimage *image)
 {
 	unsigned long page_list;
@@ -118,6 +90,11 @@ void machine_kexec(struct kimage *image)
 	printk(KERN_INFO "Bye!\n");
 	cpu_proc_fin();
 	setup_mm_for_kdump(0);
-	append_crash_params_cmdline();
+	flush_cache_all();
+	outer_flush_all();
+	outer_disable();
+	cpu_proc_fin();
+	outer_inv_all();
+	flush_cache_all();
 	__virt_to_phys(cpu_reset)(reboot_code_buffer_phys);
 }

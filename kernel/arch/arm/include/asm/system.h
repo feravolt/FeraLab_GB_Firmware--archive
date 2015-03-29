@@ -324,13 +324,9 @@ static __always_inline unsigned long __xchg(unsigned long x, volatile void *ptr,
 
 extern void disable_hlt(void);
 extern void enable_hlt(void);
+void cpu_idle_wait(void);
 
 #include <asm-generic/cmpxchg-local.h>
-
-/*
- * cmpxchg_local and cmpxchg64_local are atomic wrt current CPU. Always make
- * them available.
- */
 #define cmpxchg_local(ptr, o, n)				  	       \
 	((__typeof__(*(ptr)))__cmpxchg_local_generic((ptr), (unsigned long)(o),\
 			(unsigned long)(n), sizeof(*(ptr))))

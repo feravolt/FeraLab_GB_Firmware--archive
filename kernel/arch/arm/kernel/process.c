@@ -119,11 +119,17 @@ EXPORT_SYMBOL(pm_power_off);
 void (*arm_pm_restart)(char str) = arm_machine_restart;
 EXPORT_SYMBOL_GPL(arm_pm_restart);
 
+static void do_nothing(void *unused)
+{
+}
 
-/*
- * This is our default idle handler.  We need to disable
- * interrupts here to ensure we don't miss a wakeup call.
- */
+void cpu_idle_wait(void)
+{
+	smp_mb();
+	smp_call_function(do_nothing, NULL, 1);
+}
+EXPORT_SYMBOL_GPL(cpu_idle_wait);
+
 static void default_idle(void)
 {
 	if (!need_resched())
@@ -134,17 +140,9 @@ static void default_idle(void)
 void (*pm_idle)(void) = default_idle;
 EXPORT_SYMBOL(pm_idle);
 
-/*
- * The idle thread, has rather strange semantics for calling pm_idle,
- * but this is what x86 does and we need to do the same, so that
- * things like cpuidle get called in the same way.  The only difference
- * is that we always respect 'hlt_counter' to prevent low power idle.
- */
 void cpu_idle(void)
 {
 	local_fiq_enable();
-
-	/* endless idle loop with no priority at all */
 	while (1) {
 		leds_event(led_idle_start);
 		tick_nohz_stop_sched_tick(1);
