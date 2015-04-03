@@ -377,32 +377,6 @@ static int vdec_performance_change_request(struct vdec_data *vd, void* argp)
 	return ret;
 }
 
-#ifdef TRACE_PORTS
-static void printportsanddeviceids(void)
-{
-	int i;
-
-	pr_err("\n\n%s:loadOnPorts", __func__);
-	for (i = 0; i < numOfPorts; i++)
-		pr_err("\t%d", loadOnPorts[i]);
-
-	pr_err("\n\n");
-
-	pr_err("\n\n%s:Devids", __func__);
-	for (i = 0; i < DALVDEC_MAX_DEVICE_IDS; i++)
-		pr_err("Devid[%d]:%d\n", i, deviceIdRegistry[i]);
-
-
-	pr_err("\n\n");
-}
-#endif /*TRACE_PORTS*/
-
-
-/*
- *
- * This method is used to get the number of ports supported on the Q6
- *
- */
 static int vdec_get_numberofq6ports(void)
 {
 	struct dal_client *vdec_handle = NULL;
@@ -486,12 +460,7 @@ static void vdec_get_next_portanddevid(int *deviceid, char **portname)
 				break;
 			}
 		}
-
-#ifdef TRACE_PORTS
-		printportsanddeviceids();
-#endif /*TRACE_PORTS*/
 	} else if (1 == numOfPorts) {
-		/* single port mode */
 		*deviceid = DALDEVICEID_VDEC_DEVICE;
 		*portname = DALDEVICEID_VDEC_PORTNAME;
 	} else if (numOfPorts <= 0) {
@@ -502,17 +471,10 @@ static void vdec_get_next_portanddevid(int *deviceid, char **portname)
 
 }
 
-
-/**
-  * This method frees up the used dev id and decrements the port load.
-  *
-  */
-
 static void vdec_freeup_portanddevid(int deviceid)
 {
 
 	if (numOfPorts > 1) {
-		/* multi ports mode*/
 		if (VDEC_DEVID_FREE ==
 			deviceIdRegistry[deviceid - DALDEVICEID_VDEC_DEVICE_0])
 			pr_err("device id cannot be already free\n");
@@ -530,20 +492,12 @@ static void vdec_freeup_portanddevid(int deviceid)
 			Q6Portnames[(deviceid - DALDEVICEID_VDEC_DEVICE_0)
 			% numOfPorts]);
 
-#ifdef TRACE_PORTS
-		printportsanddeviceids();
-#endif /*TRACE_PORTS*/
 	} else {
 		/*single port mode, nothing to be done here*/
 	}
 
 }
 
-
-/**
-  * This method validates whether a new instance can be houred or not.
-  *
-  */
 static int vdec_rm_checkWithRm(struct vdec_data *vdecInstance,
 				unsigned int color_format)
 {

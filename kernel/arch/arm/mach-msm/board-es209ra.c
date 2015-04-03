@@ -718,13 +718,13 @@ static void tmd_wvga_lcd_power_on(void)
 	rc = vreg_enable(vreg_gp2);
 	rc = vreg_enable(vreg_mmc);
 	local_irq_enable();
-	msleep(45);
+	msleep(50);
 	gpio_set_value(NT35580_GPIO_XRST, 1);
 	msleep(9);
 	gpio_set_value(NT35580_GPIO_XRST, 0);
 	msleep(1);
 	gpio_set_value(NT35580_GPIO_XRST, 1);
-	msleep(180);
+	msleep(210);
 }
 
 static void tmd_wvga_lcd_power_off(void)

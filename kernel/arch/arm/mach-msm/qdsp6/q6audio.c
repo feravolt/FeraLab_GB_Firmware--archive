@@ -86,7 +86,7 @@ static struct clk *sdac_clk;
 
 static struct q6audio_analog_ops default_analog_ops;
 static struct q6audio_analog_ops *analog_ops = &default_analog_ops;
-static uint32_t tx_clk_freq = 8000;
+static uint32_t tx_clk_freq = 16000;
 static int tx_mute_status = 0;
 static int rx_vol_level = 100;
 static uint32_t tx_acdb = 0;
@@ -587,7 +587,7 @@ static int audio_qcp_open(struct audio_client *ac, uint32_t bufsz,
 	rpc.format.standard.format = format;
 	rpc.format.standard.channels = 1;
 	rpc.format.standard.bits_per_sample = 16;
-	rpc.format.standard.sampling_rate = 8000;
+	rpc.format.standard.sampling_rate = 16000;
 	rpc.format.standard.is_signed = 1;
 	rpc.format.standard.is_interleaved = 0;
 
@@ -617,7 +617,7 @@ static int audio_amrnb_open(struct audio_client *ac, uint32_t bufsz,
 	rpc.format.standard.format = ADSP_AUDIO_FORMAT_AMRNB_FS;
 	rpc.format.standard.channels = 1;
 	rpc.format.standard.bits_per_sample = 16;
-	rpc.format.standard.sampling_rate = 8000;
+	rpc.format.standard.sampling_rate = 16000;
 	rpc.format.standard.is_signed = 1;
 	rpc.format.standard.is_interleaved = 0;
 
@@ -1894,7 +1894,7 @@ struct audio_client *q6voice_open(uint32_t flags)
 		audio_rx_path_enable(1, rx_acdb);
 	else {
 		if (!audio_tx_path_refcount)
-			tx_clk_freq = 8000;
+			tx_clk_freq = 16000;
 		audio_tx_path_enable(1, tx_acdb);
 	}
 
@@ -2065,7 +2065,7 @@ struct audio_client *q6audio_open_qcp(uint32_t bufsz, uint32_t min_rate,
 		audio_rx_path_enable(1, acdb_id);
 	else{
 		if (!audio_tx_path_refcount)
-			tx_clk_freq = 8000;
+			tx_clk_freq = 16000;
 		audio_tx_path_enable(1, acdb_id);
 	}
 
@@ -2103,7 +2103,7 @@ struct audio_client *q6audio_open_amrnb(uint32_t bufsz, uint32_t enc_mode,
 		audio_rx_path_enable(1, acdb_id);
 	else{
 		if (!audio_tx_path_refcount)
-			tx_clk_freq = 8000;
+			tx_clk_freq = 16000;
 		audio_tx_path_enable(1, acdb_id);
 	}
 

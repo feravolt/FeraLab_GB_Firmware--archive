@@ -145,7 +145,7 @@ static int q6_release(struct inode *inode, struct file *file)
 static struct file_operations q6_dev_fops = {
 	.owner		= THIS_MODULE,
 	.open		= q6_open,
-	.unlocked_ioctl	= q6_ioctl,
+	.ioctl		= q6_ioctl,
 	.release	= q6_release,
 };
 

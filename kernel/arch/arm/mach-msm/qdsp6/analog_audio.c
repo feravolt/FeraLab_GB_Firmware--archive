@@ -8,7 +8,7 @@
 #include <mach/debug_mm.h>
 
 #define GPIO_HEADSET_AMP 149
-#define GPIO_SPEAKER_AMP 39
+#define GPIO_SPEAKER_AMP 154
 #define GPIO_HEADSET_SHDN_N 48
 
 void analog_init(void)
