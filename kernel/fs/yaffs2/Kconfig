@@ -93,7 +93,7 @@ config YAFFS_AUTO_YAFFS2
 config YAFFS_DISABLE_TAGS_ECC
 	bool "Disable yaffs from doing ECC on tags by default"
 	depends on YAFFS_FS && YAFFS_YAFFS2
-	default y
+	default n
 	help
 	  This defaults yaffs to using its own ECC calculations on tags instead of
 	  just relying on the MTD.
@@ -149,6 +149,16 @@ config YAFFS_DISABLE_BACKGROUND
 	help
 	 If this is set, then background processing is disabled.
 	 Background processing makes many foreground activities faster.
+
+	 If unsure, say N.
+
+config YAFFS_DISABLE_BAD_BLOCK_MARKING
+	bool "Disable yaffs2 bad block marking"
+	depends on YAFFS_FS
+	default n
+	help
+	 Useful during early flash bring up to prevent problems causing
+	 lots of bad block marking.
 
 	 If unsure, say N.
 
