@@ -19,20 +19,20 @@
 
 int yaffs_skip_verification(struct yaffs_dev *dev)
 {
-	(void) dev;
+	dev = dev;
 	return !(yaffs_trace_mask &
 		 (YAFFS_TRACE_VERIFY | YAFFS_TRACE_VERIFY_FULL));
 }
 
 static int yaffs_skip_full_verification(struct yaffs_dev *dev)
 {
-	(void) dev;
+	dev = dev;
 	return !(yaffs_trace_mask & (YAFFS_TRACE_VERIFY_FULL));
 }
 
 static int yaffs_skip_nand_verification(struct yaffs_dev *dev)
 {
-	(void) dev;
+	dev = dev;
 	return !(yaffs_trace_mask & (YAFFS_TRACE_VERIFY_NAND));
 }
 
@@ -222,13 +222,11 @@ void yaffs_verify_oh(struct yaffs_obj *obj, struct yaffs_obj_hdr *oh,
 
 void yaffs_verify_file(struct yaffs_obj *obj)
 {
-	u32 x;
 	int required_depth;
 	int actual_depth;
-	int last_chunk;
-	u32 offset_in_chunk;
+	u32 last_chunk;
 	u32 the_chunk;
-
+	u32 x;
 	u32 i;
 	struct yaffs_dev *dev;
 	struct yaffs_ext_tags tags;
@@ -244,11 +242,9 @@ void yaffs_verify_file(struct yaffs_obj *obj)
 	dev = obj->my_dev;
 	obj_id = obj->obj_id;
 
-
 	/* Check file size is consistent with tnode depth */
-	yaffs_addr_to_chunk(dev, obj->variant.file_variant.file_size,
-				&last_chunk, &offset_in_chunk);
-	last_chunk++;
+	last_chunk =
+	    obj->variant.file_variant.file_size / dev->data_bytes_per_chunk + 1;
 	x = last_chunk >> YAFFS_TNODES_LEVEL0_BITS;
 	required_depth = 0;
 	while (x > 0) {
@@ -524,6 +520,6 @@ void yaffs_verify_free_chunks(struct yaffs_dev *dev)
 
 int yaffs_verify_file_sane(struct yaffs_obj *in)
 {
-	(void) in;
+	in = in;
 	return YAFFS_OK;
 }

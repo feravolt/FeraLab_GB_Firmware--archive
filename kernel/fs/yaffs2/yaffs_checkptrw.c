@@ -14,52 +14,6 @@
 #include "yaffs_checkptrw.h"
 #include "yaffs_getblockinfo.h"
 
-struct yaffs_checkpt_chunk_hdr {
-	int version;
-	int seq;
-	u32 sum;
-	u32 xor;
-} ;
-
-
-static int apply_chunk_offset(struct yaffs_dev *dev, int chunk)
-{
-	return chunk - dev->chunk_offset;
-}
-
-static int apply_block_offset(struct yaffs_dev *dev, int block)
-{
-	return block - dev->block_offset;
-}
-
-static void yaffs2_checkpt_init_chunk_hdr(struct yaffs_dev *dev)
-{
-	struct yaffs_checkpt_chunk_hdr hdr;
-
-	hdr.version = YAFFS_CHECKPOINT_VERSION;
-	hdr.seq = dev->checkpt_page_seq;
-	hdr.sum = dev->checkpt_sum;
-	hdr.xor = dev->checkpt_xor;
-
-	dev->checkpt_byte_offs = sizeof(hdr);
-
-	memcpy(dev->checkpt_buffer, &hdr, sizeof(hdr));
-}
-
-static int yaffs2_checkpt_check_chunk_hdr(struct yaffs_dev *dev)
-{
-	struct yaffs_checkpt_chunk_hdr hdr;
-
-	memcpy(&hdr, dev->checkpt_buffer, sizeof(hdr));
-
-	dev->checkpt_byte_offs = sizeof(hdr);
-
-	return hdr.version == YAFFS_CHECKPOINT_VERSION &&
-		hdr.seq == dev->checkpt_page_seq &&
-		hdr.sum == dev->checkpt_sum &&
-		hdr.xor == dev->checkpt_xor;
-}
-
 static int yaffs2_checkpt_space_ok(struct yaffs_dev *dev)
 {
 	int blocks_avail = dev->n_erased_blocks - dev->param.n_reserved_blocks;
@@ -74,7 +28,7 @@ static int yaffs_checkpt_erase(struct yaffs_dev *dev)
 {
 	int i;
 
-	if (!dev->drv.drv_erase_fn)
+	if (!dev->param.erase_fn)
 		return 0;
 	yaffs_trace(YAFFS_TRACE_CHECKPOINT,
 		"checking blocks %d to %d",
@@ -82,23 +36,21 @@ static int yaffs_checkpt_erase(struct yaffs_dev *dev)
 
 	for (i = dev->internal_start_block; i <= dev->internal_end_block; i++) {
 		struct yaffs_block_info *bi = yaffs_get_block_info(dev, i);
-		int offset_i = apply_block_offset(dev, i);
-		int result;
-
 		if (bi->block_state == YAFFS_BLOCK_STATE_CHECKPOINT) {
 			yaffs_trace(YAFFS_TRACE_CHECKPOINT,
 			"erasing checkpt block %d", i);
 
 			dev->n_erasures++;
 
-			result = dev->drv.drv_erase_fn(dev, offset_i);
-			if(result) {
+			if (dev->param.
+			    erase_fn(dev,
+				     i - dev->block_offset /* realign */)) {
 				bi->block_state = YAFFS_BLOCK_STATE_EMPTY;
 				dev->n_erased_blocks++;
 				dev->n_free_chunks +=
 				    dev->param.chunks_per_block;
 			} else {
-				dev->drv.drv_mark_bad_fn(dev, offset_i);
+				dev->param.bad_block_fn(dev, i);
 				bi->block_state = YAFFS_BLOCK_STATE_DEAD;
 			}
 		}
@@ -125,9 +77,8 @@ static void yaffs2_checkpt_find_erased_block(struct yaffs_dev *dev)
 
 		for (i = dev->checkpt_next_block; i <= dev->internal_end_block;
 		     i++) {
-			struct yaffs_block_info *bi;
-
-			bi = yaffs_get_block_info(dev, i);
+			struct yaffs_block_info *bi =
+			    yaffs_get_block_info(dev, i);
 			if (bi->block_state == YAFFS_BLOCK_STATE_EMPTY) {
 				dev->checkpt_next_block = i + 1;
 				dev->checkpt_cur_block = i;
@@ -156,35 +107,26 @@ static void yaffs2_checkpt_find_block(struct yaffs_dev *dev)
 		for (i = dev->checkpt_next_block; i <= dev->internal_end_block;
 		     i++) {
 			int chunk = i * dev->param.chunks_per_block;
-			enum yaffs_block_state state;
-			u32 seq;
+			int realigned_chunk = chunk - dev->chunk_offset;
 
-			dev->tagger.read_chunk_tags_fn(dev,
-					apply_chunk_offset(dev, chunk),
-					NULL, &tags);
+			dev->param.read_chunk_tags_fn(dev, realigned_chunk,
+						      NULL, &tags);
 			yaffs_trace(YAFFS_TRACE_CHECKPOINT,
-				"find next checkpt block: search: block %d state %d oid %d seq %d eccr %d",
-				i, (int) state,
-				tags.obj_id, tags.seq_number,
+				"find next checkpt block: search: block %d oid %d seq %d eccr %d",
+				i, tags.obj_id, tags.seq_number,
 				tags.ecc_result);
 
-			if (tags.seq_number != YAFFS_SEQUENCE_CHECKPOINT_DATA)
-				continue;
-
-			dev->tagger.query_block_fn(dev,
-						apply_block_offset(dev, i),
-						&state, &seq);
-			if (state == YAFFS_BLOCK_STATE_DEAD)
-				continue;
-
-			/* Right kind of block */
-			dev->checkpt_next_block = tags.obj_id;
-			dev->checkpt_cur_block = i;
-			dev->checkpt_block_list[dev->blocks_in_checkpt] = i;
-			dev->blocks_in_checkpt++;
-			yaffs_trace(YAFFS_TRACE_CHECKPOINT,
-				"found checkpt block %d", i);
-			return;
+			if (tags.seq_number == YAFFS_SEQUENCE_CHECKPOINT_DATA) {
+				/* Right kind of block */
+				dev->checkpt_next_block = tags.obj_id;
+				dev->checkpt_cur_block = i;
+				dev->checkpt_block_list[dev->
+							blocks_in_checkpt] = i;
+				dev->blocks_in_checkpt++;
+				yaffs_trace(YAFFS_TRACE_CHECKPOINT,
+					"found checkpt block %d", i);
+				return;
+			}
 		}
 
 	yaffs_trace(YAFFS_TRACE_CHECKPOINT, "found no more checkpt blocks");
@@ -200,10 +142,9 @@ int yaffs2_checkpt_open(struct yaffs_dev *dev, int writing)
 	dev->checkpt_open_write = writing;
 
 	/* Got the functions we need? */
-	if (!dev->tagger.write_chunk_tags_fn ||
-	    !dev->tagger.read_chunk_tags_fn ||
-	    !dev->drv.drv_erase_fn ||
-	    !dev->drv.drv_mark_bad_fn)
+	if (!dev->param.write_chunk_tags_fn ||
+	    !dev->param.read_chunk_tags_fn ||
+	    !dev->param.erase_fn || !dev->param.bad_block_fn)
 		return 0;
 
 	if (writing && !yaffs2_checkpt_space_ok(dev))
@@ -223,13 +164,13 @@ int yaffs2_checkpt_open(struct yaffs_dev *dev, int writing)
 	dev->checkpt_cur_chunk = -1;
 	dev->checkpt_next_block = dev->internal_start_block;
 
+	/* Erase all the blocks in the checkpoint area */
 	if (writing) {
 		memset(dev->checkpt_buffer, 0, dev->data_bytes_per_chunk);
-		yaffs2_checkpt_init_chunk_hdr(dev);
+		dev->checkpt_byte_offs = 0;
 		return yaffs_checkpt_erase(dev);
 	}
 
-	/* Opening for a read */
 	/* Set to a value that will kick off a read */
 	dev->checkpt_byte_offs = dev->data_bytes_per_chunk;
 	/* A checkpoint block list of 1 checkpoint block per 16 block is
@@ -261,7 +202,7 @@ int yaffs2_get_checkpt_sum(struct yaffs_dev *dev, u32 * sum)
 static int yaffs2_checkpt_flush_buffer(struct yaffs_dev *dev)
 {
 	int chunk;
-	int offset_chunk;
+	int realigned_chunk;
 	struct yaffs_ext_tags tags;
 
 	if (dev->checkpt_cur_block < 0) {
@@ -295,12 +236,13 @@ static int yaffs2_checkpt_flush_buffer(struct yaffs_dev *dev)
 		chunk, dev->checkpt_cur_block, dev->checkpt_cur_chunk,
 		tags.obj_id, tags.chunk_id);
 
-	offset_chunk = apply_chunk_offset(dev, chunk);
+	realigned_chunk = chunk - dev->chunk_offset;
 
 	dev->n_page_writes++;
 
-	dev->tagger.write_chunk_tags_fn(dev, offset_chunk,
+	dev->param.write_chunk_tags_fn(dev, realigned_chunk,
 				       dev->checkpt_buffer, &tags);
+	dev->checkpt_byte_offs = 0;
 	dev->checkpt_page_seq++;
 	dev->checkpt_cur_chunk++;
 	if (dev->checkpt_cur_chunk >= dev->param.chunks_per_block) {
@@ -308,9 +250,6 @@ static int yaffs2_checkpt_flush_buffer(struct yaffs_dev *dev)
 		dev->checkpt_cur_block = -1;
 	}
 	memset(dev->checkpt_buffer, 0, dev->data_bytes_per_chunk);
-
-	yaffs2_checkpt_init_chunk_hdr(dev);
-
 
 	return 1;
 }
@@ -351,7 +290,7 @@ int yaffs2_checkpt_rd(struct yaffs_dev *dev, void *data, int n_bytes)
 	int ok = 1;
 	struct yaffs_ext_tags tags;
 	int chunk;
-	int offset_chunk;
+	int realigned_chunk;
 	u8 *data_bytes = (u8 *) data;
 
 	if (!dev->checkpt_buffer)
@@ -379,12 +318,12 @@ int yaffs2_checkpt_rd(struct yaffs_dev *dev, void *data, int n_bytes)
 			    dev->param.chunks_per_block +
 			    dev->checkpt_cur_chunk;
 
-			offset_chunk = apply_chunk_offset(dev, chunk);
+			realigned_chunk = chunk - dev->chunk_offset;
 			dev->n_page_reads++;
 
 			/* read in the next chunk */
-			dev->tagger.read_chunk_tags_fn(dev,
-						offset_chunk,
+			dev->param.read_chunk_tags_fn(dev,
+						realigned_chunk,
 						dev->checkpt_buffer,
 						&tags);
 
@@ -394,18 +333,14 @@ int yaffs2_checkpt_rd(struct yaffs_dev *dev, void *data, int n_bytes)
 				ok = 0;
 				break;
 			}
-			if(!yaffs2_checkpt_check_chunk_hdr(dev)) {
-				ok = 0;
-				break;
-			}
 
+			dev->checkpt_byte_offs = 0;
 			dev->checkpt_page_seq++;
 			dev->checkpt_cur_chunk++;
 
 			if (dev->checkpt_cur_chunk >=
 					dev->param.chunks_per_block)
 				dev->checkpt_cur_block = -1;
-
 		}
 
 		*data_bytes = dev->checkpt_buffer[dev->checkpt_byte_offs];
@@ -425,8 +360,7 @@ int yaffs_checkpt_close(struct yaffs_dev *dev)
 	int i;
 
 	if (dev->checkpt_open_write) {
-		if (dev->checkpt_byte_offs !=
-			sizeof(sizeof(struct yaffs_checkpt_chunk_hdr)))
+		if (dev->checkpt_byte_offs != 0)
 			yaffs2_checkpt_flush_buffer(dev);
 	} else if (dev->checkpt_block_list) {
 		for (i = 0;

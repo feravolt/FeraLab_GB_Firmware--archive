@@ -323,9 +323,11 @@ int yaffs1_scan(struct yaffs_dev *dev)
 					case YAFFS_OBJECT_TYPE_FILE:
 						if (dev->param.
 						    use_header_file_size)
+
 							in->variant.
-							file_variant.file_size
-							= yaffs_oh_to_size(oh);
+							 file_variant.file_size
+							    = oh->file_size;
+
 						break;
 					case YAFFS_OBJECT_TYPE_HARDLINK:
 						in->variant.

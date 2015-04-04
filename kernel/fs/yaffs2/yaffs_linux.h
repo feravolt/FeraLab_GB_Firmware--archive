@@ -29,20 +29,13 @@ struct yaffs_linux_context {
 				 * at compile time so we have to allocate it.
 				 */
 	struct list_head search_contexts;
+	void (*put_super_fn) (struct super_block *sb);
+
 	struct task_struct *readdir_process;
 	unsigned mount_id;
-	int dirty;
 };
 
 #define yaffs_dev_to_lc(dev) ((struct yaffs_linux_context *)((dev)->os_context))
 #define yaffs_dev_to_mtd(dev) ((struct mtd_info *)((dev)->driver_context))
-
-#if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 6, 17))
-#define WRITE_SIZE_STR "writesize"
-#define WRITE_SIZE(mtd) ((mtd)->writesize)
-#else
-#define WRITE_SIZE_STR "oobblock"
-#define WRITE_SIZE(mtd) ((mtd)->oobblock)
-#endif
 
 #endif
