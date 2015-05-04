@@ -29,9 +29,6 @@ loglevel 3
     mount /tmp /tmp tmpfs
     mkdir /mnt/sdcard 0000 system system
     symlink /mnt/sdcard /sdcard
-    mkdir /acct
-    mount cgroup none /acct cpuacct
-    mkdir /acct/uid
     mkdir /system
     mkdir /engine
     mkdir /data 0771 system system
@@ -61,20 +58,6 @@ loglevel 3
     chown root net_bw_acct /proc/net/xt_qtaguid/ctrl
     chown root net_bw_stats /proc/net/xt_qtaguid/stats
     chmod 0644 /dev/xt_qtaguid
-    mkdir /dev/cpuctl
-    mount cgroup none /dev/cpuctl cpu
-    chown system system /dev/cpuctl
-    chown system system /dev/cpuctl/tasks
-    chmod 0777 /dev/cpuctl/tasks
-    write /dev/cpuctl/cpu.shares 1024
-    mkdir /dev/cpuctl/fg_boost
-    chown system system /dev/cpuctl/fg_boost/tasks
-    chmod 0777 /dev/cpuctl/fg_boost/tasks
-    write /dev/cpuctl/fg_boost/cpu.shares 1024
-    mkdir /dev/cpuctl/bg_non_interactive
-    chown system system /dev/cpuctl/bg_non_interactive/tasks
-    chmod 0777 /dev/cpuctl/bg_non_interactive/tasks
-    write /dev/cpuctl/bg_non_interactive/cpu.shares 52
 
 on early-fs
     mount rootfs rootfs / rw remount
@@ -180,7 +163,9 @@ on boot
     chmod 0664 /sys/kernel/mm/ksm/run
     write /sys/module/lowmemorykiller/parameters/adj 0,1,2,4,7,15
     write /proc/sys/vm/overcommit_memory 1
+    write /proc/sys/vm/overcommit_ratio 100
     write /proc/sys/vm/min_free_order_shift 4
+    write /proc/sys/vm/laptop_mode 1
     write /proc/sys/vm/vfs_cache_pressure 70
     write /proc/sys/vm/swappiness 60
     write /sys/module/lowmemorykiller/parameters/cost 8
@@ -188,15 +173,16 @@ on boot
     write /sys/module/lowmemorykiller/parameters/minfree 2048,3072,4096,6144,14336,18432
     write /proc/1/oom_adj -16
     write /sys/module/wakelock/parameters/debug_mask 7
-    write /proc/sys/vm/dirty_expire_centisecs 200
-    write /proc/sys/vm/dirty_writeback_centisecs 5
-    write /proc/sys/vm/dirty_ratio 10
+    write /proc/sys/vm/dirty_expire_centisecs 300
+    write /proc/sys/vm/dirty_writeback_centisecs 1800
+    write /proc/sys/vm/dirty_ratio 40
     write /proc/sys/vm/dirty_background_ratio 5
-    write /sys/kernel/mm/ksm/pages_to_scan 256
-    write /sys/kernel/mm/ksm/sleep_millisecs 1800
+    write /proc/sys/vm/drop_caches 3
+    write /sys/kernel/mm/ksm/pages_to_scan 120
+    write /sys/kernel/mm/ksm/sleep_millisecs 5400
     write /sys/kernel/mm/ksm/run 1
     write /proc/sys/kernel/sysrq 1
-    write /proc/sys/vm/page-cluster 0
+    write /proc/sys/vm/page-cluster 1
     chmod 0660 /sys/class/rfkill/rfkill0/state
     chown root system /sys/module/lowmemorykiller/parameters/adj
     chmod 0664 /sys/module/lowmemorykiller/parameters/adj

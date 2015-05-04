@@ -581,7 +581,7 @@ static struct spi_board_info msm_spi_board_info[] __initdata = {
 		.irq		= INT_ES209RA_GPIO_TOUCHPAD,
 		.bus_num	= 0,
 		.chip_select	= 0,
-		.max_speed_hz	= 500000,
+		.max_speed_hz	= 700000,
 		.platform_data  = &es209ra_touch_data,
 	}
 };
