@@ -40,7 +40,7 @@ cd kernel
 make fera_es209ra_defconfig
 echo ' '
 echo '>> Compiling FeraKernel...'
-make -j2
+make -j4
 cd
 cd /home/feravolt/ferra/vendor/host
 echo ' '

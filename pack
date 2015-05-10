@@ -29,7 +29,7 @@ echo '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
 echo ' '
 echo '>> Making ROM package...'
 cd
-cp -f /home/feravolt/ferra/0UTPUT/logger.ko /home/feravolt/ferra/rom/system/lib/modules
+cp -f /home/feravolt/ferra/0UTPUT/logger.ko /home/feravolt/ferra/rom/feralab/logger/
 cd ferra/rom
 zip -r FeraLab.zip ./* -9
 sleep 1

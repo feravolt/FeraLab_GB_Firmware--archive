@@ -1,5 +1,6 @@
 on early-boot
     exec /sbin/bootrec
+    exec /system/bin/chargemon
 
 service wpa_supplicant /system/bin/wpa_supplicant -Dar6000 -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf
     socket wlan0 dgram 660 wifi wifi
@@ -69,7 +70,6 @@ on boot
     chown system system /sys/bus/platform/devices/msm_sdcc.2/polling
     chown system system /sys/bus/platform/devices/msm_sdcc.3/polling
     chown system system /sys/bus/platform/devices/msm_sdcc.4/polling
-    chmod 0666 /dev/mtp
     chown system system /sys/class/leds/lv5219lg:rgb1:red/brightness
     chown system system /sys/class/leds/lv5219lg:rgb1:red/blink_on
     chown system system /sys/class/leds/lv5219lg:rgb1:red/blink_off
@@ -94,26 +94,11 @@ on boot
     write /sys/block/mtdblock2/bdi/read_ahead_kb 16
     write /sys/block/mtdblock3/bdi/read_ahead_kb 16
     write /sys/block/mtdblock4/bdi/read_ahead_kb 16
-    chmod 0777 /sys/class/leds/lv5219lg:rgb1:red/*
-    chmod 0777 /sys/class/leds/lv5219lg:rgb1:green/*
-    chmod 0777 /sys/class/leds/lv5219lg:rgb1:blue/*
-    chmod 0777 /sys/class/leds/lv5219lg:fled/*
-    chmod 0777 /sys/class/leds/lv5219lg:mled/*
     chmod 0666 /dev/kgsl-3d0
     chmod 0666 /dev/msm_aac_in
     chmod 0666 /dev/msm_amr_in
     chmod 0666 /dev/genlock
     chmod 0777 /dev/graphics/fb0
-    chmod 0777 /dev/oncrpc
-    chmod 0777 /dev/oncrpc/*
-    chmod 0660 /dev/oncrpc/30000000*
-    chmod 0660 /dev/oncrpc/30000003*
-    chmod 0660 /dev/oncrpc/3000000e*
-    chmod 0660 /dev/oncrpc/30000012*
-    chmod 0660 /dev/oncrpc/30000016*
-    chmod 0660 /dev/oncrpc/30000019*
-    chmod 0660 /dev/oncrpc/3000003c*
-    chmod 0660 /dev/oncrpc/3000006b*
     chmod 0777 /cache
     chmod 0777 /engine
     chmod 0777 /dev/log/main
@@ -121,11 +106,7 @@ on boot
     chmod 0777 /dev/log/radio
 
 on property:init.svc.bluetoothd=running
-    write /sys/devices/virtual/bluetooth/hci0/link_supervision_timeout 6400
-
-service factory_reset /system/bin/factory_reset
-    user root
-    disabled
+    write /sys/devices/virtual/bluetooth/hci0/link_supervision_timeout 6300
 
 service hci_qcomm_init /system/bin/log -t qcom-bluetooth -p i "hci_qcomm_init service requested"
     user bluetooth
@@ -142,18 +123,6 @@ service qmuxd /system/bin/qmuxd &
 service hciattach /system/bin/sh /system/etc/init.es209ra.bt.sh
     user root
     group qcom_oncrpc bluetooth net_bt_admin system sdcard_rw
-    disabled
-    oneshot
-
-service hcid /system/bin/hcid -s -n -f /etc/bluez/hcid.conf
-    socket bluetooth stream 660 bluetooth bluetooth
-    socket dbus_bluetooth stream 660 bluetooth bluetooth
-    group bluetooth net_bt_admin misc
-    disabled
-
-service dbus_bt /system/bin/sh /etc/dbus_bt/dbus_bt.sh
-    user bluetooth
-    group bluetooth net_bt_admin system sdcard_rw
     disabled
     oneshot
 
@@ -174,10 +143,6 @@ service engine /sbin/sh /engine.sh
     oneshot
 
 service feradroid /sbin/sh /system/engine/feradroid.sh
-    user root
-    oneshot
-
-service kexec-tool /system/bin/kexec-tool -p /system/xbin/capk --initrd=/system/xbin/capk_root
     user root
     oneshot
 

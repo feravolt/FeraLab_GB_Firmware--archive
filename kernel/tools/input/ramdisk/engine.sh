@@ -12,10 +12,22 @@ cp /modules/wifi.ko /system/lib/modules/wifi.ko
 chmod 666 /system/lib/modules/*
 mount -t debugfs debugfs /sys/kernel/debug
 echo 0 > /sys/kernel/debug/msm_fb/0/vsync_enable
+echo 16 > /sys/kernel/debug/msm_fb/mdp/mdp_usec_diff_treshold
+echo 30 > /sys/kernel/debug/msm_fb/mdp/vs_rdcnt_slow
 echo 1 > /sys/kernel/mm/ksm/deferred_timer
+echo 1 > /sys/kernel/fast_charge/force_fast_charge
 mount -o bind /system/engine /engine
 chmod 777 /engine
 chmod 777 /cache
+cd /cache
+mkdir download
+cd
+cd /data/local
+mkdir download
+cd
+mount -o bind /data/local/download /cache/download
+chmod 777 /cache/download
+rm /cache/download/downloadfile*.apk >/dev/null 2>&1
 cd /engine
 /sbin/sysrw
 mkdir sysinit

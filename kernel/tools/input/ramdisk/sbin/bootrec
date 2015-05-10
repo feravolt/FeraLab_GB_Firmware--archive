@@ -28,9 +28,3 @@ then
   /sbin/adbd recovery
 fi
 
-if [ -e /system/bin/charger ]
-  echo "Locked Bootloader!"
-else
-  /system/bin/chargemon
-fi
-
