@@ -45,29 +45,6 @@ void machine_crash_shutdown(struct pt_regs *regs)
 	smsm_notify_apps_crashdump();
 }
 
-void setup_mm_for_kdump(char mode)
-{
-	unsigned long base_pmdval;
-	pgd_t *pgd;
-	int i;
-
-	pgd = init_mm.pgd;
-
-	cpu_switch_mm(pgd, &init_mm);
-
-	base_pmdval = PMD_SECT_AP_WRITE | PMD_SECT_AP_READ | PMD_TYPE_SECT;
-
-	for (i = 0; i < FIRST_USER_PGD_NR + USER_PTRS_PER_PGD; i++, pgd++) {
-		unsigned long pmdval = (i << PGDIR_SHIFT) | base_pmdval;
-		pmd_t *pmd;
-
-		pmd = pmd_offset(pgd, i << PGDIR_SHIFT);
-		pmd[0] = __pmd(pmdval);
-		pmd[1] = __pmd(pmdval + (1 << (PGDIR_SHIFT - 1)));
-		flush_pmd_entry(pmd);
-	}
-}
-
 void machine_kexec(struct kimage *image)
 {
 	unsigned long page_list;
@@ -89,12 +66,5 @@ void machine_kexec(struct kimage *image)
 			   (unsigned long) reboot_code_buffer + KEXEC_CONTROL_PAGE_SIZE);
 	printk(KERN_INFO "Bye!\n");
 	cpu_proc_fin();
-	setup_mm_for_kdump(0);
-	flush_cache_all();
-	outer_flush_all();
-	outer_disable();
-	cpu_proc_fin();
-	outer_inv_all();
-	flush_cache_all();
 	__virt_to_phys(cpu_reset)(reboot_code_buffer_phys);
 }

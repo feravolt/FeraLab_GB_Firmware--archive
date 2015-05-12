@@ -48,7 +48,7 @@ config GENERIC_CLOCKEVENTS
 
 config GENERIC_CLOCKEVENTS_BROADCAST
 	bool
-	depends on GENERIC_CLOCKEVENTS
+	depends on GENERIC_CLOCKEVENTS && !LOCAL_TIMERS
 	default y if SMP
 
 config MMU
@@ -132,9 +132,6 @@ config ARCH_HAS_ILOG2_U32
 config ARCH_HAS_ILOG2_U64
 	bool
 	default n
-
-config ARCH_HAS_CPU_IDLE_WAIT
-	def_bool y
 
 config GENERIC_HWEIGHT
 	bool

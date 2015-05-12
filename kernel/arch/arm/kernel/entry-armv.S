@@ -784,7 +784,7 @@ __kuser_helper_start:
  */
 
 __kuser_memory_barrier:				@ 0xffff0fa0
-	smp_dmb
+	mcr	p15, 0, r0, c7, c10, 5	@ dmb
 	usr_ret	lr
 	.align	5
 

@@ -258,7 +258,6 @@ static __always_inline unsigned long __xchg(unsigned long x, volatile void *ptr,
 #if __LINUX_ARM_ARCH__ >= 6
 	unsigned int tmp;
 #endif
-	smp_mb();
 	switch (size) {
 #if __LINUX_ARM_ARCH__ >= 6
 	case 1:
@@ -318,13 +317,11 @@ static __always_inline unsigned long __xchg(unsigned long x, volatile void *ptr,
 		__bad_xchg(ptr, size), ret = 0;
 		break;
 	}
-	smp_mb();
 	return ret;
 }
 
 extern void disable_hlt(void);
 extern void enable_hlt(void);
-void cpu_idle_wait(void);
 
 #include <asm-generic/cmpxchg-local.h>
 #define cmpxchg_local(ptr, o, n)				  	       \

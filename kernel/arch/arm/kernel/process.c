@@ -119,17 +119,6 @@ EXPORT_SYMBOL(pm_power_off);
 void (*arm_pm_restart)(char str) = arm_machine_restart;
 EXPORT_SYMBOL_GPL(arm_pm_restart);
 
-static void do_nothing(void *unused)
-{
-}
-
-void cpu_idle_wait(void)
-{
-	smp_mb();
-	smp_call_function(do_nothing, NULL, 1);
-}
-EXPORT_SYMBOL_GPL(cpu_idle_wait);
-
 static void default_idle(void)
 {
 	if (!need_resched())
