@@ -1,29 +1,7 @@
-//------------------------------------------------------------------------------
-// <copyright file="ar6k.h" company="Atheros">
-//    Copyright (c) 2007-2008 Atheros Corporation.  All rights reserved.
-// 
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License version 2 as
-// published by the Free Software Foundation;
-//
-// Software distributed under the License is distributed on an "AS
-// IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-// implied. See the License for the specific language governing
-// rights and limitations under the License.
-//
-//
-//------------------------------------------------------------------------------
-//==============================================================================
-// AR6K device layer that handles register level I/O
-//
-// Author(s): ="Atheros"
-//==============================================================================
 #ifndef AR6K_H_
 #define AR6K_H_
 
 #define AR6K_MAILBOXES 4
-
-/* HTC runs over mailbox 0 */
 #define HTC_MAILBOX          0
 
 #define AR6K_TARGET_DEBUG_INTR_MASK     0x01
@@ -31,8 +9,6 @@
 #define OTHER_INTS_ENABLED (INT_STATUS_ENABLE_ERROR_MASK |   \
                             INT_STATUS_ENABLE_CPU_MASK   |   \
                             INT_STATUS_ENABLE_COUNTER_MASK)
-
-//#define MBOXHW_UNIT_TEST 1
 
 #include "athstartpack.h"
 typedef PREPACK struct _AR6K_IRQ_PROC_REGISTERS {
@@ -124,18 +100,8 @@ static INLINE A_STATUS DevSendPacket(AR6K_DEVICE *pDev, HTC_PACKET *pPacket, A_U
     A_BOOL   sync = (pPacket->Completion == NULL) ? TRUE : FALSE;
     A_STATUS status;
 
-       /* adjust the length to be a multiple of block size if appropriate */
     paddedLength = (SendLength + (pDev->BlockMask)) &
                     (~(pDev->BlockMask));
-#if 0 // BufferLength may not be set in , fix this...
-    if (paddedLength > pPacket->BufferLength) {
-        AR_DEBUG_ASSERT(FALSE);
-        if (pPacket->Completion != NULL) {
-            COMPLETE_HTC_PACKET(pPacket,A_EINVAL);
-        }
-        return A_EINVAL;
-    }
-#endif
     AR_DEBUG_PRINTF(ATH_DEBUG_SEND,
                 ("DevSendPacket, Padded Length: %d Mbox:0x%X (mode:%s)\n",
                 paddedLength,
@@ -195,8 +161,4 @@ static INLINE A_STATUS DevRecvPacket(AR6K_DEVICE *pDev, HTC_PACKET *pPacket, A_U
     return status;
 }
 
-#ifdef MBOXHW_UNIT_TEST
-A_STATUS DoMboxHWTest(AR6K_DEVICE *pDev);
 #endif
-
-#endif /*AR6K_H_*/

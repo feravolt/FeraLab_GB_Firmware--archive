@@ -3,16 +3,66 @@
 ###################################
 
 
-        >>> ROM - v40.2 <<<
-- SDcard daemon from CM12. Optimized.
-- No Gapps.
-- Updated APNs config
-- CM12 Clock font
-- Zram tune-up
-- Video-drivers tune-up
-- Build.prop - tuneup
-- SuperSU updated
-- Misc
-- FeraKernel-v27.1
+        >>> ROM - v41 <<<
+- UTC fix
+- Animated statusbar elements
+- Animated logo in settings
+- SELinux status
+- Partition info menu
+- Updated Viper4Android
+- Updated Gallery
+- Updates SuperSU
+- Updated system icons
+- Android L-like framework tune-up
+- New Xperia animations
+- Removed battery bar
+- Removed pie control
+- Installer script fixes
+- Android Lollipop system animations
+- Dalvik VM tune-up
+- Surfaceflinger tune-up
+- SpareParts removed
+- GPS config update
+- Network location fixes
+- System sw & hw rules fix
+- Statusbar text color fix
+- Build.prop tune-up
+- DRM fixed
+- New wallpaper
+- Added market
+- Updated Walkman player
+- Ported ICS lockscreen (modified)
+- System fonts tune-up
+- Android 4.2 GLES framework API
+- JellyBean platlogo
+- Updated Adblocker (2x faster)
+- OMX codecs fix
+- Video recorder fixed
+- Alarm fixed
+- ICS camera
+- FDE updated & improved
+- misc...
+
+        >>> Kernel - v29 <<<
+- 650MB on /data partition (UB)
+- GPIO time fixes
+- CPU undervolt
+- Modem undervolt
+- SELinux support
+- MTD tune-up
+- KSM tune-up
+- VM tune-up
+- Touchscreen sensivity tune-up
+- Ramdisk binaries updated
+- MDP speed-up
+- Cgroups extended support
+- Startup services cleanup
+- Devices permissions fix
+- Disabled low battery shutdown
+- Smartass cpu gov. tuned
+- Entropy fix
+- misc..
+
+
 
 More on feralab.org

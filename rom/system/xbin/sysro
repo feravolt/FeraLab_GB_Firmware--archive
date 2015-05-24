@@ -1,4 +1,12 @@
 #!/system/xbin/sh
-### FeraDroid Engine v18 | By FeraVolt. 2015
+### FeraDroid Engine v18 | By FeraVolt. 2015 ###
 
-mount -o ro,remount -t yaffs2 /dev/block/mtdblock2 /system
+get_mtd() {
+    local DEV="$(grep "\"$1\"" /proc/mtd | awk -F: '{print $1}')"
+    local PATH=/dev/mtdblock
+    DEV="${DEV##mtd}"
+    echo "${DEV:+$PATH$DEV}"
+}
+
+mtd_system="$(get_mtd system)"
+mount -o ro,remount -t yaffs2 $mtd_system /system

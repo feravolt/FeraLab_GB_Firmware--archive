@@ -26,7 +26,7 @@
 <!ATTLIST Audio sampleRate CDATA #REQUIRED>
 <!ATTLIST Audio channels (1|2) #REQUIRED>
 <!ELEMENT ImageEncoding EMPTY>
-<!ATTLIST ImageEncoding quality (100|90|80|70|60|50) #REQUIRED>
+<!ATTLIST ImageEncoding quality (100|90|80|70|60) #REQUIRED>
 <!ELEMENT ImageDecoding EMPTY>
 <!ATTLIST ImageDecoding memCap CDATA #REQUIRED>
 <!ELEMENT Camera EMPTY>
@@ -67,11 +67,11 @@
                    bitRate="8000000"
                    width="1280"
                    height="720"
-                   frameRate="30" />
+                   frameRate="24" />
             <Audio codec="aac"
-                   bitRate="192000"
+                   bitRate="64000"
                    sampleRate="16000"
-                   channels="2" />
+                   channels="1" />
         </EncoderProfile>
         <EncoderProfile quality="low" fileFormat="mp4" duration="30">
             <Video codec="h264"

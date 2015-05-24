@@ -1,23 +1,3 @@
-//------------------------------------------------------------------------------
-// <copyright file="hif.c" company="Atheros">
-//    Copyright (c) 2004-2008 Atheros Corporation.  All rights reserved.
-// 
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License version 2 as
-// published by the Free Software Foundation;
-//
-// Software distributed under the License is distributed on an "AS
-// IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-// implied. See the License for the specific language governing
-// rights and limitations under the License.
-//
-//
-//------------------------------------------------------------------------------
-//==============================================================================
-// HIF layer reference implementation for Linux Native MMC stack
-//
-// Author(s): ="Atheros"
-//==============================================================================
 #include <linux/mmc/card.h>
 #include <linux/mmc/mmc.h>
 #include <linux/mmc/host.h>
@@ -25,12 +5,9 @@
 #include <linux/mmc/sdio_func.h>
 #include <linux/mmc/sdio_ids.h>
 #include <linux/kthread.h>
-/* by default setup a bounce buffer for the data packets, if the underlying host controller driver
-   does not use DMA you may be able to skip this step and save the memory allocation and transfer time */
 #define HIF_USE_DMA_BOUNCE_BUFFER 1
 #include "hif_internal.h"
 #include "AR6002/hw2.0/hw/mbox_host_reg.h"
-/* ATHENV */
 #ifdef ANDROID_ENV
 #include <linux/wakelock.h>
 extern struct wake_lock ar6k_init_wake_lock;
@@ -49,8 +26,6 @@ static HIF_DEVICE *addHifDevice(struct sdio_func *func);
 static HIF_DEVICE *getHifDevice(struct sdio_func *func);
 static void delHifDevice(HIF_DEVICE * device);
 
-
-/* ------ Static Variables ------ */
 static const struct sdio_device_id ar6k_id_table[] = {
     {  SDIO_DEVICE(MANUFACTURER_CODE, (MANUFACTURER_ID_AR6002_BASE | 0x0))  },
     {  SDIO_DEVICE(MANUFACTURER_CODE, (MANUFACTURER_ID_AR6002_BASE | 0x1))  },
@@ -67,10 +42,6 @@ static struct sdio_driver ar6k_driver = {
         };
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,27) && defined(CONFIG_PM)
-/* New suspend/resume based on linux-2.6.32
- * Need to patch linux-2.6.32 with mmc2.6.32_suspend.patch
- * Need to patch with msmsdcc2.6.29_suspend.patch for msm_sdcc host
-     */
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,29)
 static struct dev_pm_ops ar6k_device_pm_ops = {
 #else
@@ -81,7 +52,6 @@ static struct pm_ops ar6k_device_pm_ops = {
 };
 #endif /* CONFIG_PM */
 
-/* make sure we only unregister when registered. */
 static int registered = 0;
 
 OSDRV_CALLBACKS osdrvCallbacks;
@@ -89,39 +59,18 @@ extern A_UINT32 onebitmode;
 extern A_UINT32 busspeedlow;
 extern A_UINT32 debughif;
 
-#ifdef DEBUG
-#define ATH_DEBUG_ERROR 1
-#define ATH_DEBUG_WARN  2
-#define ATH_DEBUG_TRACE 3
-#define _AR_DEBUG_PRINTX_ARG(arg...) arg
-#define AR_DEBUG_PRINTF(lvl, args)\
-    {if (lvl <= debughif)\
-        A_PRINTF(KERN_ALERT _AR_DEBUG_PRINTX_ARG args);\
-    }
-#define AR_DEBUG_ASSERT(test) do {               \
-    if (!(test)) {                               \
-        AR_DEBUG_PRINTF(ATH_DEBUG_ERROR, ("Debug Assert Caught, File %s, Line: %d, Test:%s \n",__FILE__, __LINE__,#test));         \
-    }                                            \
-} while(0)
-#else
 #define AR_DEBUG_PRINTF(lvl, args)
 #define AR_DEBUG_ASSERT(test)
-#endif
 
 static BUS_REQUEST *hifAllocateBusRequest(HIF_DEVICE *device);
 static void hifFreeBusRequest(HIF_DEVICE *device, BUS_REQUEST *busrequest);
 static void ResetAllCards(void);
 
-/* ------ Functions ------ */
 A_STATUS HIFInit(OSDRV_CALLBACKS *callbacks)
 {
     int status;
     AR_DEBUG_ASSERT(callbacks != NULL);
-
-    /* store the callback handlers */
     osdrvCallbacks = *callbacks;
-
-    /* Register with bus driver core */
     AR_DEBUG_PRINTF(ATH_DEBUG_TRACE, ("AR6000: HIFInit registering\n"));
     registered = 1;
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,27) && defined(CONFIG_PM)
@@ -160,7 +109,6 @@ __HIFReadWrite(HIF_DEVICE *device,
 
     do {
         if (request & HIF_EXTENDED_IO) {
-            /*AR_DEBUG_PRINTF(ATH_DEBUG_TRACE, ("AR6000: Command type: CMD53\n")); */
         } else {
             AR_DEBUG_PRINTF(ATH_DEBUG_ERROR,
                             ("AR6000: Invalid command type: 0x%08x\n", request));
@@ -169,7 +117,6 @@ __HIFReadWrite(HIF_DEVICE *device,
         }
 
         if (request & HIF_BLOCK_BASIS) {
-            /* round to whole block length size */
             length = (length / HIF_MBOX_BLOCK_SIZE) * HIF_MBOX_BLOCK_SIZE;
             AR_DEBUG_PRINTF(ATH_DEBUG_TRACE,
                             ("AR6000: Block mode (BlockLen: %d)\n",
@@ -185,24 +132,11 @@ __HIFReadWrite(HIF_DEVICE *device,
             break;
         }
 
-#if 0
-        /* useful for checking register accesses */
-        if (length & 0x3) {
-            A_PRINTF(KERN_ALERT"AR6000: HIF (%s) is not a multiple of 4 bytes, addr:0x%X, len:%d\n",
-                                request & HIF_WRITE ? "write":"read", address, length);
-        }
-#endif
-
         if ((address >= HIF_MBOX_START_ADDR(0)) &&
             (address <= HIF_MBOX_END_ADDR(3)))
         {
 
             AR_DEBUG_ASSERT(length <= HIF_MBOX_WIDTH);
-
-            /*
-             * Mailbox write. Adjust the address so that the last byte
-             * falls on the EOM address.
-             */
             address += (HIF_MBOX_WIDTH - length);
         }
 
@@ -223,7 +157,6 @@ __HIFReadWrite(HIF_DEVICE *device,
 #if HIF_USE_DMA_BOUNCE_BUFFER
 	  AR_DEBUG_ASSERT(device->dma_buffer != NULL);
 	  tbuffer = device->dma_buffer;
-	  /* copy the write data to the dma buffer */
 	  AR_DEBUG_ASSERT(length <= HIF_DMA_BUFFER_SIZE);
 	  memcpy(tbuffer, buffer, length);
 #else
@@ -454,14 +387,8 @@ HIFShutDownDevice(HIF_DEVICE *device)
     if (device != NULL) {
         AR_DEBUG_ASSERT(device->func != NULL);
     } else {
-            /* since we are unloading the driver anyways, reset all cards in case the SDIO card
-             * is externally powered and we are unloading the SDIO stack.  This avoids the problem when
-             * the SDIO stack is reloaded and attempts are made to re-enumerate a card that is already
-             * enumerated */
         AR_DEBUG_PRINTF(ATH_DEBUG_TRACE, ("AR6000: HIFShutDownDevice, resetting\n"));
         ResetAllCards();
-
-        /* Unregister with bus driver core */
         if (registered) {
             registered = 0;
             AR_DEBUG_PRINTF(ATH_DEBUG_TRACE,
@@ -483,7 +410,6 @@ hifIRQHandler(struct sdio_func *func)
 
     device = getHifDevice(func);
     atomic_set(&device->irqHandling, 1);
-    /* release the host during ints so we can pick it back up when we process cmds */
     sdio_release_host(device->func);
     status = device->htcCallbacks.dsrHandler(device->htcCallbacks.context);
     sdio_claim_host(device->func);
@@ -492,23 +418,17 @@ hifIRQHandler(struct sdio_func *func)
     AR_DEBUG_PRINTF(ATH_DEBUG_TRACE, ("AR6000: -hifIRQHandler\n"));
 }
 
-/* handle HTC startup via thread*/
 static int startup_task(void *param)
 {
     HIF_DEVICE *device;
-
     device = (HIF_DEVICE *)param;
     AR_DEBUG_PRINTF(ATH_DEBUG_TRACE, ("AR6000: call HTC from startup_task\n"));
-/* ATHENV */
 #ifdef ANDROID_ENV
     wake_lock(&ar6k_init_wake_lock);
 #endif
-/* ATHENV */
-        /* start  up inform DRV layer */
     if ((osdrvCallbacks.deviceInsertedHandler(osdrvCallbacks.context,device)) != A_OK) {
         AR_DEBUG_PRINTF(ATH_DEBUG_TRACE, ("AR6000: Device rejected\n"));
     }
-/* ATHENV */
 #ifdef ANDROID_ENV
     wake_unlock(&ar6k_init_wake_lock);
 #endif
@@ -768,16 +688,9 @@ static int hifDeviceSuspend(struct device *dev)
             wait_for_completion(&device->async_completion);
             device->async_task = NULL;
         }
-        /* Disable the card */
         sdio_claim_host(device->func);
         status = sdio_disable_func(device->func);
-        /* reset the SDIO interface.  This is useful in automated testing where the card
-         * does not need to be removed at the end of the test.  It is expected that the user will
-         * also unload/reload the host controller driver to force the bus driver to re-enumerate the slot */
         AR_DEBUG_PRINTF(ATH_DEBUG_TRACE, ("AR6000: reseting SDIO card back to uninitialized state \n"));
-
-        /* NOTE : sdio_f0_writeb() cannot be used here, that API only allows access
-         *        to undefined registers in the range of: 0xF0-0xFF */
         ret = Func0_CMD52WriteByte(device->func->card, SDIO_CCCR_ABORT, (1 << 3));
         if (ret!=0) {
              AR_DEBUG_PRINTF(ATH_DEBUG_ERROR, ("AR6000: reset failed : %d \n",ret));
@@ -804,8 +717,7 @@ static int hifDeviceResume(struct device *dev)
        /* enable the SDIO function */
         sdio_claim_host(func);
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,27)
-        /* give us some time to enable, in ms */
-        func->enable_timeout = 100;
+        func->enable_timeout = 69;
 #endif
         ret = sdio_enable_func(func);
         if (ret) {

@@ -613,97 +613,75 @@ symlink("/system/engine/fix.sh", "/system/xbin/fix");
 show_progress(0.7, "1000");
 ui_print(">>  Configuring firmware...");
 mount("MTD", "system", "/system");
+set_progress(0.81);
 if
   file_getprop("/tmp/aroma/opt.prop","item.1.1") == "1"
 then
   ui_print(">>  Installing SE DLNA");
   package_extract_dir("feralab/dlna", "/system/app");
 endif;
-set_progress(0.81);
-if
-  file_getprop("/tmp/aroma/opt.prop","item.1.2") == "1"
-then
-  ui_print(">>  Installing Google mail");
-  package_extract_dir("feralab/gmail", "/system/app");
-endif;
 set_progress(0.82);
 if
-  file_getprop("/tmp/aroma/opt.prop","item.1.3") == "1"
+  file_getprop("/tmp/aroma/opt.prop","item.1.2") == "1"
 then
   ui_print(">>  Installing SIM toolkit");
   package_extract_dir("feralab/stk", "/system/app");
 endif;
 set_progress(0.83);
 if
-  file_getprop("/tmp/aroma/opt.prop","item.1.4") == "1"
-then
-  ui_print(">>  Installing YouTube");
-  package_extract_dir("feralab/youtube", "/data/app");
-endif;
-set_progress(0.84);
-if
-  file_getprop("/tmp/aroma/opt.prop","item.1.5") == "1"
+  file_getprop("/tmp/aroma/opt.prop","item.1.3") == "1"
 then
   ui_print(">>  Installing Sony Powersave");
   package_extract_dir("feralab/pwsave", "/system/app");
-  delete("/system/bin/charger");
 endif;
-set_progress(0.85);
+set_progress(0.84);
 if
-  file_getprop("/tmp/aroma/opt.prop","item.1.6") == "1"
-then
-  ui_print(">>  Installing UB Charger");
-  package_extract_dir("feralab/charger", "/system/bin");
-  delete("/system/bin/charger");
-endif;
-set_progress(0.86);
-if
-  file_getprop("/tmp/aroma/opt.prop","item.1.7") == "1"
-then
-  ui_print(">>  Scaling up CPU voltage");
-  package_extract_dir("feralab/cpu", "/system/etc/init.d");
-endif;
-set_progress(0.87);
-if
-  file_getprop("/tmp/aroma/opt.prop","item.1.8") == "1"
+  file_getprop("/tmp/aroma/opt.prop","item.1.4") == "1"
 then
   ui_print(">>  Disabling HOME key unlock");
   package_extract_dir("feralab/home", "/system/usr/keylayout");
 endif;
-set_progress(0.88);
+set_progress(0.87);
 if
-  file_getprop("/tmp/aroma/opt.prop","item.1.9") == "1"
+  file_getprop("/tmp/aroma/opt.prop","item.1.5") == "1"
 then
   ui_print(">>  Disabling HW LED");
   package_extract_dir("feralab/led", "/system/etc/init.d");
 endif;
-set_progress(0.89);
+set_progress(0.88);
 if
-  file_getprop("/tmp/aroma/opt.prop","item.1.10") == "1"
+  file_getprop("/tmp/aroma/opt.prop","item.1.6") == "1"
 then
   ui_print(">>  Disabling zRAM");
   package_extract_dir("feralab/zram", "/system/engine");
 endif;
-set_progress(0.90);
+set_progress(0.89);
 if
-  file_getprop("/tmp/aroma/opt.prop","item.1.11") == "1"
+  file_getprop("/tmp/aroma/opt.prop","item.1.7") == "1"
 then
   ui_print(">>  CPU underclock");
   package_extract_dir("feralab/underclock", "/system/etc");
 endif;
-set_progress(0.91);
+set_progress(0.90);
 if
-  file_getprop("/tmp/aroma/opt.prop","item.1.12") == "1"
+  file_getprop("/tmp/aroma/opt.prop","item.1.8") == "1"
 then
   ui_print(">>  Enabling Logger");
   package_extract_dir("feralab/logger", "/system/lib/modules");
 endif;
-set_progress(0.92);
+set_progress(0.91);
 if
-  file_getprop("/tmp/aroma/opt.prop","item.1.13") == "1"
+  file_getprop("/tmp/aroma/opt.prop","item.1.9") == "1"
 then
   ui_print(">>  Enabling FastCharge support");
   package_extract_dir("feralab/fc", "/system/etc/init.d");
+endif;
+set_progress(0.92);
+if
+  file_getprop("/tmp/aroma/opt.prop","item.1.10") == "1"
+then
+  ui_print(">>  Installing Yandex market");
+  package_extract_dir("feralab/store", "/system/app");
 endif;
 set_progress(0.93);
 ui_print(">>  Configuring Android...");
@@ -733,7 +711,6 @@ set_perm(1002, 1002, 0440, "/system/etc/dbus.conf");
 set_perm(1014, 2000, 0550, "/system/etc/dhcpcd/dhcpcd-run-hooks");
 set_perm_recursive(0, 0, 0755, 0555, "/system/etc/ppp");
 set_perm(0, 2000, 0777, "/system/xbin/run-parts");
-set_perm(0, 2000, 0755, "/system/xbin/rngd");
 set_perm(0, 0, 0755, "/system/etc/be_movie");
 set_perm(0, 0, 0755, "/system/etc/be_movie_setting");
 set_perm(0, 0, 0755, "/system/etc/be_photo");
@@ -750,7 +727,6 @@ set_perm(0, 0, 04755, "/system/xbin/nano");
 set_perm(0, 0, 06755, "/system/xbin/su");
 set_progress(0.95);
 run_program("/system/xbin/busybox", "--install", "-s", "/system/xbin");
-run_program("/system/xbin/su", "--install", "-s", "/system/xbin");
 run_program("/sbin/fix_permissions");
 delete("/sdcard/fix_permissions.log");
 ui_print(">>  Unmounting partitions");

@@ -34,7 +34,7 @@
       <extension>gif</extension>
       <mime-type>image/gif</mime-type>
     </format>
-    <format id="PNG" preferred="false">
+    <format id="PNG" preferred="true">
       <extension>png</extension>
       <mime-type>image/png</mime-type>
     </format>
@@ -52,7 +52,7 @@
       <extension>wav</extension>
       <mime-type>audio/x-wav</mime-type>
     </format>
-    <format id="MP3" preferred="false">
+    <format id="MP3" preferred="true">
       <extension>mp3</extension>
       <mime-type>audio/mpeg</mime-type>
     </format>
@@ -85,7 +85,7 @@
       <extension>m4a</extension>
       <mime-type>audio/mp4</mime-type>
     </format>
-    <format id="OGG" preferred="false">
+    <format id="OGG" preferred="true">
       <extension>ogg</extension>
       <extension>oga</extension>
       <mime-type>application/ogg</mime-type>
@@ -212,7 +212,7 @@
     <oma-v1>true</oma-v1>
     <oma-v2>false</oma-v2>
     <wmdrm>false</wmdrm>
-    <marlin>false</marlin>
+    <marlin>true</marlin>
   </drm>
   <sensme>
     <available>false</available>
@@ -225,7 +225,7 @@
     <filesize unit="bytes">1048576</filesize>
   </albumart>
   <wifi available="true"/>
-  <DLNA available="false"/>
+  <DLNA available="true"/>
   <associated-stores>
     <psn>true</psn>
   </associated-stores>

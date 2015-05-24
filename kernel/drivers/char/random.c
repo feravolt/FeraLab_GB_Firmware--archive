@@ -28,9 +28,9 @@
 #define EXTRACT_SIZE 10
 
 
-static int random_read_wakeup_thresh = 512;
+static int random_read_wakeup_thresh = 1536;
 
-static int random_write_wakeup_thresh = 1024;
+static int random_write_wakeup_thresh = 512;
 
 static int trickle_thresh __read_mostly = INPUT_POOL_WORDS * 28;
 

@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <permissions>
+    <feature name="android.hardware.audio.output" />
     <feature name="android.hardware.camera" />
+    <feature name="android.hardware.location" />
     <feature name="android.hardware.location.network" />
-    <feature name="android.hardware.location.gps" />
-    <feature name="android.hardware.location.provider" />
     <feature name="android.hardware.sensor.compass" />
     <feature name="android.hardware.sensor.accelerometer" />
-    <feature name="android.hardware.sensor.light" />
-    <feature name="android.hardware.sensor.proximity" />
     <feature name="android.hardware.bluetooth" />
     <feature name="android.hardware.touchscreen" />
-    <feature name="android.hardware.touchscreen.multitouch.jazzhand" />
     <feature name="android.hardware.microphone" />
-    <feature name="android.hardware.wifi" />
-    <feature name="android.hardware.camera.front" />
-    <feature name="android.hardware.camera.autofocus" />
-    <feature name="android.hardware.usb.accessory" />
     <feature name="android.hardware.screen.portrait" />
     <feature name="android.hardware.screen.landscape" />
-    <feature name="android.hardware.telephony.gsm" />
+    <feature name="android.software.app_widgets" />
+    <feature name="android.software.connectionservice" />
+    <feature name="android.software.voice_recognizers" />
+    <feature name="android.software.home_screen" />
+    <feature name="android.software.input_methods" />
+    <feature name="android.software.device_admin" />
 </permissions>

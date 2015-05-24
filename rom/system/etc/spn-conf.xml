@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<spnOverrides>
+	<spnOverride numeric="21401" spn_display_rule="SPN_RULE_SHOW_SPN" spn_override_only_on="214" fake_home_on="214"/>
+	<spnOverride numeric="21403" spn_display_rule="SPN_RULE_SHOW_SPN" spn_override_only_on="214" fake_home_on="214"/>
+	<spnOverride numeric="21404" spn_display_rule="SPN_RULE_SHOW_SPN" spn_override_only_on="214" fake_home_on="214"/>
+	<spnOverride numeric="21406" spn_display_rule="SPN_RULE_SHOW_SPN" spn_override_only_on="214" fake_home_on="214"/>
+	<spnOverride numeric="21408" spn_display_rule="SPN_RULE_SHOW_SPN" spn_override_only_on="214" fake_home_on="214"/>
+	<spnOverride numeric="21416" spn_display_rule="SPN_RULE_SHOW_SPN" spn_override_only_on="214" fake_home_on="214"/>
+	<spnOverride numeric="21419" spn_display_rule="SPN_RULE_SHOW_SPN" spn_override_only_on="214" fake_home_on="214"/>
+	<spnOverride numeric="24001" spn_display_rule="SPN_RULE_SHOW_SPN" spn_override_only_on="24005"/>
+	<spnOverride numeric="24007" spn_display_rule="SPN_RULE_SHOW_SPN" spn_override_only_on="24005"/>
+	<spnOverride numeric="24008" fake_home_on="24004"/>
+	<spnOverride numeric="24421" fake_home_on="24405"/>
+	<spnOverride numeric="20605" spn_display_rule="SPN_RULE_SHOW_SPN" fake_home_on="20610,20601"/>
+	<spnOverride numeric="44010" spn="NTT DOCOMO"/>
+	<spnOverride numeric="26006" spn_display_rule="SPN_RULE_SHOW_SPN" spn_override_only_on="26001"/>
+	<spnOverride numeric="65507" spn_display_rule="SPN_RULE_SHOW_SPN" spn="Cell C"/>
+	<spnOverride numeric="65502" spn_display_rule="SPN_RULE_SHOW_SPN" spn="8.ta"/>
+	<spnOverride numeric="23420" spn_display_rule="SPN_RULE_SHOW_PLMN" spn_override_only_on="23420,23433"/>
+	<spnOverride numeric="23207" fake_home_on="23203"/>
+	<spnOverride numeric="23211" fake_home_on="23201"/>
+	<spnOverride numeric="23212" fake_home_on="23205"/>
+	<spnOverride numeric="23801" imsi_subset="72" fake_home_on="24005,24007" fake_roaming_on="23801" />
+	<spnOverride numeric="24014" imsi_subset="72" fake_home_on="24005,24007" fake_roaming_on="23801" />
+	<spnOverride numeric="23801" imsi_subset="71" fake_home_on="24201" fake_roaming_on="23801" />
+	<spnOverride numeric="24208" imsi_subset="71" fake_home_on="24201" fake_roaming_on="23801" />
+	<spnOverride numeric="24412" imsi_subset="2400" fake_home_on="24412" fake_roaming_on="23801" />
+	<spnOverride numeric="23801" imsi_subset="7300" fake_home_on="24412" fake_roaming_on="23801" />
+</spnOverrides>

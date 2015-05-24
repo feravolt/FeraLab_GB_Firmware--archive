@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<permissions>
-    <library name="org.simalliance.openmobileapi"
-             file="/system/framework/org.simalliance.openmobileapi_impl.jar" />
-</permissions>

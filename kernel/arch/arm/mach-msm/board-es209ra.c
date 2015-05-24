@@ -1211,18 +1211,6 @@ static struct msm_otg_platform_data msm_otg_pdata = {
 
 static struct msm_hsusb_gadget_platform_data msm_gadget_pdata;
 
-static struct lbs_platform_data lbs_data = {
-	.threshold_vol = 3400,
-};
-
-static struct platform_device lbs_device = {
-	.name	= "Low-Battery Shutdown",
-	.id	= -1,
-	.dev	= {
-		.platform_data = &lbs_data,
-	},
-};
-
 static struct platform_device pmic_time_device = {
 	.name = "pmic_time",
 };
@@ -1253,7 +1241,6 @@ static struct platform_device *devices[] __initdata = {
 	&msm_camera_sensor_semc_imx046_camera,
 	&vibrator_device,
 	&es209ra_audio_jack_device,
-	&lbs_device,
 	&pmic_time_device,
 };
 

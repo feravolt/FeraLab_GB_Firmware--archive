@@ -3,4 +3,5 @@
     <feature name="android.hardware.camera" />
     <feature name="android.hardware.camera.autofocus" />
     <feature name="android.hardware.camera.flash" />
+    <feature name="android.hardware.camera.any" />
 </permissions>

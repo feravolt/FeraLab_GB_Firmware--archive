@@ -5,10 +5,10 @@ calibrate("0.9695","16","0.9900","0");
 theme("miui4");
 
 ini_set("rom_name",             "***FeraLab***");
-ini_set("rom_version",          "v40.2");
+ini_set("rom_version",          "v41");
 ini_set("rom_author",           "FeraVolt");
 ini_set("rom_device",           "Xperia X10");
-ini_set("rom_api",              "2.4.4");
+ini_set("rom_api",              "2.5.1");
 
 splash(
     3000,
@@ -86,18 +86,15 @@ checkbox(
       "opt.prop",
        "<~opt.c>",             " ",                                          2,
         "DLNA",                 "<~opt.d>",0,
-        "Gmail",                "<~opt.z>",0,
         "Sim Toolkit",          "<~opt.xyyx>",0,
-        "YouTube",              "<~opt.xyxyz>",0,
         "Powersave",            "<~opt.xyxyzz>",0,
-        "UB Charger",           "<~opt.xyxyzzl>",1,
-        "CPU Voltage",          "<~opt.xyxyzzll>",0,
         "Home Key",             "<~opt.xyxyzzlly>",0,
         "HW LED",               "<~opt.xyxyzzllyf>",0,
         "zRAM",                 "<~opt.xyxyzzllyff>",0,
         "CPU clock",            "<~opt.xyxyzzllyzzz>",0,
         "Logger",               "<~opt.mmmm>",0,
-        "FastCharge",           "<~opt.mmmmmm>",1
+        "No FastCharge",        "<~opt.mmmmmm>",0,
+        "Market",               "<~opt.mmmmmn>",1
 );
 
 ini_set("text_next", "<~hz.now>");

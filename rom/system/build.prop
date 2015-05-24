@@ -1,7 +1,7 @@
 ### FeraLab ###
 
 # Build info
-ro.build.date=21.03.2015
+ro.build.date=24.04.2015
 ro.build.date.utc=1308515086
 ro.build.user=FeraVolt
 ro.build.host=FeraLab
@@ -9,11 +9,11 @@ ro.build.product=X10i
 ro.build.version.incremental=tB_P
 ro.build.version.sdk=10
 ro.build.version.codename=REL
-ro.build.version.release=2.4.4
+ro.build.version.release=2.5.1
 ro.build.type=user
 ro.build.description=X10i-user 2.3.7 6.0.B.0.743 tB_P release-keys
 ro.build.id=6.0.B.0.743
-ro.build.display.id=v40.2 Final
+ro.build.display.id=v41 EE
 ro.build.tags=release-keys
 ro.build.fingerprint=SEMC/X10i_1232-9897/X10i:2.3.7/6.0.B.0.743/tB_P:user/release-keys
 
@@ -51,6 +51,7 @@ ro.config.notification_sound=18.ogg
 ro.config.alarm_alert=8.ogg
 ro.hdmi.enable=false
 hw.hdmiON=0
+mot.proximity.delay=100
 ro.product.locale.excluded=ar_EG ar_IL fa_IR iw_IL
 ro.product-res-path=framework/SemcGenericUxpRes.apk
 ro.screen.layout=normal
@@ -58,14 +59,15 @@ ro.semc.timescape_keys=Sony_Ericsson_Xperia
 ro.semc.sols.product-code=98
 ro.semc.sols.company-code=5
 ro.semc.batt.capacity=1500
-ro.semc.batt.test.z_threshold=50
-ro.semc.batt.test.min_level=70
+ro.semc.batt.test.z_threshold=45
+ro.semc.batt.test.min_level=69
 ro.setupwizard.mode=DISABLED
 persist.adb.notify=0
 persist.android.strictmode=0
 persist.chargemon.active=1
 persist.service.adb.enable=1
 persist.sys.boot.sound.volume=0
+persist.sys.profiler_ms=0
 persist.sys.strictmode.disable=true
 
 # Qualcomm
@@ -76,13 +78,14 @@ ro.opengles.version=131072
 
 # FeraLab
 ro.feralab.rom=1
-ro.feralab.rom.version=40
+ro.feralab.rom.version=41
 ro.feralab.rom.android.version=2.4.4
 ro.feralab.device=es209ra
 ro.feralab.engine=18
 
 # Networking
 ro.com.google.locationfeatures=1
+ro.config.hspap_hsdpa_open=1
 ro.ril.def.agps.feature=1
 ro.ril.def.agps.mode=2
 ro.ril.disable.power.collapse=0
@@ -91,14 +94,12 @@ ro.ril.gprsclass=10
 ro.ril.hsxpa=2
 ro.ril.hsdpa.category=8
 ro.ril.hsupa.category=6
+gsm.proximity.enable=false
 ro.ril.oem.ecclist=110,118,119,102,103,104,911
 ro.ril.oem.nosim.ecclist=110,118,119,102,103,104,911
-ro.ril.power.collapse=1
-ro.telephony.call_ring.delay=0
 ro.tethering.kb_disconnect=1
 rild.libpath=/system/lib/libril-qc-1.so
 rild.libargs=-d /dev/smd0
-ring.delay=0
 net.dns1=8.8.8.8
 net.dns2=8.8.4.4
 net.ppp0.dns1=8.8.8.8
@@ -113,6 +114,7 @@ persist.rild.nitz_short_ons_1=
 persist.rild.nitz_short_ons_2=
 persist.rild.nitz_short_ons_3=
 persist.ro.ril.sms_sync_sending=1
+persist.sys.purgeable_assets=1
 pm.sleep_mode=1
 
 # Wireless
@@ -160,6 +162,8 @@ ro.vold.umsdirtyratio=20
 persist.audio.fluence.mode=False
 persist.audio.handset.mic=Analog
 persist.audio.vr.enable=false
+persist.omxvideo.profilecheck=false
+persist.omxvideo.levelcheck=false
 persist.service.swiqi2.enable=1
 persist.service.xloud.enable=1
 persist.wpa_supplicant.debug=false
@@ -173,6 +177,7 @@ ro.drm.active.3=marlin,1
 
 # Dalvik VM
 dalvik.vm.checkjni=false
+dalvik.vm.check-dex-sum=false
 dalvik.vm.deadlock-predict=off
 dalvik.vm.debug.alloc=0
 dalvik.vm.dexopt-data-only=1
@@ -182,30 +187,41 @@ dalvik.vm.gc.preverify=false
 dalvik.vm.gc.verifycardtable=false
 dalvik.vm.jniopts=warnonly
 dalvik.vm.execution-mode=int:jit
-dalvik.vm.lockprof.threshold=500
-dalvik.vm.heapsize=45m
+dalvik.vm.lockprof.threshold=720
+dalvik.vm.heapsize=96m
+dalvik.vm.heapgrowthlimit=48m
 dalvik.vm.stack-trace-file=/cache/traces.txt
 dalvik.vm.verify-bytecode=false
 ro.config.low_ram=true
 ro.kernel.android.checkjni=0
 
 # Graphics & Display
-debug.composition.type=mdp
+debug.composition.type=dyn
 debug.egl.hw=1
 debug.egl.profiler=1
 debug.egl.swapinterval=1 
 debug.gr.numframebuffers=3
 debug.gr.swapinterval=1
 debug.mdpcomp.logs=0
+debug.mdpcomp.maxlayer=3
+debug.mdpcomp.idletime=-1
 debug.performance.tuning=1
 debug.sf.hw=1
 dev.pm.dyn_samplingrate=1
 ro.floatingtouch.available=1
-ro.max.fling_velocity=4000
+ro.min.fling_velocity=3000
+ro.product.multi_touch_enabled=true
+ro.product.max_num_touch=2
 ro.sf.lcd_density=240
+persist.hwc.mdpcomp.enable=false
 persist.sys.ui.hw=1
+persist.sys.use_dithering=1
+persist.sys.use_16bpp_alpha=1
 video.accelerate.hw=1
+windowsmgr.max_events_per_sec=27
+windowsmgr.support_rotation_270=true
 
 # Misc
 ro.HOME_APP_ADJ=1
-
+ro.build.selinux=1
+ro.origin.lockscreen=simulateICS

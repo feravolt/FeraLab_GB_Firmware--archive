@@ -1,5 +1,5 @@
 #!/system/xbin/sh
-### FeraDroid Engine v18 | By FeraVolt. 2014 ###
+### FeraDroid Engine v18 | By FeraVolt. 2015 ###
 
 ZIPALIGNDB=/data/zipalign.db
 
@@ -27,6 +27,6 @@ for DIR in /system/app /data/app ; do
   done
 done
 
-busybox mount -o ro,remount /system
+/system/xbin/sysro
 touch $ZIPALIGNDB
 

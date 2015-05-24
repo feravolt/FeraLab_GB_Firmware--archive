@@ -3,5 +3,5 @@
 <setting key="data-connection-except-mms-can-clear-icon" runtime="false">true</setting>
 <setting key="data-connection-except-mms-show-icon-when-enabled" runtime="false">false</setting>
 <setting key="data-connection-except-mms-show-icon-when-disabled" runtime="true">false</setting>
-<setting key="dual-mic-noise-suppression-enabled" runtime="true">false</setting>
+<setting key="dual-mic-noise-suppression-enabled" runtime="true">true</setting>
 </settings>

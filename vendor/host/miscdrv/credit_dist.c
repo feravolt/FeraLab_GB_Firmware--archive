@@ -1,21 +1,3 @@
-//------------------------------------------------------------------------------
-// <copyright file="credit_dist.c" company="Atheros">
-//    Copyright (c) 2004-2008 Atheros Corporation.  All rights reserved.
-// 
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License version 2 as
-// published by the Free Software Foundation;
-//
-// Software distributed under the License is distributed on an "AS
-// IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-// implied. See the License for the specific language governing
-// rights and limitations under the License.
-//
-//
-//------------------------------------------------------------------------------
-//==============================================================================
-// Author(s): ="Atheros"
-//==============================================================================
 #include "a_config.h"
 #include "athdefs.h"
 #include "a_types.h"
@@ -24,9 +6,8 @@
 #include "htc_api.h"
 #include "common_drv.h"
 
-/********* CREDIT DISTRIBUTION FUNCTIONS ******************************************/
 
-#define NO_VO_SERVICE 1 /* currently WMI only uses 3 data streams, so we leave VO service inactive */
+#define NO_VO_SERVICE 1
 
 #ifdef NO_VO_SERVICE
 #define DATA_SVCS_USED 3
@@ -69,10 +50,6 @@ static INLINE void ReduceCredits(COMMON_CREDIT_STATE_INFO *pCredInfo,
     (pCredInfo)->CurrentFreeCredits -= (credits);   \
 }
 
-
-/* default credit init callback.
- * This function is called in the context of HTCStart() to setup initial (application-specific)
- * credit distributions */
 static void ar6000_credit_init(void                     *Context,
                                HTC_ENDPOINT_CREDIT_DIST *pEPList,
                                int                      TotalCredits)
@@ -85,8 +62,6 @@ static void ar6000_credit_init(void                     *Context,
     pCredInfo->TotalAvailableCredits = TotalCredits;
 
     pCurEpDist = pEPList;
-
-        /* run through the list and initialize */
     while (pCurEpDist != NULL) {
 
             /* set minimums for each endpoint */
@@ -101,15 +76,6 @@ static void ar6000_credit_init(void                     *Context,
                 /* this is the lowest priority data endpoint, save this off for easy access */
             pCredInfo->pLowestPriEpDist = pCurEpDist;
         }
-
-        /* Streams have to be created (explicit | implicit)for all kinds
-         * of traffic. BE endpoints are also inactive in the beginning.
-         * When BE traffic starts it creates implicit streams that
-         * redistributes credits.
-         */
-
-        /* note, all other endpoints have minimums set but are initially given NO credits.
-         * Credits will be distributed as traffic activity demands */
         pCurEpDist = pCurEpDist->pNext;
     }
 
@@ -118,25 +84,14 @@ static void ar6000_credit_init(void                     *Context,
         A_ASSERT(FALSE);
         return;
     }
-
-        /* reset list */
     pCurEpDist = pEPList;
-        /* now run through the list and set max operating credit limits for everyone */
     while (pCurEpDist != NULL) {
         if (pCurEpDist->ServiceID == WMI_CONTROL_SVC) {
-                /* control service max is just 1 max message */
             pCurEpDist->TxCreditsNorm = pCurEpDist->TxCreditsPerMaxMsg;
         } else {
-                /* for the remaining data endpoints, we assume that each TxCreditsPerMaxMsg are
-                 * the same.
-                 * We use a simple calculation here, we take the remaining credits and
-                 * determine how many max messages this can cover and then set each endpoint's
-                 * normal value equal to 3/4 this amount.
-                 * */
             count = (pCredInfo->CurrentFreeCredits/pCurEpDist->TxCreditsPerMaxMsg) * pCurEpDist->TxCreditsPerMaxMsg;
             count = (count * 3) >> 2;
             count = max(count,pCurEpDist->TxCreditsPerMaxMsg);
-                /* set normal */
             pCurEpDist->TxCreditsNorm = count;
 
         }
@@ -145,14 +100,6 @@ static void ar6000_credit_init(void                     *Context,
 
 }
 
-
-/* default credit distribution callback
- * This callback is invoked whenever endpoints require credit distributions.
- * A lock is held while this function is invoked, this function shall NOT block.
- * The pEPDistList is a list of distribution structures in prioritized order as
- * defined by the call to the HTCSetCreditDistribution() api.
- *
- */
 static void ar6000_credit_distribute(void                     *Context,
                                      HTC_ENDPOINT_CREDIT_DIST *pEPDistList,
                                      HTC_CREDIT_DIST_REASON   Reason)
@@ -163,9 +110,6 @@ static void ar6000_credit_distribute(void                     *Context,
     switch (Reason) {
         case HTC_CREDIT_DIST_SEND_COMPLETE :
             pCurEpDist = pEPDistList;
-                /* we are given the start of the endpoint distribution list.
-                 * There may be one or more endpoints to service.
-                 * Run through the list and distribute credits */
             while (pCurEpDist != NULL) {
 
                 if (pCurEpDist->TxCreditsToDist > 0) {
@@ -236,24 +180,15 @@ static void RedistributeCredits(COMMON_CREDIT_STATE_INFO *pCredInfo,
                         /* EP is inactive and there are no pending messages, reduce credits back to zero */
                     ReduceCredits(pCredInfo, pCurEpDist, 0);
                 } else {
-                        /* we cannot zero the credits assigned to this EP, but to keep
-                         * the credits available for these leftover packets, reduce to
-                         * a minimum */
                     ReduceCredits(pCredInfo, pCurEpDist, pCurEpDist->TxCreditsMin);
                 }
             }
         }
-
-        /* NOTE in the active case, we do not need to do anything further,
-         * when an EP goes active and needs credits, HTC will call into
-         * our distribution function using a reason code of HTC_CREDIT_DIST_SEEK_CREDITS  */
-
         pCurEpDist = pCurEpDist->pNext;
     }
 
 }
 
-/* HTC has an endpoint that needs credits, pEPDist is the endpoint in question */
 static void SeekCredits(COMMON_CREDIT_STATE_INFO *pCredInfo,
                         HTC_ENDPOINT_CREDIT_DIST *pEPDist)
 {
@@ -264,9 +199,6 @@ static void SeekCredits(COMMON_CREDIT_STATE_INFO *pCredInfo,
     do {
 
         if (pEPDist->ServiceID == WMI_CONTROL_SVC) {
-                /* we never oversubscribe on the control service, this is not
-                 * a high performance path and the target never holds onto control
-                 * credits for too long */
             break;
         }
 
@@ -283,12 +215,6 @@ static void SeekCredits(COMMON_CREDIT_STATE_INFO *pCredInfo,
                 break;
             }
         }
-
-        /* for all other services, we follow a simple algorithm of
-         * 1. checking the free pool for credits
-         * 2. checking lower priority endpoints for credits to take */
-
-            /* give what we can */
         credits = min(pCredInfo->CurrentFreeCredits,pEPDist->TxCreditsSeek);
 
         if (credits >= pEPDist->TxCreditsSeek) {
@@ -296,27 +222,12 @@ static void SeekCredits(COMMON_CREDIT_STATE_INFO *pCredInfo,
             break;
         }
 
-        /* we don't have enough in the free pool, try taking away from lower priority services
-         *
-         * The rule for taking away credits:
-         *   1. Only take from lower priority endpoints
-         *   2. Only take what is allocated above the minimum (never starve an endpoint completely)
-         *   3. Only take what you need.
-         *
-         * */
-
-            /* starting at the lowest priority */
         pCurEpDist = pCredInfo->pLowestPriEpDist;
-
-            /* work backwards until we hit the endpoint again */
         while (pCurEpDist != pEPDist) {
                 /* calculate how many we need so far */
             need = pEPDist->TxCreditsSeek - pCredInfo->CurrentFreeCredits;
 
             if ((pCurEpDist->TxCreditsAssigned - need) >= pCurEpDist->TxCreditsMin) {
-                    /* the current one has been allocated more than it's minimum and it
-                     * has enough credits assigned above it's minimum to fullfill our need
-                     * try to take away just enough to fullfill our need */
                 ReduceCredits(pCredInfo,
                               pCurEpDist,
                               pCurEpDist->TxCreditsAssigned - need);

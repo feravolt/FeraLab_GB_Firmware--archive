@@ -1,23 +1,3 @@
-//------------------------------------------------------------------------------
-// <copyright file="ar6k_events.c" company="Atheros">
-//    Copyright (c) 2007-2008 Atheros Corporation.  All rights reserved.
-// 
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License version 2 as
-// published by the Free Software Foundation;
-//
-// Software distributed under the License is distributed on an "AS
-// IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-// implied. See the License for the specific language governing
-// rights and limitations under the License.
-//
-//
-//------------------------------------------------------------------------------
-//==============================================================================
-// AR6K Driver layer event handling (i.e. interrupts, message polling)
-//
-// Author(s): ="Atheros"
-//==============================================================================
 #include "a_config.h"
 #include "athdefs.h"
 #include "a_types.h"
@@ -37,9 +17,8 @@ extern HTC_PACKET *AR6KAllocIOPacket(AR6K_DEVICE *pDev);
 
 static A_STATUS DevServiceDebugInterrupt(AR6K_DEVICE *pDev);
 
-#define DELAY_PER_INTERVAL_MS 10  /* 10 MS delay per polling interval */
+#define DELAY_PER_INTERVAL_MS 9
 
-/* completion routine for ALL HIF layer async I/O */
 A_STATUS DevRWCompletionHandler(void *context, A_STATUS status)
 {
     HTC_PACKET *pPacket = (HTC_PACKET *)context;

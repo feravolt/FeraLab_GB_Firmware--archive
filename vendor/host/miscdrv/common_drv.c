@@ -1,21 +1,3 @@
-//------------------------------------------------------------------------------
-// <copyright file="common_drv.c" company="Atheros">
-//    Copyright (c) 2004-2008 Atheros Corporation.  All rights reserved.
-// 
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License version 2 as
-// published by the Free Software Foundation;
-//
-// Software distributed under the License is distributed on an "AS
-// IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-// implied. See the License for the specific language governing
-// rights and limitations under the License.
-//
-//
-//------------------------------------------------------------------------------
-//==============================================================================
-// Author(s): ="Atheros"
-//==============================================================================
 #include "a_config.h"
 #include "athdefs.h"
 #include "a_types.h"
@@ -47,34 +29,18 @@
 #define AR6001_LOCAL_COUNT_ADDRESS 0x0c014080
 #define AR6002_LOCAL_COUNT_ADDRESS 0x00018080
 #define AR6003_LOCAL_COUNT_ADDRESS 0x00018080
-
-/* Compile the 4BYTE version of the window register setup routine,
- * This mitigates host interconnect issues with non-4byte aligned bus requests, some
- * interconnects use bus adapters that impose strict limitations.
- * Since diag window access is not intended for performance critical operations, the 4byte mode should
- * be satisfactory even though it generates 4X the bus activity. */
-
 #ifdef USE_4BYTE_REGISTER_ACCESS
 
-    /* set the window address register (using 4-byte register access ). */
 A_STATUS ar6000_SetAddressWindowRegister(HIF_DEVICE *hifDevice, A_UINT32 RegisterAddr, A_UINT32 Address)
 {
     A_STATUS status;
     A_UINT8 addrValue[4];
     A_INT32 i;
-
-        /* write bytes 1,2,3 of the register to set the upper address bytes, the LSB is written
-         * last to initiate the access cycle */
-
     for (i = 1; i <= 3; i++) {
-            /* fill the buffer with the address byte value we want to hit 4 times*/
         addrValue[0] = ((A_UINT8 *)&Address)[i];
         addrValue[1] = addrValue[0];
         addrValue[2] = addrValue[0];
         addrValue[3] = addrValue[0];
-
-            /* hit each byte of the register address with a 4-byte write operation to the same address,
-             * this is a harmless operation */
         status = HIFReadWrite(hifDevice,
                               RegisterAddr+i,
                               addrValue,
@@ -92,9 +58,6 @@ A_STATUS ar6000_SetAddressWindowRegister(HIF_DEVICE *hifDevice, A_UINT32 Registe
         return status;
     }
 
-        /* write the address register again, this time write the whole 4-byte value.
-         * The effect here is that the LSB write causes the cycle to start, the extra
-         * 3 byte write to bytes 1,2,3 has no effect since we are writing the same values again */
     status = HIFReadWrite(hifDevice,
                           RegisterAddr,
                           (A_UCHAR *)(&Address),
@@ -113,17 +76,10 @@ A_STATUS ar6000_SetAddressWindowRegister(HIF_DEVICE *hifDevice, A_UINT32 Registe
 
 
 }
-
-
 #else
-
-    /* set the window address register */
 A_STATUS ar6000_SetAddressWindowRegister(HIF_DEVICE *hifDevice, A_UINT32 RegisterAddr, A_UINT32 Address)
 {
     A_STATUS status;
-
-        /* write bytes 1,2,3 of the register to set the upper address bytes, the LSB is written
-         * last to initiate the access cycle */
     status = HIFReadWrite(hifDevice,
                           RegisterAddr+1,  /* write upper 3 bytes */
                           ((A_UCHAR *)(&Address))+1,
@@ -189,11 +145,6 @@ ar6000_ReadRegDiag(HIF_DEVICE *hifDevice, A_UINT32 *address, A_UINT32 *data)
     return status;
 }
 
-
-/*
- * Write to the AR6000 through its diagnostic window.
- * No cooperation from the Target is required for this.
- */
 A_STATUS
 ar6000_WriteRegDiag(HIF_DEVICE *hifDevice, A_UINT32 *address, A_UINT32 *data)
 {
@@ -253,34 +204,6 @@ ar6000_WriteDataDiag(HIF_DEVICE *hifDevice, A_UINT32 address,
     return status;
 }
 
-#if 0
-static A_STATUS
-_do_write_diag(HIF_DEVICE *hifDevice, A_UINT32 addr, A_UINT32 value)
-{
-    A_STATUS status;
-
-    status = ar6000_WriteRegDiag(hifDevice, &addr, &value);
-    if (status != A_OK)
-    {
-        AR_DEBUG_PRINTF(ATH_LOG_ERR, ("Cannot force Target to execute ROM!\n"));
-    }
-
-    return status;
-}
-#endif
-
-
-/*
- * Delay up to wait_msecs millisecs to allow Target to enter BMI phase,
- * which is a good sign that it's alive and well.  This is used after
- * explicitly forcing the Target to reset.
- *
- * The wait_msecs time should be sufficiently long to cover any reasonable
- * boot-time delay.  For instance, AR6001 firmware allow one second for a
- * low frequency crystal to settle before it calibrates the refclk frequency.
- *
- * TBD: Might want to add special handling for AR6K_OPTION_BMI_DISABLE.
- */
 static A_STATUS
 _delay_until_target_alive(HIF_DEVICE *hifDevice, A_INT32 wait_msecs, A_UINT32 TargetType)
 {
@@ -332,10 +255,8 @@ A_STATUS ar6000_reset_device(HIF_DEVICE *hifDevice, A_UINT32 TargetType, A_BOOL 
 
     do {
 
-        // address = RESET_CONTROL_ADDRESS;
         data = RESET_CONTROL_COLD_RST_MASK;
 
-          /* Hardcode the address of RESET_CONTROL_ADDRESS based on the target type */
         if (TargetType == TARGET_TYPE_AR6001) {
             address = AR6001_RESET_CONTROL_ADDRESS;
         } else if (TargetType == TARGET_TYPE_AR6002) {
@@ -345,7 +266,6 @@ A_STATUS ar6000_reset_device(HIF_DEVICE *hifDevice, A_UINT32 TargetType, A_BOOL 
         } else {
             A_ASSERT(0);
         }
-
 
         status = ar6000_WriteRegDiag(hifDevice, &address, &data);
 
@@ -357,17 +277,8 @@ A_STATUS ar6000_reset_device(HIF_DEVICE *hifDevice, A_UINT32 TargetType, A_BOOL 
             break;
         }
 
+        (void)_delay_until_target_alive(hifDevice, 1800, TargetType);
 
-        /* Up to 2 second delay to allow things to settle down */
-        (void)_delay_until_target_alive(hifDevice, 2000, TargetType);
-
-        /*
-         * Read back the RESET CAUSE register to ensure that the cold reset
-         * went through.
-         */
-
-        // address = RESET_CAUSE_ADDRESS;
-        /* Hardcode the address of RESET_CAUSE_ADDRESS based on the target type */
         if (TargetType == TARGET_TYPE_AR6001) {
             address = 0x0C0000CC;
         } else if (TargetType == TARGET_TYPE_AR6002) {
@@ -400,7 +311,7 @@ A_STATUS ar6000_reset_device(HIF_DEVICE *hifDevice, A_UINT32 TargetType, A_BOOL 
     return A_OK;
 }
 
-#define REG_DUMP_COUNT_AR6001   38  /* WORDs, derived from AR600x_regdump.h */
+#define REG_DUMP_COUNT_AR6001   38
 #define REG_DUMP_COUNT_AR6002   32
 #define REG_DUMP_COUNT_AR6003   32
 #define REGISTER_DUMP_LEN_MAX   38
@@ -426,13 +337,10 @@ void ar6000_dump_target_assert_info(HIF_DEVICE *hifDevice, A_UINT32 TargetType)
 
     do {
 
-            /* the reg dump pointer is copied to the host interest area */
         address = HOST_INTEREST_ITEM_ADDRESS(TargetType, hi_failure_state);
         address = TARG_VTOP(TargetType, address);
 
         if (TargetType == TARGET_TYPE_AR6001) {
-                /* for AR6001, this is a fixed location because the ptr is actually stuck in cache,
-                 * this may be fixed in later firmware versions */
             address = 0x18a0;
             regDumpCount = REG_DUMP_COUNT_AR6001;
         } else  if (TargetType == TARGET_TYPE_AR6002) {
@@ -443,7 +351,6 @@ void ar6000_dump_target_assert_info(HIF_DEVICE *hifDevice, A_UINT32 TargetType)
             A_ASSERT(0);
         }
 
-            /* read RAM location through diagnostic window */
         status = ar6000_ReadRegDiag(hifDevice, &address, &regDumpArea);
 
         if (A_FAILED(status)) {
@@ -484,8 +391,6 @@ void ar6000_dump_target_assert_info(HIF_DEVICE *hifDevice, A_UINT32 TargetType)
 
 }
 
-/* set HTC/Mbox operational parameters, this can only be called when the target is in the
- * BMI phase */
 A_STATUS ar6000_set_htc_params(HIF_DEVICE *hifDevice,
                                A_UINT32    TargetType,
                                A_UINT32    MboxIsrYieldValue,
@@ -495,7 +400,6 @@ A_STATUS ar6000_set_htc_params(HIF_DEVICE *hifDevice,
     A_UINT32 blocksizes[HTC_MAILBOX_NUM_MAX];
 
     do {
-            /* get the block sizes */
         status = HIFConfigureDevice(hifDevice, HIF_DEVICE_GET_MBOX_BLOCK_SIZE,
                                     blocksizes, sizeof(blocksizes));
 
@@ -503,13 +407,9 @@ A_STATUS ar6000_set_htc_params(HIF_DEVICE *hifDevice,
             AR_DEBUG_PRINTF(ATH_LOG_ERR,("Failed to get block size info from HIF layer...\n"));
             break;
         }
-            /* note: we actually get the block size for mailbox 1, for SDIO the block
-             * size on mailbox 0 is artificially set to 1 */
-            /* must be a power of 2 */
         A_ASSERT((blocksizes[1] & (blocksizes[1] - 1)) == 0);
 
         if (HtcControlBuffers != 0) {
-                /* set override for number of control buffers to use */
             blocksizes[1] |=  ((A_UINT32)HtcControlBuffers) << 16;
         }
 
@@ -580,12 +480,6 @@ A_STATUS ar6000_prepare_target(HIF_DEVICE *hifDevice,
 }
 
 #if defined(CONFIG_AR6002_REV1_FORCE_HOST)
-/*
- * Call this function just before the call to BMIInit
- * in order to force* AR6002 rev 1.x firmware to detect a Host.
- * THIS IS FOR USE ONLY WITH AR6002 REV 1.x.
- * TBDXXX: Remove this function when REV 1.x is desupported.
- */
 A_STATUS
 ar6002_REV1_reset_force_host (HIF_DEVICE *hifDevice)
 {
@@ -599,16 +493,6 @@ ar6002_REV1_reset_force_host (HIF_DEVICE *hifDevice)
     A_STATUS status = A_OK;
     A_UINT32 address;
     A_UINT32 data;
-
-    /* Force AR6002 REV1.x to recognize Host presence.
-     *
-     * Note: Use RAM at 0x52df80..0x52dfa0 with ROM Remap entry 0
-     * so that this workaround functions with AR6002.war1.sh.  We
-     * could fold that entire workaround into this one, but it's not
-     * worth the effort at this point.  This workaround cannot be
-     * merged into the other workaround because this must be done
-     * before BMI.
-     */
 
     static struct forceROM_s ForceROM_NEW[] = {
         {0x52df80, 0x20f31c07},

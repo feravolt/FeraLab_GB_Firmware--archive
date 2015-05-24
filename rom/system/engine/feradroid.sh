@@ -15,7 +15,6 @@ then
    rm -f /system/usr/vendor/prop/firstboot
    rm -f /system/usr/vendor/prop/notferalab
    rm -f /system/engine/installbusybox.sh
-   rm -f /data/local/bootanimation.zip
    exit
 else
 
@@ -39,6 +38,7 @@ sqlite3 /data/data/com.android.providers.settings/databases/settings.db "INSERT 
 /system/xbin/zram
 /system/xbin/fix
 sh /system/engine/rammer.sh
+sh /system/engine/adblock.sh
 echo "FeraDroid Engine >> Ready"
 fi
 /system/xbin/sysro

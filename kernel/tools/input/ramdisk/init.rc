@@ -182,7 +182,6 @@ on boot
     write /proc/sys/vm/overcommit_memory 1
     write /proc/sys/vm/overcommit_ratio 100
     write /proc/sys/vm/min_free_order_shift 4
-    write /proc/sys/vm/laptop_mode 0
     write /proc/sys/vm/vfs_cache_pressure 70
     write /proc/sys/vm/swappiness 60
     write /sys/module/lowmemorykiller/parameters/cost 8
@@ -195,7 +194,7 @@ on boot
     write /proc/sys/vm/dirty_ratio 30
     write /proc/sys/vm/dirty_background_ratio 5
     write /proc/sys/vm/drop_caches 3
-    write /sys/kernel/mm/ksm/pages_to_scan 90
+    write /sys/kernel/mm/ksm/pages_to_scan 69
     write /sys/kernel/mm/ksm/sleep_millisecs 5400
     write /sys/kernel/mm/ksm/run 1
     write /proc/sys/kernel/sysrq 1

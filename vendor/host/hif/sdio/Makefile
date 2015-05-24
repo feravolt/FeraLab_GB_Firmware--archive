@@ -1,51 +1,17 @@
-#------------------------------------------------------------------------------
-# <copyright file="makefile" company="Atheros">
-#    Copyright (c) 2005-2008 Atheros Corporation.  All rights reserved.
-# 
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License version 2 as
-# published by the Free Software Foundation;
-#
-# Software distributed under the License is distributed on an "AS
-# IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-# implied. See the License for the specific language governing
-# rights and limitations under the License.
-#
-#
-#------------------------------------------------------------------------------
-#==============================================================================
-# Author(s): ="Atheros"
-#==============================================================================
-
-#
-#SDIO HIF makefile for atheros SDIO stack
-#  
-
-# Check for SDIO stack
 ifdef ATH_SDIO_STACK_BASE
-# Someone already set it on entry, the stack resides outside this tree, we will try to build it
 _SDIO_STACK = YES
 else
-# Check for SDIO stack within this tree
 _SDIO_STACK = $(shell if [ -f $(ATH_SRC_BASE)/sdiostack/src/Makefile ]; then echo "YES"; else echo "NO"; fi)
 
 ifeq ($(_SDIO_STACK), YES)
-    # SDIO stack is part of the kit and will need to be compiled
 ATH_SDIO_STACK_BASE := $(ATH_SRC_BASE)/sdiostack
 endif
 endif 
 
-
-ifeq ($(ATH_BUS_SUBTYPE),linux_sdio)
 _HIF_SUB_TYPE = linux_sdio
 _SDIO_STACK = NO
-else
-_HIF_SUB_TYPE = linux_athsdio
-endif
-
 
 ifeq ($(_SDIO_STACK), YES)
-    # Pass and translate build variables to the SDIO stack makefile
 _SDIO_STACK_MAKE_PARAMS := CT_BUILD_TYPE=$(ATH_BUILD_TYPE) \
                            CT_OS_TYPE=linux \
                            CT_OS_SUB_TYPE=$(ATH_OS_SUB_TYPE) \
@@ -61,10 +27,6 @@ endif
 EXTRA_CFLAGS += -I$(ATH_SRC_BASE)/hif/sdio/$(_HIF_SUB_TYPE)/include
 EXTRA_CFLAGS += -DSDIO
 EXTRA_CFLAGS += -I$(ATH_SDIO_STACK_BASE)/src/include
-
-ifeq ($(ATH_OS_SUB_TYPE),linux_2_4)
-obj-y += ../../hif/sdio/linux_athsdio/src/hif.o
-endif
 
 ifneq ($(ATH_OS_SUB_TYPE),linux_2_4)
 ar6000-objs := ../../hif/sdio/$(_HIF_SUB_TYPE)/src/hif.o

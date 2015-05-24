@@ -1,27 +1,3 @@
-//------------------------------------------------------------------------------
-// <copyright file="ar6000_drv.c" company="Atheros">
-//    Copyright (c) 2004-2009 Atheros Corporation.  All rights reserved.
-//    Copyright (C) 2010 Sony Ericsson Mobile Communications AB
-// 
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License version 2 as
-// published by the Free Software Foundation;
-//
-// Software distributed under the License is distributed on an "AS
-// IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-// implied. See the License for the specific language governing
-// rights and limitations under the License.
-//
-//
-//------------------------------------------------------------------------------
-//==============================================================================
-// Author(s): ="Atheros"
-//==============================================================================
-
-/*
- * This driver is a pseudo ethernet driver to access the Atheros AR6000
- * WLAN Device
- */
 static const char athId[] __attribute__ ((unused)) = "$Id: //depot/sw/releases/olca2.2/host/os/linux/ar6000_drv.c#64 $";
 
 #include "ar6000_drv.h"

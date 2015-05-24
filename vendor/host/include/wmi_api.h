@@ -1,23 +1,3 @@
-//------------------------------------------------------------------------------
-// <copyright file="wmi_api.h" company="Atheros">
-//    Copyright (c) 2004-2008 Atheros Corporation.  All rights reserved.
-// 
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License version 2 as
-// published by the Free Software Foundation;
-//
-// Software distributed under the License is distributed on an "AS
-// IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
-// implied. See the License for the specific language governing
-// rights and limitations under the License.
-//
-//
-//------------------------------------------------------------------------------
-//==============================================================================
-// This file contains the definitions for the Wireless Module Interface (WMI).
-//
-// Author(s): ="Atheros"
-//==============================================================================
 #ifndef _WMI_API_H_
 #define _WMI_API_H_
 
@@ -25,9 +5,6 @@
 extern "C" {
 #endif
 
-/*
- * IP QoS Field definitions according to 802.1p
- */
 #define BEST_EFFORT_PRI         0
 #define BACKGROUND_PRI          1
 #define EXCELLENT_EFFORT_PRI    3
@@ -39,7 +16,7 @@ extern "C" {
 
 #define UNDEFINED_PRI           (0xff)
 
-#define WMI_IMPLICIT_PSTREAM_INACTIVITY_INT 5000 /* 5 seconds */
+#define WMI_IMPLICIT_PSTREAM_INACTIVITY_INT 3000
 
 #define A_ROUND_UP(x, y)  ((((x) + ((y) - 1)) / (y)) * (y))
 

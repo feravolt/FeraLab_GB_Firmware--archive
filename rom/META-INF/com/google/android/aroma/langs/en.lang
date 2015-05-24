@@ -37,18 +37,17 @@ opt.a=Extra Configuration
 opt.b=Select desired options. Skip this step if you don't know what to choose.
 opt.c=Options
 opt.d=Install SE DLNA wireless file sharing application.
-opt.z=Install Google mail application.
 opt.xyyx=Install default SIM-toolkit application.
 opt.xyxyz=Install unofficial YouTube application.
 opt.xyxyzz=Install Sony Powersave application.
 opt.xyxyzzl=Select this if you have unlocked bootloader to enable offline charging.
-opt.xyxyzzll=Increase CPU voltage. Choose this if you have random reboots of your device.
 opt.xyxyzzlly=Disable HOME key device unlock.
 opt.xyxyzzllyf=Disable HW buttons LED.
 opt.xyxyzzllyff=Disable zRAM. Just in case you realy want it.
 opt.xyxyzzllyzzz=Scale down maximum CPU frequency to 768Mhz. This will greatly save your battery life in cost of overall performance. Option can be overrided later in system settings.
-opt.mmmm=Install Logger module for FeraKernel-v28 for debuging purposes
-opt.mmmmmm=Enable FastCharge mode support for FeraKernel-v28
+opt.mmmm=Install Logger module for FeraKernel-v29 for debuging purposes
+opt.mmmmmm=Disable FastCharge mode support for FeraKernel-v29
+opt.mmmmmn=Install Yandex app market
 
 
 hz.ready=Ready
