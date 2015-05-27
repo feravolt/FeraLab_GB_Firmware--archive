@@ -25,9 +25,9 @@ cd
 cd /data/local
 mkdir download
 cd
-mount -o bind /data/local/download /cache/download
-chmod 777 /cache/download
-rm /cache/download/downloadfile*.apk >/dev/null 2>&1
+mount -o bind /data/local/download /cache
+chmod 777 /cache
+rm /cache/downloadfile*.apk >/dev/null 2>&1
 cd /engine
 /sbin/sysrw
 mkdir sysinit

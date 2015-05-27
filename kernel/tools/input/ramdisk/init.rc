@@ -189,14 +189,14 @@ on boot
     write /sys/module/lowmemorykiller/parameters/minfree 2048,3072,4096,6144,14336,18432
     write /proc/1/oom_adj -16
     write /sys/module/wakelock/parameters/debug_mask 7
-    write /proc/sys/vm/dirty_expire_centisecs 270
+    write /proc/sys/vm/dirty_expire_centisecs 540
     write /proc/sys/vm/dirty_writeback_centisecs 1800
     write /proc/sys/vm/dirty_ratio 30
     write /proc/sys/vm/dirty_background_ratio 5
     write /proc/sys/vm/drop_caches 3
-    write /sys/kernel/mm/ksm/pages_to_scan 69
-    write /sys/kernel/mm/ksm/sleep_millisecs 5400
-    write /sys/kernel/mm/ksm/run 1
+    write /sys/kernel/mm/ksm/pages_to_scan 90
+    write /sys/kernel/mm/ksm/sleep_millisecs 18000
+    write /sys/kernel/mm/ksm/run 0
     write /proc/sys/kernel/sysrq 1
     write /proc/sys/vm/page-cluster 1
     chmod 0660 /sys/class/rfkill/rfkill0/state
