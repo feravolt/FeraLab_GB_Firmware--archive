@@ -1,8 +1,8 @@
 #!/system/xbin/sh
-### FeraDroid Engine v18 | By FeraVolt. 2015
+### FeraDroid Engine v18.1 | By FeraVolt. 2015
 export PATH=/sbin
 
-echo 90 > /proc/sys/vm/swappiness
+echo 100 > /proc/sys/vm/swappiness
 sleep 1
 rzscontrol /dev/block/ramzswap0 -i -d 131072
 sleep 1

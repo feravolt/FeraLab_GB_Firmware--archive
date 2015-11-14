@@ -7,14 +7,11 @@ then
    /system/xbin/sysrw
    sh /system/engine/fix.sh
    sleep 54
-   sleep 45
-   /system/xbin/boost
-   sleep 45
-   sleep 45
+   sleep 54
+   sleep 54
    /system/xbin/sysrw
    rm -f /system/usr/vendor/prop/firstboot
    rm -f /system/usr/vendor/prop/notferalab
-   rm -f /system/engine/installbusybox.sh
    exit
 else
 
@@ -34,12 +31,17 @@ rm -f /mnt/sdcard/found000/*
 rm -Rf /mnt/sdcard/found000
 rm -f /mnt/sdcard/fix_permissions.log
 chmod 000 /data/tombstones
+echo "1536,2048,4096,5120,7680,18432" > /sys/module/lowmemorykiller/parameters/minfree
+echo "0,3,5,7,14,15" > /sys/module/lowmemorykiller/parameters/adj
 sqlite3 /data/data/com.android.providers.settings/databases/settings.db "INSERT INTO secure (name, value) VALUES ('wifi_country_code', 'JP');"
 /system/xbin/zram
 /system/xbin/fix
-sh /system/engine/rammer.sh
+sh /system/engine/boost.sh
 sh /system/engine/adblock.sh
 echo "FeraDroid Engine >> Ready"
 fi
 /system/xbin/sysro
-
+sleep 45
+sh /system/engine/boost.sh
+sleep 45
+sh /system/engine/boost.sh

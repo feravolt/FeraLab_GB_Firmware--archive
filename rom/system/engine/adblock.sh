@@ -1,5 +1,5 @@
 #!/system/xbin/sh
-### FeraDroid Engine v18 | By FeraVolt. 2015
+### FeraDroid Engine v18.1 | By FeraVolt. 2015
 
 pm list packages | tr -d '\r' | grep -v 'package:android' | grep -v 'com.android.' | grep -v 'com.mstar.android.' | grep -v 'com.konka.' | while read PACKAGE; do
     PACKAGE=${PACKAGE/package:/}

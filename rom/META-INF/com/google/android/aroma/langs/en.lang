@@ -47,8 +47,6 @@ opt.xyxyzzllyff=Disable zRAM. Just in case you realy want it.
 opt.xyxyzzllyzzz=Scale down maximum CPU frequency to 768Mhz. This will greatly save your battery life in cost of overall performance. Option can be overrided later in system settings.
 opt.mmmm=Install Logger module for FeraKernel-v29 for debuging purposes
 opt.mmmmmm=Disable FastCharge mode support for FeraKernel-v29
-opt.mmmmmn=Install Yandex app market
-
 
 hz.ready=Ready
 hz.readyy=We are ready to begin installation

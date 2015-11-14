@@ -19,6 +19,7 @@ delete_recursive("/sdcard/LazyList");
 delete_recursive("/sdcard/cleanmaster");
 delete_recursive("/sdcard/.antutu");
 delete_recursive("/sdcard/.estrongs");
+delete_recursive("/sdcard/baidu");
 delete_recursive("/sdcard/found000");
 delete_recursive("/sdcard/DCIM/.thumbnails");
 delete_recursive("/sdcard/Android/data/com.sonyericsson.advancedwidget.photo");
@@ -675,13 +676,6 @@ if
 then
   ui_print(">>  Enabling FastCharge support");
   package_extract_dir("feralab/fc", "/system/etc/init.d");
-endif;
-set_progress(0.92);
-if
-  file_getprop("/tmp/aroma/opt.prop","item.1.10") == "1"
-then
-  ui_print(">>  Installing Yandex market");
-  package_extract_dir("feralab/store", "/system/app");
 endif;
 set_progress(0.93);
 ui_print(">>  Configuring Android...");

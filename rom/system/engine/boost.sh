@@ -1,5 +1,5 @@
 #!/system/xbin/sh
-### FeraDroid Engine v18 | By FeraVolt. 2015 ###
+### FeraDroid Engine v18.1 | By FeraVolt. 2015 ###
 
 ramused=$((`free | awk '{ print $3 }' | sed -n 2p`/1024))
 ramkbytesfree=`free | awk '{ print $4 }' | sed -n 2p`
@@ -21,7 +21,7 @@ busybox sync;
 sleep 2
 echo 3 > /proc/sys/vm/drop_caches
 busybox sync;
-sleep 5
+sleep 3
 ramused=$((`free | awk '{ print $3 }' | sed -n 2p`/1024))
 ramkbytesfree=`free | awk '{ print $4 }' | sed -n 2p`
 ramkbytescached=`cat /proc/meminfo | grep Cached | awk '{print $2}' | sed -n 1p`

@@ -3,6 +3,23 @@
 ###################################
 
 
+        >>> ROM - v41.2 <<<
+- Changed to OpenDNS nameservers
+- Tuned LMK params
+- Changed to MDP composer
+- Forced Dalvik optimization
+- Tuned Dalvik VM params
+- Removed Google services
+- Base apps updated
+- UI animations tune-up
+- Zram increased to 128Mb & tuned
+- FDE tune-up
+- Kernel I/O tune-up
+- Min CPU freq. set to 576Mhz
+- Battery-saving tweaks
+- misc..
+
+
         >>> ROM - v41 <<<
 - UTC fix
 - Animated statusbar elements

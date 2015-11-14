@@ -1,4 +1,4 @@
-### FeraDroid Engine v18 | By FeraVolt. 2015
+### FeraDroid Engine v18.1 | By FeraVolt. 2015
 
 echo 1 > /sys/class/leds/lv5219lg:mled/als_enable
 echo 0 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 > /sys/class/leds/lv5219lg:mled/als_config
@@ -21,13 +21,10 @@ echo 16 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 123 > /sys/c
 
 insmod /system/lib/modules/logger.ko
 /system/xbin/sysrw
-chown system.system /dev/smd27
-chown root.root /dev
-chmod 755 /dev
-chmod 777 /dev/smd27
 chmod -R 777 /cache
 chown root system /sys/devices/system/cpu/cpu0/cpufreq/vdd_levels
 chmod 0664 /sys/devices/system/cpu/cpu0/cpufreq/vdd_levels
+echo 576000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
 
 if [ ! -h /data/local/tmp/adreno_config.txt ]; then
 	chmod 777 /system/etc/adreno_config.txt

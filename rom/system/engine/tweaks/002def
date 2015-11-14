@@ -1,14 +1,11 @@
 #!/system/xbin/sh
-### FeraDroid Engine v18 | By FeraVolt. 2015 ###
+### FeraDroid Engine v18.1 | By FeraVolt. 2015 ###
 
-READ_AHEAD_KB="4096"
+READ_AHEAD_KB="2048"
 MAX="97"
 
 echo $READ_AHEAD_KB > /sys/devices/virtual/bdi/179:0/read_ahead_kb
 echo $MAX > /sys/devices/virtual/bdi/179:0/max_ratio
 echo $READ_AHEAD_KB > /sys/devices/virtual/bdi/default/read_ahead_kb
 echo $MAX > /sys/devices/virtual/bdi/default/max_ratio
-busybox mount -o remount,noatime,barrier=0,nodiratime /dev
-busybox mount -o remount,noatime,barrier=0,nodiratime /proc
-busybox mount -o remount,noatime,barrier=0,nodiratime /sys
-busybox mount -o remount,noatime,barrier=0,nodiratime /system
+
